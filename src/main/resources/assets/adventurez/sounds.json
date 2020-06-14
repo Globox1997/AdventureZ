@@ -3,5 +3,10 @@
     "sounds": [
       "adventurez:golemidle"
     ]
+  },
+  "rock_impact": {
+    "sounds": [
+      "adventurez:rock_impact"
+    ]
   }
 }

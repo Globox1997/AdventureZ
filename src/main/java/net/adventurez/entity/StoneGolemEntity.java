@@ -25,8 +25,10 @@ import net.minecraft.entity.ai.pathing.PathNodeType;
 import net.minecraft.entity.attribute.DefaultAttributeContainer;
 import net.minecraft.entity.attribute.EntityAttributes;
 import net.minecraft.entity.damage.DamageSource;
+import net.minecraft.entity.data.DataTracker;
+import net.minecraft.entity.data.TrackedData;
+import net.minecraft.entity.data.TrackedDataHandlerRegistry;
 import net.minecraft.entity.mob.HostileEntity;
-import net.minecraft.entity.mob.IllagerEntity;
 import net.minecraft.entity.mob.MobEntity;
 import net.minecraft.entity.passive.AbstractTraderEntity;
 import net.minecraft.entity.player.PlayerEntity;
@@ -49,32 +51,38 @@ import net.minecraft.world.WorldView;
 // import net.minecraft.entity.projectile.WitherSkullEntity;
 // import net.minecraft.entity.projectile.FireballEntity;
 // import net.minecraft.entity.projectile.thrown.SnowballEntity;
-//import net.minecraft.client.render.
-import net.minecraft.item.BowItem;
-import net.minecraft.entity.boss.WitherEntity;
-import net.minecraft.entity.mob.BlazeEntity;
+// import net.minecraft.item.BowItem;
+// import net.minecraft.entity.boss.WitherEntity;
+// import net.minecraft.entity.mob.RavagerEntity;
+// import net.minecraft.entity.mob.BlazeEntity;
+// System.out.println("Joooonge");
+//Ffast run mode
+// System.out.println(this.squaredDistanceTo(getTarget()));
 
 public class StoneGolemEntity extends HostileEntity {
-  private static final Predicate<Entity> IS_NOT_RAVAGER = (entity) -> {
+  public static final TrackedData<Integer> throwCooldown = DataTracker.registerData(StoneGolemEntity.class,
+      TrackedDataHandlerRegistry.INTEGER);
+
+  private static final Predicate<Entity> NOT_STONEGOLEM = (entity) -> {
     return entity.isAlive() && !(entity instanceof StoneGolemEntity);
   };
+  private int cooldown = 0;
+  private final int thrownStoneCooldown = 120;
   private int attackTick;
   private int stunTick;
   private int roarTick;
-  private int attackTicksLeft;
-  private int throwRockTick;
 
   public StoneGolemEntity(EntityType<? extends StoneGolemEntity> entityType, World world) {
     super(entityType, world);
     this.stepHeight = 1.0F;
-    this.experiencePoints = 200; // High!!!!!!!!!!!!!
+    this.experiencePoints = 200;
   }
 
   protected void initGoals() {
     super.initGoals();
     this.goalSelector.add(0, new SwimGoal(this));
     this.goalSelector.add(4, new StoneGolemEntity.AttackGoal());
-    this.goalSelector.add(5, new WanderAroundFarGoal(this, 0.4D));
+    this.goalSelector.add(5, new WanderAroundFarGoal(this, 0.6D));
     this.goalSelector.add(6, new LookAtEntityGoal(this, PlayerEntity.class, 6.0F));
     this.goalSelector.add(10, new LookAtEntityGoal(this, MobEntity.class, 8.0F));
     this.targetSelector.add(2, (new RevengeGoal(this, new Class[] { RaiderEntity.class })).setGroupRevenge());
@@ -83,10 +91,16 @@ public class StoneGolemEntity extends HostileEntity {
   }
 
   public static DefaultAttributeContainer.Builder createStoneGolemAttributes() {
-    return HostileEntity.createHostileAttributes().add(EntityAttributes.GENERIC_MAX_HEALTH, 10.0D)
+    return HostileEntity.createHostileAttributes().add(EntityAttributes.GENERIC_MAX_HEALTH, 10.0D) // HIGHER
         .add(EntityAttributes.GENERIC_MOVEMENT_SPEED, 0.24D).add(EntityAttributes.GENERIC_KNOCKBACK_RESISTANCE, 2.5D)
         .add(EntityAttributes.GENERIC_ATTACK_DAMAGE, 12.0D).add(EntityAttributes.GENERIC_ATTACK_KNOCKBACK, 2.5D)
-        .add(EntityAttributes.GENERIC_FOLLOW_RANGE, 32.0D);
+        .add(EntityAttributes.GENERIC_FOLLOW_RANGE, 38.0D);
+  }
+
+  @Override
+  public void initDataTracker() {
+    super.initDataTracker();
+    dataTracker.startTracking(throwCooldown, 0);
   }
 
   @Override
@@ -103,8 +117,8 @@ public class StoneGolemEntity extends HostileEntity {
   public void tickMovement() {
     super.tickMovement();
     if (this.isAlive()) {
-      if (this.attackTicksLeft > 0) {
-        --this.attackTicksLeft;
+      if (this.getHealth() <= this.getMaxHealth() / 2) {
+        this.getAttributeInstance(EntityAttributes.GENERIC_MOVEMENT_SPEED).setBaseValue(0.3D);
       }
       if (this.horizontalCollision && this.world.getGameRules().getBoolean(GameRules.field_19388)) {
         boolean bl = false;
@@ -129,9 +143,7 @@ public class StoneGolemEntity extends HostileEntity {
             BlockState blockState = this.world.getBlockState(blockPos);
             block = blockState.getBlock();
 
-          } while (!(block instanceof Block && !block.is(Blocks.GRASS_BLOCK) && !block.is(Blocks.BEDROCK)
-              && !block.is(Blocks.GLASS))); // XXXXXXXXXXXXXXXXXXXXXX
-          // GroundStone
+          } while (!(block instanceof Block && !block.is(Blocks.GRASS_BLOCK) && !block.is(Blocks.BEDROCK)));
 
           bl = this.world.breakBlock(blockPos, true, this) || bl;
         }
@@ -147,22 +159,50 @@ public class StoneGolemEntity extends HostileEntity {
       if (this.attackTick > 0) {
         --this.attackTick;
       }
-      if (this.throwRockTick > 0) {
-        --this.throwRockTick;
-        if (throwRockTick == 30) {
-          this.throwRock2();
-        }
-      }
 
       if (this.stunTick > 0) {
         --this.stunTick;
         this.spawnStunnedParticles();
         if (this.stunTick == 0) {
           this.playSound(SoundEvents.ENTITY_RAVAGER_ROAR, 1.0F, 1.0F);
-          this.roarTick = 20;
+          this.roarTick = 30;
         }
       }
+      if (this.getTarget() != null && this.squaredDistanceTo(getTarget()) < 1400D && this.canSee(this.getTarget()) && this.squaredDistanceTo(getTarget()) > 100D) {
+        dataTracker.set(throwCooldown, cooldown);
+        this.cooldown++;
+        if(cooldown == 110){
+          this.playSound(SoundEvents.ENTITY_RAVAGER_ROAR, 1F, 1F);
+          throwRock(this.getTarget());
+        }
+        if (cooldown >= thrownStoneCooldown) {
+          this.cooldown = -80;
+          
+        }
+      }
+    }
+  }
 
+  private void throwRock(LivingEntity target) {
+    Vec3d vec3d_1 = this.getRotationVec(1.0F);
+    double double_3 = vec3d_1.x + 2.2D;
+    double double_5 = vec3d_1.z + 1D;
+
+    double x = target.getX() - this.getX() - double_3;
+    double y = target.getBodyY(1D) - this.getBodyY(0.1D);
+    double z = target.getZ() - this.getZ() - double_5;
+
+
+    ThrownRockEntity thrownRockEntity = new ThrownRockEntity(this.world, this.getX() + double_3, this.getY() + 1D,
+        this.getZ() + double_5);
+    thrownRockEntity.setVelocity(x, y, z, 1.8F, 3.0F);
+    if (!world.isClient) {
+      if (this.squaredDistanceTo(getTarget()) < 800D) {
+        this.world.spawnEntity(thrownRockEntity);
+      } else {
+        thrownRockEntity.setVelocity(x, y + 4, z, 1.8F, 2.0F);
+        this.world.spawnEntity(thrownRockEntity);
+      }
     }
   }
 
@@ -178,64 +218,11 @@ public class StoneGolemEntity extends HostileEntity {
     }
 
   }
-  private void throwRock2() {
-    LivingEntity target = this.getTarget();
-  Vec3d vec3d_1 = this.getRotationVec(1.0F);
-  double double_3 = target.getX() - (this.getX() + vec3d_1.x * 2.0D);
-  double double_4 = target.getBoundingBox().getYLength() + (double) (target.getHeight() / 2.0F)
-          - (0.5D + this.getY() + (double) (this.getHeight() / 2.0F)) + 1D;
-  double double_5 = target.getZ() - (this.getZ() + vec3d_1.z * 2.0D);
-  double double_9 = target.getBoundingBox().getYLength() + (double) (target.getHeight() / 2.0F)
-          - (0.5D + this.getY() + (double) (this.getHeight() / 2.0F)) + 0.7D;
-  double double_10 = target.getZ() - (this.getZ() + vec3d_1.z * 2.0D) + 0.7D;
-  double double_11 = target.getZ() - (this.getZ() + vec3d_1.z * 2.0D) - 0.7D;
-  ThrownRockEntity skull1 = new ThrownRockEntity(world, this, double_3, double_4, double_5);
-  ThrownRockEntity skull2 = new ThrownRockEntity(world, this, double_3, double_9, double_10);
-  ThrownRockEntity skull3 = new ThrownRockEntity(world, this, double_3, double_9, double_11);
-  double double_6 = this.getX() + vec3d_1.x * 2.0D;
-  double double_7 = this.getY() + (double) this.getHeight();
-  double double_8 = this.getZ() + vec3d_1.z * 2.0D;
-  skull1.updatePosition(double_6, double_7, double_8);
-  skull2.updatePosition(double_6, double_7, double_8);
-  skull3.updatePosition(double_6, double_7, double_8);
-  world.spawnEntity(skull1);
-  world.spawnEntity(skull2);
-  world.spawnEntity(skull3);
-  }
-  private void throwRock() {
-    // persistentProjectileEntity.setProperties(playerEntity, playerEntity.pitch,
-    // playerEntity.yaw, 0.0F, f * 3.0F, 1.0F);
-    LivingEntity target = this.getTarget();
-   // if (target != null && this.getVisibilityCache().canSee(target)) {
-      double d = this.squaredDistanceTo(target);
-      //if (d < 300D) {
-        System.out.println("Throwed");
-        double e = target.getX() - this.getX();
-        double f = target.getBodyY(0.5D) - this.getBodyY(0.5D);
-        double g = target.getZ() - this.getZ();
-
-        double a = target.getX();
-        double b = target.getBodyY(0.5D);
-        double c = target.getZ();
-        
-        ThrownRockEntity test = new ThrownRockEntity(this.world, this, a , b, c );
-        ThrownRockEntity test2 = new ThrownRockEntity(this.world, this.getX(), this.getY() , this.getZ(), a,b,c );
-        ThrownRockEntity thrownRockEntity = new ThrownRockEntity(this.world, this, e // +
-                                                                                     // this.getRandom().nextGaussian()
-                                                                                     // * (double)h
-            , f, g // + this.getRandom().nextGaussian() * (double)h
-        );
-        thrownRockEntity.updatePosition(thrownRockEntity.getX(), this.getBodyY(0.5D) + 0.5D, thrownRockEntity.getZ());
-        this.world.spawnEntity(thrownRockEntity); 
-        this.world.spawnEntity(test); 
-        this.world.spawnEntity(test2); 
-    //  }
-  //  }
-  }
 
   @Override
   protected boolean isImmobile() {
-    return super.isImmobile() || this.attackTick > 0 || this.stunTick > 0 || this.roarTick > 0;
+    return super.isImmobile() || this.attackTick > 0 || this.stunTick > 0 || this.roarTick > 0
+        || (this.cooldown > thrownStoneCooldown - 30 && this.cooldown > 0);
   }
 
   @Override
@@ -262,21 +249,19 @@ public class StoneGolemEntity extends HostileEntity {
 
   private void roar() {
     if (this.isAlive()) {
-      List<Entity> list = this.world.getEntities(LivingEntity.class, this.getBoundingBox().expand(4.0D),
-          IS_NOT_RAVAGER);
+      List<Entity> list = this.world.getEntities(LivingEntity.class, this.getBoundingBox().expand(5.0D),
+          NOT_STONEGOLEM);
 
       Entity entity;
       for (Iterator var2 = list.iterator(); var2.hasNext(); this.knockBack(entity)) {
         entity = (Entity) var2.next();
-        if (!(entity instanceof IllagerEntity)) {
-          entity.damage(DamageSource.mob(this), 8.0F);
-          entity.setVelocity(entity.getVelocity().add(0.0D, 0.63D, 0.0D));
-        }
+        entity.damage(DamageSource.mob(this), 8.0F);
+        entity.setVelocity(entity.getVelocity().add(0.0D, 0.63D, 0.0D));
       }
 
       Vec3d vec3d = this.getBoundingBox().getCenter();
 
-      for (int i = 0; i < 40; ++i) {
+      for (int i = 0; i < 50; ++i) {
         double d = this.random.nextGaussian() * 0.2D;
         double e = this.random.nextGaussian() * 0.2D;
         double f = this.random.nextGaussian() * 0.2D;
@@ -296,8 +281,8 @@ public class StoneGolemEntity extends HostileEntity {
   @Override
   @Environment(EnvType.CLIENT)
   public void handleStatus(byte status) {
+
     if (status == 4) {
-      this.throwRockTick = 60;
       this.attackTick = 10;
       this.playSound(SoundEvents.ENTITY_RAVAGER_ATTACK, 1.0F, 1.0F);
     } else if (status == 39) {
@@ -310,11 +295,6 @@ public class StoneGolemEntity extends HostileEntity {
   @Environment(EnvType.CLIENT)
   public int getAttackTick() {
     return this.attackTick;
-  }
-
-  @Environment(EnvType.CLIENT)
-  public int getThrowRockTick() {
-    return this.throwRockTick;
   }
 
   @Environment(EnvType.CLIENT)
@@ -360,6 +340,11 @@ public class StoneGolemEntity extends HostileEntity {
     return !world.containsFluid(this.getBoundingBox());
   }
 
+  @Override
+  public boolean cannotDespawn() {
+    return true;
+  }
+
   static class PathNodeMaker extends LandPathNodeMaker {
     private PathNodeMaker() {
     }
@@ -389,9 +374,7 @@ public class StoneGolemEntity extends HostileEntity {
 
     protected double getSquaredMaxAttackDistance(LivingEntity entity) {
       float f = StoneGolemEntity.this.getWidth() - 0.1F;
-      return (double) (f // * 2.0F
-          * f // * 2.0F
-          + entity.getWidth());
+      return (double) (f * f * 1.2 + entity.getWidth());
     }
   }
 }
