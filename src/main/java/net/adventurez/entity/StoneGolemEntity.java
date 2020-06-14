@@ -3,6 +3,8 @@ package net.adventurez.entity;
 import java.util.Iterator;
 import java.util.List;
 import java.util.function.Predicate;
+
+import net.adventurez.init.SoundInit;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
 import net.minecraft.block.Block;
@@ -35,7 +37,6 @@ import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.raid.RaiderEntity;
 import net.minecraft.particle.ParticleTypes;
 import net.minecraft.sound.SoundEvent;
-import net.minecraft.sound.SoundEvents;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Box;
 import net.minecraft.util.math.MathHelper;
@@ -62,6 +63,8 @@ import net.minecraft.world.WorldView;
 public class StoneGolemEntity extends HostileEntity {
   public static final TrackedData<Integer> throwCooldown = DataTracker.registerData(StoneGolemEntity.class,
       TrackedDataHandlerRegistry.INTEGER);
+  public static final TrackedData<Boolean> inVulnerable = DataTracker.registerData(StoneGolemEntity.class,
+      TrackedDataHandlerRegistry.BOOLEAN);
 
   private static final Predicate<Entity> NOT_STONEGOLEM = (entity) -> {
     return entity.isAlive() && !(entity instanceof StoneGolemEntity);
@@ -71,6 +74,8 @@ public class StoneGolemEntity extends HostileEntity {
   private int attackTick;
   private int stunTick;
   private int roarTick;
+
+  private int TESTTICK = 0;
 
   public StoneGolemEntity(EntityType<? extends StoneGolemEntity> entityType, World world) {
     super(entityType, world);
@@ -101,6 +106,7 @@ public class StoneGolemEntity extends HostileEntity {
   public void initDataTracker() {
     super.initDataTracker();
     dataTracker.startTracking(throwCooldown, 0);
+    dataTracker.startTracking(inVulnerable, true);
   }
 
   @Override
@@ -117,8 +123,16 @@ public class StoneGolemEntity extends HostileEntity {
   public void tickMovement() {
     super.tickMovement();
     if (this.isAlive()) {
+      this.setInvulnerable(this.getDataTracker().get(StoneGolemEntity.inVulnerable));
+      ////
+      TESTTICK++;
+      if (TESTTICK == 500) {
+        dataTracker.set(inVulnerable, false);
+      }
+      ///
       if (this.getHealth() <= this.getMaxHealth() / 2) {
         this.getAttributeInstance(EntityAttributes.GENERIC_MOVEMENT_SPEED).setBaseValue(0.3D);
+
       }
       if (this.horizontalCollision && this.world.getGameRules().getBoolean(GameRules.field_19388)) {
         boolean bl = false;
@@ -164,20 +178,21 @@ public class StoneGolemEntity extends HostileEntity {
         --this.stunTick;
         this.spawnStunnedParticles();
         if (this.stunTick == 0) {
-          this.playSound(SoundEvents.ENTITY_RAVAGER_ROAR, 1.0F, 1.0F);
+          this.playSound(SoundInit.GOLEM_ROAR_EVENT, 1.0F, 1.0F);
           this.roarTick = 30;
         }
       }
-      if (this.getTarget() != null && this.squaredDistanceTo(getTarget()) < 1400D && this.canSee(this.getTarget()) && this.squaredDistanceTo(getTarget()) > 100D) {
+      if (this.getTarget() != null && this.squaredDistanceTo(getTarget()) < 1400D && this.canSee(this.getTarget())
+          && this.squaredDistanceTo(getTarget()) > 100D) {
         dataTracker.set(throwCooldown, cooldown);
         this.cooldown++;
-        if(cooldown == 110){
-          this.playSound(SoundEvents.ENTITY_RAVAGER_ROAR, 1F, 1F);
+        if (cooldown == 110) {
+          this.playSound(SoundInit.GOLEM_ROAR_EVENT, 1F, 1F);
           throwRock(this.getTarget());
         }
         if (cooldown >= thrownStoneCooldown) {
           this.cooldown = -80;
-          
+
         }
       }
     }
@@ -191,7 +206,6 @@ public class StoneGolemEntity extends HostileEntity {
     double x = target.getX() - this.getX() - double_3;
     double y = target.getBodyY(1D) - this.getBodyY(0.1D);
     double z = target.getZ() - this.getZ() - double_5;
-
 
     ThrownRockEntity thrownRockEntity = new ThrownRockEntity(this.world, this.getX() + double_3, this.getY() + 1D,
         this.getZ() + double_5);
@@ -222,7 +236,8 @@ public class StoneGolemEntity extends HostileEntity {
   @Override
   protected boolean isImmobile() {
     return super.isImmobile() || this.attackTick > 0 || this.stunTick > 0 || this.roarTick > 0
-        || (this.cooldown > thrownStoneCooldown - 30 && this.cooldown > 0);
+        || (this.cooldown > thrownStoneCooldown - 30 && this.cooldown > 0)
+        || this.getDataTracker().get(StoneGolemEntity.inVulnerable);
   }
 
   @Override
@@ -235,7 +250,7 @@ public class StoneGolemEntity extends HostileEntity {
     if (this.roarTick == 0) {
       if (this.random.nextDouble() < 0.5D) {
         this.stunTick = 40;
-        this.playSound(SoundEvents.ENTITY_RAVAGER_STUNNED, 1.0F, 1.0F);
+        this.playSound(SoundInit.GOLEM_IDLE_EVENT, 1.0F, 1.0F);
         this.world.sendEntityStatus(this, (byte) 39);
         target.pushAwayFrom(this);
       } else {
@@ -284,7 +299,7 @@ public class StoneGolemEntity extends HostileEntity {
 
     if (status == 4) {
       this.attackTick = 10;
-      this.playSound(SoundEvents.ENTITY_RAVAGER_ATTACK, 1.0F, 1.0F);
+      this.playSound(SoundInit.GOLEM_HIT_EVENT, 1.0F, 1.0F);
     } else if (status == 39) {
       this.stunTick = 40;
     }
@@ -311,28 +326,28 @@ public class StoneGolemEntity extends HostileEntity {
   public boolean tryAttack(Entity target) {
     this.attackTick = 10;
     this.world.sendEntityStatus(this, (byte) 4);
-    this.playSound(SoundEvents.ENTITY_RAVAGER_ATTACK, 1.0F, 1.0F);
+    this.playSound(SoundInit.GOLEM_HIT_EVENT, 1.0F, 1.0F);
     return super.tryAttack(target);
   }
 
   @Override
   protected SoundEvent getAmbientSound() {
-    return SoundEvents.ENTITY_RAVAGER_AMBIENT;
+    return SoundInit.GOLEM_IDLE_EVENT;
   }
 
   @Override
   protected SoundEvent getHurtSound(DamageSource source) {
-    return SoundEvents.ENTITY_RAVAGER_HURT;
+    return SoundInit.GOLEM_HIT_EVENT;
   }
 
   @Override
   protected SoundEvent getDeathSound() {
-    return SoundEvents.ENTITY_RAVAGER_DEATH;
+    return SoundInit.GOLEM_DEATH_EVENT;
   }
 
   @Override
   protected void playStepSound(BlockPos pos, BlockState state) {
-    this.playSound(SoundEvents.ENTITY_RAVAGER_STEP, 0.15F, 1.0F);
+    this.playSound(SoundInit.GOLEM_WALK_EVENT, 0.15F, 1.0F);
   }
 
   @Override

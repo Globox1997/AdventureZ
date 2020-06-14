@@ -1,12 +1,44 @@
 {
   "golem_idle": {
     "sounds": [
-      "adventurez:golemidle"
+      "adventurez:golem_idle1",
+      "adventurez:golem_idle2",
+      "adventurez:golem_idle3",
+      "adventurez:golem_idle4"
+    ]
+  },
+  "golem_hit": {
+    "sounds": [
+      "adventurez:golem_hit1",
+      "adventurez:golem_hit2",
+      "adventurez:golem_hit3",
+      "adventurez:golem_hit4"
+    ]
+  },
+  "golem_walk": {
+    "sounds": [
+      "adventurez:golem_walk1",
+      "adventurez:golem_walk2",
+      "adventurez:golem_walk3",
+      "adventurez:golem_walk4"
+    ]
+  },
+  "golem_roar": {
+    "sounds": [
+      "adventurez:golem_roar1",
+      "adventurez:golem_roar2"
+    ]
+  },
+  "golem_death": {
+    "sounds": [
+      "adventurez:golem_death1"
     ]
   },
   "rock_impact": {
     "sounds": [
-      "adventurez:rock_impact"
+      "adventurez:rock_impact1",
+      "adventurez:rock_impact2",
+      "adventurez:rock_impact3"
     ]
   }
 }
