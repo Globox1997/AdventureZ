@@ -1,0 +1,6 @@
+{
+  "parent": "block/cube_all",
+  "textures": {
+    "all": "adventurez:block/stone_holder_block"
+  }
+}

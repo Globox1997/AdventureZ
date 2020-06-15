@@ -78,7 +78,6 @@ public class StoneGolemModel<T extends StoneGolemEntity> extends CompositeEntity
     this.leftArm.pitch = -0.5F * MathHelper.method_24504(f, 13.0F) * g - 0.5236F;
     int thrownRockTick = stoneGolem.getDataTracker().get(StoneGolemEntity.throwCooldown);
     if (thrownRockTick >= 100) {
-      //this.rightArm.pitch = MathHelper.cos(-thrownRockTick * 0.2F + 0.3F) - 0.3F;
       this.leftArm.pitch = MathHelper.cos(-thrownRockTick * 0.2F + 0.3F) - 0.3F;
 
     }
@@ -99,7 +98,7 @@ public class StoneGolemModel<T extends StoneGolemEntity> extends CompositeEntity
     // System.out.println(this.rightArm.pitch);
     // }
     if (attackTick > 0) {
-      this.rightArm.pitch = g * 10.6F; // 2.6F
+      this.rightArm.pitch = g * 2.6F; // 2.6F
       this.rightArm.yaw = g * 1.2F;
     } else {
       this.rightArm.pitch = (-0.2F + 10.5F * MathHelper.method_24504(f, 13.0F)) * g * 3 + 5F;

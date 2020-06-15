@@ -35,7 +35,7 @@ public class ThrownRockRenderer extends EntityRenderer<ThrownRockEntity> {
       VertexConsumer vertexConsumer = vertexConsumerProvider
             .getBuffer(this.model.getLayer(this.getTexture(thrownRockEntity)));
       model.render(matrixStack, vertexConsumer, i, OverlayTexture.DEFAULT_UV, 1.0F, 1.0F, 1.0F, 1.0F);
-      matrixStack.scale(1.0F, 1.0F, 1.0F);
+      matrixStack.scale(1.5F, 1.5F, 1.5F);
       matrixStack.pop();
       super.render(thrownRockEntity, f, g, matrixStack, vertexConsumerProvider, i);
 

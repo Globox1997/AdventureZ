@@ -65,6 +65,10 @@ public class StoneGolemEntity extends HostileEntity {
       TrackedDataHandlerRegistry.INTEGER);
   public static final TrackedData<Boolean> inVulnerable = DataTracker.registerData(StoneGolemEntity.class,
       TrackedDataHandlerRegistry.BOOLEAN);
+  public static final TrackedData<Integer> lavaTexture = DataTracker.registerData(StoneGolemEntity.class,
+      TrackedDataHandlerRegistry.INTEGER);
+  public static final TrackedData<Boolean> halfLifeChange = DataTracker.registerData(StoneGolemEntity.class,
+      TrackedDataHandlerRegistry.BOOLEAN);
 
   private static final Predicate<Entity> NOT_STONEGOLEM = (entity) -> {
     return entity.isAlive() && !(entity instanceof StoneGolemEntity);
@@ -74,6 +78,7 @@ public class StoneGolemEntity extends HostileEntity {
   private int attackTick;
   private int stunTick;
   private int roarTick;
+  private int lavaFlow = 0;
 
   private int TESTTICK = 0;
 
@@ -107,6 +112,8 @@ public class StoneGolemEntity extends HostileEntity {
     super.initDataTracker();
     dataTracker.startTracking(throwCooldown, 0);
     dataTracker.startTracking(inVulnerable, true);
+    dataTracker.startTracking(lavaTexture, 0);
+    dataTracker.startTracking(halfLifeChange, false);
   }
 
   @Override
@@ -114,10 +121,10 @@ public class StoneGolemEntity extends HostileEntity {
     return new StoneGolemEntity.Navigation(this, world);
   }
 
-  @Override
-  public int getBodyYawSpeed() {
-    return 45;
-  }
+  // @Override
+  // public int getBodyYawSpeed() {
+  // return 45;
+  // }
 
   @Override
   public void tickMovement() {
@@ -129,10 +136,20 @@ public class StoneGolemEntity extends HostileEntity {
       if (TESTTICK == 500) {
         dataTracker.set(inVulnerable, false);
       }
+      if (TESTTICK > 500) {
+
+        if (lavaFlow <= 400) {
+          lavaFlow++;
+          if (lavaFlow % 10 == 0 && world.isClient) {
+            dataTracker.set(lavaTexture, lavaFlow / 2);
+          }
+        }
+      }
       ///
       if (this.getHealth() <= this.getMaxHealth() / 2) {
         this.getAttributeInstance(EntityAttributes.GENERIC_MOVEMENT_SPEED).setBaseValue(0.3D);
-
+        this.getAttributeInstance(EntityAttributes.GENERIC_ATTACK_KNOCKBACK).setBaseValue(4.0D);
+        dataTracker.set(halfLifeChange, true);
       }
       if (this.horizontalCollision && this.world.getGameRules().getBoolean(GameRules.field_19388)) {
         boolean bl = false;
@@ -332,7 +349,10 @@ public class StoneGolemEntity extends HostileEntity {
 
   @Override
   protected SoundEvent getAmbientSound() {
-    return SoundInit.GOLEM_IDLE_EVENT;
+    if (this.getDataTracker().get(StoneGolemEntity.inVulnerable)) {
+      return null;
+    } else
+      return SoundInit.GOLEM_IDLE_EVENT;
   }
 
   @Override

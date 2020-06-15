@@ -25,8 +25,14 @@
   },
   "golem_roar": {
     "sounds": [
-      "adventurez:golem_roar1",
-      "adventurez:golem_roar2"
+      {
+        "name": "adventurez:golem_roar1",
+        "attenuation_distance": 40
+      },
+      {
+        "name": "adventurez:golem_roar2",
+        "attenuation_distance": 40
+      }
     ]
   },
   "golem_death": {
@@ -36,9 +42,18 @@
   },
   "rock_impact": {
     "sounds": [
-      "adventurez:rock_impact1",
-      "adventurez:rock_impact2",
-      "adventurez:rock_impact3"
+      {
+        "name": "adventurez:rock_impact1",
+        "attenuation_distance": 40
+      },
+      {
+        "name": "adventurez:rock_impact2",
+        "attenuation_distance": 40
+      },
+      {
+        "name": "adventurez:rock_impact3",
+        "attenuation_distance": 40
+      }
     ]
   }
 }
