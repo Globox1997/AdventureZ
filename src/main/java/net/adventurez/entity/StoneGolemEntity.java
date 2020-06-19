@@ -11,12 +11,12 @@ import net.minecraft.block.Block;
 import net.minecraft.block.BlockState;
 import net.minecraft.block.Blocks;
 import net.minecraft.entity.Entity;
+import net.minecraft.entity.EntityGroup;
 import net.minecraft.entity.EntityType;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.ai.goal.FollowTargetGoal;
 import net.minecraft.entity.ai.goal.LookAtEntityGoal;
 import net.minecraft.entity.ai.goal.MeleeAttackGoal;
-import net.minecraft.entity.ai.goal.RevengeGoal;
 import net.minecraft.entity.ai.goal.SwimGoal;
 import net.minecraft.entity.ai.goal.WanderAroundFarGoal;
 import net.minecraft.entity.ai.pathing.EntityNavigation;
@@ -26,6 +26,7 @@ import net.minecraft.entity.ai.pathing.PathNodeNavigator;
 import net.minecraft.entity.ai.pathing.PathNodeType;
 import net.minecraft.entity.attribute.DefaultAttributeContainer;
 import net.minecraft.entity.attribute.EntityAttributes;
+import net.minecraft.entity.boss.ServerBossBar;
 import net.minecraft.entity.damage.DamageSource;
 import net.minecraft.entity.data.DataTracker;
 import net.minecraft.entity.data.TrackedData;
@@ -34,9 +35,11 @@ import net.minecraft.entity.mob.HostileEntity;
 import net.minecraft.entity.mob.MobEntity;
 import net.minecraft.entity.passive.AbstractTraderEntity;
 import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.entity.raid.RaiderEntity;
+import net.minecraft.nbt.CompoundTag;
 import net.minecraft.particle.ParticleTypes;
+import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.sound.SoundEvent;
+import net.minecraft.text.Text;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Box;
 import net.minecraft.util.math.MathHelper;
@@ -45,7 +48,12 @@ import net.minecraft.world.BlockView;
 import net.minecraft.world.GameRules;
 import net.minecraft.world.World;
 import net.minecraft.world.WorldView;
-
+import net.minecraft.entity.boss.BossBar;
+import net.minecraft.entity.mob.EvokerEntity;
+import net.minecraft.entity.mob.EvokerFangsEntity;
+import net.minecraft.client.render.entity.model.IronGolemEntityModel;
+import net.minecraft.client.render.entity.EnderDragonEntityRenderer;
+import net.minecraft.entity.boss.dragon.EnderDragonEntity;
 // import net.minecraft.entity.passive.IronGolemEntity;
 // import net.minecraft.entity.mob.HostileEntity;
 // import net.minecraft.entity.mob.ZombieEntity;
@@ -65,6 +73,8 @@ public class StoneGolemEntity extends HostileEntity {
       TrackedDataHandlerRegistry.INTEGER);
   public static final TrackedData<Boolean> inVulnerable = DataTracker.registerData(StoneGolemEntity.class,
       TrackedDataHandlerRegistry.BOOLEAN);
+  public static final TrackedData<Integer> inVulnerableTimer = DataTracker.registerData(StoneGolemEntity.class,
+      TrackedDataHandlerRegistry.INTEGER);
   public static final TrackedData<Integer> lavaTexture = DataTracker.registerData(StoneGolemEntity.class,
       TrackedDataHandlerRegistry.INTEGER);
   public static final TrackedData<Boolean> halfLifeChange = DataTracker.registerData(StoneGolemEntity.class,
@@ -74,18 +84,23 @@ public class StoneGolemEntity extends HostileEntity {
     return entity.isAlive() && !(entity instanceof StoneGolemEntity);
   };
   private int cooldown = 0;
-  private final int thrownStoneCooldown = 120;
+  private int thrownStoneCooldown = 120;
   private int attackTick;
   private int stunTick;
   private int roarTick;
   private int lavaFlow = 0;
+  private int getAliveTick = 0;
+  private int powerPhaseActivate = 0;
+  private int lavaRegenerateLife = 0;
 
-  private int TESTTICK = 0;
+  private final ServerBossBar bossBar;
 
   public StoneGolemEntity(EntityType<? extends StoneGolemEntity> entityType, World world) {
     super(entityType, world);
     this.stepHeight = 1.0F;
     this.experiencePoints = 200;
+    this.bossBar = (ServerBossBar) (new ServerBossBar(this.getDisplayName(), BossBar.Color.RED,
+        BossBar.Style.PROGRESS)); // .setDarkenSky(true)
   }
 
   protected void initGoals() {
@@ -95,8 +110,7 @@ public class StoneGolemEntity extends HostileEntity {
     this.goalSelector.add(5, new WanderAroundFarGoal(this, 0.6D));
     this.goalSelector.add(6, new LookAtEntityGoal(this, PlayerEntity.class, 6.0F));
     this.goalSelector.add(10, new LookAtEntityGoal(this, MobEntity.class, 8.0F));
-    this.targetSelector.add(2, (new RevengeGoal(this, new Class[] { RaiderEntity.class })).setGroupRevenge());
-    this.targetSelector.add(3, new FollowTargetGoal<>(this, PlayerEntity.class, true));
+    this.targetSelector.add(3, new FollowTargetGoal<>(this, PlayerEntity.class, false)); //Check true
     this.targetSelector.add(4, new FollowTargetGoal<>(this, AbstractTraderEntity.class, true));
   }
 
@@ -107,6 +121,57 @@ public class StoneGolemEntity extends HostileEntity {
         .add(EntityAttributes.GENERIC_FOLLOW_RANGE, 38.0D);
   }
 
+  public int getInvulnerableTimer() {
+    return (Integer) this.dataTracker.get(inVulnerableTimer);
+  }
+
+  public void setInvulTimer(int ticks) {
+    this.dataTracker.set(inVulnerableTimer, ticks);
+  }
+
+  public void blockStartEntityTimer() {
+    this.setInvulTimer(220);
+  }
+
+  @Override
+  public void writeCustomDataToTag(CompoundTag tag) {
+    super.writeCustomDataToTag(tag);
+    tag.putInt("AttackTick", this.attackTick);
+    tag.putInt("StunTick", this.stunTick);
+    tag.putInt("RoarTick", this.roarTick);
+    tag.putInt("Invul", this.getInvulnerableTimer());
+  }
+
+  @Override
+  public void readCustomDataFromTag(CompoundTag tag) {
+    super.readCustomDataFromTag(tag);
+    this.attackTick = tag.getInt("AttackTick");
+    this.stunTick = tag.getInt("StunTick");
+    this.roarTick = tag.getInt("RoarTick");
+    this.setInvulTimer(tag.getInt("Invul"));
+    if (this.hasCustomName()) {
+      this.bossBar.setName(this.getDisplayName());
+    }
+  }
+
+  @Override
+  public void setCustomName(Text name) {
+    super.setCustomName(name);
+    this.bossBar.setName(this.getDisplayName());
+  }
+
+  @Override
+  public void onStartedTrackingBy(ServerPlayerEntity player) {
+    super.onStartedTrackingBy(player);
+    this.bossBar.addPlayer(player);
+  }
+
+  @Override
+  public void onStoppedTrackingBy(ServerPlayerEntity player) {
+    super.onStoppedTrackingBy(player);
+    this.bossBar.removePlayer(player);
+  }
+
   @Override
   public void initDataTracker() {
     super.initDataTracker();
@@ -114,6 +179,7 @@ public class StoneGolemEntity extends HostileEntity {
     dataTracker.startTracking(inVulnerable, true);
     dataTracker.startTracking(lavaTexture, 0);
     dataTracker.startTracking(halfLifeChange, false);
+    this.dataTracker.startTracking(inVulnerableTimer, 0);
   }
 
   @Override
@@ -121,22 +187,22 @@ public class StoneGolemEntity extends HostileEntity {
     return new StoneGolemEntity.Navigation(this, world);
   }
 
-  // @Override
-  // public int getBodyYawSpeed() {
-  // return 45;
-  // }
+  @Override
+  public void mobTick() {
+    this.bossBar.setPercent(this.getHealth() / this.getMaxHealth());
+  }
 
   @Override
   public void tickMovement() {
     super.tickMovement();
     if (this.isAlive()) {
-      this.setInvulnerable(this.getDataTracker().get(StoneGolemEntity.inVulnerable));
-      ////
-      TESTTICK++;
-      if (TESTTICK == 500) {
+      if (getAliveTick < 301) {
+        getAliveTick++;
+      }
+      if (getAliveTick == 300) {
         dataTracker.set(inVulnerable, false);
       }
-      if (TESTTICK > 500) {
+      if (getAliveTick > 300) {
 
         if (lavaFlow <= 400) {
           lavaFlow++;
@@ -145,11 +211,28 @@ public class StoneGolemEntity extends HostileEntity {
           }
         }
       }
-      ///
       if (this.getHealth() <= this.getMaxHealth() / 2) {
         this.getAttributeInstance(EntityAttributes.GENERIC_MOVEMENT_SPEED).setBaseValue(0.3D);
         this.getAttributeInstance(EntityAttributes.GENERIC_ATTACK_KNOCKBACK).setBaseValue(4.0D);
-        dataTracker.set(halfLifeChange, true);
+        if (this.powerPhaseActivate < 80) {
+          this.powerPhaseActivate++;
+          if (this.powerPhaseActivate == 1 || this.powerPhaseActivate == 2) {
+            this.setAiDisabled(true);
+          }
+          if (this.powerPhaseActivate == 78 || this.powerPhaseActivate == 79) {
+            this.setAiDisabled(false);
+            this.roar();
+          }
+        }
+        if (this.powerPhaseActivate == 80) {
+          dataTracker.set(halfLifeChange, true);
+        }
+      } else if (this.isInLava() && this.getHealth() < this.getMaxHealth()) {
+        this.lavaRegenerateLife++;
+        if (this.lavaRegenerateLife >= 200) {
+          this.setHealth(this.getHealth() + 2F);
+          this.lavaRegenerateLife = 0;
+        }
       }
       if (this.horizontalCollision && this.world.getGameRules().getBoolean(GameRules.field_19388)) {
         boolean bl = false;
@@ -199,40 +282,18 @@ public class StoneGolemEntity extends HostileEntity {
           this.roarTick = 30;
         }
       }
-      if (this.getTarget() != null && this.squaredDistanceTo(getTarget()) < 1400D && this.canSee(this.getTarget())
-          && this.squaredDistanceTo(getTarget()) > 100D) {
-        dataTracker.set(throwCooldown, cooldown);
-        this.cooldown++;
-        if (cooldown == 110) {
-          this.playSound(SoundInit.GOLEM_ROAR_EVENT, 1F, 1F);
-          throwRock(this.getTarget());
+      if (this.getTarget() != null && this.canSee(this.getTarget())) {
+        if (this.squaredDistanceTo(getTarget()) < 1400D && this.squaredDistanceTo(getTarget()) > 100D) {
+          dataTracker.set(throwCooldown, cooldown);
+          this.cooldown++;
+          if (cooldown == thrownStoneCooldown - 10) {
+            this.playSound(SoundInit.GOLEM_ROAR_EVENT, 1F, 1F);
+            throwRock(this.getTarget());
+          }
+          if (cooldown >= thrownStoneCooldown) {
+            this.cooldown = -80;
+          }
         }
-        if (cooldown >= thrownStoneCooldown) {
-          this.cooldown = -80;
-
-        }
-      }
-    }
-  }
-
-  private void throwRock(LivingEntity target) {
-    Vec3d vec3d_1 = this.getRotationVec(1.0F);
-    double double_3 = vec3d_1.x + 2.2D;
-    double double_5 = vec3d_1.z + 1D;
-
-    double x = target.getX() - this.getX() - double_3;
-    double y = target.getBodyY(1D) - this.getBodyY(0.1D);
-    double z = target.getZ() - this.getZ() - double_5;
-
-    ThrownRockEntity thrownRockEntity = new ThrownRockEntity(this.world, this.getX() + double_3, this.getY() + 1D,
-        this.getZ() + double_5);
-    thrownRockEntity.setVelocity(x, y, z, 1.8F, 3.0F);
-    if (!world.isClient) {
-      if (this.squaredDistanceTo(getTarget()) < 800D) {
-        this.world.spawnEntity(thrownRockEntity);
-      } else {
-        thrownRockEntity.setVelocity(x, y + 4, z, 1.8F, 2.0F);
-        this.world.spawnEntity(thrownRockEntity);
       }
     }
   }
@@ -380,15 +441,70 @@ public class StoneGolemEntity extends HostileEntity {
     return true;
   }
 
+  @Override
+  public boolean canUsePortals() {
+    return false;
+  }
+
+  @Override
+  public EntityGroup getGroup() {
+    return EntityGroup.DEFAULT;
+  }
+
+  @Override
+  public boolean damage(DamageSource source, float amount) {
+    if (this.getDataTracker().get(StoneGolemEntity.inVulnerable)) {
+      return false;
+    } else
+      return super.damage(source, amount);
+  }
+
+  private void throwRock(LivingEntity target) {
+    Vec3d vec3d_1 = this.getRotationVec(1.0F);
+    double x_vector;
+    double z_vector;
+    if (vec3d_1.x < 0 && vec3d_1.z < 0) {
+      x_vector = vec3d_1.x + 1.8D;
+      z_vector = vec3d_1.z - 2.8D;
+    } else if (vec3d_1.x < 0 && vec3d_1.z > 0) {
+      x_vector = vec3d_1.x - 1.8D;
+      z_vector = vec3d_1.z - 2.8D;
+    } else if (vec3d_1.x > 0 && vec3d_1.z < 0) {
+      x_vector = vec3d_1.x + 1.8D;
+      z_vector = vec3d_1.z + 2.8D;
+    } else if (vec3d_1.x > 0 && vec3d_1.z > 0) {
+      x_vector = vec3d_1.x - 1.8D;
+      z_vector = vec3d_1.z + 2.8D;
+    } else {
+      x_vector = vec3d_1.x + 1.8D;
+      z_vector = vec3d_1.z - 2.8D;
+    }
+    double x = target.getX() - this.getX() - x_vector;
+    double y = target.getBodyY(1D) - this.getBodyY(0.1D);
+    double z = target.getZ() - this.getZ() - z_vector;
+    ThrownRockEntity thrownRockEntity = new ThrownRockEntity(this.world, this.getX() + x_vector, this.getY() + 0.5D,
+        this.getZ() + z_vector);
+    thrownRockEntity.setOwner(this);
+    if (!world.isClient) {
+      if (this.squaredDistanceTo(getTarget()) < 800D) {
+        thrownRockEntity.setVelocity(x, y, z, 1.8F, 3.0F);
+        this.world.spawnEntity(thrownRockEntity);
+      } else {
+        thrownRockEntity.setVelocity(x, y + 4D, z, 1.8F, 2.0F);
+        this.world.spawnEntity(thrownRockEntity);
+      }
+    }
+  }
+
   static class PathNodeMaker extends LandPathNodeMaker {
     private PathNodeMaker() {
     }
 
     protected PathNodeType adjustNodeType(BlockView world, boolean canOpenDoors, boolean canEnterOpenDoors,
         BlockPos pos, PathNodeType type) {
-      return type == PathNodeType.LEAVES ? PathNodeType.OPEN
-          : super.adjustNodeType(world, canOpenDoors, canEnterOpenDoors, pos, type);
-    }
+      return type == PathNodeType.LAVA ? PathNodeType.OPEN
+          : super.adjustNodeType(world, false, false, pos, type);
+    } // Instead of BLOCKED it was LEAVES
   }
 
   static class Navigation extends MobNavigation {

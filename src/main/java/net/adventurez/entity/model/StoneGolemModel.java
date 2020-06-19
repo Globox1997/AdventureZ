@@ -67,6 +67,7 @@ public class StoneGolemModel<T extends StoneGolemEntity> extends CompositeEntity
 
   @Override
   public void setAngles(T stoneGolem, float f, float g, float h, float i, float j) {
+    int roarTick = stoneGolem.getRoarTick();
     this.head.yaw = i * 0.0077453292F;
     this.head.pitch = j * 0.0017453292F + 0.2618F;
     this.rightLeg.yaw = 0.0F;
@@ -79,33 +80,30 @@ public class StoneGolemModel<T extends StoneGolemEntity> extends CompositeEntity
     int thrownRockTick = stoneGolem.getDataTracker().get(StoneGolemEntity.throwCooldown);
     if (thrownRockTick >= 100) {
       this.leftArm.pitch = MathHelper.cos(-thrownRockTick * 0.2F + 0.3F) - 0.3F;
-
     }
-
+    if (roarTick > 18) {
+      this.rightArm.pitch = MathHelper.sin(roarTick / 5.832F) - 0.5236F; //If he walks in your direction, right arm
+      //this.rightArm.pitch = MathHelper.
+      this.leftArm.pitch = MathHelper.sin(roarTick / 5.832F) - 0.5236F;
+    }
   }
 
   @Override
   public void animateModel(T stoneGolem, float f, float g, float h) {
     int attackTick = stoneGolem.getAttackTick();
 
-    // int thrownRockTick =
-    // stoneGolem.getDataTracker().get(StoneGolemEntity.throwCooldown);
-    // if (thrownRockTick >= 100) {
-    // // this.rightArm.pitch = -1.3963F;
-    // this.rightArm.pitch = -1.3963F * h;
-    // this.leftArm.pitch = -1.3963F * g;
-    // System.out.println(this.leftArm.pitch);
-    // System.out.println(this.rightArm.pitch);
-    // }
     if (attackTick > 0) {
-      this.rightArm.pitch = g * 2.6F; // 2.6F
+      this.rightArm.pitch = g * 2.6F;
       this.rightArm.yaw = g * 1.2F;
     } else {
       this.rightArm.pitch = (-0.2F + 10.5F * MathHelper.method_24504(f, 13.0F)) * g * 3 + 5F;
       this.leftArm.pitch = (-0.2F - 10.5F * MathHelper.method_24504(f, 13.0F)) * g * 3 + 5F;
-
     }
 
+  }
+
+  public ModelPart getLeftArm() {
+    return this.leftArm;
   }
 
 }

@@ -2,12 +2,13 @@ package net.adventurez.init;
 
 import net.adventurez.item.RedStoneItem;
 import net.minecraft.item.Item;
+import net.minecraft.item.ItemGroup;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.registry.Registry;
 
 public class ItemInit {
 
-  public static final RedStoneItem RED_STONE_ITEM = new RedStoneItem(new Item.Settings(),
+  public static final RedStoneItem RED_STONE_ITEM = new RedStoneItem(new Item.Settings().group(ItemGroup.MISC),
       () -> EntityInit.REDSTONE_ENTITY);
 
   public static void init() {

@@ -10,6 +10,8 @@ import net.minecraft.client.render.entity.EntityRenderDispatcher;
 import net.minecraft.client.render.entity.MobEntityRenderer;
 import net.minecraft.client.util.math.MatrixStack;
 import net.minecraft.util.Identifier;
+import net.minecraft.client.render.entity.EndermanEntityRenderer;
+import net.minecraft.client.render.entity.SpiderEntityRenderer;
 
 @Environment(EnvType.CLIENT)
 public class StoneGolemRenderer extends MobEntityRenderer<StoneGolemEntity, StoneGolemModel<StoneGolemEntity>> {

@@ -41,7 +41,6 @@ public class RedStoneRenderer extends EntityRenderer<RedStoneEntity> {
     matrixStack.scale(1.0F, 1.0F, 1.0F);
     matrixStack.pop();
     super.render(redStoneEntity, f, g, matrixStack, vertexConsumerProvider, i);
-    System.out.println("light above:" + lightAbove);
   }
 
   @Override

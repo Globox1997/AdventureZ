@@ -35,11 +35,6 @@ public class RedStoneItem extends Item {
   }
 
   @Override
-  public boolean hasEnchantmentGlint(ItemStack stack) {
-    return true;
-  }
-
-  @Override
   public void appendTooltip(ItemStack itemStack, World world, List<Text> tooltip, TooltipContext tooltipContext) {
     tooltip.add(new TranslatableText("item.adventurez.red_stone_item.tooltip"));
   }
@@ -47,18 +42,21 @@ public class RedStoneItem extends Item {
   @Override
   public TypedActionResult<ItemStack> use(World world, PlayerEntity user, Hand hand) {
     ItemStack itemStack = user.getStackInHand(hand);
-    world.playSound((PlayerEntity) null, user.getX(), user.getY(), user.getZ(), SoundEvents.ENTITY_EGG_THROW,
-        SoundCategory.PLAYERS, 0.5F, 0.4F / (RANDOM.nextFloat() * 0.4F + 0.8F));
-    if (!world.isClient) {
-      RedStoneEntity eggEntity = new RedStoneEntity(world, user);
-      eggEntity.setItem(itemStack);
-      eggEntity.setProperties(user, user.pitch, user.yaw, 0.0F, 1.5F, 1.0F);
-      world.spawnEntity(eggEntity);
-    }
-    if (!user.abilities.creativeMode) {
-      itemStack.decrement(1);
-    }
+    if (!user.isSneaking()) {
+      world.playSound((PlayerEntity) null, user.getX(), user.getY(), user.getZ(), SoundEvents.ENTITY_EGG_THROW,
+          SoundCategory.PLAYERS, 0.5F, 0.4F / (RANDOM.nextFloat() * 0.4F + 0.8F));
+      if (!world.isClient) {
+        RedStoneEntity redStoneEntity = new RedStoneEntity(world, user.getX(), user.getY() + 0.5D, user.getZ());
+        redStoneEntity.setItem(itemStack);
+        redStoneEntity.setProperties(user, user.pitch, user.yaw, 0.0F, 1.8F, 1.0F);
+        world.spawnEntity(redStoneEntity);
+      }
+      if (!user.abilities.creativeMode) {
+        itemStack.decrement(1);
+      }
 
-    return TypedActionResult.method_29237(itemStack, world.isClient());
+      return TypedActionResult.method_29237(itemStack, world.isClient());
+    }
+    return TypedActionResult.pass(itemStack);
   }
 }

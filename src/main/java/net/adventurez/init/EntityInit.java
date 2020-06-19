@@ -14,7 +14,7 @@ import net.minecraft.util.registry.Registry;
 
 public class EntityInit {
         public static final EntityType<StoneGolemEntity> STONEGOLEM_ENTITY = FabricEntityTypeBuilder
-                        .create(SpawnGroup.MONSTER, StoneGolemEntity::new).trackable(74, 2)
+                        .create(SpawnGroup.MONSTER, StoneGolemEntity::new).trackable(74, 2).fireImmune()
                         .dimensions(EntityDimensions.fixed(3.36F, 4.44F)).build();
         public static final EntityType<ThrownRockEntity> THROWNROCK_ENTITY = FabricEntityTypeBuilder
                         .<ThrownRockEntity>create(SpawnGroup.MISC, ThrownRockEntity::new).trackable(74, 2)
@@ -30,8 +30,7 @@ public class EntityInit {
 
                 FabricDefaultAttributeRegistry.register(STONEGOLEM_ENTITY,
                                 StoneGolemEntity.createStoneGolemAttributes());
-                Registry.register(Registry.ITEM, new Identifier("adventurez", "spawn_stone_golem"),
-                                new SpawnEggItem(STONEGOLEM_ENTITY, 10198167, 6329475,
-                                                new Item.Settings().maxCount(1).group(ItemGroup.MISC)));
+                Registry.register(Registry.ITEM, new Identifier("adventurez", "spawn_stone_golem"), new SpawnEggItem(
+                                STONEGOLEM_ENTITY, 2956072, 1445648, new Item.Settings().group(ItemGroup.MISC)));
         }
 }
