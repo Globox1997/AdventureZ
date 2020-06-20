@@ -55,5 +55,13 @@
         "attenuation_distance": 40
       }
     ]
+  },
+  "golem_spawn": {
+    "sounds": [
+      {
+        "name": "adventurez:golem_spawn",
+        "attenuation_distance": 50
+      }
+    ]
   }
 }

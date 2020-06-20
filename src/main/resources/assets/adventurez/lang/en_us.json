@@ -2,7 +2,10 @@
   "entity.adventurez.stone_golem": "Blackstone Golem",
   "item.adventurez.spawn_stone_golem": "Blackstone Golem Spawn Egg",
   "item.adventurez.gilded_stone_item": "Gilded Blackstone Shard",
+  "item.adventurez.gilded_stone_item.tooltip": "§1Rare",
   "item.adventurez.stone_golem_arm": "Blackstone´s Arm",
+  "item.adventurez.stone_golem_arm.tooltip": "§5Epic",
   "item.adventurez.stone_golem_heart": "Blackstone Golem Heart",
+  "item.adventurez.stone_golem_heart.tooltip": "§5Epic Material",
   "block.adventurez.stone_holder_block": "Chiseled Polished Blackstone Holder"
 }

@@ -90,8 +90,6 @@ public class StoneGolemEntity extends HostileEntity {
   private int attackTick;
   private int stunTick;
   private int roarTick;
-  private int lavaFlow = 0;
-  private int getAliveTick = 0;
   private int powerPhaseActivate = 0;
   private int lavaRegenerateLife = 0;
 
@@ -102,7 +100,7 @@ public class StoneGolemEntity extends HostileEntity {
     this.stepHeight = 1.0F;
     this.experiencePoints = 200;
     this.bossBar = (ServerBossBar) (new ServerBossBar(this.getDisplayName(), BossBar.Color.RED,
-        BossBar.Style.PROGRESS)); // .setDarkenSky(true)
+        BossBar.Style.PROGRESS));
   }
 
   protected void initGoals() {
@@ -123,17 +121,9 @@ public class StoneGolemEntity extends HostileEntity {
         .add(EntityAttributes.GENERIC_FOLLOW_RANGE, 38.0D);
   }
 
-  public int getInvulnerableTimer() {
-    return (Integer) this.dataTracker.get(inVulnerableTimer);
-  }
-
-  public void setInvulTimer(int ticks) {
-    this.dataTracker.set(inVulnerableTimer, ticks);
-  }
-
-  public void blockStartEntityTimer() {
-    this.setInvulTimer(220);
-  }
+  // public void blockStartEntityTimer() {
+  // this.setInvulTimer(300);
+  // }
 
   @Override
   public void writeCustomDataToTag(CompoundTag tag) {
@@ -142,6 +132,7 @@ public class StoneGolemEntity extends HostileEntity {
     tag.putInt("StunTick", this.stunTick);
     tag.putInt("RoarTick", this.roarTick);
     tag.putInt("Invul", this.getInvulnerableTimer());
+    tag.putInt("LavaTexture", this.getLavaTexture());
   }
 
   @Override
@@ -151,6 +142,7 @@ public class StoneGolemEntity extends HostileEntity {
     this.stunTick = tag.getInt("StunTick");
     this.roarTick = tag.getInt("RoarTick");
     this.setInvulTimer(tag.getInt("Invul"));
+    this.setLavaTexture(tag.getInt("LavaTexture"));
     if (this.hasCustomName()) {
       this.bossBar.setName(this.getDisplayName());
     }
@@ -179,7 +171,7 @@ public class StoneGolemEntity extends HostileEntity {
     super.initDataTracker();
     dataTracker.startTracking(throwCooldown, 0);
     dataTracker.startTracking(inVulnerable, true);
-    dataTracker.startTracking(lavaTexture, 0);
+    dataTracker.startTracking(lavaTexture, 400); // 0
     dataTracker.startTracking(halfLifeChange, false);
     this.dataTracker.startTracking(inVulnerableTimer, 0);
   }
@@ -198,19 +190,15 @@ public class StoneGolemEntity extends HostileEntity {
   public void tickMovement() {
     super.tickMovement();
     if (this.isAlive()) {
-      if (getAliveTick < 301) {
-        getAliveTick++;
+      if (this.getInvulnerableTimer() > 0) {
+        this.setInvulTimer(this.getInvulnerableTimer() - 1);
       }
-      if (getAliveTick == 300) {
+      if (this.getInvulnerableTimer() == 0) {
         dataTracker.set(inVulnerable, false);
       }
-      if (getAliveTick > 300) {
-
-        if (lavaFlow <= 400) {
-          lavaFlow++;
-          if (lavaFlow % 10 == 0 && world.isClient) {
-            dataTracker.set(lavaTexture, lavaFlow / 2);
-          }
+      if (this.getInvulnerableTimer() == 0) {
+        if (this.getLavaTexture() < 400) {
+          this.setLavaTexture(this.getLavaTexture() + 1);
         }
       }
       if (this.getHealth() <= this.getMaxHealth() / 2) {
@@ -498,6 +486,27 @@ public class StoneGolemEntity extends HostileEntity {
     }
   }
 
+  public void sendtoEntity() {
+    this.setInvulTimer(220);
+    this.setLavaTexture(0);
+  }
+
+  public int getInvulnerableTimer() {
+    return (Integer) this.dataTracker.get(inVulnerableTimer);
+  }
+
+  public void setInvulTimer(int ticks) {
+    this.dataTracker.set(inVulnerableTimer, ticks);
+  }
+
+  public int getLavaTexture() {
+    return (Integer) this.dataTracker.get(lavaTexture);
+  }
+
+  public void setLavaTexture(int ticks) {
+    this.dataTracker.set(lavaTexture, ticks);
+  }
+
   @Override
   public void onDeath(DamageSource source) {
     if (!this.removed && !this.dead) {
@@ -514,8 +523,8 @@ public class StoneGolemEntity extends HostileEntity {
         this.drop(source);
         this.onKilledBy(livingEntity);
         ZombieEntity SmallZombie = (ZombieEntity) EntityType.ZOMBIE.create(this.world);
-            SmallZombie.refreshPositionAndAngles(this.getBlockPos(), 0.0F, 0.0F);
-            this.world.spawnEntity(SmallZombie);
+        SmallZombie.refreshPositionAndAngles(this.getBlockPos(), 0.0F, 0.0F);
+        this.world.spawnEntity(SmallZombie);
       }
 
       this.world.sendEntityStatus(this, (byte) 3);
