@@ -16,7 +16,7 @@ import net.minecraft.util.math.BlockPos;
 
 @Environment(EnvType.CLIENT)
 public class RedStoneRenderer extends EntityRenderer<RedStoneEntity> {
-  private static final Identifier TEXTURE = new Identifier("adventurez:textures/item/red_stone_item.png");
+  private static final Identifier TEXTURE = new Identifier("adventurez:textures/item/gilded_stone_item.png");
   private final RedStoneModel model = new RedStoneModel();
 
   public RedStoneRenderer(EntityRenderDispatcher entityRenderDispatcher) {

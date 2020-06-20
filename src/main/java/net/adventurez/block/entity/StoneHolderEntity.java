@@ -13,6 +13,8 @@ import net.minecraft.inventory.Inventory;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.particle.ParticleTypes;
+import net.minecraft.sound.SoundCategory;
+import net.minecraft.sound.SoundEvents;
 import net.minecraft.util.collection.DefaultedList;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
@@ -20,7 +22,6 @@ import net.minecraft.util.Tickable;
 
 public class StoneHolderEntity extends BlockEntity implements Tickable, Inventory, BlockEntityClientSerializable {
   private DefaultedList<ItemStack> inventory;
-  private int countBlocks = 0;
 
   public StoneHolderEntity() {
     super(BlockInit.STONE_HOLDER_ENTITY);
@@ -60,19 +61,14 @@ public class StoneHolderEntity extends BlockEntity implements Tickable, Inventor
                   || stoneState.getBlock() == Blocks.POLISHED_BLACKSTONE_BRICK_SLAB
                   || stoneState.getBlock() == Blocks.POLISHED_BLACKSTONE_SLAB
                   || stoneState.getBlock() == Blocks.GILDED_BLACKSTONE) {
-                countBlocks++;
                 // System.out.println(countBlocks);
                 return true;
-
               }
             }
           }
         }
       }
     }
-    // if(countBlocks >= 100){
-    // return true;
-    // }else
     return false;
   }
 
@@ -82,37 +78,61 @@ public class StoneHolderEntity extends BlockEntity implements Tickable, Inventor
   }
 
   public void update() {
-    if (!isEmpty()) {
-      BlockState state = this.getCachedState();
-      if (this.isValid(world, pos, state)) {
+    BlockState state = this.getCachedState();
+    BlockPos secondHolderPos = pos.north(10);
+    BlockPos thirdHolderPos = pos.east(5).north(5);
+    BlockPos fourthHolderPos = pos.west(5).north(5);
+
+    if (this.isValid(world, pos, state)) {
+      if (world.isClient) {
+        // double d = (double) pos.getX() + (double) world.random.nextFloat();
+        // double e = (double) pos.getY() + (double) world.random.nextFloat();
+        // double f = (double) pos.getZ() + (double) world.random.nextFloat();
+        // double o = (double) pos.getY() + ((double) world.random.nextFloat() + 1);
+        // double r = (double) pos.getY() - ((double) world.random.nextFloat());
+        // world.addParticle(ParticleTypes.SMOKE, d, e, f, 0.0D, 0.0D, 0.0D);
+        // world.addParticle(ParticleTypes.SMOKE, d, o, f, 0.0D, 0.0D, 0.0D);
+        // world.addParticle(ParticleTypes.SMOKE, d, r, f, 0.0D, 0.0D, 0.0D);
+      }
+      if (!isEmpty() && !BlockInit.STONE_HOLDER_ENTITY.get(world, secondHolderPos).isEmpty()
+          && !BlockInit.STONE_HOLDER_ENTITY.get(world, thirdHolderPos).isEmpty()
+          && !BlockInit.STONE_HOLDER_ENTITY.get(world, fourthHolderPos).isEmpty()) {
+        BlockInit.STONE_HOLDER_ENTITY.get(world, pos.north(10)).clear();
+        BlockInit.STONE_HOLDER_ENTITY.get(world, pos.east(5).north(5)).clear();
+        BlockInit.STONE_HOLDER_ENTITY.get(world, pos.west(5).north(5)).clear();
         this.clear();
         if (!world.isClient) {
           StoneGolemEntity stoneGolemEntity = (StoneGolemEntity) EntityInit.STONEGOLEM_ENTITY.create(world);
           BlockPos spawnPos = new BlockPos(pos.getX(), pos.getY() + 1, pos.getZ() - 5);
           stoneGolemEntity.refreshPositionAndAngles(spawnPos, 0.0F, 0.0F);
-          // world.playSound(null, pos, SoundEvents.BLOCK_FIRE_EXTINGUISH,
-          // SoundCategory.HOSTILE, 1F, 1F);
+          world.playSound(null, pos, SoundEvents.BLOCK_FIRE_EXTINGUISH, SoundCategory.HOSTILE, 1F, 1F);
           world.spawnEntity(stoneGolemEntity);
-          // this.items.clear();
-          // this.clear();
         } else {
-          double d = (double) pos.getX() + (double) world.random.nextFloat();
-          double e = (double) pos.getY() + (double) world.random.nextFloat();
-          double f = (double) pos.getZ() + (double) world.random.nextFloat();
-          double o = (double) pos.getY() + ((double) world.random.nextFloat() + 1);
-          double r = (double) pos.getY() - ((double) world.random.nextFloat());
-          world.addParticle(ParticleTypes.SMOKE, d, e, f, 0.0D, 0.0D, 0.0D);
-          world.addParticle(ParticleTypes.SMOKE, d, o, f, 0.0D, 0.0D, 0.0D);
-          world.addParticle(ParticleTypes.SMOKE, d, r, f, 0.0D, 0.0D, 0.0D);
-        }
+          for (int counting = 0; counting < 20; counting++) {
+            double d = (double) pos.getX() + (double) world.random.nextFloat();
+            double e = (double) pos.getY() + (double) world.random.nextFloat() + 1D;
+            double f = (double) pos.getZ() + (double) world.random.nextFloat();
 
+            double d2 = (double) secondHolderPos.getX() + (double) world.random.nextFloat();
+            double e2 = (double) secondHolderPos.getY() + (double) world.random.nextFloat() + 1D;
+            double f2 = (double) secondHolderPos.getZ() + (double) world.random.nextFloat();
+
+            double d3 = (double) thirdHolderPos.getX() + (double) world.random.nextFloat();
+            double e3 = (double) thirdHolderPos.getY() + (double) world.random.nextFloat() + 1D;
+            double f3 = (double) thirdHolderPos.getZ() + (double) world.random.nextFloat();
+
+            double d4 = (double) fourthHolderPos.getX() + (double) world.random.nextFloat();
+            double e4 = (double) fourthHolderPos.getY() + (double) world.random.nextFloat() + 1D;
+            double f4 = (double) fourthHolderPos.getZ() + (double) world.random.nextFloat();
+
+            world.addParticle(ParticleTypes.SMOKE, d, e, f, 0.0D, 0.0D, 0.0D);
+            world.addParticle(ParticleTypes.SMOKE, d2, e2, f2, 0.0D, 0.0D, 0.0D);
+            world.addParticle(ParticleTypes.SMOKE, d3, e3, f3, 0.0D, 0.0D, 0.0D);
+            world.addParticle(ParticleTypes.SMOKE, d4, e4, f4, 0.0D, 0.0D, 0.0D);
+
+          }
+        }
       }
-      // ++processTime;
-      // if (processTime >= dryingTime) {
-      // this.items.clear();
-      // setStack(0, new ItemStack(Items.LEATHER));
-      // processTime = 0;
-      // }
     }
   }
 

@@ -44,7 +44,7 @@ public class StoneHolderBlock extends Block implements BlockEntityProvider {
       return ActionResult.SUCCESS;
     } else {
       ItemStack heldItem = player.getMainHandStack();
-      if (heldItem.isItemEqual(new ItemStack(ItemInit.RED_STONE_ITEM))) {
+      if (heldItem.isItemEqual(new ItemStack(ItemInit.GILDED_STONE_ITEM))) {
         if (!world.isClient) {
           blockEntity.setStack(0, heldItem.split(1));
           return ActionResult.SUCCESS;

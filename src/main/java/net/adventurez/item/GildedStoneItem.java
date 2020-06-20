@@ -17,12 +17,12 @@ import net.minecraft.entity.EntityType;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.Item;
 
-public class RedStoneItem extends Item {
+public class GildedStoneItem extends Item {
 
   private final Supplier<EntityType<RedStoneEntity>> typeSupplier;
   private EntityType<RedStoneEntity> cachedType = null;
 
-  public RedStoneItem(Settings settings, Supplier<EntityType<RedStoneEntity>> typeSupplier) {
+  public GildedStoneItem(Settings settings, Supplier<EntityType<RedStoneEntity>> typeSupplier) {
     super(settings);
     this.typeSupplier = typeSupplier;
   }

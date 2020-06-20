@@ -1,0 +1,15 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "pattern": [
+    "#"
+  ],
+  "key": {
+    "#": {
+      "item": "adventurez:stone_golem_heart"
+    }
+  },
+  "result": {
+    "item": "adventurez:stone_golem_arm",
+    "count": 1
+  }
+}

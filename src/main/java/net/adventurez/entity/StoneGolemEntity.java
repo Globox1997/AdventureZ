@@ -12,6 +12,7 @@ import net.minecraft.block.BlockState;
 import net.minecraft.block.Blocks;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityGroup;
+import net.minecraft.entity.EntityPose;
 import net.minecraft.entity.EntityType;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.ai.goal.FollowTargetGoal;
@@ -33,6 +34,7 @@ import net.minecraft.entity.data.TrackedData;
 import net.minecraft.entity.data.TrackedDataHandlerRegistry;
 import net.minecraft.entity.mob.HostileEntity;
 import net.minecraft.entity.mob.MobEntity;
+import net.minecraft.entity.mob.ZombieEntity;
 import net.minecraft.entity.passive.AbstractTraderEntity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.nbt.CompoundTag;
@@ -110,7 +112,7 @@ public class StoneGolemEntity extends HostileEntity {
     this.goalSelector.add(5, new WanderAroundFarGoal(this, 0.6D));
     this.goalSelector.add(6, new LookAtEntityGoal(this, PlayerEntity.class, 6.0F));
     this.goalSelector.add(10, new LookAtEntityGoal(this, MobEntity.class, 8.0F));
-    this.targetSelector.add(3, new FollowTargetGoal<>(this, PlayerEntity.class, false)); //Check true
+    this.targetSelector.add(3, new FollowTargetGoal<>(this, PlayerEntity.class, false)); // Check true
     this.targetSelector.add(4, new FollowTargetGoal<>(this, AbstractTraderEntity.class, true));
   }
 
@@ -496,15 +498,45 @@ public class StoneGolemEntity extends HostileEntity {
     }
   }
 
+  @Override
+  public void onDeath(DamageSource source) {
+    if (!this.removed && !this.dead) {
+      Entity entity = source.getAttacker();
+      LivingEntity livingEntity = this.getPrimeAdversary();
+
+      if (entity != null) {
+        entity.onKilledOther(this);
+      }
+
+      this.dead = true;
+      this.getDamageTracker().update();
+      if (!this.world.isClient) {
+        this.drop(source);
+        this.onKilledBy(livingEntity);
+        ZombieEntity SmallZombie = (ZombieEntity) EntityType.ZOMBIE.create(this.world);
+            SmallZombie.refreshPositionAndAngles(this.getBlockPos(), 0.0F, 0.0F);
+            this.world.spawnEntity(SmallZombie);
+      }
+
+      this.world.sendEntityStatus(this, (byte) 3);
+      this.setPose(EntityPose.DYING);
+    }
+  }
+
+  // @Override
+  // protected void onKilledBy(LivingEntity adversary) { //Nullable LivingEntity
+  // if (!this.world.isClient) {
+  // }
+  // }
+
   static class PathNodeMaker extends LandPathNodeMaker {
     private PathNodeMaker() {
     }
 
     protected PathNodeType adjustNodeType(BlockView world, boolean canOpenDoors, boolean canEnterOpenDoors,
         BlockPos pos, PathNodeType type) {
-      return type == PathNodeType.LAVA ? PathNodeType.OPEN
-          : super.adjustNodeType(world, false, false, pos, type);
-    } // Instead of BLOCKED it was LEAVES
+      return type == PathNodeType.LAVA ? PathNodeType.OPEN : super.adjustNodeType(world, false, false, pos, type);
+    }
   }
 
   static class Navigation extends MobNavigation {

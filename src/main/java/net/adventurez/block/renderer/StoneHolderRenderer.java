@@ -28,7 +28,7 @@ public class StoneHolderRenderer extends BlockEntityRenderer<StoneHolderEntity> 
     if (!blockEntity.isEmpty()) {
       // if (blockDirection == Direction.NORTH) {
       matrices.push();
-      double offset = Math.sin((blockEntity.getWorld().getTime() + tickDelta) / 8.0D) / 4.0D;
+      double offset = Math.sin((blockEntity.getWorld().getTime() + tickDelta) / 8.0D) / 4.5D;
       matrices.translate(0.5D, 1.3D + offset, 0.5D);
       matrices.multiply(Vector3f.POSITIVE_Y.getDegreesQuaternion((blockEntity.getWorld().getTime() + tickDelta) * 4F));
       int lightAbove = WorldRenderer.getLightmapCoordinates(blockEntity.getWorld(), blockEntity.getPos().up());

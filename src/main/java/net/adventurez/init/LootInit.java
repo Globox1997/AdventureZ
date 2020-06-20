@@ -27,7 +27,7 @@ public class LootInit {
     LootTableLoadingCallback.EVENT.register((resourceManager, lootManager, id, supplier, setter) -> {
       if (addedLootTable(id)) {
         FabricLootPoolBuilder poolBuilder = FabricLootPoolBuilder.builder().rolls(new BinomialLootTableRange(1, 0.05F))
-            .with(ItemEntry.builder(ItemInit.RED_STONE_ITEM));
+            .with(ItemEntry.builder(ItemInit.GILDED_STONE_ITEM));
         supplier.pool(poolBuilder);
       }
     });
