@@ -1,7 +1,6 @@
 package net.adventurez.item;
 
 import java.util.List;
-import java.util.function.Consumer;
 
 import net.adventurez.entity.ThrownRockEntity;
 import net.fabricmc.fabric.api.object.builder.v1.client.model.FabricModelPredicateProviderRegistry;
@@ -23,8 +22,6 @@ import net.minecraft.util.TypedActionResult;
 import net.minecraft.util.UseAction;
 import net.minecraft.world.World;
 
-import net.minecraft.item.TridentItem;
-
 public class StoneGolemArm extends Item {
   int stoneCounter = 0;
 
@@ -43,27 +40,6 @@ public class StoneGolemArm extends Item {
     tooltip.add(new TranslatableText("item.adventurez.stone_golem_arm.tooltip"));
   }
 
-  // public TypedActionResult<ItemStack> use(World world, PlayerEntity user, Hand
-  // hand) {
-  // ItemStack itemStack = user.getStackInHand(hand);
-  // if (!user.isSneaking()) {
-  // // world.playSound((PlayerEntity) null, user.getX(), user.getY(),
-  // user.getZ(),
-  // // SoundEvents.ENTITY_EGG_THROW,
-  // // SoundCategory.PLAYERS, 0.5F, 0.4F / (RANDOM.nextFloat() * 0.4F + 0.8F));
-  // if (!world.isClient) {
-  // ThrownRockEntity thrownRockEntity = new ThrownRockEntity(world, user.getX(),
-  // user.getY() + 0.5D, user.getZ());
-  // thrownRockEntity.setItem(itemStack);
-  // thrownRockEntity.setProperties(user, user.pitch, user.yaw, 0.0F, 1.8F, 1.0F);
-  // world.spawnEntity(thrownRockEntity);
-  // stoneCounter = 300;
-  // }
-
-  // return TypedActionResult.method_29237(itemStack, world.isClient());
-  // }
-  // return TypedActionResult.pass(itemStack);
-  // }
   @Override
   public void onStoppedUsing(ItemStack stack, World world, LivingEntity user, int remainingUseTicks) {
     if (user instanceof PlayerEntity) {
