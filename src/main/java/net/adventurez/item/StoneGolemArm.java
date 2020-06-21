@@ -98,15 +98,10 @@ public class StoneGolemArm extends Item {
     return 72000;
   }
 
-  // @Override
-  // public boolean canRepair(ItemStack stack, ItemStack ingredient) {
-  //   ingredient.equals(new ItemStack(Items.NETHERITE_SCRAP));
-  //   return true;
-  // }
   @Override
   public boolean canRepair(ItemStack stack, ItemStack ingredient) {
-    return  ingredient.equals(new ItemStack(Items.NETHERITE_SCRAP)) || super.canRepair(stack, ingredient);
- }
+    return ingredient.getItem() == Items.NETHERITE_SCRAP;
+  }
 
   @Override
   public boolean postHit(ItemStack stack, LivingEntity target, LivingEntity attacker) {
