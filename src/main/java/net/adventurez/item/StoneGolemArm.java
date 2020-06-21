@@ -3,6 +3,7 @@ package net.adventurez.item;
 import java.util.List;
 
 import net.adventurez.entity.ThrownRockEntity;
+import net.adventurez.init.SoundInit;
 import net.fabricmc.fabric.api.object.builder.v1.client.model.FabricModelPredicateProviderRegistry;
 import net.minecraft.client.item.TooltipContext;
 import net.minecraft.entity.Entity;
@@ -12,24 +13,30 @@ import net.minecraft.entity.effect.StatusEffectInstance;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
+import net.minecraft.item.Items;
 import net.minecraft.sound.SoundCategory;
-import net.minecraft.sound.SoundEvents;
 import net.minecraft.text.Text;
 import net.minecraft.text.TranslatableText;
 import net.minecraft.util.Hand;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.TypedActionResult;
 import net.minecraft.util.UseAction;
+import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.World;
 
+//import net.minecraft.item.TridentItem;
+//import net.minecraft.item.BowItem;
+//import net.minecraft.item.ArmorMaterial;
+
 public class StoneGolemArm extends Item {
-  int stoneCounter = 0;
+  private int stoneCounter;
+  private boolean lavalight = false;
 
   public StoneGolemArm(Settings settings) {
     super(settings);
-    FabricModelPredicateProviderRegistry.register(new Identifier("phase"), (stack, world, entity) -> {
-      if (stoneCounter >= 600 && stoneCounter <= 1200) {
-        return 0.5F;
+    FabricModelPredicateProviderRegistry.register(new Identifier("lavalight"), (stack, world, entity) -> {
+      if (lavalight == true) {
+        return 1F;
       }
       return 0F;
     });
@@ -44,29 +51,19 @@ public class StoneGolemArm extends Item {
   public void onStoppedUsing(ItemStack stack, World world, LivingEntity user, int remainingUseTicks) {
     if (user instanceof PlayerEntity) {
       PlayerEntity playerEntity = (PlayerEntity) user;
-      int i = this.getMaxUseTime(stack) - remainingUseTicks;
-      int count = 0;
-      if (count < 500) {
-        System.out.println("MaxUseTime:" + i);
-        count++;
-      }
-
-      if (i >= 10) {
+      stoneCounter = this.getMaxUseTime(stack) - remainingUseTicks;
+      if (stoneCounter >= 10) {
         if (!world.isClient) {
+          float strength = getStoneStrength(stoneCounter);
           stack.damage(1, playerEntity, (p) -> p.sendToolBreakStatus(p.getActiveHand()));
           ThrownRockEntity tridentEntity = new ThrownRockEntity(world, playerEntity);
-          tridentEntity.setProperties(playerEntity, playerEntity.pitch, playerEntity.yaw, 0.0F, 2.5F, 1.0F); // +
-                                                                                                             // (float)
-                                                                                                             // j * 0.5F
-
+          tridentEntity.setProperties(playerEntity, playerEntity.pitch, playerEntity.yaw, 0.0F, strength * 1.2F, 1.0F);
           world.spawnEntity(tridentEntity);
-          world.playSoundFromEntity((PlayerEntity) null, tridentEntity, SoundEvents.ITEM_TRIDENT_THROW,
+          world.playSoundFromEntity((PlayerEntity) null, tridentEntity, SoundInit.ROCK_THROW_EVENT,
               SoundCategory.PLAYERS, 1.0F, 1.0F);
         }
       }
-
     }
-
   }
 
   @Override
@@ -86,20 +83,48 @@ public class StoneGolemArm extends Item {
     StatusEffectInstance slowness = new StatusEffectInstance(StatusEffect.byRawId(2), 9, 0, false, false);
     if (selected && !world.isClient) {
       player.addStatusEffect(slowness);
-      if (stoneCounter > 0) {
-        stoneCounter--;
-      }
+    }
+    if (stoneCounter >= 1) {
+      this.stoneCounter--;
+      this.lavalight = true;
+    } else {
+      this.lavalight = false;
     }
   }
 
   @Override
   public UseAction getUseAction(ItemStack stack) {
-    return UseAction.BOW;
+    return UseAction.NONE;
   }
 
   @Override
   public int getMaxUseTime(ItemStack stack) {
     return 72000;
+  }
+
+  @Override
+  public boolean canRepair(ItemStack stack, ItemStack ingredient) {
+    return ingredient.equals(new ItemStack(Items.NETHERITE_SCRAP));
+  }
+
+  @Override
+  public boolean postHit(ItemStack stack, LivingEntity target, LivingEntity attacker) {
+    Vec3d vec3d_1 = attacker.getRotationVec(1.0F);
+    double x_vector = vec3d_1.x / 3D;
+    double z_vector = vec3d_1.z / 3D;
+    stack.damage(1, attacker, (p) -> p.sendToolBreakStatus(p.getActiveHand()));
+    target.addVelocity(x_vector, 0.5D, z_vector);
+    return true;
+  }
+
+  public static float getStoneStrength(int useTicks) {
+    float f = (float) useTicks / 20.0F;
+    f = (f * f + f * 2.0F) / 3.0F;
+    if (f > 1.0F) {
+      f = 1.0F;
+    }
+
+    return f;
   }
 
 }

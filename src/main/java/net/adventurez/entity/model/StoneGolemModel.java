@@ -82,8 +82,7 @@ public class StoneGolemModel<T extends StoneGolemEntity> extends CompositeEntity
       this.leftArm.pitch = MathHelper.cos(-thrownRockTick * 0.2F + 0.3F) - 0.3F;
     }
     if (roarTick > 18) {
-      this.rightArm.pitch = MathHelper.sin(roarTick / 5.832F) - 0.5236F; //If he walks in your direction, right arm
-      //this.rightArm.pitch = MathHelper.
+      this.rightArm.pitch = MathHelper.sin(roarTick / 5.832F) - 0.5236F; 
       this.leftArm.pitch = MathHelper.sin(roarTick / 5.832F) - 0.5236F;
     }
   }
@@ -100,10 +99,6 @@ public class StoneGolemModel<T extends StoneGolemEntity> extends CompositeEntity
       this.leftArm.pitch = (-0.2F - 10.5F * MathHelper.method_24504(f, 13.0F)) * g * 3 + 5F;
     }
 
-  }
-
-  public ModelPart getLeftArm() {
-    return this.leftArm;
   }
 
 }

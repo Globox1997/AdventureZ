@@ -4,6 +4,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.function.Predicate;
 
+import net.adventurez.init.EntityInit;
 import net.adventurez.init.SoundInit;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
@@ -34,7 +35,6 @@ import net.minecraft.entity.data.TrackedData;
 import net.minecraft.entity.data.TrackedDataHandlerRegistry;
 import net.minecraft.entity.mob.HostileEntity;
 import net.minecraft.entity.mob.MobEntity;
-import net.minecraft.entity.mob.ZombieEntity;
 import net.minecraft.entity.passive.AbstractTraderEntity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.nbt.CompoundTag;
@@ -110,20 +110,16 @@ public class StoneGolemEntity extends HostileEntity {
     this.goalSelector.add(5, new WanderAroundFarGoal(this, 0.6D));
     this.goalSelector.add(6, new LookAtEntityGoal(this, PlayerEntity.class, 6.0F));
     this.goalSelector.add(10, new LookAtEntityGoal(this, MobEntity.class, 8.0F));
-    this.targetSelector.add(3, new FollowTargetGoal<>(this, PlayerEntity.class, false)); // Check true
+    this.targetSelector.add(3, new FollowTargetGoal<>(this, PlayerEntity.class, false));
     this.targetSelector.add(4, new FollowTargetGoal<>(this, AbstractTraderEntity.class, true));
   }
 
   public static DefaultAttributeContainer.Builder createStoneGolemAttributes() {
-    return HostileEntity.createHostileAttributes().add(EntityAttributes.GENERIC_MAX_HEALTH, 10.0D) // HIGHER
+    return HostileEntity.createHostileAttributes().add(EntityAttributes.GENERIC_MAX_HEALTH, 600.0D)
         .add(EntityAttributes.GENERIC_MOVEMENT_SPEED, 0.24D).add(EntityAttributes.GENERIC_KNOCKBACK_RESISTANCE, 2.5D)
         .add(EntityAttributes.GENERIC_ATTACK_DAMAGE, 12.0D).add(EntityAttributes.GENERIC_ATTACK_KNOCKBACK, 2.5D)
         .add(EntityAttributes.GENERIC_FOLLOW_RANGE, 38.0D);
   }
-
-  // public void blockStartEntityTimer() {
-  // this.setInvulTimer(300);
-  // }
 
   @Override
   public void writeCustomDataToTag(CompoundTag tag) {
@@ -171,7 +167,7 @@ public class StoneGolemEntity extends HostileEntity {
     super.initDataTracker();
     dataTracker.startTracking(throwCooldown, 0);
     dataTracker.startTracking(inVulnerable, true);
-    dataTracker.startTracking(lavaTexture, 400); // 0
+    dataTracker.startTracking(lavaTexture, 400);
     dataTracker.startTracking(halfLifeChange, false);
     this.dataTracker.startTracking(inVulnerableTimer, 0);
   }
@@ -522,21 +518,20 @@ public class StoneGolemEntity extends HostileEntity {
       if (!this.world.isClient) {
         this.drop(source);
         this.onKilledBy(livingEntity);
-        ZombieEntity SmallZombie = (ZombieEntity) EntityType.ZOMBIE.create(this.world);
-        SmallZombie.refreshPositionAndAngles(this.getBlockPos(), 0.0F, 0.0F);
-        this.world.spawnEntity(SmallZombie);
+        SmallStoneGolemEntity smallStoneGolemEntity = (SmallStoneGolemEntity) EntityInit.SMALLSTONEGOLEM_ENTITY
+            .create(this.world);
+        SmallStoneGolemEntity smallStoneGolemEntity2 = (SmallStoneGolemEntity) EntityInit.SMALLSTONEGOLEM_ENTITY
+            .create(this.world);
+        smallStoneGolemEntity.refreshPositionAndAngles(this.getBlockPos().east(), 0.0F, 0.0F);
+        smallStoneGolemEntity2.refreshPositionAndAngles(this.getBlockPos().west(), 0.0F, 0.0F);
+        this.world.spawnEntity(smallStoneGolemEntity);
+        this.world.spawnEntity(smallStoneGolemEntity2);
       }
 
       this.world.sendEntityStatus(this, (byte) 3);
       this.setPose(EntityPose.DYING);
     }
   }
-
-  // @Override
-  // protected void onKilledBy(LivingEntity adversary) { //Nullable LivingEntity
-  // if (!this.world.isClient) {
-  // }
-  // }
 
   static class PathNodeMaker extends LandPathNodeMaker {
     private PathNodeMaker() {

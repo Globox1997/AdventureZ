@@ -63,5 +63,38 @@
         "attenuation_distance": 50
       }
     ]
+  },
+  "rock_throw": {
+    "sounds": [
+      "adventurez:rock_throw"
+    ]
+  },
+  "small_golem_idle": {
+    "sounds": [
+      "adventurez:small_golem_idle1",
+      "adventurez:small_golem_idle2"
+    ]
+  },
+  "small_golem_hit": {
+    "sounds": [
+      "adventurez:small_golem_hit1",
+      "adventurez:small_golem_hit2"
+    ]
+  },
+  "small_golem_walk": {
+    "sounds": [
+      "adventurez:small_golem_walk1",
+      "adventurez:small_golem_walk2"
+    ]
+  },
+  "small_golem_death": {
+    "sounds": [
+      "adventurez:small_golem_death1"
+    ]
+  },
+  "heart_beat": {
+    "sounds": [
+      "adventurez:heart_beat"
+    ]
   }
 }

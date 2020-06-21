@@ -19,18 +19,28 @@ public class EntityInit {
         public static final EntityType<ThrownRockEntity> THROWNROCK_ENTITY = FabricEntityTypeBuilder
                         .<ThrownRockEntity>create(SpawnGroup.MISC, ThrownRockEntity::new).trackable(74, 2)
                         .dimensions(EntityDimensions.fixed(1.5F, 1.5F)).build();
-        public static final EntityType<RedStoneEntity> REDSTONE_ENTITY = FabricEntityTypeBuilder
-                        .<RedStoneEntity>create(SpawnGroup.MISC, RedStoneEntity::new).trackable(74, 2)
-                        .dimensions(EntityDimensions.fixed(0.5F, 0.5F)).build();
+        public static final EntityType<GildedStoneEntity> GILDEDSTONE_ENTITY = FabricEntityTypeBuilder
+                        .<GildedStoneEntity>create(SpawnGroup.MISC, GildedStoneEntity::new).trackable(74, 2)
+                        .dimensions(EntityDimensions.fixed(0.4F, 0.8F)).build();
+        public static final EntityType<SmallStoneGolemEntity> SMALLSTONEGOLEM_ENTITY = FabricEntityTypeBuilder
+                        .create(SpawnGroup.MONSTER, SmallStoneGolemEntity::new).trackable(74, 2).fireImmune()
+                        .dimensions(EntityDimensions.fixed(1.2F, 1.2F)).build();
 
         public static void init() {
                 Registry.register(Registry.ENTITY_TYPE, new Identifier("adventurez", "stone_golem"), STONEGOLEM_ENTITY);
                 Registry.register(Registry.ENTITY_TYPE, new Identifier("adventurez", "thrown_rock"), THROWNROCK_ENTITY);
-                Registry.register(Registry.ENTITY_TYPE, new Identifier("adventurez", "red_stone"), REDSTONE_ENTITY);
-
+                Registry.register(Registry.ENTITY_TYPE, new Identifier("adventurez", "gilded_stone"),
+                                GILDEDSTONE_ENTITY);
+                Registry.register(Registry.ENTITY_TYPE, new Identifier("adventurez", "small_stone_golem"),
+                                SMALLSTONEGOLEM_ENTITY);
                 FabricDefaultAttributeRegistry.register(STONEGOLEM_ENTITY,
                                 StoneGolemEntity.createStoneGolemAttributes());
+                FabricDefaultAttributeRegistry.register(SMALLSTONEGOLEM_ENTITY,
+                                SmallStoneGolemEntity.createSmallStoneGolemAttributes());
                 Registry.register(Registry.ITEM, new Identifier("adventurez", "spawn_stone_golem"), new SpawnEggItem(
                                 STONEGOLEM_ENTITY, 2956072, 1445648, new Item.Settings().group(ItemGroup.MISC)));
+                Registry.register(Registry.ITEM, new Identifier("adventurez", "spawn_small_stone_golem"),
+                                new SpawnEggItem(SMALLSTONEGOLEM_ENTITY, 4077380, 4400440,
+                                                new Item.Settings().group(ItemGroup.MISC)));
         }
 }

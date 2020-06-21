@@ -1,6 +1,6 @@
 package net.adventurez.entity.render;
 
-import net.adventurez.entity.RedStoneEntity;
+import net.adventurez.entity.GildedStoneEntity;
 import net.adventurez.entity.model.RedStoneModel;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
@@ -15,36 +15,36 @@ import net.minecraft.util.Identifier;
 import net.minecraft.util.math.BlockPos;
 
 @Environment(EnvType.CLIENT)
-public class RedStoneRenderer extends EntityRenderer<RedStoneEntity> {
+public class GildedStoneRenderer extends EntityRenderer<GildedStoneEntity> {
   private static final Identifier TEXTURE = new Identifier("adventurez:textures/item/gilded_stone_item.png");
   private final RedStoneModel model = new RedStoneModel();
 
-  public RedStoneRenderer(EntityRenderDispatcher entityRenderDispatcher) {
+  public GildedStoneRenderer(EntityRenderDispatcher entityRenderDispatcher) {
     super(entityRenderDispatcher);
   }
 
   @Override
-  protected int getBlockLight(RedStoneEntity redStoneEntity, BlockPos blockPos) {
+  protected int getBlockLight(GildedStoneEntity gildedStoneEntity, BlockPos blockPos) {
     return 15;
   }
 
   @Override
-  public void render(RedStoneEntity redStoneEntity, float f, float g, MatrixStack matrixStack,
+  public void render(GildedStoneEntity gildedStoneEntity, float f, float g, MatrixStack matrixStack,
       VertexConsumerProvider vertexConsumerProvider, int i) {
 
     matrixStack.push();
     VertexConsumer vertexConsumer = vertexConsumerProvider
-        .getBuffer(this.model.getLayer(this.getTexture(redStoneEntity)));
-    int lightAbove = WorldRenderer.getLightmapCoordinates(redStoneEntity.getEntityWorld(),
-        redStoneEntity.getBlockPos().up());
+        .getBuffer(this.model.getLayer(this.getTexture(gildedStoneEntity)));
+    int lightAbove = WorldRenderer.getLightmapCoordinates(gildedStoneEntity.getEntityWorld(),
+        gildedStoneEntity.getBlockPos().up());
     model.render(matrixStack, vertexConsumer, lightAbove, OverlayTexture.DEFAULT_UV, 1.0F, 1.0F, 1.0F, 1.0F);
     matrixStack.scale(1.0F, 1.0F, 1.0F);
     matrixStack.pop();
-    super.render(redStoneEntity, f, g, matrixStack, vertexConsumerProvider, i);
+    super.render(gildedStoneEntity, f, g, matrixStack, vertexConsumerProvider, i);
   }
 
   @Override
-  public Identifier getTexture(RedStoneEntity redStoneEntity) {
+  public Identifier getTexture(GildedStoneEntity gildedStoneEntity) {
     return TEXTURE;
   }
 }

@@ -11,7 +11,7 @@ import net.minecraft.world.World;
 import java.util.List;
 import java.util.function.Supplier;
 
-import net.adventurez.entity.RedStoneEntity;
+import net.adventurez.entity.GildedStoneEntity;
 import net.minecraft.client.item.TooltipContext;
 import net.minecraft.entity.EntityType;
 import net.minecraft.entity.player.PlayerEntity;
@@ -19,15 +19,15 @@ import net.minecraft.item.Item;
 
 public class GildedStoneItem extends Item {
 
-  private final Supplier<EntityType<RedStoneEntity>> typeSupplier;
-  private EntityType<RedStoneEntity> cachedType = null;
+  private final Supplier<EntityType<GildedStoneEntity>> typeSupplier;
+  private EntityType<GildedStoneEntity> cachedType = null;
 
-  public GildedStoneItem(Settings settings, Supplier<EntityType<RedStoneEntity>> typeSupplier) {
+  public GildedStoneItem(Settings settings, Supplier<EntityType<GildedStoneEntity>> typeSupplier) {
     super(settings);
     this.typeSupplier = typeSupplier;
   }
 
-  public EntityType<RedStoneEntity> getType() {
+  public EntityType<GildedStoneEntity> getType() {
     if (cachedType == null) {
       cachedType = typeSupplier.get();
     }
@@ -46,10 +46,11 @@ public class GildedStoneItem extends Item {
       world.playSound((PlayerEntity) null, user.getX(), user.getY(), user.getZ(), SoundEvents.ENTITY_EGG_THROW,
           SoundCategory.PLAYERS, 0.5F, 0.4F / (RANDOM.nextFloat() * 0.4F + 0.8F));
       if (!world.isClient) {
-        RedStoneEntity redStoneEntity = new RedStoneEntity(world, user.getX(), user.getY() + 0.5D, user.getZ());
-        redStoneEntity.setItem(itemStack);
-        redStoneEntity.setProperties(user, user.pitch, user.yaw, 0.0F, 1.8F, 1.0F);
-        world.spawnEntity(redStoneEntity);
+        GildedStoneEntity gildedStoneEntity = new GildedStoneEntity(world, user.getX(), user.getY() + 0.5D,
+            user.getZ());
+        gildedStoneEntity.setItem(itemStack);
+        gildedStoneEntity.setProperties(user, user.pitch, user.yaw, 0.0F, 1.8F, 1.0F);
+        world.spawnEntity(gildedStoneEntity);
       }
       if (!user.abilities.creativeMode) {
         itemStack.decrement(1);

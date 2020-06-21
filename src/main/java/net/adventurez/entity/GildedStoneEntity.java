@@ -22,17 +22,17 @@ import net.minecraft.util.hit.EntityHitResult;
 import net.minecraft.util.hit.HitResult;
 import net.minecraft.world.World;
 
-public class RedStoneEntity extends ThrownItemEntity {
-  public RedStoneEntity(EntityType<? extends RedStoneEntity> entityType, World world) {
+public class GildedStoneEntity extends ThrownItemEntity {
+  public GildedStoneEntity(EntityType<? extends GildedStoneEntity> entityType, World world) {
     super(entityType, world);
   }
 
-  public RedStoneEntity(World world, LivingEntity owner) {
-    super(EntityInit.REDSTONE_ENTITY, owner, world);
+  public GildedStoneEntity(World world, LivingEntity owner) {
+    super(EntityInit.GILDEDSTONE_ENTITY, owner, world);
   }
 
-  public RedStoneEntity(World world, double x, double y, double z) {
-    super(EntityInit.REDSTONE_ENTITY, x, y, z, world);
+  public GildedStoneEntity(World world, double x, double y, double z) {
+    super(EntityInit.GILDEDSTONE_ENTITY, x, y, z, world);
   }
 
   @Override

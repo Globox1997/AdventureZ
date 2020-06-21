@@ -1,11 +1,16 @@
 {
   "type": "minecraft:crafting_shaped",
   "pattern": [
-    "#"
+    "eee",
+    "ede",
+    "e e"
   ],
   "key": {
-    "#": {
+    "d": {
       "item": "adventurez:stone_golem_heart"
+    },
+    "e": {
+      "item": "minecraft:blackstone"
     }
   },
   "result": {

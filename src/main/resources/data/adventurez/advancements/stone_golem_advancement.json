@@ -1,0 +1,32 @@
+{
+  "parent": "minecraft:nether/summon_wither",
+  "display": {
+    "icon": {
+      "item": "adventurez:gilded_stone_item"
+    },
+    "title": {
+      "translate": "adventurez.advancements.stone_golem"
+    },
+    "description": {
+      "translate": "adventurez.advancements.stone_golem.description"
+    },
+    "frame": "task",
+    "show_toast": true,
+    "announce_to_chat": true,
+    "hidden": false
+  },
+  "criteria": {
+    "adventurestart": {
+      "trigger": "minecraft:player_killed_entity",
+      "conditions": {
+        "entity": {
+          "type": "adventurez:stone_golem"
+        }
+      }
+    }
+  },
+  "rewards": {
+    "experience": 50,
+    "function": "adventurez:stone_golem_heart"
+  }
+}

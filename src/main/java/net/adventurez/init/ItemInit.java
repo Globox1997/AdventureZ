@@ -9,11 +9,11 @@ import net.minecraft.util.registry.Registry;
 public class ItemInit {
 
   public static final GildedStoneItem GILDED_STONE_ITEM = new GildedStoneItem(new Item.Settings().group(ItemGroup.MISC),
-      () -> EntityInit.REDSTONE_ENTITY);
+      () -> EntityInit.GILDEDSTONE_ENTITY);
   public static final StoneGolemHeart STONE_GOLEM_HEART = new StoneGolemHeart(
       new Item.Settings().group(ItemGroup.MISC));
   public static final StoneGolemArm STONE_GOLEM_ARM = new StoneGolemArm(
-      new Item.Settings().group(ItemGroup.MISC).maxDamage(2506));
+      new Item.Settings().group(ItemGroup.COMBAT).maxDamage(2506));
 
   public static void init() {
     Registry.register(Registry.ITEM, new Identifier("adventurez", "gilded_stone_item"), GILDED_STONE_ITEM);

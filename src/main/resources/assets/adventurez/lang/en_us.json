@@ -1,6 +1,8 @@
 {
   "entity.adventurez.stone_golem": "Blackstone Golem",
+  "entity.adventurez.small_stone_golem": "Mini Blackstone Golem",
   "item.adventurez.spawn_stone_golem": "Blackstone Golem Spawn Egg",
+  "item.adventurez.spawn_small_stone_golem": "Mini Blackstone Golem Spawn Egg",
   "item.adventurez.gilded_stone_item": "Gilded Blackstone Shard",
   "item.adventurez.gilded_stone_item.tooltip": "§1Rare",
   "item.adventurez.stone_golem_arm": "Blackstone´s Arm",

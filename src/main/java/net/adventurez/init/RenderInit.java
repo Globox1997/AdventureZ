@@ -21,8 +21,10 @@ public class RenderInit {
     EntityRendererRegistry.INSTANCE.register(EntityInit.THROWNROCK_ENTITY,
         (dispatcher, context) -> new ThrownRockRenderer(dispatcher));
     registerClientboundPackets();
-    EntityRendererRegistry.INSTANCE.register(EntityInit.REDSTONE_ENTITY,
-        (dispatcher, context) -> new RedStoneRenderer(dispatcher));
+    EntityRendererRegistry.INSTANCE.register(EntityInit.GILDEDSTONE_ENTITY,
+        (dispatcher, context) -> new GildedStoneRenderer(dispatcher));
+    EntityRendererRegistry.INSTANCE.register(EntityInit.SMALLSTONEGOLEM_ENTITY,
+        (dispatcher, context) -> new SmallStoneGolemRenderer(dispatcher));
 
     // Network
     registerClientboundPackets();
