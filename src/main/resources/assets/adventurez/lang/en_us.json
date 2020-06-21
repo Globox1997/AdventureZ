@@ -9,5 +9,7 @@
   "item.adventurez.stone_golem_arm.tooltip": "§5Epic",
   "item.adventurez.stone_golem_heart": "Blackstone Golem Heart",
   "item.adventurez.stone_golem_heart.tooltip": "§5Epic Material",
-  "block.adventurez.stone_holder_block": "Chiseled Polished Blackstone Holder"
+  "block.adventurez.stone_holder_block": "Chiseled Polished Blackstone Holder",
+  "adventurez.advancements.stone_golem.title": "Blackstone Golem",
+  "adventurez.advancements.stone_golem.description": "Kill the Blackrocky Golem"
 }

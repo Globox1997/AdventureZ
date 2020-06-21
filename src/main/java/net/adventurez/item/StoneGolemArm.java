@@ -24,10 +24,6 @@ import net.minecraft.util.UseAction;
 import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.World;
 
-//import net.minecraft.item.TridentItem;
-//import net.minecraft.item.BowItem;
-//import net.minecraft.item.ArmorMaterial;
-
 public class StoneGolemArm extends Item {
   private int stoneCounter;
   private boolean lavalight = false;
@@ -102,10 +98,15 @@ public class StoneGolemArm extends Item {
     return 72000;
   }
 
+  // @Override
+  // public boolean canRepair(ItemStack stack, ItemStack ingredient) {
+  //   ingredient.equals(new ItemStack(Items.NETHERITE_SCRAP));
+  //   return true;
+  // }
   @Override
   public boolean canRepair(ItemStack stack, ItemStack ingredient) {
-    return ingredient.equals(new ItemStack(Items.NETHERITE_SCRAP));
-  }
+    return  ingredient.equals(new ItemStack(Items.NETHERITE_SCRAP)) || super.canRepair(stack, ingredient);
+ }
 
   @Override
   public boolean postHit(ItemStack stack, LivingEntity target, LivingEntity attacker) {
@@ -113,7 +114,7 @@ public class StoneGolemArm extends Item {
     double x_vector = vec3d_1.x / 3D;
     double z_vector = vec3d_1.z / 3D;
     stack.damage(1, attacker, (p) -> p.sendToolBreakStatus(p.getActiveHand()));
-    target.addVelocity(x_vector, 0.5D, z_vector);
+    target.addVelocity(x_vector, 0.45D, z_vector);
     return true;
   }
 

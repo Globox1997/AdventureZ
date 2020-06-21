@@ -21,7 +21,7 @@ public class EntityInit {
                         .dimensions(EntityDimensions.fixed(1.5F, 1.5F)).build();
         public static final EntityType<GildedStoneEntity> GILDEDSTONE_ENTITY = FabricEntityTypeBuilder
                         .<GildedStoneEntity>create(SpawnGroup.MISC, GildedStoneEntity::new).trackable(74, 2)
-                        .dimensions(EntityDimensions.fixed(0.4F, 0.8F)).build();
+                        .dimensions(EntityDimensions.fixed(0.4F, 1.2F)).build();
         public static final EntityType<SmallStoneGolemEntity> SMALLSTONEGOLEM_ENTITY = FabricEntityTypeBuilder
                         .create(SpawnGroup.MONSTER, SmallStoneGolemEntity::new).trackable(74, 2).fireImmune()
                         .dimensions(EntityDimensions.fixed(1.2F, 1.2F)).build();

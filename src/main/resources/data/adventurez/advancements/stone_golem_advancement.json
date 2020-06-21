@@ -5,7 +5,7 @@
       "item": "adventurez:gilded_stone_item"
     },
     "title": {
-      "translate": "adventurez.advancements.stone_golem"
+      "translate": "adventurez.advancements.stone_golem.title"
     },
     "description": {
       "translate": "adventurez.advancements.stone_golem.description"
@@ -13,7 +13,8 @@
     "frame": "task",
     "show_toast": true,
     "announce_to_chat": true,
-    "hidden": false
+    "hidden": false,
+    "background": "minecraft:textures/gui/advancements/backgrounds/adventure.png"
   },
   "criteria": {
     "adventurestart": {
