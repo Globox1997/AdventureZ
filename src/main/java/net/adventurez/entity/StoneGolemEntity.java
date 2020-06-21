@@ -108,14 +108,14 @@ public class StoneGolemEntity extends HostileEntity {
     this.goalSelector.add(0, new SwimGoal(this));
     this.goalSelector.add(4, new StoneGolemEntity.AttackGoal());
     this.goalSelector.add(5, new WanderAroundFarGoal(this, 0.6D));
-    this.goalSelector.add(6, new LookAtEntityGoal(this, PlayerEntity.class, 6.0F));
+    this.goalSelector.add(6, new LookAtEntityGoal(this, PlayerEntity.class, 600.0F));
     this.goalSelector.add(10, new LookAtEntityGoal(this, MobEntity.class, 8.0F));
     this.targetSelector.add(3, new FollowTargetGoal<>(this, PlayerEntity.class, false));
     this.targetSelector.add(4, new FollowTargetGoal<>(this, AbstractTraderEntity.class, true));
   }
 
   public static DefaultAttributeContainer.Builder createStoneGolemAttributes() {
-    return HostileEntity.createHostileAttributes().add(EntityAttributes.GENERIC_MAX_HEALTH, 600.0D)
+    return HostileEntity.createHostileAttributes().add(EntityAttributes.GENERIC_MAX_HEALTH, 6.0D)
         .add(EntityAttributes.GENERIC_MOVEMENT_SPEED, 0.24D).add(EntityAttributes.GENERIC_KNOCKBACK_RESISTANCE, 2.5D)
         .add(EntityAttributes.GENERIC_ATTACK_DAMAGE, 12.0D).add(EntityAttributes.GENERIC_ATTACK_KNOCKBACK, 2.5D)
         .add(EntityAttributes.GENERIC_FOLLOW_RANGE, 38.0D);
@@ -508,6 +508,10 @@ public class StoneGolemEntity extends HostileEntity {
     if (!this.removed && !this.dead) {
       Entity entity = source.getAttacker();
       LivingEntity livingEntity = this.getPrimeAdversary();
+
+      if (this.scoreAmount >= 0 && livingEntity != null) {
+        livingEntity.updateKilledAdvancementCriterion(this, this.scoreAmount, source);
+      }
 
       if (entity != null) {
         entity.onKilledOther(this);

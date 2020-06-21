@@ -46,10 +46,10 @@ public class GildedStoneItem extends Item {
       world.playSound((PlayerEntity) null, user.getX(), user.getY(), user.getZ(), SoundEvents.ENTITY_EGG_THROW,
           SoundCategory.PLAYERS, 0.5F, 0.4F / (RANDOM.nextFloat() * 0.4F + 0.8F));
       if (!world.isClient) {
-        GildedStoneEntity gildedStoneEntity = new GildedStoneEntity(world, user.getX(), user.getY() + 0.5D,
+        GildedStoneEntity gildedStoneEntity = new GildedStoneEntity(world, user.getX(), user.getY() + 1.6D,
             user.getZ());
         gildedStoneEntity.setItem(itemStack);
-        gildedStoneEntity.setProperties(user, user.pitch, user.yaw, 0.0F, 1.8F, 1.0F);
+        gildedStoneEntity.setProperties(user, user.pitch, user.yaw, 0.0F, 1.4F, 1.0F);
         world.spawnEntity(gildedStoneEntity);
       }
       if (!user.abilities.creativeMode) {

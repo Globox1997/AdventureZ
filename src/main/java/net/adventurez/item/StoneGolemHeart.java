@@ -1,7 +1,6 @@
 package net.adventurez.item;
 
 import java.util.List;
-import java.util.Random;
 
 import net.adventurez.init.SoundInit;
 import net.minecraft.client.item.TooltipContext;
@@ -14,6 +13,7 @@ import net.minecraft.text.TranslatableText;
 import net.minecraft.world.World;
 
 public class StoneGolemHeart extends Item {
+  int heartbeat = 0;
 
   public StoneGolemHeart(Settings settings) {
     super(settings);
@@ -26,10 +26,10 @@ public class StoneGolemHeart extends Item {
 
   @Override
   public void inventoryTick(ItemStack stack, World world, Entity entity, int slot, boolean selected) {
-    Random random = new Random();
-    double beat = (random.nextInt() % 30);
-    if (beat == 22) {
+    this.heartbeat++;
+    if (this.heartbeat >= 200) {
       world.playSound(null, entity.getBlockPos(), SoundInit.HEART_BEAT_EVENT, SoundCategory.AMBIENT, 1F, 1F);
+      this.heartbeat = 0;
     }
   }
 

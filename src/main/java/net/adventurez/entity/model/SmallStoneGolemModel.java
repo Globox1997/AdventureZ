@@ -62,29 +62,10 @@ public class SmallStoneGolemModel<T extends SmallStoneGolemEntity> extends Compo
     this.torso.pitch = 1.309F;
     this.rightArm.pitch = 0.5F * MathHelper.method_24504(f, 13.0F) * g * 1.3F - 0.6109F;
     this.leftArm.pitch = -0.5F * MathHelper.method_24504(f, 13.0F) * g * 1.3F - 0.6109F;
-    // int thrownRockTick = stoneGolem.getDataTracker().get(StoneGolemEntity.throwCooldown);
-    // if (thrownRockTick >= 100) {
-    //   this.leftArm.pitch = MathHelper.cos(-thrownRockTick * 0.2F + 0.3F) - 0.3F;
-    // }
-    // if (roarTick > 18) {
-    //   this.rightArm.pitch = MathHelper.sin(roarTick / 5.832F) - 0.5236F; //If he walks in your direction, right arm
-    //   //this.rightArm.pitch = MathHelper.
-    //   this.leftArm.pitch = MathHelper.sin(roarTick / 5.832F) - 0.5236F;
-    // }
   }
 
   @Override
   public void animateModel(T stoneGolem, float f, float g, float h) {
-    // int attackTick = stoneGolem.getAttackTick();
-
-    // if (attackTick > 0) {
-    //   this.rightArm.pitch = g * 2.6F;
-    //   this.rightArm.yaw = g * 1.2F;
-    // } else {
-    //   this.rightArm.pitch = (-0.2F + 10.5F * MathHelper.method_24504(f, 13.0F)) * g * 3 + 5F;
-    //   this.leftArm.pitch = (-0.2F - 10.5F * MathHelper.method_24504(f, 13.0F)) * g * 3 + 5F;
-    // }
-
   }
 
 }

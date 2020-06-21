@@ -10,8 +10,9 @@ import net.minecraft.client.util.math.MatrixStack;
 import net.minecraft.util.Identifier;
 
 @Environment(EnvType.CLIENT)
-public class SmallStoneGolemRenderer extends MobEntityRenderer<SmallStoneGolemEntity, SmallStoneGolemModel<SmallStoneGolemEntity>> {
-  private static final Identifier TEXTURE = new Identifier("adventurez:textures/entity/stone_golem.png");
+public class SmallStoneGolemRenderer
+    extends MobEntityRenderer<SmallStoneGolemEntity, SmallStoneGolemModel<SmallStoneGolemEntity>> {
+  private static final Identifier TEXTURE = new Identifier("adventurez:textures/entity/small_stone_golem.png");
 
   public SmallStoneGolemRenderer(EntityRenderDispatcher entityRenderDispatcher) {
     super(entityRenderDispatcher, new SmallStoneGolemModel<>(), 0.7F);

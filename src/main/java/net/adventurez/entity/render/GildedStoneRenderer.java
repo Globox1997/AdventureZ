@@ -1,7 +1,7 @@
 package net.adventurez.entity.render;
 
 import net.adventurez.entity.GildedStoneEntity;
-import net.adventurez.entity.model.RedStoneModel;
+import net.adventurez.entity.model.GildedStoneModel;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
 import net.minecraft.client.render.OverlayTexture;
@@ -17,7 +17,7 @@ import net.minecraft.util.math.BlockPos;
 @Environment(EnvType.CLIENT)
 public class GildedStoneRenderer extends EntityRenderer<GildedStoneEntity> {
   private static final Identifier TEXTURE = new Identifier("adventurez:textures/item/gilded_stone_item.png");
-  private final RedStoneModel model = new RedStoneModel();
+  private final GildedStoneModel model = new GildedStoneModel();
 
   public GildedStoneRenderer(EntityRenderDispatcher entityRenderDispatcher) {
     super(entityRenderDispatcher);
@@ -37,8 +37,9 @@ public class GildedStoneRenderer extends EntityRenderer<GildedStoneEntity> {
         .getBuffer(this.model.getLayer(this.getTexture(gildedStoneEntity)));
     int lightAbove = WorldRenderer.getLightmapCoordinates(gildedStoneEntity.getEntityWorld(),
         gildedStoneEntity.getBlockPos().up());
+    matrixStack.scale(1.0F, -1.0F, 1.0F);
+    matrixStack.translate(0D, -1.45D, 0D);
     model.render(matrixStack, vertexConsumer, lightAbove, OverlayTexture.DEFAULT_UV, 1.0F, 1.0F, 1.0F, 1.0F);
-    matrixStack.scale(1.0F, 1.0F, 1.0F);
     matrixStack.pop();
     super.render(gildedStoneEntity, f, g, matrixStack, vertexConsumerProvider, i);
   }

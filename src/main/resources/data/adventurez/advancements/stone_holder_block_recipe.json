@@ -2,16 +2,16 @@
   "parent": "minecraft:recipes/root",
   "rewards": {
     "recipes": [
-      "adventurez:stone_golem_arm"
+      "adventurez:stone_holder_block"
     ]
   },
   "criteria": {
-    "got_the_heart": {
+    "got_blackstone": {
       "trigger": "minecraft:inventory_changed",
       "conditions": {
         "items": [
           {
-            "item": "adventurez:stone_golem_heart"
+            "item": "minecraft:blackstone"
           }
         ]
       }
