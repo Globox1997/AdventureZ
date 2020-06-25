@@ -18,7 +18,7 @@ import net.minecraft.util.registry.Registry;
 import java.util.UUID;
 
 public class EntitySpawnPacket {
-	public static final Identifier ID = new Identifier("adventurez", "spawn_entity");
+	public static final Identifier ID = new Identifier("adventurez", "adventurespawn_entity");
 
 	public static Packet<?> createPacket(Entity entity) {
 		PacketByteBuf buf = new PacketByteBuf(Unpooled.buffer());
