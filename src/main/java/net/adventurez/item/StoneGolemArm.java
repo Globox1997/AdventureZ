@@ -3,6 +3,7 @@ package net.adventurez.item;
 import java.util.List;
 
 import net.adventurez.entity.ThrownRockEntity;
+import net.adventurez.init.ItemInit;
 import net.adventurez.init.SoundInit;
 import net.fabricmc.fabric.api.object.builder.v1.client.model.FabricModelPredicateProviderRegistry;
 import net.minecraft.client.item.TooltipContext;
@@ -30,12 +31,6 @@ public class StoneGolemArm extends Item {
 
   public StoneGolemArm(Settings settings) {
     super(settings);
-    FabricModelPredicateProviderRegistry.register(new Identifier("lavalight"), (stack, world, entity) -> {
-      if (lavalight == true) {
-        return 1F;
-      }
-      return 0F;
-    });
   }
 
   @Override
@@ -121,6 +116,15 @@ public class StoneGolemArm extends Item {
     }
 
     return f;
+  }
+
+  public static void registerClient() {
+    FabricModelPredicateProviderRegistry.register(new Identifier("lavalight"), (stack, world, entity) -> {
+      if (ItemInit.STONE_GOLEM_ARM.lavalight) {
+        return 1F;
+      }
+      return 0F;
+    });
   }
 
 }
