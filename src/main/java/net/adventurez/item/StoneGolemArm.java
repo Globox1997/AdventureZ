@@ -79,12 +79,6 @@ public class StoneGolemArm extends Item {
     if (selected && !world.isClient) {
       player.addStatusEffect(slowness);
     }
-    // if (stoneCounter >= 1) {
-    // this.stoneCounter--;
-    // this.lavalight = true;
-    // } else {
-    // this.lavalight = false;
-    // }
     if (stack.hasTag() && (tags.getInt("stonecounter") + 40) < (int) world.getTime()) {
       tags.putBoolean("lavalight", false);
     }

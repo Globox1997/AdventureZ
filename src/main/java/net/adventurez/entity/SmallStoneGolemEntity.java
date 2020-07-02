@@ -19,8 +19,6 @@ import net.minecraft.sound.SoundEvent;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 
-//import net.minecraft.entity.passive.IronGolemEntity;
-
 public class SmallStoneGolemEntity extends HostileEntity {
 
   public SmallStoneGolemEntity(EntityType<? extends SmallStoneGolemEntity> entityType, World world) {
