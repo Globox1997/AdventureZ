@@ -13,7 +13,6 @@ import net.minecraft.text.TranslatableText;
 import net.minecraft.world.World;
 
 public class StoneGolemHeart extends Item {
-  int heartbeat = 0;
 
   public StoneGolemHeart(Settings settings) {
     super(settings);
@@ -26,10 +25,8 @@ public class StoneGolemHeart extends Item {
 
   @Override
   public void inventoryTick(ItemStack stack, World world, Entity entity, int slot, boolean selected) {
-    this.heartbeat++;
-    if (this.heartbeat >= 200) {
+    if ((int) world.getTime() % 100 == 0) {
       world.playSound(null, entity.getBlockPos(), SoundInit.HEART_BEAT_EVENT, SoundCategory.AMBIENT, 1F, 1F);
-      this.heartbeat = 0;
     }
   }
 
