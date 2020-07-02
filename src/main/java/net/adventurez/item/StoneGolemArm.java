@@ -3,9 +3,7 @@ package net.adventurez.item;
 import java.util.List;
 
 import net.adventurez.entity.ThrownRockEntity;
-import net.adventurez.init.ItemInit;
 import net.adventurez.init.SoundInit;
-import net.fabricmc.fabric.api.object.builder.v1.client.model.FabricModelPredicateProviderRegistry;
 import net.minecraft.client.item.TooltipContext;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.LivingEntity;
@@ -19,15 +17,15 @@ import net.minecraft.sound.SoundCategory;
 import net.minecraft.text.Text;
 import net.minecraft.text.TranslatableText;
 import net.minecraft.util.Hand;
-import net.minecraft.util.Identifier;
 import net.minecraft.util.TypedActionResult;
 import net.minecraft.util.UseAction;
 import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.World;
+import net.minecraft.nbt.CompoundTag;
 
 public class StoneGolemArm extends Item {
   private int stoneCounter;
-  private boolean lavalight = false;
+  public boolean lavalight = false;
 
   public StoneGolemArm(Settings settings) {
     super(settings);
@@ -47,11 +45,11 @@ public class StoneGolemArm extends Item {
         if (!world.isClient) {
           float strength = getStoneStrength(stoneCounter);
           stack.damage(1, playerEntity, (p) -> p.sendToolBreakStatus(p.getActiveHand()));
-          ThrownRockEntity tridentEntity = new ThrownRockEntity(world, playerEntity);
-          tridentEntity.setProperties(playerEntity, playerEntity.pitch, playerEntity.yaw, 0.0F, strength * 1.2F, 1.0F);
-          world.spawnEntity(tridentEntity);
-          world.playSoundFromEntity((PlayerEntity) null, tridentEntity, SoundInit.ROCK_THROW_EVENT,
-              SoundCategory.PLAYERS, 1.0F, 1.0F);
+          ThrownRockEntity rockEntity = new ThrownRockEntity(world, playerEntity);
+          rockEntity.setProperties(playerEntity, playerEntity.pitch, playerEntity.yaw, 0.0F, strength * 1.2F, 1.0F);
+          world.spawnEntity(rockEntity);
+          world.playSoundFromEntity((PlayerEntity) null, rockEntity, SoundInit.ROCK_THROW_EVENT, SoundCategory.PLAYERS,
+              1.0F, 1.0F);
         }
       }
     }
@@ -60,26 +58,35 @@ public class StoneGolemArm extends Item {
   @Override
   public TypedActionResult<ItemStack> use(World world, PlayerEntity user, Hand hand) {
     ItemStack itemStack = user.getStackInHand(hand);
+    CompoundTag tags = itemStack.getTag();
     if (itemStack.getDamage() >= itemStack.getMaxDamage() - 1) {
       return TypedActionResult.fail(itemStack);
     } else {
       user.setCurrentHand(hand);
-      return TypedActionResult.fail(itemStack);
+      itemStack.setTag(new CompoundTag());
+      tags = itemStack.getTag();
+      tags.putInt("stonecounter", (int) world.getTime());
+      tags.putBoolean("lavalight", true);
+      return TypedActionResult.success(itemStack);
     }
   }
 
   @Override
   public void inventoryTick(ItemStack stack, World world, Entity entity, int slot, boolean selected) {
     PlayerEntity player = (PlayerEntity) entity;
+    CompoundTag tags = stack.getTag();
     StatusEffectInstance slowness = new StatusEffectInstance(StatusEffect.byRawId(2), 9, 0, false, false);
     if (selected && !world.isClient) {
       player.addStatusEffect(slowness);
     }
-    if (stoneCounter >= 1) {
-      this.stoneCounter--;
-      this.lavalight = true;
-    } else {
-      this.lavalight = false;
+    // if (stoneCounter >= 1) {
+    // this.stoneCounter--;
+    // this.lavalight = true;
+    // } else {
+    // this.lavalight = false;
+    // }
+    if (stack.hasTag() && (tags.getInt("stonecounter") + 40) < (int) world.getTime()) {
+      tags.putBoolean("lavalight", false);
     }
   }
 
@@ -114,17 +121,7 @@ public class StoneGolemArm extends Item {
     if (f > 1.0F) {
       f = 1.0F;
     }
-
     return f;
-  }
-
-  public static void registerClient() {
-    FabricModelPredicateProviderRegistry.register(new Identifier("lavalight"), (stack, world, entity) -> {
-      if (ItemInit.STONE_GOLEM_ARM.lavalight) {
-        return 1F;
-      }
-      return 0F;
-    });
   }
 
 }
