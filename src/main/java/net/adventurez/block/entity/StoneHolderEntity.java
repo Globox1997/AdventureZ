@@ -4,6 +4,7 @@ import net.adventurez.entity.StoneGolemEntity;
 import net.adventurez.init.BlockInit;
 import net.adventurez.init.EntityInit;
 import net.adventurez.init.SoundInit;
+import net.adventurez.init.TagInit;
 import net.fabricmc.fabric.api.block.entity.BlockEntityClientSerializable;
 import net.minecraft.block.BlockState;
 import net.minecraft.block.Blocks;
@@ -61,12 +62,7 @@ public class StoneHolderEntity extends BlockEntity implements Tickable, Inventor
     for (stoneCounter = 1; stoneCounter < 10; stoneCounter++) {
       for (stoneCounter2 = -5; stoneCounter2 < 4; stoneCounter2++) {
         BlockState stoneState = world.getBlockState(pos.north(stoneCounter).east(stoneCounter2));
-        if (stoneState.getBlock() == Blocks.BLACKSTONE || stoneState.getBlock() == Blocks.BLACKSTONE_SLAB
-            || stoneState.getBlock() == Blocks.CRACKED_POLISHED_BLACKSTONE_BRICKS
-            || stoneState.getBlock() == Blocks.POLISHED_BLACKSTONE_BRICKS
-            || stoneState.getBlock() == Blocks.POLISHED_BLACKSTONE_BRICK_SLAB
-            || stoneState.getBlock() == Blocks.POLISHED_BLACKSTONE_SLAB
-            || stoneState.getBlock() == Blocks.GILDED_BLACKSTONE) {
+        if (stoneState.getBlock().isIn(TagInit.PLATFORM_BLOCKS)) {
           return true;
         }
       }
@@ -89,13 +85,13 @@ public class StoneHolderEntity extends BlockEntity implements Tickable, Inventor
     BlockState west = world.getBlockState(pos.west(5).north(5));
     if (north.getBlock() == BlockInit.STONE_HOLDER_BLOCK && east.getBlock() == BlockInit.STONE_HOLDER_BLOCK
         && west.getBlock() == BlockInit.STONE_HOLDER_BLOCK) {
-      if (this.isValid(world, pos, state)) {
-        if (world.isClient) {
-          // Visuals?
-        }
-        if (!isEmpty() && !BlockInit.STONE_HOLDER_ENTITY.get(world, secondHolderPos).isEmpty()
-            && !BlockInit.STONE_HOLDER_ENTITY.get(world, thirdHolderPos).isEmpty()
-            && !BlockInit.STONE_HOLDER_ENTITY.get(world, fourthHolderPos).isEmpty()) {
+      if (world.isClient) {
+        // Visuals?
+      }
+      if (!isEmpty() && !BlockInit.STONE_HOLDER_ENTITY.get(world, secondHolderPos).isEmpty()
+          && !BlockInit.STONE_HOLDER_ENTITY.get(world, thirdHolderPos).isEmpty()
+          && !BlockInit.STONE_HOLDER_ENTITY.get(world, fourthHolderPos).isEmpty()) {
+        if (this.isValid(world, pos, state)) {
           BlockInit.STONE_HOLDER_ENTITY.get(world, pos.north(10)).clear();
           BlockInit.STONE_HOLDER_ENTITY.get(world, pos.east(5).north(5)).clear();
           BlockInit.STONE_HOLDER_ENTITY.get(world, pos.west(5).north(5)).clear();

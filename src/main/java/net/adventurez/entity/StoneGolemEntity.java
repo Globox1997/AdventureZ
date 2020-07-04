@@ -6,6 +6,7 @@ import java.util.function.Predicate;
 
 import net.adventurez.init.EntityInit;
 import net.adventurez.init.SoundInit;
+import net.adventurez.init.TagInit;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
 import net.minecraft.block.Block;
@@ -222,7 +223,7 @@ public class StoneGolemEntity extends HostileEntity {
       }
       if (this.horizontalCollision && this.world.getGameRules().getBoolean(GameRules.DO_MOB_GRIEFING)) {
         boolean bl = false;
-        Box box = this.getBoundingBox().expand(0.2D);
+        Box box = this.getBoundingBox().expand(0.25D);
         Iterator var8 = BlockPos
             .iterate(MathHelper.floor(box.minX), MathHelper.floor(box.minY), MathHelper.floor(box.minZ),
                 MathHelper.floor(box.maxX), MathHelper.floor(box.maxY), MathHelper.floor(box.maxZ))
@@ -242,8 +243,7 @@ public class StoneGolemEntity extends HostileEntity {
             blockPos = (BlockPos) var8.next();
             BlockState blockState = this.world.getBlockState(blockPos);
             block = blockState.getBlock();
-
-          } while (!(block instanceof Block && !block.is(Blocks.GRASS_BLOCK) && !block.is(Blocks.BEDROCK)));
+          } while (!(block instanceof Block && !block.isIn(TagInit.UNBREAKABLE_BLOCKS)));
 
           bl = this.world.breakBlock(blockPos, true, this) || bl;
         }

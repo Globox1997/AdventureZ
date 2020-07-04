@@ -1,0 +1,12 @@
+{
+  "replace": false,
+  "values": [
+    "minecraft:bedrock",
+    "minecraft:barrier",
+    "minecraft:chain_command_block",
+    "minecraft:command_block",
+    "minecraft:repeating_command_block",
+    "minecraft:jigsaw",
+    "minecraft:respawn_anchor"
+  ]
+}

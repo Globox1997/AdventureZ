@@ -13,6 +13,7 @@ public class AdventureMain implements ModInitializer {
     ItemInit.init();
     LootInit.init();
     SoundInit.init();
+    TagInit.init();
 
   }
 }
