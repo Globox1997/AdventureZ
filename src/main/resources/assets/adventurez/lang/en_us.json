@@ -1,6 +1,7 @@
 {
   "entity.adventurez.stone_golem": "Blackstone Golem",
   "entity.adventurez.small_stone_golem": "Mini Blackstone Golem",
+
   "item.adventurez.spawn_stone_golem": "Blackstone Golem Spawn Egg",
   "item.adventurez.spawn_small_stone_golem": "Mini Blackstone Golem Spawn Egg",
   "item.adventurez.gilded_stone_item": "Gilded Blackstone Shard",
@@ -9,7 +10,16 @@
   "item.adventurez.stone_golem_arm.tooltip": "§5Epic",
   "item.adventurez.stone_golem_heart": "Blackstone Golem Heart",
   "item.adventurez.stone_golem_heart.tooltip": "§5Epic Material",
+  "item.adventurez.stone_golem_helmet": "Gilded Netherite Helmet",
+  "item.adventurez.stone_golem_chestplate": "Gilded Netherite Chestplate",
+  "item.adventurez.stone_golem_leggings": "Gilded Netherite Leggings",
+  "item.adventurez.stone_golem_boots": "Gilded Netherite Boots",
+  "item.adventurez.gilded_netherite_fragment": "Gilded Netherite Fragment",
+  "item.adventurez.gilded_netherite_fragment.tooltip": "§5Epic Material",
+  "item.adventurez.stone_golem_armor.tooltip": "§5Epic",
+
   "block.adventurez.stone_holder_block": "Chiseled Polished Blackstone Holder",
+
   "adventurez.advancements.stone_golem.title": "Blackstone Golem",
   "adventurez.advancements.stone_golem.description": "Kill the Blackrocky Golem"
 }

@@ -10,8 +10,8 @@
             {
               "function": "minecraft:set_count",
               "count": {
-                "min": 0.0,
-                "max": 4.0,
+                "min": 3.0,
+                "max": 7.0,
                 "type": "minecraft:uniform"
               }
             },
@@ -47,6 +47,25 @@
           "condition": "minecraft:random_chance_with_looting",
           "chance": 0.6,
           "looting_multiplier": 0.01
+        }
+      ]
+    },
+    {
+      "rolls": 1,
+      "entries": [
+        {
+          "type": "minecraft:item",
+          "name": "adventurez:gilded_netherite_fragment"
+        }
+      ],
+      "conditions": [
+        {
+          "condition": "minecraft:killed_by_player"
+        },
+        {
+          "condition": "minecraft:random_chance_with_looting",
+          "chance": 0.5,
+          "looting_multiplier": 0.1
         }
       ]
     }

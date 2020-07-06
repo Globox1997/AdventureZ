@@ -1,0 +1,12 @@
+{
+  "type": "minecraft:smithing",
+  "base": {
+    "item": "minecraft:netherite_leggings"
+  },
+  "addition": {
+    "item": "adventurez:gilded_netherite_fragment"
+  },
+  "result": {
+    "item": "adventurez:stone_golem_leggings"
+  }
+}
