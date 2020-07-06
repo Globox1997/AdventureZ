@@ -223,7 +223,7 @@ public class StoneGolemEntity extends HostileEntity {
       if (this.horizontalCollision && this.world.getGameRules().getBoolean(GameRules.DO_MOB_GRIEFING)) {
         boolean bl = false;
         Box box = this.getBoundingBox().expand(0.25D);
-        Iterator var8 = BlockPos
+        Iterator<BlockPos> var8 = BlockPos
             .iterate(MathHelper.floor(box.minX), MathHelper.floor(box.minY), MathHelper.floor(box.minZ),
                 MathHelper.floor(box.maxX), MathHelper.floor(box.maxY), MathHelper.floor(box.maxZ))
             .iterator();
@@ -331,7 +331,7 @@ public class StoneGolemEntity extends HostileEntity {
           NOT_STONEGOLEM);
 
       Entity entity;
-      for (Iterator var2 = list.iterator(); var2.hasNext(); this.knockBack(entity)) {
+      for (Iterator<Entity> var2 = list.iterator(); var2.hasNext(); this.knockBack(entity)) {
         entity = (Entity) var2.next();
         entity.damage(DamageSource.mob(this), 8.0F);
         entity.setVelocity(entity.getVelocity().add(0.0D, 0.63D, 0.0D));
