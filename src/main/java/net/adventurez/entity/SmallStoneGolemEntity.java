@@ -1,5 +1,6 @@
 package net.adventurez.entity;
 
+import net.adventurez.init.EntityInit;
 import net.adventurez.init.SoundInit;
 import net.minecraft.block.BlockState;
 import net.minecraft.entity.EntityGroup;
@@ -17,7 +18,9 @@ import net.minecraft.entity.mob.MobEntity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.sound.SoundEvent;
 import net.minecraft.util.math.BlockPos;
+import net.minecraft.world.Difficulty;
 import net.minecraft.world.World;
+import net.minecraft.world.WorldView;
 
 public class SmallStoneGolemEntity extends HostileEntity {
 
@@ -72,6 +75,17 @@ public class SmallStoneGolemEntity extends HostileEntity {
   @Override
   public EntityGroup getGroup() {
     return EntityGroup.DEFAULT;
+  }
+
+  @Override
+  public boolean canSpawn(WorldView view) {
+    BlockPos blockunderentity = new BlockPos(this.getX(), this.getY() - 1, this.getZ());
+    BlockPos posentity = new BlockPos(this.getX(), this.getY(), this.getZ());
+    return view.intersectsEntities(this)
+        && this.world.getLocalDifficulty(posentity).getGlobalDifficulty() != Difficulty.PEACEFUL
+        && this.world.getLightLevel(posentity) <= 5
+        && this.world.getBlockState(posentity).getBlock().canMobSpawnInside() && this.world
+            .getBlockState(blockunderentity).allowsSpawning(view, blockunderentity, EntityInit.SMALLSTONEGOLEM_ENTITY);
   }
 
 }
