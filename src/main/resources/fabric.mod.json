@@ -1,9 +1,9 @@
 {
   "schemaVersion": 1,
   "id": "adventurez",
-  "version": "1.0.3",
+  "version": "1.0.4",
   "name": "AdventureZ",
-  "description": "Adds a new Boss to Minecraft; 1.16 ModFest entry",
+  "description": "Adds a new Boss to Minecraft",
   "authors": [
     "Globox_Z"
   ],
