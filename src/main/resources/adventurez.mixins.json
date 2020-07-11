@@ -4,7 +4,8 @@
   "package": "net.adventurez.mixin",
   "compatibilityLevel": "JAVA_8",
   "mixins": [
-    "PlayerEntityMixin"
+    "PlayerEntityMixin",
+    "OreBlockMixin"
   ],
   "client": [],
   "injectors": {
