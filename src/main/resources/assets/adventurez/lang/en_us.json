@@ -1,6 +1,9 @@
 {
   "entity.adventurez.stone_golem": "Blackstone Golem",
   "entity.adventurez.small_stone_golem": "Mini Blackstone Golem",
+  "entity.adventurez.piglin_beast": "Piglin Beast",
+  "entity.adventurez.gilded_stone": "Gilded Blackstone Shard",
+  "entity.adventurez.thrown_rock": "Rock",
 
   "item.adventurez.spawn_stone_golem": "Blackstone Golem Spawn Egg",
   "item.adventurez.spawn_small_stone_golem": "Mini Blackstone Golem Spawn Egg",

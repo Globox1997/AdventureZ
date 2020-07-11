@@ -22,7 +22,9 @@
       "net.adventurez.AdventureClient"
     ]
   },
-  "mixins": [],
+  "mixins": [
+    "adventurez.mixins.json"
+  ],
   "depends": {
     "fabricloader": ">=0.7.4",
     "fabric": "*",

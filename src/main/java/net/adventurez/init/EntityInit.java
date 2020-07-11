@@ -25,6 +25,9 @@ public class EntityInit {
         public static final EntityType<SmallStoneGolemEntity> SMALLSTONEGOLEM_ENTITY = FabricEntityTypeBuilder
                         .create(SpawnGroup.MONSTER, SmallStoneGolemEntity::new).trackable(74, 2).fireImmune()
                         .dimensions(EntityDimensions.fixed(1.2F, 1.2F)).build();
+        public static final EntityType<PiglinBeastEntity> PIGLINBEAST_ENTITY = FabricEntityTypeBuilder
+                        .create(SpawnGroup.MONSTER, PiglinBeastEntity::new).trackable(74, 2).fireImmune()
+                        .dimensions(EntityDimensions.fixed(1.55F, 3.35F)).build();
 
         public static void init() {
                 Registry.register(Registry.ENTITY_TYPE, new Identifier("adventurez", "stone_golem"), STONEGOLEM_ENTITY);
@@ -33,10 +36,18 @@ public class EntityInit {
                                 GILDEDSTONE_ENTITY);
                 Registry.register(Registry.ENTITY_TYPE, new Identifier("adventurez", "small_stone_golem"),
                                 SMALLSTONEGOLEM_ENTITY);
+                Registry.register(Registry.ENTITY_TYPE, new Identifier("adventurez", "piglin_beast"),
+                                PIGLINBEAST_ENTITY);
+
+                // Attributes
                 FabricDefaultAttributeRegistry.register(STONEGOLEM_ENTITY,
                                 StoneGolemEntity.createStoneGolemAttributes());
                 FabricDefaultAttributeRegistry.register(SMALLSTONEGOLEM_ENTITY,
                                 SmallStoneGolemEntity.createSmallStoneGolemAttributes());
+                FabricDefaultAttributeRegistry.register(PIGLINBEAST_ENTITY,
+                                PiglinBeastEntity.createPiglinBeastAttributes());
+
+                // Spawn Eggs
                 Registry.register(Registry.ITEM, new Identifier("adventurez", "spawn_stone_golem"), new SpawnEggItem(
                                 STONEGOLEM_ENTITY, 2956072, 1445648, new Item.Settings().group(ItemGroup.MISC)));
                 Registry.register(Registry.ITEM, new Identifier("adventurez", "spawn_small_stone_golem"),

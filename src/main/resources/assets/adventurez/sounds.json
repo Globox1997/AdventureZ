@@ -96,5 +96,47 @@
     "sounds": [
       "adventurez:heart_beat"
     ]
+  },
+  "piglinbeast_idle": {
+    "sounds": [
+      "adventurez:piglinbeast_angry1",
+      "adventurez:piglinbeast_angry2",
+      "adventurez:piglinbeast_angry3"
+    ]
+  },
+  "piglinbeast_death": {
+    "sounds": [
+      "adventurez:piglinbeast_death1",
+      "adventurez:piglinbeast_death2",
+      "adventurez:piglinbeast_death3"
+    ]
+  },
+  "piglinbeast_hurt": {
+    "sounds": [
+      "adventurez:piglinbeast_hurt1",
+      "adventurez:piglinbeast_hurt2",
+      "adventurez:piglinbeast_hurt3"
+    ]
+  },
+  "piglinbeast_walk": {
+    "sounds": [
+      "adventurez:piglinbeast_step1",
+      "adventurez:piglinbeast_step2",
+      "adventurez:piglinbeast_step3",
+      "adventurez:piglinbeast_step4",
+      "adventurez:piglinbeast_step5"
+    ]
+  },
+  "piglinbeast_shout": {
+    "sounds": [
+      "adventurez:piglinbeast_shout"
+    ]
+  },
+  "piglinbeast_clubswing": {
+    "sounds": [
+      "adventurez:club_swing1",
+      "adventurez:club_swing2",
+      "adventurez:club_swing3"
+    ]
   }
 }

@@ -34,6 +34,19 @@ public class SoundInit {
   public static SoundEvent SMALL_GOLEM_WALK_EVENT = new SoundEvent(SMALL_GOLEM_WALK);
   public static SoundEvent SMALL_GOLEM_HIT_EVENT = new SoundEvent(SMALL_GOLEM_HIT);
   public static SoundEvent SMALL_GOLEM_DEATH_EVENT = new SoundEvent(SMALL_GOLEM_DEATH);
+  // Piglin Beast
+  public static final Identifier PIGLINBEAST_IDLE = new Identifier("adventurez:piglinbeast_idle");
+  public static final Identifier PIGLINBEAST_DEATH = new Identifier("adventurez:piglinbeast_death");
+  public static final Identifier PIGLINBEAST_HURT = new Identifier("adventurez:piglinbeast_hurt");
+  public static final Identifier PIGLINBEAST_WALK = new Identifier("adventurez:piglinbeast_walk");
+  public static final Identifier PIGLINBEAST_SHOUT = new Identifier("adventurez:piglinbeast_shout");
+  public static final Identifier PIGLINBEAST_CLUBSWING = new Identifier("adventurez:piglinbeast_clubswing");
+  public static SoundEvent PIGLINBEAST_IDLE_EVENT = new SoundEvent(PIGLINBEAST_IDLE);
+  public static SoundEvent PIGLINBEAST_DEATH_EVENT = new SoundEvent(PIGLINBEAST_DEATH);
+  public static SoundEvent PIGLINBEAST_HURT_EVENT = new SoundEvent(PIGLINBEAST_HURT);
+  public static SoundEvent PIGLINBEAST_WALK_EVENT = new SoundEvent(PIGLINBEAST_WALK);
+  public static SoundEvent PIGLINBEAST_SHOUT_EVENT = new SoundEvent(PIGLINBEAST_SHOUT);
+  public static SoundEvent PIGLINBEAST_CLUBSWING_EVENT = new SoundEvent(PIGLINBEAST_CLUBSWING);
 
   public static void init() {
     Registry.register(Registry.SOUND_EVENT, SoundInit.GOLEM_IDLE, GOLEM_IDLE_EVENT);
@@ -49,5 +62,11 @@ public class SoundInit {
     Registry.register(Registry.SOUND_EVENT, SoundInit.SMALL_GOLEM_HIT, SMALL_GOLEM_HIT_EVENT);
     Registry.register(Registry.SOUND_EVENT, SoundInit.SMALL_GOLEM_DEATH, SMALL_GOLEM_DEATH_EVENT);
     Registry.register(Registry.SOUND_EVENT, SoundInit.HEART_BEAT, HEART_BEAT_EVENT);
+    Registry.register(Registry.SOUND_EVENT, SoundInit.PIGLINBEAST_IDLE, PIGLINBEAST_IDLE_EVENT);
+    Registry.register(Registry.SOUND_EVENT, SoundInit.PIGLINBEAST_DEATH, PIGLINBEAST_DEATH_EVENT);
+    Registry.register(Registry.SOUND_EVENT, SoundInit.PIGLINBEAST_HURT, PIGLINBEAST_HURT_EVENT);
+    Registry.register(Registry.SOUND_EVENT, SoundInit.PIGLINBEAST_WALK, PIGLINBEAST_WALK_EVENT);
+    Registry.register(Registry.SOUND_EVENT, SoundInit.PIGLINBEAST_SHOUT, PIGLINBEAST_SHOUT_EVENT);
+    Registry.register(Registry.SOUND_EVENT, SoundInit.PIGLINBEAST_CLUBSWING, PIGLINBEAST_CLUBSWING_EVENT);
   }
 }

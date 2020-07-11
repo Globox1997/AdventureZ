@@ -103,7 +103,15 @@ public class StoneGolemEntity extends HostileEntity {
         BossBar.Style.PROGRESS));
   }
 
-  protected void initGoals() {
+  public static DefaultAttributeContainer.Builder createStoneGolemAttributes() {
+    return HostileEntity.createHostileAttributes().add(EntityAttributes.GENERIC_MAX_HEALTH, 600.0D)
+        .add(EntityAttributes.GENERIC_MOVEMENT_SPEED, 0.24D).add(EntityAttributes.GENERIC_KNOCKBACK_RESISTANCE, 2.5D)
+        .add(EntityAttributes.GENERIC_ATTACK_DAMAGE, 12.0D).add(EntityAttributes.GENERIC_ATTACK_KNOCKBACK, 2.5D)
+        .add(EntityAttributes.GENERIC_FOLLOW_RANGE, 38.0D);
+  }
+
+  @Override
+  public void initGoals() {
     super.initGoals();
     this.goalSelector.add(0, new SwimGoal(this));
     this.goalSelector.add(4, new StoneGolemEntity.AttackGoal());
@@ -112,13 +120,6 @@ public class StoneGolemEntity extends HostileEntity {
     this.goalSelector.add(10, new LookAtEntityGoal(this, MobEntity.class, 8.0F));
     this.targetSelector.add(3, new FollowTargetGoal<>(this, PlayerEntity.class, false));
     this.targetSelector.add(4, new FollowTargetGoal<>(this, AbstractTraderEntity.class, true));
-  }
-
-  public static DefaultAttributeContainer.Builder createStoneGolemAttributes() {
-    return HostileEntity.createHostileAttributes().add(EntityAttributes.GENERIC_MAX_HEALTH, 600.0D)
-        .add(EntityAttributes.GENERIC_MOVEMENT_SPEED, 0.24D).add(EntityAttributes.GENERIC_KNOCKBACK_RESISTANCE, 2.5D)
-        .add(EntityAttributes.GENERIC_ATTACK_DAMAGE, 12.0D).add(EntityAttributes.GENERIC_ATTACK_KNOCKBACK, 2.5D)
-        .add(EntityAttributes.GENERIC_FOLLOW_RANGE, 38.0D);
   }
 
   @Override
@@ -562,7 +563,7 @@ public class StoneGolemEntity extends HostileEntity {
       super(StoneGolemEntity.this, 1.0D, true);
     }
 
-    protected double getSquaredMaxAttackDistance(LivingEntity entity) {
+    public double getSquaredMaxAttackDistance(LivingEntity entity) {
       float f = StoneGolemEntity.this.getWidth() - 0.1F;
       return (double) (f * f * 1.2 + entity.getWidth());
     }
