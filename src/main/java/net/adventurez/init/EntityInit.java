@@ -53,5 +53,7 @@ public class EntityInit {
                 Registry.register(Registry.ITEM, new Identifier("adventurez", "spawn_small_stone_golem"),
                                 new SpawnEggItem(SMALLSTONEGOLEM_ENTITY, 4077380, 4400440,
                                                 new Item.Settings().group(ItemGroup.MISC)));
+                Registry.register(Registry.ITEM, new Identifier("adventurez", "spawn_piglin_beast"), new SpawnEggItem(
+                                PIGLINBEAST_ENTITY, 5121815, 14192743, new Item.Settings().group(ItemGroup.MISC)));
         }
 }
