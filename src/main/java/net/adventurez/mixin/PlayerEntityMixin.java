@@ -5,10 +5,10 @@ import java.util.List;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
+import org.spongepowered.asm.mixin.injection.At;
 
 import net.adventurez.entity.PiglinBeastEntity;
 import net.adventurez.init.EntityInit;
-import org.spongepowered.asm.mixin.injection.At;
 
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityType;
