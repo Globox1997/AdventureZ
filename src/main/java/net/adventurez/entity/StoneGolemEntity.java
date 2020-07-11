@@ -2,6 +2,7 @@ package net.adventurez.entity;
 
 import java.util.Iterator;
 import java.util.List;
+import java.util.UUID;
 import java.util.function.Predicate;
 
 import net.adventurez.init.EntityInit;
@@ -27,6 +28,7 @@ import net.minecraft.entity.ai.pathing.MobNavigation;
 import net.minecraft.entity.ai.pathing.PathNodeNavigator;
 import net.minecraft.entity.ai.pathing.PathNodeType;
 import net.minecraft.entity.attribute.DefaultAttributeContainer;
+import net.minecraft.entity.attribute.EntityAttributeModifier;
 import net.minecraft.entity.attribute.EntityAttributes;
 import net.minecraft.entity.boss.ServerBossBar;
 import net.minecraft.entity.damage.DamageSource;
@@ -81,7 +83,8 @@ public class StoneGolemEntity extends HostileEntity {
       TrackedDataHandlerRegistry.INTEGER);
   public static final TrackedData<Boolean> halfLifeChange = DataTracker.registerData(StoneGolemEntity.class,
       TrackedDataHandlerRegistry.BOOLEAN);
-
+  private static final UUID WALKINSPEEDINCREASE_ID;
+  private static final EntityAttributeModifier WALKINSPEEDINCREASE;
   private static final Predicate<Entity> NOT_STONEGOLEM = (entity) -> {
     return entity.isAlive() && !(entity instanceof StoneGolemEntity);
   };
@@ -280,6 +283,17 @@ public class StoneGolemEntity extends HostileEntity {
             this.cooldown = -80;
           }
         }
+      }
+      if (this.isOnSoulSpeedBlock() && !this.getAttributes()
+          .hasModifierForAttribute(EntityAttributes.GENERIC_MOVEMENT_SPEED, WALKINSPEEDINCREASE_ID)) {
+        this.getAttributeInstance(EntityAttributes.GENERIC_MOVEMENT_SPEED).addTemporaryModifier(WALKINSPEEDINCREASE);
+        this.setVelocity(this.getVelocity().multiply(1D));
+      } else if (!this.isOnSoulSpeedBlock() && this.getAttributes()
+          .hasModifierForAttribute(EntityAttributes.GENERIC_MOVEMENT_SPEED, WALKINSPEEDINCREASE_ID)) {
+        this.getAttributeInstance(EntityAttributes.GENERIC_MOVEMENT_SPEED).removeModifier(WALKINSPEEDINCREASE_ID);
+      }
+      if (this.isInLava()) {
+        this.setVelocity(this.getVelocity().multiply(1.9D));
       }
     }
   }
@@ -567,5 +581,11 @@ public class StoneGolemEntity extends HostileEntity {
       float f = StoneGolemEntity.this.getWidth() - 0.1F;
       return (double) (f * f * 1.2 + entity.getWidth());
     }
+  }
+
+  static {
+    WALKINSPEEDINCREASE_ID = UUID.fromString("766bfa64-11f3-11ea-8d71-362b9e155667");// 766bfa64-11f3-11ea-8d71-362b9e155667
+    WALKINSPEEDINCREASE = new EntityAttributeModifier(WALKINSPEEDINCREASE_ID, "LavaAndSoulSpeed", 0.5D,
+        EntityAttributeModifier.Operation.MULTIPLY_BASE);
   }
 }
