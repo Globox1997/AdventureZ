@@ -228,7 +228,7 @@ public class StoneGolemEntity extends HostileEntity {
         boolean bl = false;
         Box box = this.getBoundingBox().expand(0.25D);
         Iterator<BlockPos> var8 = BlockPos
-            .iterate(MathHelper.floor(box.minX), MathHelper.floor(box.minY), MathHelper.floor(box.minZ),
+            .iterate(MathHelper.floor(box.minX), MathHelper.floor(box.expand(-0.25D).minY), MathHelper.floor(box.minZ),
                 MathHelper.floor(box.maxX), MathHelper.floor(box.maxY), MathHelper.floor(box.maxZ))
             .iterator();
 

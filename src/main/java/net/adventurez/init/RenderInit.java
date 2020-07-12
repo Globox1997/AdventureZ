@@ -1,6 +1,6 @@
 package net.adventurez.init;
 
-import net.adventurez.block.renderer.StoneHolderRenderer;
+import net.adventurez.block.renderer.*;
 import net.adventurez.entity.render.*;
 import net.adventurez.network.EntitySpawnPacket;
 import net.fabricmc.fabric.api.blockrenderlayer.v1.BlockRenderLayerMap;
@@ -26,6 +26,10 @@ public class RenderInit {
         (dispatcher, context) -> new SmallStoneGolemRenderer(dispatcher));
     EntityRendererRegistry.INSTANCE.register(EntityInit.PIGLINBEAST_ENTITY,
         (dispatcher, context) -> new PiglinBeastRenderer(dispatcher));
+    EntityRendererRegistry.INSTANCE.register(EntityInit.NIGHTMARE_ENTITY,
+        (dispatcher, context) -> new NightmareRenderer(dispatcher));
+    EntityRendererRegistry.INSTANCE.register(EntityInit.SOULREAPER_ENTITY,
+        (dispatcher, context) -> new SoulReaperRenderer(dispatcher));
 
     // Network
     registerClientboundPackets();

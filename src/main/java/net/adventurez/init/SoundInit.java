@@ -47,6 +47,22 @@ public class SoundInit {
   public static SoundEvent PIGLINBEAST_WALK_EVENT = new SoundEvent(PIGLINBEAST_WALK);
   public static SoundEvent PIGLINBEAST_SHOUT_EVENT = new SoundEvent(PIGLINBEAST_SHOUT);
   public static SoundEvent PIGLINBEAST_CLUBSWING_EVENT = new SoundEvent(PIGLINBEAST_CLUBSWING);
+  // Nightmare
+  public static final Identifier NIGHTMARE_IDLE = new Identifier("adventurez:nightmare_idle");
+  public static final Identifier NIGHTMARE_DEATH = new Identifier("adventurez:nightmare_death");
+  public static final Identifier NIGHTMARE_HURT = new Identifier("adventurez:nightmare_hurt");
+  public static final Identifier NIGHTMARE_ANGRY = new Identifier("adventurez:nightmare_angry");
+  public static SoundEvent NIGHTMARE_IDLE_EVENT = new SoundEvent(NIGHTMARE_IDLE);
+  public static SoundEvent NIGHTMARE_DEATH_EVENT = new SoundEvent(NIGHTMARE_DEATH);
+  public static SoundEvent NIGHTMARE_HURT_EVENT = new SoundEvent(NIGHTMARE_HURT);
+  public static SoundEvent NIGHTMARE_ANGRY_EVENT = new SoundEvent(NIGHTMARE_ANGRY);
+  // Soul Reaper
+  public static final Identifier SOULREAPER_IDLE = new Identifier("adventurez:soulreaper_idle");
+  public static final Identifier SOULREAPER_HURT = new Identifier("adventurez:soulreaper_hurt");
+  public static final Identifier SOULREAPER_DEATH = new Identifier("adventurez:soulreaper_death");
+  public static SoundEvent SOULREAPER_IDLE_EVENT = new SoundEvent(SOULREAPER_IDLE);
+  public static SoundEvent SOULREAPER_HURT_EVENT = new SoundEvent(SOULREAPER_HURT);
+  public static SoundEvent SOULREAPER_DEATH_EVENT = new SoundEvent(SOULREAPER_DEATH);
 
   public static void init() {
     Registry.register(Registry.SOUND_EVENT, SoundInit.GOLEM_IDLE, GOLEM_IDLE_EVENT);
@@ -68,5 +84,12 @@ public class SoundInit {
     Registry.register(Registry.SOUND_EVENT, SoundInit.PIGLINBEAST_WALK, PIGLINBEAST_WALK_EVENT);
     Registry.register(Registry.SOUND_EVENT, SoundInit.PIGLINBEAST_SHOUT, PIGLINBEAST_SHOUT_EVENT);
     Registry.register(Registry.SOUND_EVENT, SoundInit.PIGLINBEAST_CLUBSWING, PIGLINBEAST_CLUBSWING_EVENT);
+    Registry.register(Registry.SOUND_EVENT, SoundInit.NIGHTMARE_IDLE, NIGHTMARE_IDLE_EVENT);
+    Registry.register(Registry.SOUND_EVENT, SoundInit.NIGHTMARE_DEATH, NIGHTMARE_DEATH_EVENT);
+    Registry.register(Registry.SOUND_EVENT, SoundInit.NIGHTMARE_HURT, NIGHTMARE_HURT_EVENT);
+    Registry.register(Registry.SOUND_EVENT, SoundInit.NIGHTMARE_ANGRY, NIGHTMARE_ANGRY_EVENT);
+    Registry.register(Registry.SOUND_EVENT, SoundInit.SOULREAPER_IDLE, SOULREAPER_IDLE_EVENT);
+    Registry.register(Registry.SOUND_EVENT, SoundInit.SOULREAPER_HURT, SOULREAPER_HURT_EVENT);
+    Registry.register(Registry.SOUND_EVENT, SoundInit.SOULREAPER_DEATH, SOULREAPER_DEATH_EVENT);
   }
 }

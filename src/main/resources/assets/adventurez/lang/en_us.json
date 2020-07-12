@@ -4,10 +4,14 @@
   "entity.adventurez.piglin_beast": "Piglin Beast",
   "entity.adventurez.gilded_stone": "Gilded Blackstone Shard",
   "entity.adventurez.thrown_rock": "Rock",
+  "entity.adventurez.nightmare": "Nightmare",
+  "entity.adventurez.soul_reaper": "Soul Reaper",
 
   "item.adventurez.spawn_stone_golem": "Blackstone Golem Spawn Egg",
   "item.adventurez.spawn_small_stone_golem": "Mini Blackstone Golem Spawn Egg",
   "item.adventurez.spawn_piglin_beast": "Piglin Beast Spawn Egg",
+  "item.adventurez.spawn_nightmare": "Nightmare Spawn Egg",
+  "item.adventurez.spawn_soul_reaper": "Soul Reaper Spawn Egg",
 
   "item.adventurez.gilded_stone_item": "Gilded Blackstone Shard",
   "item.adventurez.gilded_stone_item.tooltip": "Placeable in the Stone Holder",

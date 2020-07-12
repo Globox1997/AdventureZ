@@ -17,6 +17,7 @@ import net.minecraft.entity.ai.goal.LookAtEntityGoal;
 import net.minecraft.entity.ai.goal.MeleeAttackGoal;
 import net.minecraft.entity.ai.goal.SwimGoal;
 import net.minecraft.entity.ai.goal.WanderAroundFarGoal;
+import net.minecraft.entity.ai.pathing.PathNodeType;
 import net.minecraft.entity.attribute.DefaultAttributeContainer;
 import net.minecraft.entity.attribute.EntityAttributes;
 import net.minecraft.entity.damage.DamageSource;
@@ -48,6 +49,7 @@ public class PiglinBeastEntity extends HostileEntity {
     super(entityType, world);
     this.stepHeight = 1.0F;
     this.experiencePoints = 30;
+    this.setPathfindingPenalty(PathNodeType.LAVA, 8.0F);
   }
 
   public static DefaultAttributeContainer.Builder createPiglinBeastAttributes() {

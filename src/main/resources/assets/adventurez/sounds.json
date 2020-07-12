@@ -138,5 +138,50 @@
       "adventurez:club_swing2",
       "adventurez:club_swing3"
     ]
+  },
+  "nightmare_idle": {
+    "sounds": [
+      "adventurez:nightmare_idle1",
+      "adventurez:nightmare_idle2",
+      "adventurez:nightmare_idle3"
+    ]
+  },
+  "nightmare_death": {
+    "sounds": [
+      "adventurez:nightmare_death"
+    ]
+  },
+  "nightmare_hurt": {
+    "sounds": [
+      "adventurez:nightmare_hit1",
+      "adventurez:nightmare_hit2",
+      "adventurez:nightmare_hit3"
+    ]
+  },
+  "soulreaper_idle": {
+    "sounds": [
+      "adventurez:reaper_idle1",
+      "adventurez:reaper_idle2",
+      "adventurez:reaper_idle3"
+    ]
+  },
+  "soulreaper_hurt": {
+    "sounds": [
+      "adventurez:reaper_death1",
+      "adventurez:reaper_death2"
+    ]
+  },
+  "soulreaper_death": {
+    "sounds": [
+      "adventurez:reaper_hurt1",
+      "adventurez:reaper_hurt2",
+      "adventurez:reaper_hurt3",
+      "adventurez:reaper_hurt4"
+    ]
+  },
+  "nightmare_angry": {
+    "sounds": [
+      "adventurez:nightmare_angry1"
+    ]
   }
 }

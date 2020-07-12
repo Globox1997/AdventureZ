@@ -28,6 +28,12 @@ public class EntityInit {
         public static final EntityType<PiglinBeastEntity> PIGLINBEAST_ENTITY = FabricEntityTypeBuilder
                         .create(SpawnGroup.MONSTER, PiglinBeastEntity::new).trackable(74, 2).fireImmune()
                         .dimensions(EntityDimensions.fixed(1.55F, 3.35F)).build();
+        public static final EntityType<NightmareEntity> NIGHTMARE_ENTITY = FabricEntityTypeBuilder
+                        .create(SpawnGroup.MONSTER, NightmareEntity::new).trackable(74, 2).fireImmune()
+                        .dimensions(EntityDimensions.fixed(1.4F, 1.6F)).build();
+        public static final EntityType<SoulReaperEntity> SOULREAPER_ENTITY = FabricEntityTypeBuilder
+                        .create(SpawnGroup.MONSTER, SoulReaperEntity::new).trackable(74, 2).fireImmune()
+                        .dimensions(EntityDimensions.fixed(0.7F, 2.4F)).build();
 
         public static void init() {
                 Registry.register(Registry.ENTITY_TYPE, new Identifier("adventurez", "stone_golem"), STONEGOLEM_ENTITY);
@@ -38,6 +44,8 @@ public class EntityInit {
                                 SMALLSTONEGOLEM_ENTITY);
                 Registry.register(Registry.ENTITY_TYPE, new Identifier("adventurez", "piglin_beast"),
                                 PIGLINBEAST_ENTITY);
+                Registry.register(Registry.ENTITY_TYPE, new Identifier("adventurez", "nightmare"), NIGHTMARE_ENTITY);
+                Registry.register(Registry.ENTITY_TYPE, new Identifier("adventurez", "soul_reaper"), SOULREAPER_ENTITY);
 
                 // Attributes
                 FabricDefaultAttributeRegistry.register(STONEGOLEM_ENTITY,
@@ -46,6 +54,9 @@ public class EntityInit {
                                 SmallStoneGolemEntity.createSmallStoneGolemAttributes());
                 FabricDefaultAttributeRegistry.register(PIGLINBEAST_ENTITY,
                                 PiglinBeastEntity.createPiglinBeastAttributes());
+                FabricDefaultAttributeRegistry.register(NIGHTMARE_ENTITY, NightmareEntity.createNightmareAttributes());
+                FabricDefaultAttributeRegistry.register(SOULREAPER_ENTITY,
+                                SoulReaperEntity.createSoulReaperAttributes());
 
                 // Spawn Eggs
                 Registry.register(Registry.ITEM, new Identifier("adventurez", "spawn_stone_golem"), new SpawnEggItem(
@@ -55,5 +66,9 @@ public class EntityInit {
                                                 new Item.Settings().group(ItemGroup.MISC)));
                 Registry.register(Registry.ITEM, new Identifier("adventurez", "spawn_piglin_beast"), new SpawnEggItem(
                                 PIGLINBEAST_ENTITY, 5121815, 14192743, new Item.Settings().group(ItemGroup.MISC)));
+                Registry.register(Registry.ITEM, new Identifier("adventurez", "spawn_nightmare"), new SpawnEggItem(
+                                NIGHTMARE_ENTITY, 1381653, 3012863, new Item.Settings().group(ItemGroup.MISC)));
+                Registry.register(Registry.ITEM, new Identifier("adventurez", "spawn_soul_reaper"), new SpawnEggItem(
+                                SOULREAPER_ENTITY, 1381653, 5329747, new Item.Settings().group(ItemGroup.MISC)));
         }
 }
