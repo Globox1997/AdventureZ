@@ -1,5 +1,7 @@
 package net.adventurez.entity;
 
+import java.util.UUID;
+
 import net.adventurez.init.EntityInit;
 import net.adventurez.init.SoundInit;
 import net.minecraft.entity.Entity;
@@ -10,6 +12,7 @@ import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.SpawnReason;
 import net.minecraft.entity.ai.pathing.PathNodeType;
 import net.minecraft.entity.attribute.DefaultAttributeContainer;
+import net.minecraft.entity.attribute.EntityAttributeModifier;
 import net.minecraft.entity.attribute.EntityAttributes;
 import net.minecraft.entity.damage.DamageSource;
 import net.minecraft.entity.effect.StatusEffectInstance;
@@ -32,6 +35,9 @@ import net.minecraft.block.Blocks;
 
 public class NightmareEntity extends SkeletonHorseEntity {
   private int eatingGrassTicks;
+  private int damageWaterTicks;
+  private static final UUID WALKINSPEEDINCREASE_ID;
+  private static final EntityAttributeModifier WALKINSPEEDINCREASE;
 
   public NightmareEntity(EntityType<? extends SkeletonHorseEntity> entityType, World world) {
     super(entityType, world);
@@ -41,7 +47,7 @@ public class NightmareEntity extends SkeletonHorseEntity {
 
   public static DefaultAttributeContainer.Builder createNightmareAttributes() {
     return createBaseHorseAttributes().add(EntityAttributes.GENERIC_MAX_HEALTH, 40.0D)
-        .add(EntityAttributes.GENERIC_MOVEMENT_SPEED, 0.2D).add(EntityAttributes.GENERIC_ATTACK_DAMAGE, 7.0D);
+        .add(EntityAttributes.GENERIC_MOVEMENT_SPEED, 0.21D).add(EntityAttributes.GENERIC_ATTACK_DAMAGE, 7.0D);
   }
 
   @Nullable
@@ -80,17 +86,32 @@ public class NightmareEntity extends SkeletonHorseEntity {
       this.walkToParent();
     }
     if (world.isClient) {
-      double g = this.random.nextDouble() * 0.7F - 0.3F;
-      double e = this.random.nextDouble() * 0.8F;
-      double f = this.random.nextDouble() * 0.7F - 0.3F;
-      double g2 = world.random.nextDouble() * 0.7F - 0.3F;
-      double e2 = world.random.nextDouble() * 0.8F;
-      double f2 = world.random.nextDouble() * 0.7F - 0.3F;
+      double g = this.random.nextDouble() * 0.75F - 0.375F;
+      double e = this.random.nextDouble() * 0.9F;
+      double f = this.random.nextDouble() * 0.75F - 0.375F;
+      double g2 = world.random.nextDouble() * 0.75F - 0.375F;
+      double e2 = world.random.nextDouble() * 0.9F;
+      double f2 = world.random.nextDouble() * 0.75F - 0.375F;
       this.world.addParticle(ParticleTypes.SOUL_FIRE_FLAME, this.getX() + g, this.getY() + 0.5D + e, this.getZ() + f,
           0D, 0D, 0D);
       this.world.addParticle(ParticleTypes.SOUL_FIRE_FLAME, this.getX() + g2, this.getY() + 0.5D + e2, this.getZ() + f2,
           0D, 0D, 0D);
     }
+    if (this.touchingWater && !world.isClient) {
+      damageWaterTicks++;
+      if (damageWaterTicks == 40) {
+        this.damage(DamageSource.HOT_FLOOR, 1F);
+        damageWaterTicks = 0;
+      }
+    }
+    if (this.isOnSoulSpeedBlock() && !this.getAttributes()
+        .hasModifierForAttribute(EntityAttributes.GENERIC_MOVEMENT_SPEED, WALKINSPEEDINCREASE_ID)) {
+      this.getAttributeInstance(EntityAttributes.GENERIC_MOVEMENT_SPEED).addTemporaryModifier(WALKINSPEEDINCREASE);
+    } else if (!this.isOnSoulSpeedBlock() && this.getAttributes()
+        .hasModifierForAttribute(EntityAttributes.GENERIC_MOVEMENT_SPEED, WALKINSPEEDINCREASE_ID)) {
+      this.getAttributeInstance(EntityAttributes.GENERIC_MOVEMENT_SPEED).removeModifier(WALKINSPEEDINCREASE_ID);
+    }
+
   }
 
   @Override
@@ -171,6 +192,12 @@ public class NightmareEntity extends SkeletonHorseEntity {
   @Override
   public boolean cannotDespawn() {
     return true;
+  }
+
+  static {
+    WALKINSPEEDINCREASE_ID = UUID.fromString("766bfa64-11f3-11ea-8d71-362b9e155667");
+    WALKINSPEEDINCREASE = new EntityAttributeModifier(WALKINSPEEDINCREASE_ID, "LavaAndSoulSpeed", 0.5D,
+        EntityAttributeModifier.Operation.MULTIPLY_BASE);
   }
 
 }

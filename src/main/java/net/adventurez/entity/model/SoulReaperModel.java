@@ -103,14 +103,9 @@ public class SoulReaperModel<T extends MobEntity & RangedAttackMob> extends Bipe
     this.rightArmPose = BipedEntityModel.ArmPose.EMPTY;
     this.leftArmPose = BipedEntityModel.ArmPose.EMPTY;
     ItemStack itemStack = mobEntity.getStackInHand(Hand.MAIN_HAND);
-    if (itemStack.getItem() == Items.BOW && mobEntity.isAttacking()) {
-      if (mobEntity.getMainArm() == Arm.RIGHT) {
-        this.rightArmPose = BipedEntityModel.ArmPose.BOW_AND_ARROW;
-      } else {
-        this.leftArmPose = BipedEntityModel.ArmPose.BOW_AND_ARROW;
-      }
+    if (itemStack.getItem() == Items.BOW && mobEntity.isAttacking() && !this.riding) {
+      this.rightArmPose = BipedEntityModel.ArmPose.BOW_AND_ARROW;
     }
-
     super.animateModel((T) mobEntity, f, g, h);
   }
 
@@ -118,7 +113,7 @@ public class SoulReaperModel<T extends MobEntity & RangedAttackMob> extends Bipe
   public void setAngles(T mobEntity, float f, float g, float h, float i, float j) {
     super.setAngles((T) mobEntity, f, g, h, i, j);
     ItemStack itemStack = mobEntity.getMainHandStack();
-    if (mobEntity.isAttacking() && (itemStack.isEmpty() || itemStack.getItem() != Items.BOW)) {
+    if (mobEntity.isAttacking() && (itemStack.isEmpty() || itemStack.getItem() != Items.BOW) && !this.riding) {
       float k = MathHelper.sin(this.handSwingProgress * 3.1415927F);
       float l = MathHelper.sin((1.0F - (1.0F - this.handSwingProgress) * (1.0F - this.handSwingProgress)) * 3.1415927F);
       this.rightArm.roll = 0.0F;
@@ -132,8 +127,29 @@ public class SoulReaperModel<T extends MobEntity & RangedAttackMob> extends Bipe
       var10000 = this.leftArm;
       var10000.pitch -= k * 1.2F - l * 0.4F;
     }
-
     if (this.riding) {
+      if (mobEntity.isAttacking()) {
+        if (itemStack.getItem() == Items.BOW) {
+          this.rightArm.yaw = -0.1F + this.head.yaw - 0.4F;
+          this.leftArm.yaw = 0.1F + this.head.yaw;
+          this.rightArm.pitch = -1.0F + this.head.pitch;
+          this.leftArm.pitch = -1.0F + this.head.pitch;
+        } else {
+          float k = MathHelper.sin(this.handSwingProgress * 3.1415927F);
+          float l = MathHelper
+              .sin((1.0F - (1.0F - this.handSwingProgress) * (1.0F - this.handSwingProgress)) * 3.1415927F);
+          this.rightArm.roll = 0.0F;
+          this.leftArm.roll = 0.0F;
+          this.rightArm.yaw = -(0.1F - k * 0.6F);
+          this.leftArm.yaw = 0.1F - k * 0.6F;
+          this.rightArm.pitch = -1.0F;
+          this.leftArm.pitch = -1.0F;
+          ModelPart var10000 = this.rightArm;
+          var10000.pitch -= k * 1.2F - l * 0.4F;
+          var10000 = this.leftArm;
+          var10000.pitch -= k * 1.2F - l * 0.4F;
+        }
+      }
       this.torso.pivotY = 5.2F;
       this.head.pivotY = 5.2F;
       this.rightArm.pivotY = 5.2F;

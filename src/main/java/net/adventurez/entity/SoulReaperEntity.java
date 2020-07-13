@@ -44,10 +44,6 @@ import net.minecraft.world.LocalDifficulty;
 import net.minecraft.world.World;
 import net.minecraft.world.WorldAccess;
 import net.minecraft.world.WorldView;
-// import net.minecraft.entity.mob.PiglinEntity;
-// import net.minecraft.entity.mob.WitherSkeletonEntity;
-// import net.minecraft.entity.mob.SkeletonEntity;
-// import net.minecraft.entity.mob.AbstractSkeletonEntity;
 
 public class SoulReaperEntity extends HostileEntity implements RangedAttackMob {
   private final BowAttackGoal<SoulReaperEntity> bowAttackGoal = new BowAttackGoal<>(this, 1.0D, 40, 15.0F);
@@ -65,7 +61,6 @@ public class SoulReaperEntity extends HostileEntity implements RangedAttackMob {
 
   public SoulReaperEntity(EntityType<? extends HostileEntity> entityType, World world) {
     super(entityType, world);
-    // this.updateAttackType();
     this.setPathfindingPenalty(PathNodeType.LAVA, 8.0F);
     this.stepHeight = 1.0F;
     this.experiencePoints = 60;
@@ -114,7 +109,7 @@ public class SoulReaperEntity extends HostileEntity implements RangedAttackMob {
 
   @Override
   public float getActiveEyeHeight(EntityPose pose, EntityDimensions dimensions) {
-    return 2.1F;
+    return 1.6F;
   }
 
   @Override

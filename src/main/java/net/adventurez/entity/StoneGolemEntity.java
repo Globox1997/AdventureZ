@@ -287,7 +287,6 @@ public class StoneGolemEntity extends HostileEntity {
       if (this.isOnSoulSpeedBlock() && !this.getAttributes()
           .hasModifierForAttribute(EntityAttributes.GENERIC_MOVEMENT_SPEED, WALKINSPEEDINCREASE_ID)) {
         this.getAttributeInstance(EntityAttributes.GENERIC_MOVEMENT_SPEED).addTemporaryModifier(WALKINSPEEDINCREASE);
-        this.setVelocity(this.getVelocity().multiply(1D));
       } else if (!this.isOnSoulSpeedBlock() && this.getAttributes()
           .hasModifierForAttribute(EntityAttributes.GENERIC_MOVEMENT_SPEED, WALKINSPEEDINCREASE_ID)) {
         this.getAttributeInstance(EntityAttributes.GENERIC_MOVEMENT_SPEED).removeModifier(WALKINSPEEDINCREASE_ID);
@@ -584,7 +583,7 @@ public class StoneGolemEntity extends HostileEntity {
   }
 
   static {
-    WALKINSPEEDINCREASE_ID = UUID.fromString("766bfa64-11f3-11ea-8d71-362b9e155667");// 766bfa64-11f3-11ea-8d71-362b9e155667
+    WALKINSPEEDINCREASE_ID = UUID.fromString("766bfa64-11f3-11ea-8d71-362b9e155667");
     WALKINSPEEDINCREASE = new EntityAttributeModifier(WALKINSPEEDINCREASE_ID, "LavaAndSoulSpeed", 0.5D,
         EntityAttributeModifier.Operation.MULTIPLY_BASE);
   }
