@@ -17,6 +17,10 @@ public class SpawnInit {
       biome.getEntitySpawnList(EntityInit.SMALLSTONEGOLEM_ENTITY.getSpawnGroup())
           .add(new Biome.SpawnEntry(EntityInit.SMALLSTONEGOLEM_ENTITY, 1, 1, 1));
     }
+    if (biome.equals(Biomes.SOUL_SAND_VALLEY)) {
+      biome.getEntitySpawnList(EntityInit.NIGHTMARE_ENTITY.getSpawnGroup())
+          .add(new Biome.SpawnEntry(EntityInit.SMALLSTONEGOLEM_ENTITY, 1, 1, 1));
+    }
   }
 
 }
