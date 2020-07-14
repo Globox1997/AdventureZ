@@ -33,6 +33,10 @@
         {
           "type": "minecraft:item",
           "name": "minecraft:netherite_scrap"
+        },
+        {
+          "type": "minecraft:item",
+          "name": "adventurez:piglin_flag_block"
         }
       ],
       "conditions": [
@@ -41,8 +45,8 @@
         },
         {
           "condition": "minecraft:random_chance_with_looting",
-          "chance": 0.01,
-          "looting_multiplier": 0.01
+          "chance": 0.005,
+          "looting_multiplier": 0.005
         }
       ]
     }
