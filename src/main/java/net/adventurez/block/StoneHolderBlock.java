@@ -29,7 +29,6 @@ public class StoneHolderBlock extends Block implements BlockEntityProvider {
 
   @Override
   public BlockEntity createBlockEntity(BlockView view) {
-
     return new StoneHolderEntity();
   }
 
