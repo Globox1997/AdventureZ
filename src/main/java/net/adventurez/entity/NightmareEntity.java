@@ -21,12 +21,14 @@ import net.minecraft.sound.SoundCategory;
 import net.minecraft.sound.SoundEvent;
 import net.minecraft.util.ActionResult;
 import net.minecraft.util.Hand;
+import net.minecraft.util.math.BlockPos;
 import net.minecraft.entity.mob.SkeletonHorseEntity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.Items;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.particle.ParticleTypes;
+import net.minecraft.world.Difficulty;
 import net.minecraft.world.LocalDifficulty;
 import net.minecraft.world.World;
 import net.minecraft.world.WorldAccess;
@@ -47,7 +49,7 @@ public class NightmareEntity extends SkeletonHorseEntity {
 
   public static DefaultAttributeContainer.Builder createNightmareAttributes() {
     return createBaseHorseAttributes().add(EntityAttributes.GENERIC_MAX_HEALTH, 40.0D)
-        .add(EntityAttributes.GENERIC_MOVEMENT_SPEED, 0.21D).add(EntityAttributes.GENERIC_ATTACK_DAMAGE, 7.0D);
+        .add(EntityAttributes.GENERIC_MOVEMENT_SPEED, 0.215D).add(EntityAttributes.GENERIC_ATTACK_DAMAGE, 7.0D);
   }
 
   @Nullable
@@ -185,8 +187,14 @@ public class NightmareEntity extends SkeletonHorseEntity {
   }
 
   @Override
-  public boolean canSpawn(WorldView world) {
-    return !world.containsFluid(this.getBoundingBox());
+  public boolean canSpawn(WorldView view) {
+    BlockPos blockunderentity = new BlockPos(this.getX(), this.getY() - 1, this.getZ());
+    BlockPos posentity = new BlockPos(this.getX(), this.getY(), this.getZ());
+    return view.intersectsEntities(this)
+        && this.world.getLocalDifficulty(posentity).getGlobalDifficulty() != Difficulty.PEACEFUL
+        && this.world.getLightLevel(posentity) <= 5
+        && this.world.getBlockState(posentity).getBlock().canMobSpawnInside() && this.world
+            .getBlockState(blockunderentity).allowsSpawning(view, blockunderentity, EntityInit.NIGHTMARE_ENTITY);
   }
 
   @Override
