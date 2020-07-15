@@ -43,11 +43,10 @@ import net.minecraft.entity.mob.PathAwareEntity;
 import net.minecraft.world.LocalDifficulty;
 import net.minecraft.world.World;
 import net.minecraft.world.WorldAccess;
-import net.minecraft.world.WorldView;
 
 public class SoulReaperEntity extends HostileEntity implements RangedAttackMob {
   private final BowAttackGoal<SoulReaperEntity> bowAttackGoal = new BowAttackGoal<>(this, 1.0D, 40, 15.0F);
-  private final MeleeAttackGoal meleeAttackGoal = new MeleeAttackGoal(this, 1.2D, false) {
+  private final MeleeAttackGoal meleeAttackGoal = new MeleeAttackGoal(this, 1.2D, true) {
     public void stop() {
       super.stop();
       SoulReaperEntity.this.setAttacking(false);
@@ -198,11 +197,6 @@ public class SoulReaperEntity extends HostileEntity implements RangedAttackMob {
   @Override
   public void equipStack(EquipmentSlot slot, ItemStack stack) {
     super.equipStack(slot, stack);
-  }
-
-  @Override
-  public boolean canSpawn(WorldView world) {
-    return !world.containsFluid(this.getBoundingBox());
   }
 
   @Override
