@@ -120,14 +120,15 @@ public class SoulReaperModel<T extends MobEntity & RangedAttackMob> extends Bipe
       this.leftArm.roll = 0.0F;
       this.rightArm.yaw = -(0.1F - k * 0.6F);
       this.leftArm.yaw = 0.1F - k * 0.6F;
-      this.rightArm.pitch = -1.5707964F;
-      this.leftArm.pitch = -1.5707964F;
+      this.rightArm.pitch = -1.2707964F;
+      // this.leftArm.pitch = 0.1F;
+      this.leftArm.pitch = MathHelper.cos(f * 0.6662F) * g * 0.5F;
       ModelPart var10000 = this.rightArm;
-      var10000.pitch -= k * 1.2F - l * 0.4F;
-      var10000 = this.leftArm;
       var10000.pitch -= k * 1.2F - l * 0.4F;
     }
     if (this.riding) {
+      this.rightArm.pitch = 0.3F;
+      this.leftArm.pitch = 0.3F;
       if (mobEntity.isAttacking()) {
         if (itemStack.getItem() == Items.BOW) {
           this.rightArm.yaw = -0.1F + this.head.yaw - 0.4F;
@@ -142,11 +143,9 @@ public class SoulReaperModel<T extends MobEntity & RangedAttackMob> extends Bipe
           this.leftArm.roll = 0.0F;
           this.rightArm.yaw = -(0.1F - k * 0.6F);
           this.leftArm.yaw = 0.1F - k * 0.6F;
-          this.rightArm.pitch = -1.0F;
-          this.leftArm.pitch = -1.0F;
+          this.rightArm.pitch = -0.7F;
+          this.leftArm.pitch = 0.3F;
           ModelPart var10000 = this.rightArm;
-          var10000.pitch -= k * 1.2F - l * 0.4F;
-          var10000 = this.leftArm;
           var10000.pitch -= k * 1.2F - l * 0.4F;
         }
       }
