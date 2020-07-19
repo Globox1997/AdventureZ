@@ -24,8 +24,6 @@ import net.minecraft.world.World;
 import net.minecraft.nbt.CompoundTag;
 
 public class StoneGolemArm extends Item {
-  private int stoneCounter;
-  public boolean lavalight = false;
 
   public StoneGolemArm(Settings settings) {
     super(settings);
@@ -38,10 +36,13 @@ public class StoneGolemArm extends Item {
 
   @Override
   public void onStoppedUsing(ItemStack stack, World world, LivingEntity user, int remainingUseTicks) {
+    CompoundTag tags = stack.getTag();
     if (user instanceof PlayerEntity) {
       PlayerEntity playerEntity = (PlayerEntity) user;
+      int stoneCounter;
       stoneCounter = this.getMaxUseTime(stack) - remainingUseTicks;
-      if (stoneCounter >= 10) {
+      if (stoneCounter >= 30) {
+        tags.putBoolean("lavalight", false);
         if (!world.isClient) {
           float strength = getStoneStrength(stoneCounter);
           stack.damage(1, playerEntity, (p) -> p.sendToolBreakStatus(p.getActiveHand()));
@@ -58,15 +59,10 @@ public class StoneGolemArm extends Item {
   @Override
   public TypedActionResult<ItemStack> use(World world, PlayerEntity user, Hand hand) {
     ItemStack itemStack = user.getStackInHand(hand);
-    CompoundTag tags = itemStack.getTag();
     if (itemStack.getDamage() >= itemStack.getMaxDamage() - 1) {
       return TypedActionResult.fail(itemStack);
     } else {
       user.setCurrentHand(hand);
-      itemStack.setTag(new CompoundTag());
-      tags = itemStack.getTag();
-      tags.putInt("stonecounter", (int) world.getTime());
-      tags.putBoolean("lavalight", true);
       return TypedActionResult.success(itemStack);
     }
   }
@@ -79,9 +75,12 @@ public class StoneGolemArm extends Item {
     if (selected && !world.isClient) {
       player.addStatusEffect(slowness);
     }
-    if (stack.hasTag() && (tags.getInt("stonecounter") + 40) < (int) world.getTime()) {
-      tags.putBoolean("lavalight", false);
+    if (player.getItemUseTimeLeft() < 71970 && player.getItemUseTimeLeft() != 0 && world.isClient) {
+      stack.setTag(new CompoundTag());
+      tags = stack.getTag();
+      tags.putBoolean("lavalight", true);
     }
+
   }
 
   @Override
@@ -102,8 +101,8 @@ public class StoneGolemArm extends Item {
   @Override
   public boolean postHit(ItemStack stack, LivingEntity target, LivingEntity attacker) {
     Vec3d vec3d_1 = attacker.getRotationVec(1.0F);
-    double x_vector = vec3d_1.x / 3D;
-    double z_vector = vec3d_1.z / 3D;
+    double x_vector = vec3d_1.x / 2D;
+    double z_vector = vec3d_1.z / 2D;
     stack.damage(1, attacker, (p) -> p.sendToolBreakStatus(p.getActiveHand()));
     target.addVelocity(x_vector, 0.45D, z_vector);
     return true;
