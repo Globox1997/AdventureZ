@@ -23,7 +23,7 @@ public class ThrownRockRenderer extends EntityRenderer<ThrownRockEntity> {
    }
 
    @Override
-   protected int getBlockLight(ThrownRockEntity ThrownRockEntity, BlockPos blockPos) {
+   public int getBlockLight(ThrownRockEntity ThrownRockEntity, BlockPos blockPos) {
       return 15;
    }
 

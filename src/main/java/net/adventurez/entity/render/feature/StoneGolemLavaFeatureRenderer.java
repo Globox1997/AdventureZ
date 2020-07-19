@@ -18,13 +18,7 @@ import net.minecraft.util.Identifier;
 public class StoneGolemLavaFeatureRenderer
     extends FeatureRenderer<StoneGolemEntity, StoneGolemModel<StoneGolemEntity>> {
   private static final RenderLayer LAVA_LAYER = RenderLayer
-
       .getEntityTranslucentCull(new Identifier("adventurez:textures/entity/lava_feature_golem.png"));
-
-  // .getItemEntityTranslucentCull(new
-  // Identifier("adventurez:textures/entity/lava_feature_golem.png"));
-  // .getEyes(new
-  // Identifier("adventurez:textures/entity/lava_feature_golem.png"));
 
   public StoneGolemLavaFeatureRenderer(
       FeatureRendererContext<StoneGolemEntity, StoneGolemModel<StoneGolemEntity>> featureRendererContext) {
@@ -40,7 +34,6 @@ public class StoneGolemLavaFeatureRenderer
           stoneGolemEntity.getDataTracker().get(StoneGolemEntity.lavaTexture), OverlayTexture.DEFAULT_UV, 1.0F, 1.0F,
           1.0F, 1.0F);
     }
-    // 15728640
   }
 
 }

@@ -72,6 +72,8 @@ import net.minecraft.entity.boss.BossBar;
 //Ffast run mode
 // System.out.println(this.squaredDistanceTo(getTarget()));
 
+import net.minecraft.entity.mob.EndermanEntity;
+
 public class StoneGolemEntity extends HostileEntity {
   public static final TrackedData<Integer> throwCooldown = DataTracker.registerData(StoneGolemEntity.class,
       TrackedDataHandlerRegistry.INTEGER);

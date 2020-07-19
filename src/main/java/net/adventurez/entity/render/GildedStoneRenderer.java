@@ -24,7 +24,7 @@ public class GildedStoneRenderer extends EntityRenderer<GildedStoneEntity> {
   }
 
   @Override
-  protected int getBlockLight(GildedStoneEntity gildedStoneEntity, BlockPos blockPos) {
+  public int getBlockLight(GildedStoneEntity gildedStoneEntity, BlockPos blockPos) {
     return 15;
   }
 

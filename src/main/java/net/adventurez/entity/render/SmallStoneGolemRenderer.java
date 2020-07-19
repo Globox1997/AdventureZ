@@ -18,7 +18,8 @@ public class SmallStoneGolemRenderer
     super(entityRenderDispatcher, new SmallStoneGolemModel<>(), 0.7F);
   }
 
-  protected void scale(SmallStoneGolemEntity stone, MatrixStack matrixStack, float f) {
+  @Override
+  public void scale(SmallStoneGolemEntity stone, MatrixStack matrixStack, float f) {
     matrixStack.scale(1.0F, 1.0F, 1.0F);
   }
 

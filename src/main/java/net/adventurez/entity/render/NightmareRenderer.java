@@ -1,6 +1,7 @@
 package net.adventurez.entity.render;
 
 import net.adventurez.entity.NightmareEntity;
+import net.adventurez.entity.render.feature.NightmareEyesFeatureRenderer;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
 import net.minecraft.client.render.entity.EntityRenderDispatcher;
@@ -15,6 +16,7 @@ public final class NightmareRenderer
 
   public NightmareRenderer(EntityRenderDispatcher entityRenderDispatcher) {
     super(entityRenderDispatcher, new HorseEntityModel<>(0.0F), 1.1F);
+    this.addFeature(new NightmareEyesFeatureRenderer(this));
   }
 
   @Override

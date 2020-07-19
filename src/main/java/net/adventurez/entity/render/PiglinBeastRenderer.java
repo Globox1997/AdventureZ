@@ -17,7 +17,8 @@ public class PiglinBeastRenderer extends MobEntityRenderer<PiglinBeastEntity, Pi
     super(entityRenderDispatcher, new PiglinBeastModel<>(), 1F);
   }
 
-  protected void scale(PiglinBeastEntity beast, MatrixStack matrixStack, float f) {
+  @Override
+  public void scale(PiglinBeastEntity beast, MatrixStack matrixStack, float f) {
     matrixStack.scale(1.1F, 1.1F, 1.1F);
   }
 

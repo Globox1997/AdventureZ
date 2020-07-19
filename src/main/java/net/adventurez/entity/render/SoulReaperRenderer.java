@@ -2,6 +2,7 @@ package net.adventurez.entity.render;
 
 import net.adventurez.entity.SoulReaperEntity;
 import net.adventurez.entity.model.SoulReaperModel;
+import net.adventurez.entity.render.feature.SoulReaperEyesFeatureRenderer;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
 import net.minecraft.client.render.entity.BipedEntityRenderer;
@@ -15,6 +16,7 @@ public class SoulReaperRenderer extends BipedEntityRenderer<SoulReaperEntity, So
 
   public SoulReaperRenderer(EntityRenderDispatcher entityRenderDispatcher) {
     super(entityRenderDispatcher, new SoulReaperModel<>(), 0.5F);
+    this.addFeature(new SoulReaperEyesFeatureRenderer(this));
   }
 
   @Override

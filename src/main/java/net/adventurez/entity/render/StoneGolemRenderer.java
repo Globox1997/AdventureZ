@@ -21,7 +21,8 @@ public class StoneGolemRenderer extends MobEntityRenderer<StoneGolemEntity, Ston
     this.addFeature(new StoneGolemBlueLavaFeatureRenderer(this));
   }
 
-  protected void scale(StoneGolemEntity stone, MatrixStack matrixStack, float f) {
+  @Override
+  public void scale(StoneGolemEntity stone, MatrixStack matrixStack, float f) {
     matrixStack.scale(2.4F, 2.4F, 2.4F);
   }
 
