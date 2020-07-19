@@ -1,15 +1,25 @@
 package net.adventurez.block;
 
+import java.util.List;
+
 import net.adventurez.block.entity.StoneHolderEntity;
+import net.adventurez.entity.Nullable;
 import net.adventurez.init.ItemInit;
+import net.fabricmc.api.EnvType;
+import net.fabricmc.api.Environment;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockEntityProvider;
 import net.minecraft.block.BlockState;
 import net.minecraft.block.ShapeContext;
 import net.minecraft.block.entity.BlockEntity;
+import net.minecraft.client.MinecraftClient;
+import net.minecraft.client.item.TooltipContext;
+import net.minecraft.client.util.InputUtil;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.inventory.Inventory;
 import net.minecraft.item.ItemStack;
+import net.minecraft.text.Text;
+import net.minecraft.text.TranslatableText;
 import net.minecraft.util.ActionResult;
 import net.minecraft.util.Hand;
 import net.minecraft.util.ItemScatterer;
@@ -30,6 +40,18 @@ public class StoneHolderBlock extends Block implements BlockEntityProvider {
   @Override
   public BlockEntity createBlockEntity(BlockView view) {
     return new StoneHolderEntity();
+  }
+
+  @Override
+  @Environment(EnvType.CLIENT)
+  public void buildTooltip(ItemStack stack, @Nullable BlockView view, List<Text> tooltip, TooltipContext options) {
+    tooltip.add(new TranslatableText("item.adventurez.moreinfo.tooltip"));
+    if (InputUtil.isKeyPressed(MinecraftClient.getInstance().getWindow().getHandle(), 340)) {
+      tooltip.remove(new TranslatableText("item.adventurez.moreinfo.tooltip"));
+      tooltip.add(new TranslatableText("block.adventurez.stone_holder_block.tooltip"));
+      tooltip.add(new TranslatableText("block.adventurez.stone_holder_block.tooltip2"));
+      tooltip.add(new TranslatableText("block.adventurez.stone_holder_block.tooltip3"));
+    }
   }
 
   @Override

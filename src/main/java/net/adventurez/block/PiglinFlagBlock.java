@@ -7,16 +7,28 @@ import net.minecraft.block.BlockState;
 import net.minecraft.block.HorizontalFacingBlock;
 import net.minecraft.block.ShapeContext;
 import net.minecraft.block.entity.BlockEntity;
+import net.minecraft.client.MinecraftClient;
+import net.minecraft.client.item.TooltipContext;
+import net.minecraft.client.util.InputUtil;
 import net.minecraft.entity.ai.pathing.NavigationType;
 import net.minecraft.item.ItemPlacementContext;
+import net.minecraft.item.ItemStack;
 import net.minecraft.state.StateManager;
 import net.minecraft.state.property.DirectionProperty;
+import net.minecraft.text.Text;
+import net.minecraft.text.TranslatableText;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Direction;
 import net.minecraft.util.shape.VoxelShape;
 import net.minecraft.util.shape.VoxelShapes;
 import net.minecraft.world.BlockView;
+
+import java.util.List;
+
 import net.adventurez.block.entity.PiglinFlagEntity;
+import net.adventurez.entity.Nullable;
+import net.fabricmc.api.EnvType;
+import net.fabricmc.api.Environment;
 
 public class PiglinFlagBlock extends Block implements BlockEntityProvider {
   public static final DirectionProperty FACING;
@@ -39,6 +51,18 @@ public class PiglinFlagBlock extends Block implements BlockEntityProvider {
   @Override
   public BlockEntity createBlockEntity(BlockView view) {
     return new PiglinFlagEntity();
+  }
+
+  @Override
+  @Environment(EnvType.CLIENT)
+  public void buildTooltip(ItemStack stack, @Nullable BlockView view, List<Text> tooltip, TooltipContext options) {
+    tooltip.add(new TranslatableText("item.adventurez.moreinfo.tooltip"));
+    if (InputUtil.isKeyPressed(MinecraftClient.getInstance().getWindow().getHandle(), 340)) {
+      tooltip.remove(new TranslatableText("item.adventurez.moreinfo.tooltip"));
+      tooltip.add(new TranslatableText("block.adventurez.piglin_flag_block.tooltip"));
+      tooltip.add(new TranslatableText("block.adventurez.piglin_flag_block.tooltip2"));
+      tooltip.add(new TranslatableText("block.adventurez.piglin_flag_block.tooltip3"));
+    }
   }
 
   @Override

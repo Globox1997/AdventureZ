@@ -12,7 +12,9 @@ import java.util.List;
 import java.util.function.Supplier;
 
 import net.adventurez.entity.GildedStoneEntity;
+import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.item.TooltipContext;
+import net.minecraft.client.util.InputUtil;
 import net.minecraft.entity.EntityType;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.Item;
@@ -37,7 +39,11 @@ public class GildedStoneItem extends Item {
   @Override
   public void appendTooltip(ItemStack itemStack, World world, List<Text> tooltip, TooltipContext tooltipContext) {
     tooltip.add(new TranslatableText("item.adventurez.gilded_stone_item.tooltip"));
-    tooltip.add(new TranslatableText("item.adventurez.gilded_stone_item.tooltip2"));
+    tooltip.add(new TranslatableText("item.adventurez.moreinfo.tooltip"));
+    if (InputUtil.isKeyPressed(MinecraftClient.getInstance().getWindow().getHandle(), 340)) {
+      tooltip.remove(new TranslatableText("item.adventurez.moreinfo.tooltip"));
+      tooltip.add(new TranslatableText("item.adventurez.gilded_stone_item.tooltip2"));
+    }
   }
 
   @Override

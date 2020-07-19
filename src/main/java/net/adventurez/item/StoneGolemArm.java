@@ -4,7 +4,9 @@ import java.util.List;
 
 import net.adventurez.entity.ThrownRockEntity;
 import net.adventurez.init.SoundInit;
+import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.item.TooltipContext;
+import net.minecraft.client.util.InputUtil;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.effect.StatusEffect;
@@ -32,6 +34,11 @@ public class StoneGolemArm extends Item {
   @Override
   public void appendTooltip(ItemStack itemStack, World world, List<Text> tooltip, TooltipContext tooltipContext) {
     tooltip.add(new TranslatableText("item.adventurez.stone_golem_arm.tooltip"));
+    tooltip.add(new TranslatableText("item.adventurez.moreinfo.tooltip"));
+    if (InputUtil.isKeyPressed(MinecraftClient.getInstance().getWindow().getHandle(), 340)) {
+      tooltip.remove(new TranslatableText("item.adventurez.moreinfo.tooltip"));
+      tooltip.add(new TranslatableText("item.adventurez.stone_golem_arm.tooltip2"));
+    }
   }
 
   @Override

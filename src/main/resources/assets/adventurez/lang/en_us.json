@@ -14,10 +14,11 @@
   "item.adventurez.spawn_soul_reaper": "Soul Reaper Spawn Egg",
 
   "item.adventurez.gilded_stone_item": "Gilded Blackstone Shard",
-  "item.adventurez.gilded_stone_item.tooltip": "Placeable in the Stone Holder",
-  "item.adventurez.gilded_stone_item.tooltip2": "§1Rare",
+  "item.adventurez.gilded_stone_item.tooltip2": "Placeable in the Stone Holder",
+  "item.adventurez.gilded_stone_item.tooltip": "§1Rare",
   "item.adventurez.stone_golem_arm": "Blackstone´s Arm",
   "item.adventurez.stone_golem_arm.tooltip": "§5Epic",
+  "item.adventurez.stone_golem_arm.tooltip2": "Hold Right Click to Charge Arm",
   "item.adventurez.stone_golem_heart": "Blackstone Golem Heart",
   "item.adventurez.stone_golem_heart.tooltip": "§5Epic Material",
   "item.adventurez.stone_golem_helmet": "Gilded Netherite Helmet",
@@ -26,10 +27,19 @@
   "item.adventurez.stone_golem_boots": "Gilded Netherite Boots",
   "item.adventurez.gilded_netherite_fragment": "Gilded Netherite Fragment",
   "item.adventurez.gilded_netherite_fragment.tooltip": "§5Epic Material",
+  "item.adventurez.gilded_netherite_fragment.tooltip2": "Upgrade Material for the Netherite Armor",
   "item.adventurez.stone_golem_armor.tooltip": "§5Epic",
 
+  "item.adventurez.moreinfo.tooltip": "§8Hold §6Shift §8For More Info",
+
   "block.adventurez.stone_holder_block": "Chiseled Polished Blackstone Holder",
+  "block.adventurez.stone_holder_block.tooltip": "Place 4 Blocks in Circle",
+  "block.adventurez.stone_holder_block.tooltip2": "(With a radius of 5 Blocks)",
+  "block.adventurez.stone_holder_block.tooltip3": "Put Gilded Blackstone Shards inside",
   "block.adventurez.piglin_flag_block": "Piglin Flag",
+  "block.adventurez.piglin_flag_block.tooltip": "Charging Time: 2 Minutes",
+  "block.adventurez.piglin_flag_block.tooltip2": "When Charged:",
+  "block.adventurez.piglin_flag_block.tooltip3": "Calms attacking Piglins when Player gets close",
 
   "adventurez.advancements.stone_golem.title": "Blackstone Golem",
   "adventurez.advancements.stone_golem.description": "Kill the Blackrocky Golem"
