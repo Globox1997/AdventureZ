@@ -79,7 +79,7 @@ public class StoneGolemArmor extends ArmorItem {
   public void inventoryTick(ItemStack stack, World world, Entity entity, int slot, boolean selected) {
     CompoundTag tag = stack.getTag();
     if (tag != null && tag.contains("armor_time")) {
-      if (tag.getInt("armor_time") + 1200 < (int) world.getTime() && tag.getBoolean("activating_armor")) {
+      if (tag.getInt("armor_time") + 1800 < (int) world.getTime() && tag.getBoolean("activating_armor")) {
         tag.putBoolean("activating_armor", false);
       }
       if (tag.getInt("armor_time") + 600 < (int) world.getTime() && tag.getBoolean("activating_armor")) {
@@ -102,7 +102,7 @@ public class StoneGolemArmor extends ArmorItem {
         if (!player.world.isClient) {
           player.addStatusEffect(fire);
         }
-        player.playSound(SoundEvents.ITEM_FIRECHARGE_USE, SoundCategory.PLAYERS, 1.0F, 1.0F);
+        player.playSound(SoundEvents.BLOCK_FIRE_EXTINGUISH, SoundCategory.PLAYERS, 1.0F, 1.0F);
       }
     } else {
       tag.putBoolean("activating_armor", true);
@@ -110,7 +110,7 @@ public class StoneGolemArmor extends ArmorItem {
       tag.putInt("armor_time", (int) player.world.getTime());
       stack.setTag(tag);
       player.addStatusEffect(fire);
-      player.playSound(SoundEvents.ITEM_FIRECHARGE_USE, SoundCategory.PLAYERS, 1.0F, 1.0F);
+      player.playSound(SoundEvents.BLOCK_FIRE_EXTINGUISH, SoundCategory.PLAYERS, 1.0F, 1.0F);
     }
   }
 

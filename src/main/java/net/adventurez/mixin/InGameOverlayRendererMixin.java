@@ -6,6 +6,8 @@ import org.spongepowered.asm.mixin.injection.Redirect;
 
 import net.adventurez.init.ItemInit;
 import net.adventurez.item.armor.StoneGolemArmor;
+import net.fabricmc.api.EnvType;
+import net.fabricmc.api.Environment;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.gui.hud.InGameOverlayRenderer;
 import net.minecraft.client.network.ClientPlayerEntity;
@@ -14,6 +16,7 @@ import net.minecraft.entity.EquipmentSlot;
 import net.minecraft.item.ItemStack;
 
 @Mixin(InGameOverlayRenderer.class)
+@Environment(EnvType.CLIENT)
 public class InGameOverlayRendererMixin {
 
   @Redirect(at = @At(value = "INVOKE", target = "Lnet/minecraft/client/network/ClientPlayerEntity;isOnFire()Z"), method = "net/minecraft/client/gui/hud/InGameOverlayRenderer.renderOverlays(Lnet/minecraft/client/MinecraftClient;Lnet/minecraft/client/util/math/MatrixStack;)V")

@@ -20,7 +20,7 @@ public class KeybindInit {
   public static boolean armorKeyBoolean;
 
   public static void init() {
-    armorKeyBind = new KeyBinding("key.adventurez.activatearmor", InputUtil.Type.KEYSYM, GLFW.GLFW_KEY_X,
+    armorKeyBind = new KeyBinding("key.adventurez.activatearmor", InputUtil.Type.KEYSYM, GLFW.GLFW_KEY_V,
         "category.adventurez.test");
     KeyBindingHelper.registerKeyBinding(armorKeyBind);
     ClientTickEvents.END_CLIENT_TICK.register(client -> {

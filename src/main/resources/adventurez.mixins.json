@@ -6,11 +6,12 @@
   "mixins": [
     "PlayerEntityMixin",
     "OreBlockMixin",
-    "SpawnRestrictionMixin",
-    "InGameOverlayRendererMixin"
+    "SpawnRestrictionMixin"
   ],
   "client": [
-    "ArmorFeatureRendererMixin"
+    "ArmorFeatureRendererMixin",
+    "InGameOverlayRendererMixin",
+    "InGameHudMixin"
   ],
   "injectors": {
     "defaultRequire": 1
