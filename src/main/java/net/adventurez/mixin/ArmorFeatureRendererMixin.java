@@ -36,7 +36,7 @@ public abstract class ArmorFeatureRendererMixin<T extends LivingEntity, M extend
     this.bodyModel = bodyModel;
   }
 
-  @Inject(method = "render(Lnet/minecraft/client/util/math/MatrixStack;Lnet/minecraft/client/render/VertexConsumerProvider;ILnet/minecraft/entity/LivingEntity;FFFFFFLorg/spongepowered/asm/mixin/injection/callback/CallbackInfo;)V", at = @At("FIELD"))
+  @Inject(method = "render", at = @At("FIELD"))
   private void gildedNetheriteActivated(MatrixStack matrixStack, VertexConsumerProvider vertexConsumerProvider, int i,
       T livingEntity, float f, float g, float h, float j, float k, float l, CallbackInfo info) {
     ItemStack golemChestplate = livingEntity.getEquippedStack(EquipmentSlot.CHEST);
@@ -55,7 +55,7 @@ public abstract class ArmorFeatureRendererMixin<T extends LivingEntity, M extend
     }
   }
 
-  @Inject(method = "render(Lnet/minecraft/client/util/math/MatrixStack;Lnet/minecraft/client/render/VertexConsumerProvider;ILnet/minecraft/entity/LivingEntity;FFFFFFLorg/spongepowered/asm/mixin/injection/callback/CallbackInfo;)V", at = @At("TAIL"))
+  @Inject(method = "render", at = @At("TAIL"))
   private void gildedNetheriteActivatedHelmet(MatrixStack matrixStack, VertexConsumerProvider vertexConsumerProvider,
       int i, T livingEntity, float f, float g, float h, float j, float k, float l, CallbackInfo info) {
     ItemStack golemChestplate = livingEntity.getEquippedStack(EquipmentSlot.CHEST);
