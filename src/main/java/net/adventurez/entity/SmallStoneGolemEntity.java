@@ -66,11 +66,6 @@ public class SmallStoneGolemEntity extends HostileEntity {
   }
 
   @Override
-  public boolean cannotDespawn() {
-    return true;
-  }
-
-  @Override
   public EntityGroup getGroup() {
     return EntityGroup.DEFAULT;
   }
