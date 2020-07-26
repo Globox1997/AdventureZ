@@ -121,7 +121,6 @@ public class SoulReaperModel<T extends MobEntity & RangedAttackMob> extends Bipe
       this.rightArm.yaw = -(0.1F - k * 0.6F);
       this.leftArm.yaw = 0.1F - k * 0.6F;
       this.rightArm.pitch = -1.2707964F;
-      // this.leftArm.pitch = 0.1F;
       this.leftArm.pitch = MathHelper.cos(f * 0.6662F) * g * 0.5F;
       ModelPart var10000 = this.rightArm;
       var10000.pitch -= k * 1.2F - l * 0.4F;
