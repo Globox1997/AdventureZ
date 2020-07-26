@@ -9,12 +9,17 @@ import org.spongepowered.asm.mixin.injection.At;
 
 import net.adventurez.entity.PiglinBeastEntity;
 import net.adventurez.init.EntityInit;
-
+import net.adventurez.init.ItemInit;
+import net.adventurez.item.armor.StoneGolemArmor;
+import net.fabricmc.api.EnvType;
+import net.fabricmc.api.Environment;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityType;
+import net.minecraft.entity.EquipmentSlot;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.mob.PiglinEntity;
 import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.item.ItemStack;
 import net.minecraft.entity.SpawnRestriction;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.ChunkPos;
@@ -93,6 +98,15 @@ public abstract class PlayerEntityMixin extends LivingEntity {
       }
     }
     return true;
+  }
+
+  @Override
+  @Environment(EnvType.CLIENT)
+  public boolean doesRenderOnFire() {
+    ItemStack golemChestplate = this.getEquippedStack(EquipmentSlot.CHEST);
+    boolean fireActivated = this.getEquippedStack(EquipmentSlot.CHEST).getItem().equals(ItemInit.STONE_GOLEM_CHESTPLATE)
+        && StoneGolemArmor.fireTime(golemChestplate);
+    return this.isOnFire() && !this.isSpectator() && !fireActivated;
   }
 
 }

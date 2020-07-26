@@ -8,20 +8,26 @@ import com.google.common.collect.Multimap;
 import com.google.common.collect.ImmutableMultimap.Builder;
 
 import net.adventurez.init.ItemInit;
+import net.adventurez.init.KeybindInit;
+import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.item.TooltipContext;
+import net.minecraft.client.util.InputUtil;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EquipmentSlot;
-import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.attribute.EntityAttribute;
 import net.minecraft.entity.attribute.EntityAttributeModifier;
 import net.minecraft.entity.attribute.EntityAttributes;
 import net.minecraft.entity.effect.StatusEffect;
 import net.minecraft.entity.effect.StatusEffectInstance;
+import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.ArmorItem;
 import net.minecraft.item.ArmorMaterial;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemGroup;
 import net.minecraft.item.ItemStack;
+import net.minecraft.nbt.CompoundTag;
+import net.minecraft.sound.SoundCategory;
+import net.minecraft.sound.SoundEvents;
 import net.minecraft.text.Text;
 import net.minecraft.text.TranslatableText;
 import net.minecraft.world.World;
@@ -58,26 +64,64 @@ public class StoneGolemArmor extends ArmorItem {
   @Override
   public void appendTooltip(ItemStack itemStack, World world, List<Text> tooltip, TooltipContext tooltipContext) {
     tooltip.add(new TranslatableText("item.adventurez.stone_golem_armor.tooltip"));
+    tooltip.add(new TranslatableText("item.adventurez.moreinfo.tooltip"));
+    if (InputUtil.isKeyPressed(MinecraftClient.getInstance().getWindow().getHandle(), 340)) {
+      tooltip.remove(new TranslatableText("item.adventurez.moreinfo.tooltip"));
+      tooltip.add(new TranslatableText("item.adventurez.stone_golem_armor.tooltip2"));
+      tooltip.add(new TranslatableText("item.adventurez.stone_golem_armor.tooltip3",
+          KeybindInit.armorKeyBind.getBoundKeyLocalizedText()));
+      tooltip.add(new TranslatableText("item.adventurez.stone_golem_armor.tooltip4"));
+      tooltip.add(new TranslatableText("item.adventurez.stone_golem_armor.tooltip5"));
+    }
   }
 
   @Override
   public void inventoryTick(ItemStack stack, World world, Entity entity, int slot, boolean selected) {
-    LivingEntity player = (LivingEntity) entity;
-    StatusEffectInstance spd = new StatusEffectInstance(StatusEffect.byRawId(1), 9, 0, false, false);
-    StatusEffectInstance haste = new StatusEffectInstance(StatusEffect.byRawId(3), 9, 0, false, false);
-    StatusEffectInstance fire = new StatusEffectInstance(StatusEffect.byRawId(12), 9, 0, false, false);
-
-    if (player.getEquippedStack(EquipmentSlot.FEET).isItemEqual(new ItemStack(ItemInit.STONE_GOLEM_BOOTS))
-        && player.getEquippedStack(EquipmentSlot.LEGS).isItemEqual(new ItemStack(ItemInit.STONE_GOLEM_LEGGINGS))
-        && player.getEquippedStack(EquipmentSlot.CHEST).isItemEqual(new ItemStack(ItemInit.STONE_GOLEM_CHESTPLATE))
-        && player.getEquippedStack(EquipmentSlot.HEAD).isItemEqual(new ItemStack(ItemInit.STONE_GOLEM_HELMET))
-        && !world.isClient) {
-      player.addStatusEffect(haste);
-      player.addStatusEffect(fire);
-      if (player.isSprinting()) {
-        player.addStatusEffect(spd);
+    CompoundTag tag = stack.getTag();
+    if (tag != null && tag.contains("armor_time")) {
+      if (tag.getInt("armor_time") + 1200 < (int) world.getTime() && tag.getBoolean("activating_armor")) {
+        tag.putBoolean("activating_armor", false);
+      }
+      if (tag.getInt("armor_time") + 600 < (int) world.getTime() && tag.getBoolean("activating_armor")) {
+        entity.setFireTicks(0);
+        tag.putBoolean("activating_armor_visuals", false);
       }
     }
+  }
+
+  public static void fireActive(PlayerEntity player, ItemStack stack) {
+    StatusEffectInstance fire = new StatusEffectInstance(StatusEffect.byRawId(12), 600, 0, false, false);
+    if (stack.getItem() != ItemInit.STONE_GOLEM_CHESTPLATE)
+      return;
+    CompoundTag tag = stack.getTag();
+    if (tag != null && tag.contains("activating_armor")) {
+      if (tag.getBoolean("activating_armor") == false) {
+        tag.putBoolean("activating_armor", true);
+        tag.putBoolean("activating_armor_visuals", true);
+        tag.putInt("armor_time", (int) player.world.getTime());
+        if (!player.world.isClient) {
+          player.addStatusEffect(fire);
+        }
+        player.playSound(SoundEvents.ITEM_FIRECHARGE_USE, SoundCategory.PLAYERS, 1.0F, 1.0F);
+      }
+    } else {
+      tag.putBoolean("activating_armor", true);
+      tag.putBoolean("activating_armor_visuals", true);
+      tag.putInt("armor_time", (int) player.world.getTime());
+      stack.setTag(tag);
+      player.addStatusEffect(fire);
+      player.playSound(SoundEvents.ITEM_FIRECHARGE_USE, SoundCategory.PLAYERS, 1.0F, 1.0F);
+    }
+  }
+
+  public static boolean fireTime(ItemStack stack) {
+    CompoundTag tag = stack.getTag();
+    if (tag != null && tag.contains("armor_time")) {
+      if (tag.getBoolean("activating_armor_visuals")) {
+        return true;
+      }
+    }
+    return false;
   }
 
 }

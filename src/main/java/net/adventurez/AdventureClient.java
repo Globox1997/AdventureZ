@@ -1,5 +1,6 @@
 package net.adventurez;
 
+import net.adventurez.init.KeybindInit;
 import net.adventurez.init.ModelProviderInit;
 import net.adventurez.init.RenderInit;
 
@@ -9,6 +10,7 @@ public class AdventureClient implements ClientModInitializer {
 
   @Override
   public void onInitializeClient() {
+    KeybindInit.init();
     RenderInit.init();
     ModelProviderInit.init();
   }
