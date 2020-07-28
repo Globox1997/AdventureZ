@@ -116,7 +116,7 @@ public class StoneGolemArmor extends ArmorItem {
 
   public static boolean fireTime(ItemStack stack) {
     CompoundTag tag = stack.getTag();
-    if (tag != null && tag.contains("armor_time")) {
+    if (tag != null && tag.contains("armor_time") && tag.contains("activating_armor")) {
       if (tag.getBoolean("activating_armor_visuals")) {
         return true;
       }

@@ -47,7 +47,7 @@ public abstract class InGameHudMixin extends DrawableHelper {
     CompoundTag tag = golemChestplate.getTag();
 
     if (this.client.player.getEquippedStack(EquipmentSlot.CHEST).getItem().equals(ItemInit.STONE_GOLEM_CHESTPLATE)) {
-      if (tag != null && tag.contains("armor_time")) {
+      if (tag != null && tag.contains("armor_time") && tag.contains("activating_armor")) {
         if (tag.getBoolean("activating_armor")) {
           int savedTagInt = tag.getInt("armor_time");
           int multiplier = 2;
