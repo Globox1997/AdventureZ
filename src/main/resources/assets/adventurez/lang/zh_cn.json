@@ -29,8 +29,14 @@
   "item.adventurez.gilded_netherite_fragment.tooltip": "§5史诗级材料",
   "item.adventurez.gilded_netherite_fragment.tooltip2": "升级下界合金盔甲所需材料",
   "item.adventurez.stone_golem_armor.tooltip": "§5史诗",
-
+  "item.adventurez.stone_golem_armor.tooltip2": "全套效果",
+  "item.adventurez.stone_golem_armor.tooltip3": "按%1$s激活",
+  "item.adventurez.stone_golem_armor.tooltip4": "§抗火 (0:30)",
+  "item.adventurez.stone_golem_armor.tooltip5": "§c充能 (1:00)",
+  
   "item.adventurez.moreinfo.tooltip": "§8按住§6Shift§8查看详情",
+  "key.adventurez.activatearmor": "激活盔甲",
+  "category.adventurez.test": "AdventureZ按键绑定",
 
   "block.adventurez.stone_holder_block": "錾制磨制黑石基座",
   "block.adventurez.stone_holder_block.tooltip": "请在圆圈内放置4个基座",
