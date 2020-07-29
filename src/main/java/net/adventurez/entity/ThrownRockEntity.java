@@ -92,7 +92,7 @@ public class ThrownRockEntity extends ThrownItemEntity {
          boolean bl2;
          if (entity2 instanceof LivingEntity) {
             LivingEntity livingEntity = (LivingEntity) entity2;
-            bl2 = entity.damage(DamageSource.ANVIL, 16F);
+            bl2 = entity.damage(DamageSource.FALLING_BLOCK, 16F);
             if (bl2) {
                if (entity.isAlive()) {
                   this.dealDamage(livingEntity, entity);
@@ -101,7 +101,7 @@ public class ThrownRockEntity extends ThrownItemEntity {
                }
             }
          } else {
-            bl2 = entity.damage(DamageSource.ANVIL, 16F);
+            bl2 = entity.damage(DamageSource.FALLING_BLOCK, 16F);
          }
 
          if (bl2 && entity instanceof LivingEntity) {
