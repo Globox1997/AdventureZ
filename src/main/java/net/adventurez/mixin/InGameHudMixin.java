@@ -2,7 +2,9 @@ package net.adventurez.mixin;
 
 import com.mojang.blaze3d.systems.RenderSystem;
 
+import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Mixin;
+import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import org.spongepowered.asm.mixin.injection.At;
@@ -21,10 +23,12 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.util.math.MathHelper;
 
-@Mixin(InGameHud.class)
 @Environment(EnvType.CLIENT)
+@Mixin(InGameHud.class)
 public abstract class InGameHudMixin extends DrawableHelper {
-  private final MinecraftClient client;
+  @Shadow
+  @Final
+  private MinecraftClient client;
 
   public InGameHudMixin(MinecraftClient client) {
     this.client = client;
@@ -36,21 +40,19 @@ public abstract class InGameHudMixin extends DrawableHelper {
   }
 
   private void renderFireIconOverlay(MatrixStack matrixStack) {
-    int scaledWidth = this.client.getWindow().getScaledWidth();
-    int scaledHeight = this.client.getWindow().getScaledHeight();
-    int worldTime = (int) this.client.player.world.getTime();
-
-    Sprite sprite = this.client.getStatusEffectSpriteManager().getSprite(StatusEffects.FIRE_RESISTANCE);
-    this.client.getTextureManager().bindTexture(sprite.getAtlas().getId());
-
     ItemStack golemChestplate = this.client.player.getEquippedStack(EquipmentSlot.CHEST);
-    CompoundTag tag = golemChestplate.getTag();
-
-    if (this.client.player.getEquippedStack(EquipmentSlot.CHEST).getItem().equals(ItemInit.STONE_GOLEM_CHESTPLATE)) {
+    if (golemChestplate.getItem().equals(ItemInit.STONE_GOLEM_CHESTPLATE)) {
+      CompoundTag tag = golemChestplate.getTag();
       if (tag != null && tag.contains("armor_time") && tag.contains("activating_armor")) {
         if (tag.getBoolean("activating_armor")) {
+          int scaledWidth = this.client.getWindow().getScaledWidth();
+          int scaledHeight = this.client.getWindow().getScaledHeight();
+          int worldTime = (int) this.client.player.world.getTime();
+          Sprite sprite = this.client.getStatusEffectSpriteManager().getSprite(StatusEffects.FIRE_RESISTANCE);
+          this.client.getTextureManager().bindTexture(sprite.getAtlas().getId());
           int savedTagInt = tag.getInt("armor_time");
           int multiplier = 2;
+
           if (savedTagInt + 600 > worldTime) {
             if (savedTagInt + 540 < worldTime) {
               multiplier = 4;

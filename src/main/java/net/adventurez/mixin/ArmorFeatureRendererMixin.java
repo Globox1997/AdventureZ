@@ -1,6 +1,8 @@
 package net.adventurez.mixin;
 
+import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Mixin;
+import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
@@ -25,11 +27,13 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.math.MathHelper;
 
-@Mixin(ArmorFeatureRenderer.class)
 @Environment(EnvType.CLIENT)
+@Mixin(ArmorFeatureRenderer.class)
 public abstract class ArmorFeatureRendererMixin<T extends LivingEntity, M extends BipedEntityModel<T>, A extends BipedEntityModel<T>>
     extends FeatureRenderer<T, M> {
-  private final A bodyModel;
+  @Shadow
+  @Final
+  private A bodyModel;
 
   public ArmorFeatureRendererMixin(FeatureRendererContext<T, M> context, A leggingsModel, A bodyModel) {
     super(context);
@@ -40,7 +44,7 @@ public abstract class ArmorFeatureRendererMixin<T extends LivingEntity, M extend
   private void gildedNetheriteActivated(MatrixStack matrixStack, VertexConsumerProvider vertexConsumerProvider, int i,
       T livingEntity, float f, float g, float h, float j, float k, float l, CallbackInfo info) {
     ItemStack golemChestplate = livingEntity.getEquippedStack(EquipmentSlot.CHEST);
-    if (livingEntity.getEquippedStack(EquipmentSlot.CHEST).getItem().equals(ItemInit.STONE_GOLEM_CHESTPLATE)) {
+    if (golemChestplate.getItem().equals(ItemInit.STONE_GOLEM_CHESTPLATE)) {
       if (StoneGolemArmor.fireTime(golemChestplate)) {
         VertexConsumer vertexConsumer = ItemRenderer
             .getArmorVertexConsumer(vertexConsumerProvider,
@@ -53,13 +57,14 @@ public abstract class ArmorFeatureRendererMixin<T extends LivingEntity, M extend
             OverlayTexture.DEFAULT_UV, 1.0F, 1.0F, 1.0F, 1.0F);
       }
     }
+
   }
 
   @Inject(method = "render", at = @At("TAIL"))
   private void gildedNetheriteActivatedHelmet(MatrixStack matrixStack, VertexConsumerProvider vertexConsumerProvider,
       int i, T livingEntity, float f, float g, float h, float j, float k, float l, CallbackInfo info) {
     ItemStack golemChestplate = livingEntity.getEquippedStack(EquipmentSlot.CHEST);
-    if (livingEntity.getEquippedStack(EquipmentSlot.CHEST).getItem().equals(ItemInit.STONE_GOLEM_CHESTPLATE)) {
+    if (golemChestplate.getItem().equals(ItemInit.STONE_GOLEM_CHESTPLATE)) {
       if (StoneGolemArmor.fireTime(golemChestplate)) {
         VertexConsumer vertexConsumer = ItemRenderer
             .getArmorVertexConsumer(vertexConsumerProvider,

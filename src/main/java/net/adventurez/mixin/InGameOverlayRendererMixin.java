@@ -15,8 +15,8 @@ import net.minecraft.client.util.math.MatrixStack;
 import net.minecraft.entity.EquipmentSlot;
 import net.minecraft.item.ItemStack;
 
-@Mixin(InGameOverlayRenderer.class)
 @Environment(EnvType.CLIENT)
+@Mixin(InGameOverlayRenderer.class)
 public class InGameOverlayRendererMixin {
 
   @Redirect(at = @At(value = "INVOKE", target = "Lnet/minecraft/client/network/ClientPlayerEntity;isOnFire()Z"), method = "net/minecraft/client/gui/hud/InGameOverlayRenderer.renderOverlays(Lnet/minecraft/client/MinecraftClient;Lnet/minecraft/client/util/math/MatrixStack;)V")
