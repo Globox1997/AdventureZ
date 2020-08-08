@@ -53,26 +53,6 @@ import net.minecraft.world.GameRules;
 import net.minecraft.world.World;
 import net.minecraft.world.WorldView;
 import net.minecraft.entity.boss.BossBar;
-// import net.minecraft.entity.mob.EvokerEntity;
-// import net.minecraft.entity.mob.EvokerFangsEntity;
-// import net.minecraft.client.render.entity.model.IronGolemEntityModel;
-// import net.minecraft.client.render.entity.EnderDragonEntityRenderer;
-// import net.minecraft.entity.boss.dragon.EnderDragonEntity;
-// import net.minecraft.entity.passive.IronGolemEntity;
-// import net.minecraft.entity.mob.HostileEntity;
-// import net.minecraft.entity.mob.ZombieEntity;
-// import net.minecraft.entity.projectile.WitherSkullEntity;
-// import net.minecraft.entity.projectile.FireballEntity;
-// import net.minecraft.entity.projectile.thrown.SnowballEntity;
-// import net.minecraft.item.BowItem;
-// import net.minecraft.entity.boss.WitherEntity;
-// import net.minecraft.entity.mob.RavagerEntity;
-// import net.minecraft.entity.mob.BlazeEntity;
-// System.out.println("Joooonge");
-//Ffast run mode
-// System.out.println(this.squaredDistanceTo(getTarget()));
-
-import net.minecraft.entity.mob.EndermanEntity;
 
 public class StoneGolemEntity extends HostileEntity {
   public static final TrackedData<Integer> throwCooldown = DataTracker.registerData(StoneGolemEntity.class,
