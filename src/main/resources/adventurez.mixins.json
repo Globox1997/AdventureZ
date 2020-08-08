@@ -6,7 +6,8 @@
   "mixins": [
     "PlayerEntityMixin",
     "OreBlockMixin",
-    "SpawnRestrictionMixin"
+    "SpawnRestrictionMixin",
+    "PiglinBrainMixin"
   ],
   "client": [
     "ArmorFeatureRendererMixin",
