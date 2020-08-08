@@ -200,6 +200,11 @@ public class NightmareEntity extends SkeletonHorseEntity {
     return false;
   }
 
+  @Override
+  public int getLimitPerChunk() {
+    return 1;
+  }
+
   static {
     WALKINSPEEDINCREASE_ID = UUID.fromString("766bfa64-11f3-11ea-8d71-362b9e155667");
     WALKINSPEEDINCREASE = new EntityAttributeModifier(WALKINSPEEDINCREASE_ID, "LavaAndSoulSpeed", 0.5D,
