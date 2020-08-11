@@ -64,8 +64,4 @@ public class SmallStoneGolemModel<T extends SmallStoneGolemEntity> extends Compo
     this.leftArm.pitch = -0.5F * MathHelper.method_24504(f, 13.0F) * g * 1.3F - 0.6109F;
   }
 
-  @Override
-  public void animateModel(T stoneGolem, float f, float g, float h) {
-  }
-
 }
