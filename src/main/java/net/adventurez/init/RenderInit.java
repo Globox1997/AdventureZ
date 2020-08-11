@@ -31,8 +31,12 @@ public class RenderInit {
                                 (dispatcher, context) -> new NightmareRenderer(dispatcher));
                 EntityRendererRegistry.INSTANCE.register(EntityInit.SOULREAPER_ENTITY,
                                 (dispatcher, context) -> new SoulReaperRenderer(dispatcher));
+                EntityRendererRegistry.INSTANCE.register(EntityInit.NECROMANCER_ENTITY,
+                                (dispatcher, context) -> new NecromancerRenderer(dispatcher));
+                EntityRendererRegistry.INSTANCE.register(EntityInit.WITHERPUPPET_ENTITY,
+                                (dispatcher, context) -> new WitherPuppetRenderer(dispatcher));
                 // EntityRendererRegistry.INSTANCE.register(EntityInit.GRYPHON_ENTITY,
-                //                 (dispatcher, context) -> new GryphonRenderer(dispatcher));
+                // (dispatcher, context) -> new GryphonRenderer(dispatcher));
 
                 // Network
                 registerClientboundPackets();

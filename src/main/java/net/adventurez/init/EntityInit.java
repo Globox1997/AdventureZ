@@ -34,9 +34,16 @@ public class EntityInit {
         public static final EntityType<SoulReaperEntity> SOULREAPER_ENTITY = FabricEntityTypeBuilder
                         .create(SpawnGroup.MONSTER, SoulReaperEntity::new).trackable(74, 2).fireImmune()
                         .dimensions(EntityDimensions.fixed(0.7F, 2.4F)).build();
-        // public static final EntityType<GryphonEntity> GRYPHON_ENTITY = FabricEntityTypeBuilder
-        //                 .create(SpawnGroup.CREATURE, GryphonEntity::new).trackable(74, 2)
-        //                 .dimensions(EntityDimensions.fixed(1.4F, 1.6F)).build();
+        public static final EntityType<NecromancerEntity> NECROMANCER_ENTITY = FabricEntityTypeBuilder
+                        .create(SpawnGroup.MONSTER, NecromancerEntity::new).trackable(74, 2).fireImmune()
+                        .dimensions(EntityDimensions.fixed(0.7F, 2.4F)).build();
+        public static final EntityType<WitherPuppetEntity> WITHERPUPPET_ENTITY = FabricEntityTypeBuilder
+                        .create(SpawnGroup.MONSTER, WitherPuppetEntity::new).trackable(74, 2).fireImmune()
+                        .dimensions(EntityDimensions.fixed(0.7F, 2.4F)).build();
+        // public static final EntityType<GryphonEntity> GRYPHON_ENTITY =
+        // FabricEntityTypeBuilder
+        // .create(SpawnGroup.CREATURE, GryphonEntity::new).trackable(74, 2)
+        // .dimensions(EntityDimensions.fixed(1.4F, 1.6F)).build();
 
         public static void init() {
                 Registry.register(Registry.ENTITY_TYPE, new Identifier("adventurez", "stone_golem"), STONEGOLEM_ENTITY);
@@ -49,7 +56,12 @@ public class EntityInit {
                                 PIGLINBEAST_ENTITY);
                 Registry.register(Registry.ENTITY_TYPE, new Identifier("adventurez", "nightmare"), NIGHTMARE_ENTITY);
                 Registry.register(Registry.ENTITY_TYPE, new Identifier("adventurez", "soul_reaper"), SOULREAPER_ENTITY);
-              //  Registry.register(Registry.ENTITY_TYPE, new Identifier("adventurez", "gryphon"), GRYPHON_ENTITY);
+                Registry.register(Registry.ENTITY_TYPE, new Identifier("adventurez", "necromancer"),
+                                NECROMANCER_ENTITY);
+                Registry.register(Registry.ENTITY_TYPE, new Identifier("adventurez", "wither_puppet"),
+                                WITHERPUPPET_ENTITY);
+                // Registry.register(Registry.ENTITY_TYPE, new Identifier("adventurez",
+                // "gryphon"), GRYPHON_ENTITY);
 
                 // Attributes
                 FabricDefaultAttributeRegistry.register(STONEGOLEM_ENTITY,
@@ -61,7 +73,12 @@ public class EntityInit {
                 FabricDefaultAttributeRegistry.register(NIGHTMARE_ENTITY, NightmareEntity.createNightmareAttributes());
                 FabricDefaultAttributeRegistry.register(SOULREAPER_ENTITY,
                                 SoulReaperEntity.createSoulReaperAttributes());
-               // FabricDefaultAttributeRegistry.register(GRYPHON_ENTITY, GryphonEntity.createGryphonAttributes());
+                FabricDefaultAttributeRegistry.register(NECROMANCER_ENTITY,
+                                NecromancerEntity.createNecromancerAttributes());
+                FabricDefaultAttributeRegistry.register(WITHERPUPPET_ENTITY,
+                                WitherPuppetEntity.createWitherPuppetAttributes());
+                // FabricDefaultAttributeRegistry.register(GRYPHON_ENTITY,
+                // GryphonEntity.createGryphonAttributes());
 
                 // Spawn Eggs
                 Registry.register(Registry.ITEM, new Identifier("adventurez", "spawn_stone_golem"), new SpawnEggItem(
@@ -75,7 +92,9 @@ public class EntityInit {
                                 NIGHTMARE_ENTITY, 1381653, 3012863, new Item.Settings().group(ItemGroup.MISC)));
                 Registry.register(Registry.ITEM, new Identifier("adventurez", "spawn_soul_reaper"), new SpawnEggItem(
                                 SOULREAPER_ENTITY, 1381653, 5329747, new Item.Settings().group(ItemGroup.MISC)));
-                // Registry.register(Registry.ITEM, new Identifier("adventurez", "spawn_gryphon"), new SpawnEggItem(
-                //                 GRYPHON_ENTITY, 1381653, 5329747, new Item.Settings().group(ItemGroup.MISC)));
+                // Registry.register(Registry.ITEM, new Identifier("adventurez",
+                // "spawn_gryphon"), new SpawnEggItem(
+                // GRYPHON_ENTITY, 1381653, 5329747, new
+                // Item.Settings().group(ItemGroup.MISC)));
         }
 }
