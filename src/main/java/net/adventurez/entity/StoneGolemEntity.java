@@ -42,6 +42,7 @@ import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.particle.ParticleTypes;
 import net.minecraft.server.network.ServerPlayerEntity;
+import net.minecraft.server.world.ServerWorld;
 import net.minecraft.sound.SoundEvent;
 import net.minecraft.text.Text;
 import net.minecraft.util.math.BlockPos;
@@ -323,7 +324,7 @@ public class StoneGolemEntity extends HostileEntity {
 
   private void roar() {
     if (this.isAlive()) {
-      List<Entity> list = this.world.getEntities(LivingEntity.class, this.getBoundingBox().expand(5.0D),
+      List<Entity> list = this.world.getEntitiesByClass(LivingEntity.class, this.getBoundingBox().expand(5.0D),
           NOT_STONEGOLEM);
 
       Entity entity;
@@ -509,7 +510,7 @@ public class StoneGolemEntity extends HostileEntity {
       }
 
       if (entity != null) {
-        entity.onKilledOther(this);
+        entity.onKilledOther((ServerWorld) this.world, this);
       }
 
       this.dead = true;

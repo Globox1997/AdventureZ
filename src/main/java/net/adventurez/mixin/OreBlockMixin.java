@@ -10,8 +10,10 @@ import net.minecraft.block.BlockState;
 import net.minecraft.block.Blocks;
 import net.minecraft.block.OreBlock;
 import net.minecraft.entity.Entity;
+import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.SpawnRestriction;
 import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.predicate.entity.EntityPredicates;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.ChunkPos;
 import net.minecraft.util.math.MathHelper;
@@ -25,10 +27,11 @@ public abstract class OreBlockMixin {
   private boolean isBeastNear = false;
 
   public void onBroken(WorldAccess world, BlockPos pos, BlockState state) {
-    PlayerEntity player = world.getWorld().getClosestPlayer((double) pos.getX(), (double) pos.getY(),
-        (double) pos.getZ(), 16D, false);
+    PlayerEntity player = world.getClosestPlayer((double) pos.getX(), (double) pos.getY(), (double) pos.getZ(), 16D,
+        false);
     if (state.isOf(Blocks.NETHER_GOLD_ORE) && !world.isClient() && player.world.getRegistryKey() == World.NETHER) {
-      List<Entity> list = world.getEntities(null, player.getBoundingBox().expand(40D));
+      List<Entity> list = world.getEntitiesByClass(LivingEntity.class, player.getBoundingBox().expand(40D),
+          EntityPredicates.EXCEPT_SPECTATOR);
       for (int i = 0; i < list.size(); ++i) {
         Entity entity = (Entity) list.get(i);
         if (entity.getType() == EntityInit.PIGLINBEAST_ENTITY) {
@@ -37,7 +40,7 @@ public abstract class OreBlockMixin {
       }
       int spawnChanceInt = world.getRandom().nextInt(200);
       if (spawnChanceInt == 22 && !isBeastNear) {
-        PiglinBeastEntity beastEntity = (PiglinBeastEntity) EntityInit.PIGLINBEAST_ENTITY.create(world.getWorld());
+        PiglinBeastEntity beastEntity = (PiglinBeastEntity) EntityInit.PIGLINBEAST_ENTITY.create((World) world);
         for (int counter = 0; counter < 100; counter++) {
           float randomFloat = world.getRandom().nextFloat() * 6.2831855F;
           int posX = pos.getX() + MathHelper.floor(MathHelper.cos(randomFloat) * 26.0F + world.getRandom().nextInt(5));

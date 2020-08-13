@@ -4,6 +4,7 @@ import com.mojang.blaze3d.systems.RenderSystem;
 
 import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Mixin;
+import org.spongepowered.asm.mixin.Mutable;
 import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
@@ -28,6 +29,7 @@ import net.minecraft.util.math.MathHelper;
 public abstract class InGameHudMixin extends DrawableHelper {
   @Shadow
   @Final
+  @Mutable
   private MinecraftClient client;
 
   public InGameHudMixin(MinecraftClient client) {

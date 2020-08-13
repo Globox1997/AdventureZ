@@ -24,10 +24,12 @@ import net.minecraft.entity.damage.DamageSource;
 import net.minecraft.entity.data.DataTracker;
 import net.minecraft.entity.data.TrackedData;
 import net.minecraft.entity.data.TrackedDataHandlerRegistry;
+import net.minecraft.entity.mob.AbstractPiglinEntity;
 import net.minecraft.entity.mob.HostileEntity;
 import net.minecraft.entity.mob.MobEntity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.nbt.CompoundTag;
+import net.minecraft.predicate.entity.EntityPredicates;
 import net.minecraft.sound.SoundCategory;
 import net.minecraft.sound.SoundEvent;
 import net.minecraft.util.math.BlockPos;
@@ -175,7 +177,8 @@ public class PiglinBeastEntity extends HostileEntity {
   }
 
   public void getPiglins() {
-    List<Entity> list = this.world.getEntities(this, this.getBoundingBox().expand(40D));
+    List<Entity> list = this.world.getEntitiesByClass(LivingEntity.class, this.getBoundingBox().expand(40D),
+        EntityPredicates.EXCEPT_SPECTATOR);
     for (int i = 0; i < list.size(); ++i) {
       Entity entity = (Entity) list.get(i);
       if (entity.getType() == EntityType.PIGLIN) {
@@ -185,21 +188,21 @@ public class PiglinBeastEntity extends HostileEntity {
     }
   }
 
-  public static void angerNearbyPiglins(PiglinEntity piglin) {
-    getNearbyPiglins(piglin).forEach((piglinEntity) -> {
-      getNearestDetectedPlayer(piglinEntity).ifPresent((playerEntity) -> {
-        becomeAngryWith(piglinEntity, playerEntity);
+  private static void angerNearbyPiglins(AbstractPiglinEntity piglin) {
+    getNearbyPiglins(piglin).forEach((abstractPiglinEntity) -> {
+      getNearestDetectedPlayer(abstractPiglinEntity).ifPresent((playerEntity) -> {
+        becomeAngryWith(abstractPiglinEntity, playerEntity);
       });
     });
   }
 
-  public static Optional<PlayerEntity> getNearestDetectedPlayer(PiglinEntity piglin) {
+  public static Optional<PlayerEntity> getNearestDetectedPlayer(AbstractPiglinEntity piglin) {
     return piglin.getBrain().hasMemoryModule(MemoryModuleType.NEAREST_VISIBLE_TARGETABLE_PLAYER)
         ? piglin.getBrain().getOptionalMemory(MemoryModuleType.NEAREST_VISIBLE_TARGETABLE_PLAYER)
         : Optional.empty();
   }
 
-  public static void becomeAngryWith(PiglinEntity piglin, LivingEntity target) {
+  public static void becomeAngryWith(AbstractPiglinEntity piglin, LivingEntity target) {
     piglin.getBrain().forget(MemoryModuleType.CANT_REACH_WALK_TARGET_SINCE);
     piglin.getBrain().remember(MemoryModuleType.ANGRY_AT, target.getUuid(), 600L);
 
@@ -209,8 +212,8 @@ public class PiglinBeastEntity extends HostileEntity {
 
   }
 
-  private static List<PiglinEntity> getNearbyPiglins(PiglinEntity piglin) {
-    return (List<PiglinEntity>) piglin.getBrain().getOptionalMemory(MemoryModuleType.NEAREST_ADULT_PIGLINS)
+  private static List<AbstractPiglinEntity> getNearbyPiglins(AbstractPiglinEntity piglin) {
+    return (List<AbstractPiglinEntity>) piglin.getBrain().getOptionalMemory(MemoryModuleType.NEARBY_ADULT_PIGLINS)
         .orElse(ImmutableList.of());
   }
 

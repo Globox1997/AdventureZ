@@ -20,6 +20,7 @@ import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.mob.PiglinEntity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.ItemStack;
+import net.minecraft.predicate.entity.EntityPredicates;
 import net.minecraft.entity.SpawnRestriction;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.ChunkPos;
@@ -90,7 +91,8 @@ public abstract class PlayerEntityMixin extends LivingEntity {
   }
 
   private boolean getBeasts() {
-    List<Entity> list = this.world.getEntities(this, this.getBoundingBox().expand(40D));
+    List<Entity> list = this.world.getEntitiesByClass(LivingEntity.class, this.getBoundingBox().expand(40D),
+        EntityPredicates.EXCEPT_SPECTATOR);
     for (int i = 0; i < list.size(); ++i) {
       Entity entity = (Entity) list.get(i);
       if (entity.getType() == EntityInit.PIGLINBEAST_ENTITY) {

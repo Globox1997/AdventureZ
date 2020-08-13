@@ -30,8 +30,8 @@ import net.minecraft.nbt.CompoundTag;
 import net.minecraft.particle.ParticleTypes;
 import net.minecraft.world.Difficulty;
 import net.minecraft.world.LocalDifficulty;
+import net.minecraft.world.ServerWorldAccess;
 import net.minecraft.world.World;
-import net.minecraft.world.WorldAccess;
 import net.minecraft.world.WorldView;
 import net.minecraft.block.Blocks;
 
@@ -52,15 +52,16 @@ public class NightmareEntity extends SkeletonHorseEntity {
         .add(EntityAttributes.GENERIC_MOVEMENT_SPEED, 0.215D).add(EntityAttributes.GENERIC_ATTACK_DAMAGE, 7.0D);
   }
 
+  @Override
   @Nullable
-  public EntityData initialize(WorldAccess world, LocalDifficulty difficulty, SpawnReason spawnReason,
+  public EntityData initialize(ServerWorldAccess serverWorldAccess, LocalDifficulty difficulty, SpawnReason spawnReason,
       @Nullable EntityData entityData, @Nullable CompoundTag entityTag) {
     if (spawnReason.equals(SpawnReason.COMMAND) || spawnReason.equals(SpawnReason.NATURAL)) {
       SoulReaperEntity soulReaperEntity = (SoulReaperEntity) EntityInit.SOULREAPER_ENTITY.create(this.world);
       soulReaperEntity.refreshPositionAndAngles(this.getX(), this.getY(), this.getZ(), this.yaw, 0.0F);
-      soulReaperEntity.initialize(world, difficulty, spawnReason, (EntityData) null, (CompoundTag) null);
+      soulReaperEntity.initialize(serverWorldAccess, difficulty, spawnReason, (EntityData) null, (CompoundTag) null);
+
       soulReaperEntity.startRiding(this);
-      world.spawnEntity(soulReaperEntity);
     }
     return (EntityData) entityData;
   }
@@ -206,7 +207,7 @@ public class NightmareEntity extends SkeletonHorseEntity {
   }
 
   static {
-    WALKINSPEEDINCREASE_ID = UUID.fromString("766bfa64-11f3-11ea-8d71-362b9e155667");
+    WALKINSPEEDINCREASE_ID = UUID.fromString("020E0DFB-87AE-8274-9556-928370E291A0");// 020E0DFB-87AE-4653-9556-831010E291A0
     WALKINSPEEDINCREASE = new EntityAttributeModifier(WALKINSPEEDINCREASE_ID, "LavaAndSoulSpeed", 0.5D,
         EntityAttributeModifier.Operation.MULTIPLY_BASE);
   }

@@ -41,8 +41,8 @@ import net.minecraft.util.math.MathHelper;
 import net.minecraft.entity.mob.HostileEntity;
 import net.minecraft.entity.mob.PathAwareEntity;
 import net.minecraft.world.LocalDifficulty;
+import net.minecraft.world.ServerWorldAccess;
 import net.minecraft.world.World;
-import net.minecraft.world.WorldAccess;
 
 public class SoulReaperEntity extends HostileEntity implements RangedAttackMob {
   private final BowAttackGoal<SoulReaperEntity> bowAttackGoal = new BowAttackGoal<>(this, 1.0D, 40, 15.0F);
@@ -80,16 +80,28 @@ public class SoulReaperEntity extends HostileEntity implements RangedAttackMob {
     this.targetSelector.add(2, new FollowTargetGoal<>(this, PlayerEntity.class, true));
   }
 
+  @Override
   @Nullable
-  public EntityData initialize(WorldAccess world, LocalDifficulty difficulty, SpawnReason spawnReason,
+  public EntityData initialize(ServerWorldAccess serverWorldAccess, LocalDifficulty difficulty, SpawnReason spawnReason,
       @Nullable EntityData entityData, @Nullable CompoundTag entityTag) {
-    entityData = super.initialize(world, difficulty, spawnReason, entityData, entityTag);
+    entityData = super.initialize(serverWorldAccess, difficulty, spawnReason, entityData, entityTag);
     this.initEquipment(difficulty);
     this.updateEnchantments(difficulty);
     this.bowAttackGoal.setAttackInterval(40);
     this.goalSelector.add(4, this.bowAttackGoal);
     return entityData;
   }
+
+  // @Nullable
+  // public EntityData initialize(ServerWorldAccess serverWorldAccess,
+  // LocalDifficulty difficulty, SpawnReason spawnReason, @Nullable EntityData
+  // entityData, @Nullable CompoundTag entityTag) {
+  // this.initEquipment(difficulty);
+  // this.updateEnchantments(difficulty);
+  // this.bowAttackGoal.setAttackInterval(40);
+  // this.goalSelector.add(4, this.bowAttackGoal);
+  // return entityData;
+  // }
 
   @Override
   public void tickRiding() {

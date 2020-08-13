@@ -44,7 +44,7 @@ public class StoneHolderBlock extends Block implements BlockEntityProvider {
 
   @Override
   @Environment(EnvType.CLIENT)
-  public void buildTooltip(ItemStack stack, @Nullable BlockView view, List<Text> tooltip, TooltipContext options) {
+  public void appendTooltip(ItemStack stack, @Nullable BlockView world, List<Text> tooltip, TooltipContext options) {
     tooltip.add(new TranslatableText("item.adventurez.moreinfo.tooltip"));
     if (InputUtil.isKeyPressed(MinecraftClient.getInstance().getWindow().getHandle(), 340)) {
       tooltip.remove(new TranslatableText("item.adventurez.moreinfo.tooltip"));

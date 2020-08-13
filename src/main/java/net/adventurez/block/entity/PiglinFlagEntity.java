@@ -7,10 +7,12 @@ import net.minecraft.block.BlockState;
 import net.minecraft.block.entity.BlockEntity;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityType;
+import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.ai.brain.MemoryModuleType;
 import net.minecraft.entity.mob.PiglinEntity;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.particle.ParticleTypes;
+import net.minecraft.predicate.entity.EntityPredicates;
 import net.minecraft.util.Tickable;
 import net.minecraft.util.math.Box;
 
@@ -74,7 +76,8 @@ public class PiglinFlagEntity extends BlockEntity implements Tickable {
   }
 
   public void getPiglins() {
-    List<Entity> list = this.world.getEntities(null, new Box(pos).expand(40D));
+    List<Entity> list = this.world.getEntitiesByClass(LivingEntity.class, new Box(pos).expand(40D),
+        EntityPredicates.EXCEPT_SPECTATOR);
     for (int i = 0; i < list.size(); ++i) {
       Entity entity = (Entity) list.get(i);
       if (entity.getType() == EntityType.PIGLIN) {
