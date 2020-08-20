@@ -36,10 +36,10 @@ public class EntityInit {
                         .dimensions(EntityDimensions.fixed(0.7F, 2.4F)).build();
         public static final EntityType<NecromancerEntity> NECROMANCER_ENTITY = FabricEntityTypeBuilder
                         .create(SpawnGroup.MONSTER, NecromancerEntity::new).trackable(74, 2).fireImmune()
-                        .dimensions(EntityDimensions.fixed(0.7F, 2.4F)).build();
+                        .dimensions(EntityDimensions.fixed(0.9F, 2.4F)).build();
         public static final EntityType<WitherPuppetEntity> WITHERPUPPET_ENTITY = FabricEntityTypeBuilder
                         .create(SpawnGroup.MONSTER, WitherPuppetEntity::new).trackable(74, 2).fireImmune()
-                        .dimensions(EntityDimensions.fixed(0.7F, 2.4F)).build();
+                        .dimensions(EntityDimensions.fixed(0.7F, 1.32F)).build();
         // public static final EntityType<GryphonEntity> GRYPHON_ENTITY =
         // FabricEntityTypeBuilder
         // .create(SpawnGroup.CREATURE, GryphonEntity::new).trackable(74, 2)
@@ -92,6 +92,10 @@ public class EntityInit {
                                 NIGHTMARE_ENTITY, 1381653, 3012863, new Item.Settings().group(ItemGroup.MISC)));
                 Registry.register(Registry.ITEM, new Identifier("adventurez", "spawn_soul_reaper"), new SpawnEggItem(
                                 SOULREAPER_ENTITY, 1381653, 5329747, new Item.Settings().group(ItemGroup.MISC)));
+                Registry.register(Registry.ITEM, new Identifier("adventurez", "spawn_necromancer"), new SpawnEggItem(
+                                NECROMANCER_ENTITY, 1447446, 15514145, new Item.Settings().group(ItemGroup.MISC)));
+                Registry.register(Registry.ITEM, new Identifier("adventurez", "spawn_wither_puppet"), new SpawnEggItem(
+                                WITHERPUPPET_ENTITY, 1250067, 3092271, new Item.Settings().group(ItemGroup.MISC)));
                 // Registry.register(Registry.ITEM, new Identifier("adventurez",
                 // "spawn_gryphon"), new SpawnEggItem(
                 // GRYPHON_ENTITY, 1381653, 5329747, new
