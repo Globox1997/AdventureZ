@@ -77,25 +77,26 @@ public class NecromancerModel<T extends NecromancerEntity> extends CompositeEnti
   public void setAngles(T necromancer, float f, float g, float h, float i, float j) {
 
     this.head2.pitch = -0.2618F;
+    this.rightArm.pitch = MathHelper.cos(f * 0.6662F + 3.1415927F) * 2.0F * g * 0.5F;
+    this.rightArm.yaw = 0.0F;
+    this.rightArm.roll = 0.0F;
+    this.leftArm.pitch = MathHelper.cos(f * 0.6662F) * 2.0F * g * 0.5F;
+    this.leftArm.yaw = 0.0F;
+    this.leftArm.roll = 0.0F;
+    this.rightLeg.pitch = MathHelper.cos(f * 0.6662F) * 1.4F * g * 0.5F;
+    this.rightLeg.yaw = 0.0F;
+    this.rightLeg.roll = 0.0F;
+    this.leftLeg.pitch = MathHelper.cos(f * 0.6662F + 3.1415927F) * 1.4F * g * 0.5F;
+    this.leftLeg.yaw = 0.0F;
+    this.leftLeg.roll = 0.0F;
 
-    // this.head.yaw = i * 0.0077453292F;
-    // this.head.pitch = j * 0.0017453292F + 0.1745F;
-    // this.rightLeg.yaw = 0.0F;
-    // this.leftLeg.yaw = 0.0F;
-    this.rightLeg.pitch = -0.3F * MathHelper.method_24504(f, 13.0F) * g * 1.3F;
-    this.leftLeg.pitch = 0.3F * MathHelper.method_24504(f, 13.0F) * g * 1.3F;
-    this.rightArm.pitch = MathHelper.cos(f * 0.6662F + 3.1415927F) * 2.0F * g * 0.3F;
-    this.leftArm.pitch = -MathHelper.cos(f * 0.6662F + 3.1415927F) * 2.0F * g * 0.3F;
-    // this.rightLeg.pitch = MathHelper.cos(limbAngle * 0.6662F + 3.1415927F) * 1.4F
-    // * limbDistance;
-    // this.leftLeg.pitch = MathHelper.cos(limbAngle * 0.6662F) * 1.4F *
-    // limbDistance;
-
-    // this.torso.pitch = 1.309F;
-    // this.this.rightArm.pitch = 0.5F * MathHelper.method_24504(f, 13.0F) * g *
-    // 1.3F - 0.6109F;
-    // this.this.leftArm.pitch = -0.5F * MathHelper.method_24504(f, 13.0F) * g *
-    // 1.3F - 0.6109F;
+    if (necromancer.isSpellcasting()) {
+      this.rightArm.pivotZ = 0.0F;
+      this.rightArm.pivotX = 7.0F;
+      this.rightArm.pitch = MathHelper.cos(h * 0.6662F) * 0.1F - 0.6F;
+      this.rightArm.roll = -2.0F;
+      this.rightArm.yaw = -0.5F;
+    }
   }
 
 }
