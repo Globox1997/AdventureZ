@@ -37,6 +37,7 @@ import net.minecraft.world.GameRules;
 import net.minecraft.world.World;
 import net.minecraft.world.WorldView;
 import net.minecraft.entity.mob.PiglinEntity;
+import net.minecraft.entity.mob.WitherSkeletonEntity;
 
 public class PiglinBeastEntity extends HostileEntity {
   public static final TrackedData<Float> AttackTickVisual = DataTracker.registerData(PiglinBeastEntity.class,
@@ -65,12 +66,13 @@ public class PiglinBeastEntity extends HostileEntity {
   public void initGoals() {
     super.initGoals();
     this.goalSelector.add(0, new SwimGoal(this));
-    this.goalSelector.add(4, new PiglinBeastEntity.AttackGoal());
-    this.goalSelector.add(5, new WanderAroundFarGoal(this, 1.0D));
-    this.goalSelector.add(6, new LookAtEntityGoal(this, PlayerEntity.class, 12.0F));
-    this.goalSelector.add(7, new LookAroundGoal(this));
-    this.goalSelector.add(10, new LookAtEntityGoal(this, MobEntity.class, 8.0F));
-    this.targetSelector.add(3, new FollowTargetGoal<>(this, PlayerEntity.class, true));
+    this.goalSelector.add(1, new PiglinBeastEntity.AttackGoal());
+    this.goalSelector.add(4, new WanderAroundFarGoal(this, 1.0D));
+    this.goalSelector.add(5, new LookAtEntityGoal(this, PlayerEntity.class, 12.0F));
+    this.goalSelector.add(6, new LookAroundGoal(this));
+    this.goalSelector.add(7, new LookAtEntityGoal(this, MobEntity.class, 8.0F));
+    this.targetSelector.add(1, new FollowTargetGoal<>(this, WitherSkeletonEntity.class, true));
+    this.targetSelector.add(2, new FollowTargetGoal<>(this, PlayerEntity.class, true));
   }
 
   @Override

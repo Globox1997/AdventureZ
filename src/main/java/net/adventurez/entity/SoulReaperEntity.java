@@ -38,6 +38,7 @@ import net.minecraft.sound.SoundEvent;
 import net.minecraft.sound.SoundEvents;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.MathHelper;
+import net.minecraft.entity.mob.AbstractPiglinEntity;
 import net.minecraft.entity.mob.HostileEntity;
 import net.minecraft.entity.mob.PathAwareEntity;
 import net.minecraft.world.LocalDifficulty;
@@ -78,6 +79,7 @@ public class SoulReaperEntity extends HostileEntity implements RangedAttackMob {
     this.goalSelector.add(6, new LookAroundGoal(this));
     this.targetSelector.add(1, new RevengeGoal(this, new Class[0]));
     this.targetSelector.add(2, new FollowTargetGoal<>(this, PlayerEntity.class, true));
+    this.targetSelector.add(3, new FollowTargetGoal<>(this, AbstractPiglinEntity.class, true));
   }
 
   @Override
@@ -91,17 +93,6 @@ public class SoulReaperEntity extends HostileEntity implements RangedAttackMob {
     this.goalSelector.add(4, this.bowAttackGoal);
     return entityData;
   }
-
-  // @Nullable
-  // public EntityData initialize(ServerWorldAccess serverWorldAccess,
-  // LocalDifficulty difficulty, SpawnReason spawnReason, @Nullable EntityData
-  // entityData, @Nullable CompoundTag entityTag) {
-  // this.initEquipment(difficulty);
-  // this.updateEnchantments(difficulty);
-  // this.bowAttackGoal.setAttackInterval(40);
-  // this.goalSelector.add(4, this.bowAttackGoal);
-  // return entityData;
-  // }
 
   @Override
   public void tickRiding() {

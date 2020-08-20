@@ -23,11 +23,13 @@ import net.minecraft.util.ActionResult;
 import net.minecraft.util.Hand;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.entity.mob.SkeletonHorseEntity;
+import net.minecraft.entity.passive.PassiveEntity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.Items;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.particle.ParticleTypes;
+import net.minecraft.server.world.ServerWorld;
 import net.minecraft.world.Difficulty;
 import net.minecraft.world.LocalDifficulty;
 import net.minecraft.world.ServerWorldAccess;
@@ -49,7 +51,7 @@ public class NightmareEntity extends SkeletonHorseEntity {
 
   public static DefaultAttributeContainer.Builder createNightmareAttributes() {
     return createBaseHorseAttributes().add(EntityAttributes.GENERIC_MAX_HEALTH, 40.0D)
-        .add(EntityAttributes.GENERIC_MOVEMENT_SPEED, 0.215D).add(EntityAttributes.GENERIC_ATTACK_DAMAGE, 7.0D);
+        .add(EntityAttributes.GENERIC_MOVEMENT_SPEED, 0.22D).add(EntityAttributes.GENERIC_ATTACK_DAMAGE, 7.0D);
   }
 
   @Override
@@ -88,17 +90,22 @@ public class NightmareEntity extends SkeletonHorseEntity {
 
       this.walkToParent();
     }
-    if (world.isClient) {
+    if (this.world.isClient) {
       double g = this.random.nextDouble() * 0.75F - 0.375F;
       double e = this.random.nextDouble() * 0.9F;
       double f = this.random.nextDouble() * 0.75F - 0.375F;
-      double g2 = world.random.nextDouble() * 0.75F - 0.375F;
-      double e2 = world.random.nextDouble() * 0.9F;
-      double f2 = world.random.nextDouble() * 0.75F - 0.375F;
-      this.world.addParticle(ParticleTypes.SOUL_FIRE_FLAME, this.getX() + g, this.getY() + 0.5D + e, this.getZ() + f,
-          0D, 0D, 0D);
-      this.world.addParticle(ParticleTypes.SOUL_FIRE_FLAME, this.getX() + g2, this.getY() + 0.5D + e2, this.getZ() + f2,
-          0D, 0D, 0D);
+      if (!this.isBaby()) {
+        double g2 = world.random.nextDouble() * 0.75F - 0.375F;
+        double e2 = world.random.nextDouble() * 0.9F;
+        double f2 = world.random.nextDouble() * 0.75F - 0.375F;
+        this.world.addParticle(ParticleTypes.SOUL_FIRE_FLAME, this.getX() + g, this.getY() + 0.5D + e, this.getZ() + f,
+            0D, 0D, 0D);
+        this.world.addParticle(ParticleTypes.SOUL_FIRE_FLAME, this.getX() + g2, this.getY() + 0.5D + e2,
+            this.getZ() + f2, 0D, 0D, 0D);
+      } else {
+        this.world.addParticle(ParticleTypes.SOUL_FIRE_FLAME, this.getX() + g, this.getY() + 0.5D + e, this.getZ() + f,
+            0D, 0D, 0D);
+      }
     }
     if (this.touchingWater && !world.isClient) {
       damageWaterTicks++;
@@ -206,8 +213,14 @@ public class NightmareEntity extends SkeletonHorseEntity {
     return 1;
   }
 
+  @Override
+  @Nullable
+  public PassiveEntity createChild(ServerWorld serverWorld, PassiveEntity passiveEntity) {
+    return (PassiveEntity) EntityInit.NIGHTMARE_ENTITY.create(serverWorld);
+  }
+
   static {
-    WALKINSPEEDINCREASE_ID = UUID.fromString("020E0DFB-87AE-8274-9556-928370E291A0");// 020E0DFB-87AE-4653-9556-831010E291A0
+    WALKINSPEEDINCREASE_ID = UUID.fromString("020E0DFB-87AE-8274-9556-928370E291A0");
     WALKINSPEEDINCREASE = new EntityAttributeModifier(WALKINSPEEDINCREASE_ID, "LavaAndSoulSpeed", 0.5D,
         EntityAttributeModifier.Operation.MULTIPLY_BASE);
   }
