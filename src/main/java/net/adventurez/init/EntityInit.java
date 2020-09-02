@@ -3,6 +3,7 @@ package net.adventurez.init;
 import net.adventurez.entity.*;
 import net.fabricmc.fabric.api.object.builder.v1.entity.FabricDefaultAttributeRegistry;
 import net.fabricmc.fabric.api.object.builder.v1.entity.FabricEntityTypeBuilder;
+import net.minecraft.block.Blocks;
 import net.minecraft.entity.EntityDimensions;
 import net.minecraft.entity.EntityType;
 import net.minecraft.entity.SpawnGroup;
@@ -30,13 +31,15 @@ public class EntityInit {
                         .dimensions(EntityDimensions.fixed(1.55F, 3.35F)).build();
         public static final EntityType<NightmareEntity> NIGHTMARE_ENTITY = FabricEntityTypeBuilder
                         .create(SpawnGroup.MONSTER, NightmareEntity::new).trackable(74, 2).fireImmune()
+                        .specificSpawnBlocks(Blocks.SOUL_SAND, Blocks.SOUL_SOIL)
                         .dimensions(EntityDimensions.fixed(1.4F, 1.6F)).build();
         public static final EntityType<SoulReaperEntity> SOULREAPER_ENTITY = FabricEntityTypeBuilder
                         .create(SpawnGroup.MONSTER, SoulReaperEntity::new).trackable(74, 2).fireImmune()
                         .dimensions(EntityDimensions.fixed(0.7F, 2.4F)).build();
         public static final EntityType<NecromancerEntity> NECROMANCER_ENTITY = FabricEntityTypeBuilder
                         .create(SpawnGroup.MONSTER, NecromancerEntity::new).trackable(74, 2).fireImmune()
-                        .dimensions(EntityDimensions.fixed(0.9F, 2.4F)).build();
+                        .specificSpawnBlocks(Blocks.NETHER_BRICKS).dimensions(EntityDimensions.fixed(0.9F, 2.4F))
+                        .build();
         public static final EntityType<WitherPuppetEntity> WITHERPUPPET_ENTITY = FabricEntityTypeBuilder
                         .create(SpawnGroup.MONSTER, WitherPuppetEntity::new).trackable(74, 2).fireImmune()
                         .dimensions(EntityDimensions.fixed(0.7F, 1.32F)).build();
