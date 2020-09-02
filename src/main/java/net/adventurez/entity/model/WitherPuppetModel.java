@@ -47,10 +47,11 @@ public class WitherPuppetModel<T extends MobEntity> extends BipedEntityModel<T> 
     this.rightArm.roll = 0.0F;
     this.leftArm.roll = 0.0F;
     this.rightArm.yaw = -(0.1F - k * 0.6F);
-    this.leftArm.yaw = 0.1F - k * 0.6F;
-    this.rightArm.pitch = -k * 1.2F;
+    this.rightArm.pitch = -k * 1.5F;
     this.rightLeg.pitch = MathHelper.cos(f * 0.6662F) * 1.4F * g;
     this.leftLeg.pitch = MathHelper.cos(f * 0.6662F + 3.1415927F) * 1.4F * g;
+    this.rightArm.pitch = MathHelper.cos(f * 0.6662F + 3.1415927F) * 2.0F * g * 0.5F;
+    this.leftArm.pitch = MathHelper.cos(f * 0.6662F) * 2.0F * g * 0.5F;
   }
 
 }

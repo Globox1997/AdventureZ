@@ -49,7 +49,7 @@ public class WitherPuppetEntity extends HostileEntity {
   public void initGoals() {
     super.initGoals();
     this.goalSelector.add(0, new SwimGoal(this));
-    this.goalSelector.add(1, new MeleeAttackGoal(this, 1.2D, true));
+    this.goalSelector.add(1, new MeleeAttackGoal(this, 1.2D, false));
     this.goalSelector.add(7, new LookAtEntityGoal(this, PlayerEntity.class, 3.0F, 1.0F));
     this.goalSelector.add(8, new LookAtEntityGoal(this, MobEntity.class, 8.0F));
     this.targetSelector.add(1, (new RevengeGoal(this, new Class[] { NecromancerEntity.class })));

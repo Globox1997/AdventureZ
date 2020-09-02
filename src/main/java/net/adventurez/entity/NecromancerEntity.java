@@ -3,7 +3,6 @@ package net.adventurez.entity;
 import java.util.List;
 
 import net.adventurez.init.EntityInit;
-import net.adventurez.init.SoundInit;
 import net.minecraft.block.BlockState;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityType;
@@ -30,6 +29,7 @@ import net.minecraft.server.world.ServerWorld;
 import net.minecraft.sound.SoundEvent;
 import net.minecraft.sound.SoundEvents;
 import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.math.MathHelper;
 import net.minecraft.world.World;
 
 public class NecromancerEntity extends SpellCastingEntity {
@@ -43,7 +43,7 @@ public class NecromancerEntity extends SpellCastingEntity {
 
   public static DefaultAttributeContainer.Builder createNecromancerAttributes() {
     return HostileEntity.createHostileAttributes().add(EntityAttributes.GENERIC_MAX_HEALTH, 45.0D)
-        .add(EntityAttributes.GENERIC_MOVEMENT_SPEED, 0.35D).add(EntityAttributes.GENERIC_ATTACK_DAMAGE, 5.0D)
+        .add(EntityAttributes.GENERIC_MOVEMENT_SPEED, 0.34D).add(EntityAttributes.GENERIC_ATTACK_DAMAGE, 5.0D)
         .add(EntityAttributes.GENERIC_ATTACK_KNOCKBACK, 0.1D).add(EntityAttributes.GENERIC_FOLLOW_RANGE, 38.0D);
   }
 
@@ -54,6 +54,7 @@ public class NecromancerEntity extends SpellCastingEntity {
     this.goalSelector.add(1, new NecromancerEntity.LookAtTargetGoalNecro());
     this.goalSelector.add(2, new FleeEntityGoal<>(this, PlayerEntity.class, 8.0F, 0.6D, 1.0D));
     this.goalSelector.add(4, new NecromancerEntity.SummonPuppetGoal());
+    this.goalSelector.add(5, new NecromancerEntity.MagicWitheringGoal());
     this.goalSelector.add(8, new WanderAroundGoal(this, 0.9D));
     this.goalSelector.add(9, new LookAtEntityGoal(this, PlayerEntity.class, 4.0F, 1.0F));
     this.goalSelector.add(10, new LookAtEntityGoal(this, MobEntity.class, 8.0F));
@@ -111,22 +112,22 @@ public class NecromancerEntity extends SpellCastingEntity {
 
   @Override
   protected SoundEvent getAmbientSound() {
-    return SoundInit.SOULREAPER_IDLE_EVENT;
+    return SoundEvents.ENTITY_WITHER_SKELETON_AMBIENT;
   }
 
   @Override
   protected SoundEvent getHurtSound(DamageSource source) {
-    return SoundInit.SOULREAPER_HURT_EVENT;
+    return SoundEvents.ENTITY_EVOKER_HURT;
   }
 
   @Override
   protected SoundEvent getDeathSound() {
-    return SoundInit.SOULREAPER_DEATH_EVENT;
+    return SoundEvents.ENTITY_EVOKER_DEATH;
   }
 
   @Override
   protected void playStepSound(BlockPos pos, BlockState state) {
-    this.playSound(SoundEvents.ENTITY_WITHER_SKELETON_STEP, 0.5F, 1.0F);
+    this.playSound(SoundEvents.ENTITY_WITHER_SKELETON_STEP, 0.5F, 0.7F);
   }
 
   @Override
@@ -146,6 +147,52 @@ public class NecromancerEntity extends SpellCastingEntity {
       return this.isTeammate(((WitherPuppetEntity) other).getOwner());
     } else {
       return false;
+    }
+  }
+
+  class MagicWitheringGoal extends SpellCastingEntity.CastSpellGoal {
+    private MagicWitheringGoal() {
+      super();
+    }
+
+    @Override
+    public int getSpellTicks() {
+      return 60;
+    }
+
+    @Override
+    public int startTimeDelay() {
+      return 120;
+    }
+
+    @Override
+    public void castSpell() {
+      LivingEntity livingEntity = NecromancerEntity.this.getTarget();
+      if (livingEntity != null) {
+        if (NecromancerEntity.this.squaredDistanceTo(livingEntity) < 12.0D) {
+          livingEntity.addStatusEffect(new StatusEffectInstance(StatusEffects.SLOWNESS, 60, 0));
+          for (int i = 0; i < 60; ++i) {
+            double x = MathHelper.nextDouble(random, livingEntity.getBoundingBox().minX - 1.5D,
+                livingEntity.getBoundingBox().maxX) + 1.5D;
+            double y = MathHelper.nextDouble(random, livingEntity.getBoundingBox().minY,
+                livingEntity.getBoundingBox().maxY) + 1.0D;
+            double z = MathHelper.nextDouble(random, livingEntity.getBoundingBox().minZ - 1.5D,
+                livingEntity.getBoundingBox().maxZ) + 1.5D;
+            ((ServerWorld) world).spawnParticles(ParticleTypes.SMOKE, x, y, z, 0, 0.0D, 0.0D, 0.0D, 0.0D);
+          }
+        }
+
+      }
+    }
+
+    @Override
+    public SoundEvent getSoundPrepare() {
+      return SoundEvents.ENTITY_EVOKER_PREPARE_SUMMON;
+    }
+
+    @Override
+    public SpellCastingEntity.Spell getSpell() {
+      return SpellCastingEntity.Spell.SUMMON_PUPPET;
     }
   }
 

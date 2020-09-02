@@ -74,10 +74,8 @@ public abstract class SpellCastingEntity extends HostileEntity {
       float g = this.bodyYaw * 0.017453292F + MathHelper.cos((float) this.age * 0.6662F) * 0.25F;
       float h = MathHelper.cos(g);
       float i = MathHelper.sin(g);
-      this.world.addParticle(ParticleTypes.ENTITY_EFFECT, this.getX() + (double) h * 0.6D, this.getY() + 1.8D,
-          this.getZ() + (double) i * 0.6D, d, e, f);
-      this.world.addParticle(ParticleTypes.ENTITY_EFFECT, this.getX() - (double) h * 0.6D, this.getY() + 1.8D,
-          this.getZ() - (double) i * 0.6D, d, e, f);
+      this.world.addParticle(ParticleTypes.ENTITY_EFFECT, this.getX() + (double) h * 0.92D, this.getY() + 2.32D,
+          this.getZ() + (double) i * 0.92D, d, e, f);
     }
 
   }
@@ -93,7 +91,7 @@ public abstract class SpellCastingEntity extends HostileEntity {
   }
 
   public static enum Spell {
-    NONE(0, 0.0D, 0.0D, 0.0D), SUMMON_PUPPET(1, 0.7D, 0.7D, 0.8D);
+    NONE(0, 0.0D, 0.0D, 0.0D), SUMMON_PUPPET(1, 0.01D, 0.01D, 0.015D), WITHERING(2, 0.01D, 0.01D, 0.015D);
 
     private final int id;
     private final double[] particleVelocity;
