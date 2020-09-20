@@ -2,6 +2,7 @@ package net.adventurez.entity;
 
 import java.util.List;
 
+import net.adventurez.init.EffectInit;
 import net.adventurez.init.EntityInit;
 import net.minecraft.block.BlockState;
 import net.minecraft.entity.Entity;
@@ -55,9 +56,9 @@ public class NecromancerEntity extends SpellCastingEntity {
     this.goalSelector.add(2, new FleeEntityGoal<>(this, PlayerEntity.class, 8.0F, 0.6D, 1.0D));
     this.goalSelector.add(4, new NecromancerEntity.SummonPuppetGoal());
     this.goalSelector.add(5, new NecromancerEntity.MagicWitheringGoal());
-    this.goalSelector.add(8, new WanderAroundGoal(this, 0.9D));
-    this.goalSelector.add(9, new LookAtEntityGoal(this, PlayerEntity.class, 4.0F, 1.0F));
-    this.goalSelector.add(10, new LookAtEntityGoal(this, MobEntity.class, 8.0F));
+    this.goalSelector.add(7, new WanderAroundGoal(this, 0.9D));
+    this.goalSelector.add(8, new LookAtEntityGoal(this, PlayerEntity.class, 5.0F, 1.0F));
+    this.goalSelector.add(9, new LookAtEntityGoal(this, MobEntity.class, 8.0F));
     this.targetSelector.add(1, (new RevengeGoal(this, new Class[] { WitherPuppetEntity.class })));
     this.targetSelector.add(2, (new RevengeGoal(this, new Class[] { WitherSkeletonEntity.class })));
     this.targetSelector.add(3,
@@ -84,7 +85,7 @@ public class NecromancerEntity extends SpellCastingEntity {
     if (this.isSpellcasting() && this.spellTicks == 3) {
       int invisibleChance = world.getRandom().nextInt(5);
       if (invisibleChance == 0) {
-        this.addStatusEffect(new StatusEffectInstance(StatusEffects.INVISIBILITY, 300));
+        this.addStatusEffect(new StatusEffectInstance(StatusEffects.INVISIBILITY, 100));
         if (this.world.isClient) {
           for (int i = 0; i < 10; ++i) {
             this.world.addParticle(ParticleTypes.SMOKE, this.getParticleX(0.5D), this.getRandomBodyY(),
@@ -162,27 +163,38 @@ public class NecromancerEntity extends SpellCastingEntity {
 
     @Override
     public int startTimeDelay() {
-      return 120;
+      return 60;
+    }
+
+    @Override
+    public boolean canStart() {
+      LivingEntity livingEntity = NecromancerEntity.this.getTarget();
+      if (!super.canStart()) {
+        return false;
+      } else if (NecromancerEntity.this.squaredDistanceTo(livingEntity) < 15.0D
+          && NecromancerEntity.this.age >= this.startTime) {
+        return true;
+      } else
+        return false;
     }
 
     @Override
     public void castSpell() {
       LivingEntity livingEntity = NecromancerEntity.this.getTarget();
       if (livingEntity != null) {
-        if (NecromancerEntity.this.squaredDistanceTo(livingEntity) < 12.0D) {
-          livingEntity.addStatusEffect(new StatusEffectInstance(StatusEffects.SLOWNESS, 60, 0));
-          for (int i = 0; i < 60; ++i) {
-            double x = MathHelper.nextDouble(random, livingEntity.getBoundingBox().minX - 1.5D,
-                livingEntity.getBoundingBox().maxX) + 1.5D;
-            double y = MathHelper.nextDouble(random, livingEntity.getBoundingBox().minY,
-                livingEntity.getBoundingBox().maxY) + 1.0D;
-            double z = MathHelper.nextDouble(random, livingEntity.getBoundingBox().minZ - 1.5D,
-                livingEntity.getBoundingBox().maxZ) + 1.5D;
-            ((ServerWorld) world).spawnParticles(ParticleTypes.SMOKE, x, y, z, 0, 0.0D, 0.0D, 0.0D, 0.0D);
-          }
-        }
 
+        livingEntity.addStatusEffect(new StatusEffectInstance(EffectInit.WITHERING, 200, 0));
+        for (int i = 0; i < 60; ++i) {
+          double x = MathHelper.nextDouble(random, livingEntity.getBoundingBox().minX - 1.5D,
+              livingEntity.getBoundingBox().maxX) + 1.5D;
+          double y = MathHelper.nextDouble(random, livingEntity.getBoundingBox().minY,
+              livingEntity.getBoundingBox().maxY) + 1.0D;
+          double z = MathHelper.nextDouble(random, livingEntity.getBoundingBox().minZ - 1.5D,
+              livingEntity.getBoundingBox().maxZ) + 1.5D;
+          ((ServerWorld) world).spawnParticles(ParticleTypes.SMOKE, x, y, z, 0, 0.0D, 0.0D, 0.0D, 0.0D);
+        }
       }
+
     }
 
     @Override
