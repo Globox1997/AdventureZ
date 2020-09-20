@@ -44,14 +44,14 @@ public class WitherPuppetModel<T extends MobEntity> extends BipedEntityModel<T> 
   @Override
   public void setAngles(T puppet, float f, float g, float h, float i, float j) {
     float k = MathHelper.sin(this.handSwingProgress * 3.1415927F);
+    this.rightArm.pitch = MathHelper.cos(f * 0.6662F + 3.1415927F) * 2.0F * g * 0.5F;
+    this.leftArm.pitch = MathHelper.cos(f * 0.6662F) * 2.0F * g * 0.5F;
     this.rightArm.roll = 0.0F;
     this.leftArm.roll = 0.0F;
     this.rightArm.yaw = -(0.1F - k * 0.6F);
     this.rightArm.pitch = -k * 1.5F;
     this.rightLeg.pitch = MathHelper.cos(f * 0.6662F) * 1.4F * g;
     this.leftLeg.pitch = MathHelper.cos(f * 0.6662F + 3.1415927F) * 1.4F * g;
-    this.rightArm.pitch = MathHelper.cos(f * 0.6662F + 3.1415927F) * 2.0F * g * 0.5F;
-    this.leftArm.pitch = MathHelper.cos(f * 0.6662F) * 2.0F * g * 0.5F;
   }
 
 }
