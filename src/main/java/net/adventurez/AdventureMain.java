@@ -10,6 +10,7 @@ public class AdventureMain implements ModInitializer {
   public void onInitialize() {
 
     BlockInit.init();
+    EffectInit.init();
     EntityInit.init();
     ItemInit.init();
     KeybindPacket.init();
