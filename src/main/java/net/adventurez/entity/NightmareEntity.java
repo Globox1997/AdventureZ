@@ -1,5 +1,8 @@
 package net.adventurez.entity;
 
+import java.util.Objects;
+import java.util.Optional;
+import java.util.Random;
 import java.util.UUID;
 
 import net.adventurez.init.EntityInit;
@@ -22,6 +25,7 @@ import net.minecraft.sound.SoundEvent;
 import net.minecraft.util.ActionResult;
 import net.minecraft.util.Hand;
 import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.registry.RegistryKey;
 import net.minecraft.entity.mob.SkeletonHorseEntity;
 import net.minecraft.entity.passive.PassiveEntity;
 import net.minecraft.entity.player.PlayerEntity;
@@ -31,10 +35,13 @@ import net.minecraft.nbt.CompoundTag;
 import net.minecraft.particle.ParticleTypes;
 import net.minecraft.server.world.ServerWorld;
 import net.minecraft.world.Difficulty;
+import net.minecraft.world.LightType;
 import net.minecraft.world.LocalDifficulty;
 import net.minecraft.world.ServerWorldAccess;
 import net.minecraft.world.World;
 import net.minecraft.world.WorldView;
+import net.minecraft.world.biome.Biome;
+import net.minecraft.world.biome.BiomeKeys;
 import net.minecraft.block.Blocks;
 
 public class NightmareEntity extends SkeletonHorseEntity {
@@ -66,6 +73,18 @@ public class NightmareEntity extends SkeletonHorseEntity {
       soulReaperEntity.startRiding(this);
     }
     return (EntityData) entityData;
+  }
+
+  public static boolean canSpawn(EntityType<NightmareEntity> type, ServerWorldAccess world, SpawnReason spawnReason,
+      BlockPos pos, Random random) {
+    Optional<RegistryKey<Biome>> optional = world.method_31081(pos);
+    boolean bl = (world.getDifficulty() != Difficulty.PEACEFUL
+        && !(world.getLightLevel(LightType.SKY, pos) > random.nextInt(32))
+        && canMobSpawn(type, world, spawnReason, pos, random)) || spawnReason == SpawnReason.SPAWNER;
+    if (Objects.equals(optional, Optional.of(BiomeKeys.SOUL_SAND_VALLEY))) {
+      return bl;
+    } else
+      return false;
   }
 
   @Override
