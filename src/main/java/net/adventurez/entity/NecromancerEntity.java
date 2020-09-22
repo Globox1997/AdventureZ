@@ -65,20 +65,6 @@ public class NecromancerEntity extends SpellCastingEntity {
         (new FollowTargetGoal<>(this, PlayerEntity.class, true)).setMaxTimeWithoutVisibility(300));
   }
 
-  private boolean arePuppetsNearby() {
-    List<Entity> list = this.world.getEntitiesByClass(LivingEntity.class, this.getBoundingBox().expand(40D),
-        EntityPredicates.EXCEPT_SPECTATOR);
-    if (!list.isEmpty()) {
-      for (int i = 0; i < list.size(); i++) {
-        Entity entity = (Entity) list.get(i);
-        if (entity.getType() == EntityInit.WITHERPUPPET_ENTITY) {
-          return true;
-        }
-      }
-    }
-    return false;
-  }
-
   @Override
   public void mobTick() {
     super.mobTick();
@@ -99,11 +85,6 @@ public class NecromancerEntity extends SpellCastingEntity {
   @Override
   public boolean canHaveStatusEffect(StatusEffectInstance effect) {
     return effect.getEffectType() == StatusEffects.WITHER ? false : super.canHaveStatusEffect(effect);
-  }
-
-  @Override
-  public boolean canImmediatelyDespawn(double distanceSquared) {
-    return false;
   }
 
   @Override
@@ -286,6 +267,20 @@ public class NecromancerEntity extends SpellCastingEntity {
       }
 
     }
+  }
+
+  private boolean arePuppetsNearby() {
+    List<Entity> list = this.world.getEntitiesByClass(LivingEntity.class, this.getBoundingBox().expand(40D),
+        EntityPredicates.EXCEPT_SPECTATOR);
+    if (!list.isEmpty()) {
+      for (int i = 0; i < list.size(); i++) {
+        Entity entity = (Entity) list.get(i);
+        if (entity.getType() == EntityInit.WITHERPUPPET_ENTITY) {
+          return true;
+        }
+      }
+    }
+    return false;
   }
 
 }
