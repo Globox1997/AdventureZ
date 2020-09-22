@@ -183,5 +183,15 @@
     "sounds": [
       "adventurez:nightmare_angry1"
     ]
+  },
+  "spellcast_shield": {
+    "sounds": [
+      "adventurez:spellcast_shield"
+    ]
+  },
+  "magic_shield_hit": {
+    "sounds": [
+      "adventurez:magic_shield_hit"
+    ]
   }
 }
