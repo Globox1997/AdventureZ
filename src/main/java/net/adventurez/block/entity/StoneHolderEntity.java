@@ -32,6 +32,7 @@ public class StoneHolderEntity extends BlockEntity implements Tickable, Inventor
   private DefaultedList<ItemStack> inventory;
   private boolean startBuildingGolem = false;
   private int buildGolemCounter = 0;
+  private int tickCounter = 0;
 
   public StoneHolderEntity() {
     super(BlockInit.STONE_HOLDER_ENTITY);
@@ -44,6 +45,7 @@ public class StoneHolderEntity extends BlockEntity implements Tickable, Inventor
     inventory.clear();
     Inventories.fromTag(tag, inventory);
     buildGolemCounter = tag.getInt("buildcounter");
+    tickCounter = tag.getInt("tickcounter");
     startBuildingGolem = tag.getBoolean("startbuilding");
   }
 
@@ -52,6 +54,7 @@ public class StoneHolderEntity extends BlockEntity implements Tickable, Inventor
     super.toTag(tag);
     Inventories.toTag(tag, inventory);
     tag.putInt("buildcounter", buildGolemCounter);
+    tag.putInt("tickcounter", tickCounter);
     tag.putBoolean("startbuilding", startBuildingGolem);
     return tag;
   }
@@ -59,20 +62,33 @@ public class StoneHolderEntity extends BlockEntity implements Tickable, Inventor
   public boolean isValid(World world, BlockPos pos, BlockState state) {
     int stoneCounter;
     int stoneCounter2;
+    int stoneCounter3 = 0;
     for (stoneCounter = 1; stoneCounter < 10; stoneCounter++) {
-      for (stoneCounter2 = -5; stoneCounter2 < 4; stoneCounter2++) {
+      for (stoneCounter2 = -4; stoneCounter2 < 5; stoneCounter2++) {
         BlockState stoneState = world.getBlockState(pos.north(stoneCounter).east(stoneCounter2));
         if (stoneState.getBlock().isIn(TagInit.PLATFORM_BLOCKS)) {
-          return true;
+          stoneCounter3++;
         }
       }
+    }
+    if (stoneCounter3 == 81) {
+      return true;
     }
     return false;
   }
 
   @Override
   public void tick() {
-    this.update();
+    if (!this.isEmpty()) {
+      this.tickCounter++;
+      if (tickCounter > 40) {
+        this.update();
+        tickCounter = 0;
+      }
+    }
+    if (startBuildingGolem == true) {
+      this.buildStructure();
+    }
   }
 
   public void update() {
@@ -88,7 +104,7 @@ public class StoneHolderEntity extends BlockEntity implements Tickable, Inventor
       if (world.isClient) {
         // Visuals?
       }
-      if (!isEmpty() && !BlockInit.STONE_HOLDER_ENTITY.get(world, secondHolderPos).isEmpty()
+      if (!this.isEmpty() && !BlockInit.STONE_HOLDER_ENTITY.get(world, secondHolderPos).isEmpty()
           && !BlockInit.STONE_HOLDER_ENTITY.get(world, thirdHolderPos).isEmpty()
           && !BlockInit.STONE_HOLDER_ENTITY.get(world, fourthHolderPos).isEmpty()) {
         if (this.isValid(world, pos, state)) {
@@ -97,7 +113,7 @@ public class StoneHolderEntity extends BlockEntity implements Tickable, Inventor
           BlockInit.STONE_HOLDER_ENTITY.get(world, pos.west(5).north(5)).clear();
           this.clear();
           startBuildingGolem = true;
-          markDirty();
+          this.markDirty();
           if (world.isClient) {
             for (int counting = 0; counting < 20; counting++) {
               double d = (double) pos.getX() + (double) world.random.nextFloat();
@@ -126,139 +142,142 @@ public class StoneHolderEntity extends BlockEntity implements Tickable, Inventor
         }
       }
     }
-    if (startBuildingGolem == true) {
-      buildGolemCounter++;
-      if (!world.isClient) {
-        // First Layer
-        if (buildGolemCounter == 30) {
-          world.setBlockState(pos.up().north(2).east(2), Blocks.BLACKSTONE_STAIRS.getDefaultState(), 3);
-          world.setBlockState(pos.up().north(2).west(2), Blocks.BLACKSTONE_STAIRS.getDefaultState(), 3);
-          world.setBlockState(pos.up().north(3).east(2), Blocks.BLACKSTONE_STAIRS.getDefaultState()
-              .with(StairsBlock.HALF, BlockHalf.TOP).with(StairsBlock.FACING, Direction.SOUTH), 3);
-          world.setBlockState(pos.up().north(3).west(2), Blocks.BLACKSTONE_STAIRS.getDefaultState()
-              .with(StairsBlock.HALF, BlockHalf.TOP).with(StairsBlock.FACING, Direction.SOUTH), 3);
-          world.setBlockState(pos.up().north(7).east(), Blocks.BLACKSTONE.getDefaultState(), 3);
-          world.setBlockState(pos.up().north(7).west(), Blocks.BLACKSTONE.getDefaultState(), 3);
-          world.playSound(null, pos, SoundEvents.BLOCK_STONE_PLACE, SoundCategory.BLOCKS, 1F, 1F);
+
+  }
+
+  private void buildStructure() {
+    buildGolemCounter++;
+    if (!world.isClient) {
+      // First Layer
+      if (buildGolemCounter == 30) {
+        world.setBlockState(pos.up().north(2).east(2), Blocks.BLACKSTONE_STAIRS.getDefaultState(), 3);
+        world.setBlockState(pos.up().north(2).west(2), Blocks.BLACKSTONE_STAIRS.getDefaultState(), 3);
+        world.setBlockState(pos.up().north(3).east(2), Blocks.BLACKSTONE_STAIRS.getDefaultState()
+            .with(StairsBlock.HALF, BlockHalf.TOP).with(StairsBlock.FACING, Direction.SOUTH), 3);
+        world.setBlockState(pos.up().north(3).west(2), Blocks.BLACKSTONE_STAIRS.getDefaultState()
+            .with(StairsBlock.HALF, BlockHalf.TOP).with(StairsBlock.FACING, Direction.SOUTH), 3);
+        world.setBlockState(pos.up().north(7).east(), Blocks.BLACKSTONE.getDefaultState(), 3);
+        world.setBlockState(pos.up().north(7).west(), Blocks.BLACKSTONE.getDefaultState(), 3);
+        world.playSound(null, pos, SoundEvents.BLOCK_STONE_PLACE, SoundCategory.BLOCKS, 1F, 1F);
+      }
+      // Second Layer
+      if (buildGolemCounter == 60) {
+        world.setBlockState(pos.up(2).north(3).east(2), Blocks.BLACKSTONE_STAIRS.getDefaultState(), 3);
+        world.setBlockState(pos.up(2).north(3).west(2), Blocks.BLACKSTONE_STAIRS.getDefaultState(), 3);
+        world.setBlockState(pos.up(2).north(4).east(2), Blocks.BLACKSTONE_STAIRS.getDefaultState()
+            .with(StairsBlock.HALF, BlockHalf.TOP).with(StairsBlock.FACING, Direction.SOUTH), 3);
+        world.setBlockState(pos.up(2).north(4).west(2), Blocks.BLACKSTONE_STAIRS.getDefaultState()
+            .with(StairsBlock.HALF, BlockHalf.TOP).with(StairsBlock.FACING, Direction.SOUTH), 3);
+        world.setBlockState(pos.up(2).north(6).east(),
+            Blocks.BLACKSTONE_SLAB.getDefaultState().with(SlabBlock.TYPE, SlabType.TOP), 3);
+        world.setBlockState(pos.up(2).north(6).west(),
+            Blocks.BLACKSTONE_SLAB.getDefaultState().with(SlabBlock.TYPE, SlabType.TOP), 3);
+        world.setBlockState(pos.up(2).north(7).east(), Blocks.BLACKSTONE.getDefaultState(), 3);
+        world.setBlockState(pos.up(2).north(7).west(), Blocks.BLACKSTONE.getDefaultState(), 3);
+        world.playSound(null, pos, SoundEvents.BLOCK_STONE_PLACE, SoundCategory.BLOCKS, 1F, 1F);
+      }
+      // Third Layer
+      if (buildGolemCounter == 90) {
+        world.setBlockState(pos.up(3).north(4).east(2), Blocks.BLACKSTONE_STAIRS.getDefaultState(), 3);
+        world.setBlockState(pos.up(3).north(4).west(2), Blocks.BLACKSTONE_STAIRS.getDefaultState(), 3);
+        world.setBlockState(pos.up(3).north(5).east(2), Blocks.BLACKSTONE.getDefaultState(), 3);
+        world.setBlockState(pos.up(3).north(5).west(2), Blocks.BLACKSTONE.getDefaultState(), 3);
+        world.setBlockState(pos.up(3).north(6).east(2), Blocks.BLACKSTONE.getDefaultState(), 3);
+        world.setBlockState(pos.up(3).north(6).west(2), Blocks.BLACKSTONE.getDefaultState(), 3);
+        world.setBlockState(pos.up(3).north(7).east(),
+            Blocks.BLACKSTONE_STAIRS.getDefaultState().with(StairsBlock.FACING, Direction.SOUTH), 3);
+        world.setBlockState(pos.up(3).north(7).west(),
+            Blocks.BLACKSTONE_STAIRS.getDefaultState().with(StairsBlock.FACING, Direction.SOUTH), 3);
+        for (int i = -1; i < 2; i++) {
+          world.setBlockState(pos.up(3).north(5).east(i), Blocks.BLACKSTONE.getDefaultState(), 3);
+          world.setBlockState(pos.up(3).north(6).east(i), Blocks.BLACKSTONE.getDefaultState(), 3);
         }
-        // Second Layer
-        if (buildGolemCounter == 60) {
-          world.setBlockState(pos.up(2).north(3).east(2), Blocks.BLACKSTONE_STAIRS.getDefaultState(), 3);
-          world.setBlockState(pos.up(2).north(3).west(2), Blocks.BLACKSTONE_STAIRS.getDefaultState(), 3);
-          world.setBlockState(pos.up(2).north(4).east(2), Blocks.BLACKSTONE_STAIRS.getDefaultState()
-              .with(StairsBlock.HALF, BlockHalf.TOP).with(StairsBlock.FACING, Direction.SOUTH), 3);
-          world.setBlockState(pos.up(2).north(4).west(2), Blocks.BLACKSTONE_STAIRS.getDefaultState()
-              .with(StairsBlock.HALF, BlockHalf.TOP).with(StairsBlock.FACING, Direction.SOUTH), 3);
-          world.setBlockState(pos.up(2).north(6).east(),
-              Blocks.BLACKSTONE_SLAB.getDefaultState().with(SlabBlock.TYPE, SlabType.TOP), 3);
-          world.setBlockState(pos.up(2).north(6).west(),
-              Blocks.BLACKSTONE_SLAB.getDefaultState().with(SlabBlock.TYPE, SlabType.TOP), 3);
-          world.setBlockState(pos.up(2).north(7).east(), Blocks.BLACKSTONE.getDefaultState(), 3);
-          world.setBlockState(pos.up(2).north(7).west(), Blocks.BLACKSTONE.getDefaultState(), 3);
-          world.playSound(null, pos, SoundEvents.BLOCK_STONE_PLACE, SoundCategory.BLOCKS, 1F, 1F);
-        }
-        // Third Layer
-        if (buildGolemCounter == 90) {
-          world.setBlockState(pos.up(3).north(4).east(2), Blocks.BLACKSTONE_STAIRS.getDefaultState(), 3);
-          world.setBlockState(pos.up(3).north(4).west(2), Blocks.BLACKSTONE_STAIRS.getDefaultState(), 3);
-          world.setBlockState(pos.up(3).north(5).east(2), Blocks.BLACKSTONE.getDefaultState(), 3);
-          world.setBlockState(pos.up(3).north(5).west(2), Blocks.BLACKSTONE.getDefaultState(), 3);
-          world.setBlockState(pos.up(3).north(6).east(2), Blocks.BLACKSTONE.getDefaultState(), 3);
-          world.setBlockState(pos.up(3).north(6).west(2), Blocks.BLACKSTONE.getDefaultState(), 3);
-          world.setBlockState(pos.up(3).north(7).east(),
+        world.playSound(null, pos, SoundEvents.BLOCK_STONE_PLACE, SoundCategory.BLOCKS, 1F, 1F);
+      }
+      // Fourth Layer
+      if (buildGolemCounter == 120) {
+        world.setBlockState(pos.up(4).north(5).east(2),
+            Blocks.BLACKSTONE_STAIRS.getDefaultState().with(StairsBlock.FACING, Direction.WEST), 3);
+        world.setBlockState(pos.up(4).north(5).west(2),
+            Blocks.BLACKSTONE_STAIRS.getDefaultState().with(StairsBlock.FACING, Direction.EAST), 3);
+        world.setBlockState(pos.up(4).north(6).east(2), Blocks.BLACKSTONE_STAIRS.getDefaultState()
+            .with(StairsBlock.FACING, Direction.WEST).with(StairsBlock.SHAPE, StairShape.OUTER_LEFT), 3);
+        world.setBlockState(pos.up(4).north(6).west(2), Blocks.BLACKSTONE_STAIRS.getDefaultState()
+            .with(StairsBlock.FACING, Direction.EAST).with(StairsBlock.SHAPE, StairShape.OUTER_RIGHT), 3);
+        for (int i = -1; i < 2; i++) {
+          world.setBlockState(pos.up(4).north(5).east(i), Blocks.BLACKSTONE.getDefaultState(), 3);
+          world.setBlockState(pos.up(4).north(6).east(i),
               Blocks.BLACKSTONE_STAIRS.getDefaultState().with(StairsBlock.FACING, Direction.SOUTH), 3);
-          world.setBlockState(pos.up(3).north(7).west(),
-              Blocks.BLACKSTONE_STAIRS.getDefaultState().with(StairsBlock.FACING, Direction.SOUTH), 3);
-          for (int i = -1; i < 2; i++) {
-            world.setBlockState(pos.up(3).north(5).east(i), Blocks.BLACKSTONE.getDefaultState(), 3);
-            world.setBlockState(pos.up(3).north(6).east(i), Blocks.BLACKSTONE.getDefaultState(), 3);
-          }
-          world.playSound(null, pos, SoundEvents.BLOCK_STONE_PLACE, SoundCategory.BLOCKS, 1F, 1F);
         }
-        // Fourth Layer
-        if (buildGolemCounter == 120) {
-          world.setBlockState(pos.up(4).north(5).east(2),
-              Blocks.BLACKSTONE_STAIRS.getDefaultState().with(StairsBlock.FACING, Direction.WEST), 3);
-          world.setBlockState(pos.up(4).north(5).west(2),
-              Blocks.BLACKSTONE_STAIRS.getDefaultState().with(StairsBlock.FACING, Direction.EAST), 3);
-          world.setBlockState(pos.up(4).north(6).east(2), Blocks.BLACKSTONE_STAIRS.getDefaultState()
-              .with(StairsBlock.FACING, Direction.WEST).with(StairsBlock.SHAPE, StairShape.OUTER_LEFT), 3);
-          world.setBlockState(pos.up(4).north(6).west(2), Blocks.BLACKSTONE_STAIRS.getDefaultState()
-              .with(StairsBlock.FACING, Direction.EAST).with(StairsBlock.SHAPE, StairShape.OUTER_RIGHT), 3);
-          for (int i = -1; i < 2; i++) {
-            world.setBlockState(pos.up(4).north(5).east(i), Blocks.BLACKSTONE.getDefaultState(), 3);
-            world.setBlockState(pos.up(4).north(6).east(i),
-                Blocks.BLACKSTONE_STAIRS.getDefaultState().with(StairsBlock.FACING, Direction.SOUTH), 3);
-          }
-          world.setBlockState(pos.up(4).north(4), Blocks.BLACKSTONE.getDefaultState(), 3);
-          world.setBlockState(pos.up(5).north(4), Blocks.BLACKSTONE_SLAB.getDefaultState(), 3);
-          world.playSound(null, pos, SoundEvents.BLOCK_STONE_PLACE, SoundCategory.BLOCKS, 1F, 1F);
-        }
-        if (buildGolemCounter >= 150) {
-          for (int i = 1; i < 6; i++) {
-            for (int o = -4; o < 6; o++) {
-              for (int u = 1; u < 10; u++) {
-                world.breakBlock(pos.up(i).east(o).north(u), false);
-              }
+        world.setBlockState(pos.up(4).north(4), Blocks.BLACKSTONE.getDefaultState(), 3);
+        world.setBlockState(pos.up(5).north(4), Blocks.BLACKSTONE_SLAB.getDefaultState(), 3);
+        world.playSound(null, pos, SoundEvents.BLOCK_STONE_PLACE, SoundCategory.BLOCKS, 1F, 1F);
+      }
+      if (buildGolemCounter >= 150) {
+        for (int i = 1; i < 6; i++) {
+          for (int o = -4; o < 6; o++) {
+            for (int u = 1; u < 10; u++) {
+              world.breakBlock(pos.up(i).east(o).north(u), false);
             }
           }
-          StoneGolemEntity stoneGolemEntity = (StoneGolemEntity) EntityInit.STONEGOLEM_ENTITY.create(world);
-          BlockPos spawnPos = new BlockPos(pos.getX(), pos.getY() + 1, pos.getZ() - 5);
-          stoneGolemEntity.refreshPositionAndAngles(spawnPos, 0.0F, 0.0F);
-          stoneGolemEntity.sendtoEntity();
-          world.spawnEntity(stoneGolemEntity);
-          world.playSound(null, pos, SoundInit.GOLEM_SPAWN_EVENT, SoundCategory.HOSTILE, 1F, 1F);
         }
-      } else {
-        double d = (double) pos.getX() + (double) world.random.nextFloat();
-        double e = (double) pos.getY() + (double) world.random.nextFloat() + 1D;
-        double f = (double) pos.getZ() + (double) world.random.nextFloat();
-        if (buildGolemCounter > 0 && buildGolemCounter < 26) {
-          world.addParticle(ParticleTypes.SMOKE, d + 2, e, f - 2, 0.0D, 0.0D, 0.0D);
-          world.addParticle(ParticleTypes.SMOKE, d - 2, e, f - 2, 0.0D, 0.0D, 0.0D);
-          world.addParticle(ParticleTypes.SMOKE, d + 2, e, f - 3, 0.0D, 0.0D, 0.0D);
-          world.addParticle(ParticleTypes.SMOKE, d - 2, e, f - 3, 0.0D, 0.0D, 0.0D);
-          world.addParticle(ParticleTypes.SMOKE, d + 1, e, f - 7, 0.0D, 0.0D, 0.0D);
-          world.addParticle(ParticleTypes.SMOKE, d - 1, e, f - 7, 0.0D, 0.0D, 0.0D);
+        StoneGolemEntity stoneGolemEntity = (StoneGolemEntity) EntityInit.STONEGOLEM_ENTITY.create(world);
+        BlockPos spawnPos = new BlockPos(pos.getX(), pos.getY() + 1, pos.getZ() - 5);
+        stoneGolemEntity.refreshPositionAndAngles(spawnPos, 0.0F, 0.0F);
+        stoneGolemEntity.sendtoEntity();
+        world.spawnEntity(stoneGolemEntity);
+        world.playSound(null, pos, SoundInit.GOLEM_SPAWN_EVENT, SoundCategory.HOSTILE, 1F, 1F);
+      }
+    } else {
+      double d = (double) pos.getX() + (double) world.random.nextFloat();
+      double e = (double) pos.getY() + (double) world.random.nextFloat() + 1D;
+      double f = (double) pos.getZ() + (double) world.random.nextFloat();
+      if (buildGolemCounter > 0 && buildGolemCounter < 26) {
+        world.addParticle(ParticleTypes.SMOKE, d + 2, e, f - 2, 0.0D, 0.0D, 0.0D);
+        world.addParticle(ParticleTypes.SMOKE, d - 2, e, f - 2, 0.0D, 0.0D, 0.0D);
+        world.addParticle(ParticleTypes.SMOKE, d + 2, e, f - 3, 0.0D, 0.0D, 0.0D);
+        world.addParticle(ParticleTypes.SMOKE, d - 2, e, f - 3, 0.0D, 0.0D, 0.0D);
+        world.addParticle(ParticleTypes.SMOKE, d + 1, e, f - 7, 0.0D, 0.0D, 0.0D);
+        world.addParticle(ParticleTypes.SMOKE, d - 1, e, f - 7, 0.0D, 0.0D, 0.0D);
+      }
+      if (buildGolemCounter > 30 && buildGolemCounter < 56) {
+        world.addParticle(ParticleTypes.SMOKE, d + 2, e + 1, f - 3, 0.0D, 0.0D, 0.0D);
+        world.addParticle(ParticleTypes.SMOKE, d - 2, e + 1, f - 3, 0.0D, 0.0D, 0.0D);
+        world.addParticle(ParticleTypes.SMOKE, d + 2, e + 1, f - 4, 0.0D, 0.0D, 0.0D);
+        world.addParticle(ParticleTypes.SMOKE, d - 2, e + 1, f - 4, 0.0D, 0.0D, 0.0D);
+        world.addParticle(ParticleTypes.SMOKE, d + 1, e + 1, f - 6, 0.0D, 0.0D, 0.0D);
+        world.addParticle(ParticleTypes.SMOKE, d - 1, e + 1, f - 6, 0.0D, 0.0D, 0.0D);
+        world.addParticle(ParticleTypes.SMOKE, d + 1, e + 1, f - 7, 0.0D, 0.0D, 0.0D);
+        world.addParticle(ParticleTypes.SMOKE, d - 1, e + 1, f - 7, 0.0D, 0.0D, 0.0D);
+      }
+      if (buildGolemCounter > 60 && buildGolemCounter < 86) {
+        world.addParticle(ParticleTypes.SMOKE, d + 2, e + 2, f - 4, 0.0D, 0.0D, 0.0D);
+        world.addParticle(ParticleTypes.SMOKE, d - 2, e + 2, f - 4, 0.0D, 0.0D, 0.0D);
+        world.addParticle(ParticleTypes.SMOKE, d + 2, e + 2, f - 5, 0.0D, 0.0D, 0.0D);
+        world.addParticle(ParticleTypes.SMOKE, d - 2, e + 2, f - 5, 0.0D, 0.0D, 0.0D);
+        world.addParticle(ParticleTypes.SMOKE, d + 2, e + 2, f - 6, 0.0D, 0.0D, 0.0D);
+        world.addParticle(ParticleTypes.SMOKE, d - 2, e + 2, f - 6, 0.0D, 0.0D, 0.0D);
+        world.addParticle(ParticleTypes.SMOKE, d + 1, e + 2, f - 7, 0.0D, 0.0D, 0.0D);
+        world.addParticle(ParticleTypes.SMOKE, d - 1, e + 2, f - 7, 0.0D, 0.0D, 0.0D);
+        for (int i = -1; i < 2; i++) {
+          world.addParticle(ParticleTypes.SMOKE, d - i, e + 2, f - 5, 0.0D, 0.0D, 0.0D);
+          world.addParticle(ParticleTypes.SMOKE, d - i, e + 2, f - 6, 0.0D, 0.0D, 0.0D);
         }
-        if (buildGolemCounter > 30 && buildGolemCounter < 56) {
-          world.addParticle(ParticleTypes.SMOKE, d + 2, e + 1, f - 3, 0.0D, 0.0D, 0.0D);
-          world.addParticle(ParticleTypes.SMOKE, d - 2, e + 1, f - 3, 0.0D, 0.0D, 0.0D);
-          world.addParticle(ParticleTypes.SMOKE, d + 2, e + 1, f - 4, 0.0D, 0.0D, 0.0D);
-          world.addParticle(ParticleTypes.SMOKE, d - 2, e + 1, f - 4, 0.0D, 0.0D, 0.0D);
-          world.addParticle(ParticleTypes.SMOKE, d + 1, e + 1, f - 6, 0.0D, 0.0D, 0.0D);
-          world.addParticle(ParticleTypes.SMOKE, d - 1, e + 1, f - 6, 0.0D, 0.0D, 0.0D);
-          world.addParticle(ParticleTypes.SMOKE, d + 1, e + 1, f - 7, 0.0D, 0.0D, 0.0D);
-          world.addParticle(ParticleTypes.SMOKE, d - 1, e + 1, f - 7, 0.0D, 0.0D, 0.0D);
-        }
-        if (buildGolemCounter > 60 && buildGolemCounter < 86) {
-          world.addParticle(ParticleTypes.SMOKE, d + 2, e + 2, f - 4, 0.0D, 0.0D, 0.0D);
-          world.addParticle(ParticleTypes.SMOKE, d - 2, e + 2, f - 4, 0.0D, 0.0D, 0.0D);
-          world.addParticle(ParticleTypes.SMOKE, d + 2, e + 2, f - 5, 0.0D, 0.0D, 0.0D);
-          world.addParticle(ParticleTypes.SMOKE, d - 2, e + 2, f - 5, 0.0D, 0.0D, 0.0D);
-          world.addParticle(ParticleTypes.SMOKE, d + 2, e + 2, f - 6, 0.0D, 0.0D, 0.0D);
-          world.addParticle(ParticleTypes.SMOKE, d - 2, e + 2, f - 6, 0.0D, 0.0D, 0.0D);
-          world.addParticle(ParticleTypes.SMOKE, d + 1, e + 2, f - 7, 0.0D, 0.0D, 0.0D);
-          world.addParticle(ParticleTypes.SMOKE, d - 1, e + 2, f - 7, 0.0D, 0.0D, 0.0D);
-          for (int i = -1; i < 2; i++) {
-            world.addParticle(ParticleTypes.SMOKE, d - i, e + 2, f - 5, 0.0D, 0.0D, 0.0D);
-            world.addParticle(ParticleTypes.SMOKE, d - i, e + 2, f - 6, 0.0D, 0.0D, 0.0D);
-          }
-        }
-        if (buildGolemCounter > 90 && buildGolemCounter < 116) {
-          world.addParticle(ParticleTypes.SMOKE, d + 2, e + 3, f - 5, 0.0D, 0.0D, 0.0D);
-          world.addParticle(ParticleTypes.SMOKE, d - 2, e + 3, f - 5, 0.0D, 0.0D, 0.0D);
-          world.addParticle(ParticleTypes.SMOKE, d + 2, e + 3, f - 6, 0.0D, 0.0D, 0.0D);
-          world.addParticle(ParticleTypes.SMOKE, d - 2, e + 3, f - 6, 0.0D, 0.0D, 0.0D);
-          world.addParticle(ParticleTypes.SMOKE, d, e + 3, f - 4, 0.0D, 0.0D, 0.0D);
-          world.addParticle(ParticleTypes.SMOKE, d, e + 4, f - 4, 0.0D, 0.0D, 0.0D);
-          for (int i = -1; i < 2; i++) {
-            world.addParticle(ParticleTypes.SMOKE, d - i, e + 3, f - 5, 0.0D, 0.0D, 0.0D);
-            world.addParticle(ParticleTypes.SMOKE, d - i, e + 3, f - 6, 0.0D, 0.0D, 0.0D);
-          }
+      }
+      if (buildGolemCounter > 90 && buildGolemCounter < 116) {
+        world.addParticle(ParticleTypes.SMOKE, d + 2, e + 3, f - 5, 0.0D, 0.0D, 0.0D);
+        world.addParticle(ParticleTypes.SMOKE, d - 2, e + 3, f - 5, 0.0D, 0.0D, 0.0D);
+        world.addParticle(ParticleTypes.SMOKE, d + 2, e + 3, f - 6, 0.0D, 0.0D, 0.0D);
+        world.addParticle(ParticleTypes.SMOKE, d - 2, e + 3, f - 6, 0.0D, 0.0D, 0.0D);
+        world.addParticle(ParticleTypes.SMOKE, d, e + 3, f - 4, 0.0D, 0.0D, 0.0D);
+        world.addParticle(ParticleTypes.SMOKE, d, e + 4, f - 4, 0.0D, 0.0D, 0.0D);
+        for (int i = -1; i < 2; i++) {
+          world.addParticle(ParticleTypes.SMOKE, d - i, e + 3, f - 5, 0.0D, 0.0D, 0.0D);
+          world.addParticle(ParticleTypes.SMOKE, d - i, e + 3, f - 6, 0.0D, 0.0D, 0.0D);
         }
       }
     }
+
     if (buildGolemCounter >= 150) {
       startBuildingGolem = false;
       buildGolemCounter = 0;
