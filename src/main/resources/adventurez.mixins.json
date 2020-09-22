@@ -6,7 +6,6 @@
   "mixins": [
     "PlayerEntityMixin",
     "OreBlockMixin",
-    "SpawnRestrictionMixin",
     "PiglinBrainMixin"
   ],
   "client": [
