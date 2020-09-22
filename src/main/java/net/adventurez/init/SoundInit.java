@@ -63,6 +63,11 @@ public class SoundInit {
   public static SoundEvent SOULREAPER_IDLE_EVENT = new SoundEvent(SOULREAPER_IDLE);
   public static SoundEvent SOULREAPER_HURT_EVENT = new SoundEvent(SOULREAPER_HURT);
   public static SoundEvent SOULREAPER_DEATH_EVENT = new SoundEvent(SOULREAPER_DEATH);
+  // Magic
+  public static final Identifier SPELL_CAST_SHIELD = new Identifier("adventurez:spellcast_shield");
+  public static final Identifier MAGIC_SHIELD_HIT = new Identifier("adventurez:magic_shield_hit");
+  public static SoundEvent SPELL_CAST_SHIELD_EVENT = new SoundEvent(SPELL_CAST_SHIELD);
+  public static SoundEvent MAGIC_SHIELD_HIT_EVENT = new SoundEvent(MAGIC_SHIELD_HIT);
 
   public static void init() {
     Registry.register(Registry.SOUND_EVENT, SoundInit.GOLEM_IDLE, GOLEM_IDLE_EVENT);
@@ -91,5 +96,7 @@ public class SoundInit {
     Registry.register(Registry.SOUND_EVENT, SoundInit.SOULREAPER_IDLE, SOULREAPER_IDLE_EVENT);
     Registry.register(Registry.SOUND_EVENT, SoundInit.SOULREAPER_HURT, SOULREAPER_HURT_EVENT);
     Registry.register(Registry.SOUND_EVENT, SoundInit.SOULREAPER_DEATH, SOULREAPER_DEATH_EVENT);
+    Registry.register(Registry.SOUND_EVENT, SoundInit.SPELL_CAST_SHIELD, SPELL_CAST_SHIELD_EVENT);
+    Registry.register(Registry.SOUND_EVENT, SoundInit.MAGIC_SHIELD_HIT, MAGIC_SHIELD_HIT_EVENT);
   }
 }
