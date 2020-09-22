@@ -82,23 +82,13 @@ public class StoneGolemModel<T extends StoneGolemEntity> extends CompositeEntity
       this.leftArm.pitch = MathHelper.cos(-thrownRockTick * 0.2F + 0.3F) - 0.3F;
     }
     if (roarTick > 18) {
-      this.rightArm.pitch = MathHelper.sin(roarTick / 5.832F) - 0.5236F; 
+      this.rightArm.pitch = MathHelper.sin(roarTick / 5.832F) - 0.5236F;
       this.leftArm.pitch = MathHelper.sin(roarTick / 5.832F) - 0.5236F;
     }
-  }
-
-  @Override
-  public void animateModel(T stoneGolem, float f, float g, float h) {
-    int attackTick = stoneGolem.getAttackTick();
-
-    if (attackTick > 0) {
-      this.rightArm.pitch = g * 2.6F;
-      this.rightArm.yaw = g * 1.2F;
-    } else {
-      this.rightArm.pitch = (-0.2F + 10.5F * MathHelper.method_24504(f, 13.0F)) * g * 3 + 5F;
-      this.leftArm.pitch = (-0.2F - 10.5F * MathHelper.method_24504(f, 13.0F)) * g * 3 + 5F;
+    float k = MathHelper.sin(this.handSwingProgress * 3.1415927F) * 0.5F;
+    if (k > 0.1F) {
+      this.rightArm.pitch = -k - 0.5236F;
     }
-
   }
 
 }
