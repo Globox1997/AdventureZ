@@ -63,7 +63,9 @@ public class SmallStoneGolemModel<T extends SmallStoneGolemEntity> extends Compo
     this.rightArm.pitch = 0.5F * MathHelper.method_24504(f, 13.0F) * g * 1.3F - 0.6109F;
     this.leftArm.pitch = -0.5F * MathHelper.method_24504(f, 13.0F) * g * 1.3F - 0.6109F;
     float k = MathHelper.sin(this.handSwingProgress * 3.1415927F);
-    this.rightArm.pitch = -k * 1.5F;
+    if (k > 0) {
+      this.rightArm.pitch = -k * 1.5F;
+    }
   }
 
 }
