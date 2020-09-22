@@ -11,6 +11,7 @@ import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityType;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.damage.DamageSource;
+import net.minecraft.entity.damage.ProjectileDamageSource;
 import net.minecraft.entity.effect.StatusEffectInstance;
 import net.minecraft.entity.effect.StatusEffects;
 import net.minecraft.item.Item;
@@ -90,18 +91,17 @@ public class ThrownRockEntity extends ThrownItemEntity {
          Entity entity = entityHitResult.getEntity();
          Entity entity2 = this.getOwner();
          boolean bl2;
+         DamageSource damageSource = createDamageSource(this, entity2 == null ? this : entity2);
          if (entity2 instanceof LivingEntity) {
             LivingEntity livingEntity = (LivingEntity) entity2;
-            bl2 = entity.damage(DamageSource.FALLING_BLOCK, 16F);
-            if (bl2) {
+            bl2 = entity.damage(damageSource, 16F);
+            if (entity.damage(damageSource, 16F)) {
                if (entity.isAlive()) {
                   this.dealDamage(livingEntity, entity);
-               } else {
-                  livingEntity.heal(5.0F);
                }
             }
          } else {
-            bl2 = entity.damage(DamageSource.FALLING_BLOCK, 16F);
+            bl2 = entity.damage(damageSource, 16F);
          }
 
          if (bl2 && entity instanceof LivingEntity) {
@@ -112,5 +112,9 @@ public class ThrownRockEntity extends ThrownItemEntity {
          }
 
       }
+   }
+
+   public static DamageSource createDamageSource(Entity entity, Entity owner) {
+      return new ProjectileDamageSource("rock", entity, owner).setProjectile();
    }
 }
