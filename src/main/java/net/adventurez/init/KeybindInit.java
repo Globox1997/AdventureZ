@@ -26,18 +26,16 @@ public class KeybindInit {
     ClientTickEvents.END_CLIENT_TICK.register(client -> {
       if (armorKeyBind.wasPressed()) {
         if (!armorKeyBoolean) {
-          activateArmor();
+          activateArmor(client.player);
         }
         armorKeyBoolean = true;
       } else {
         armorKeyBoolean = false;
       }
-
     });
   }
 
-  public static void activateArmor() {
-    ClientPlayerEntity player = MinecraftClient.getInstance().player;
+  public static void activateArmor(ClientPlayerEntity player) {
     if (fullNetheriteArmor(player)) {
       PacketByteBuf buf = new PacketByteBuf(Unpooled.buffer());
       CustomPayloadC2SPacket packet = new CustomPayloadC2SPacket(KeybindPacket.ARMOR_PACKET, buf);
