@@ -15,39 +15,45 @@ import net.minecraft.util.registry.Registry;
 
 public class EntityInit {
         public static final EntityType<StoneGolemEntity> STONEGOLEM_ENTITY = FabricEntityTypeBuilder
-                        .create(SpawnGroup.MONSTER, StoneGolemEntity::new).trackable(74, 2).fireImmune()
+                        .create(SpawnGroup.MONSTER, StoneGolemEntity::new).fireImmune()
                         .dimensions(EntityDimensions.fixed(3.36F, 4.44F)).build();
         public static final EntityType<ThrownRockEntity> THROWNROCK_ENTITY = FabricEntityTypeBuilder
-                        .<ThrownRockEntity>create(SpawnGroup.MISC, ThrownRockEntity::new).trackable(74, 2)
+                        .<ThrownRockEntity>create(SpawnGroup.MISC, ThrownRockEntity::new)
                         .dimensions(EntityDimensions.fixed(1.5F, 1.5F)).build();
         public static final EntityType<GildedStoneEntity> GILDEDSTONE_ENTITY = FabricEntityTypeBuilder
-                        .<GildedStoneEntity>create(SpawnGroup.MISC, GildedStoneEntity::new).trackable(74, 2)
+                        .<GildedStoneEntity>create(SpawnGroup.MISC, GildedStoneEntity::new)
                         .dimensions(EntityDimensions.fixed(0.4F, 0.7F)).build();
         public static final EntityType<SmallStoneGolemEntity> SMALLSTONEGOLEM_ENTITY = FabricEntityTypeBuilder
-                        .create(SpawnGroup.MONSTER, SmallStoneGolemEntity::new).trackable(74, 2).fireImmune()
+                        .create(SpawnGroup.MONSTER, SmallStoneGolemEntity::new).fireImmune()
                         .dimensions(EntityDimensions.fixed(1.2F, 1.2F)).build();
         public static final EntityType<PiglinBeastEntity> PIGLINBEAST_ENTITY = FabricEntityTypeBuilder
-                        .create(SpawnGroup.MONSTER, PiglinBeastEntity::new).trackable(74, 2).fireImmune()
+                        .create(SpawnGroup.MONSTER, PiglinBeastEntity::new).fireImmune()
                         .dimensions(EntityDimensions.fixed(1.55F, 3.35F)).build();
         public static final EntityType<NightmareEntity> NIGHTMARE_ENTITY = FabricEntityTypeBuilder
-                        .create(SpawnGroup.MONSTER, NightmareEntity::new).trackable(74, 2).fireImmune()
-                        .specificSpawnBlocks(Blocks.SOUL_SAND, Blocks.SOUL_SOIL)
+                        .create(SpawnGroup.MONSTER, NightmareEntity::new).fireImmune()
                         .dimensions(EntityDimensions.fixed(1.4F, 1.6F)).build();
         public static final EntityType<SoulReaperEntity> SOULREAPER_ENTITY = FabricEntityTypeBuilder
-                        .create(SpawnGroup.MONSTER, SoulReaperEntity::new).trackable(74, 2).fireImmune()
+                        .create(SpawnGroup.MONSTER, SoulReaperEntity::new).fireImmune()
                         .dimensions(EntityDimensions.fixed(0.7F, 2.4F)).build();
         public static final EntityType<NecromancerEntity> NECROMANCER_ENTITY = FabricEntityTypeBuilder
-                        .create(SpawnGroup.MONSTER, NecromancerEntity::new).trackable(74, 2).fireImmune()
+                        .create(SpawnGroup.MONSTER, NecromancerEntity::new).fireImmune()
                         .specificSpawnBlocks(Blocks.NETHER_BRICKS).dimensions(EntityDimensions.fixed(0.9F, 2.4F))
                         .build();
         public static final EntityType<WitherPuppetEntity> WITHERPUPPET_ENTITY = FabricEntityTypeBuilder
-                        .create(SpawnGroup.MONSTER, WitherPuppetEntity::new).trackable(74, 2).fireImmune()
+                        .create(SpawnGroup.MONSTER, WitherPuppetEntity::new).fireImmune()
                         .dimensions(EntityDimensions.fixed(0.7F, 1.32F)).build();
+        public static final EntityType<SkeletonVanguardEntity> SKELETON_VANGUARD_ENTITY = FabricEntityTypeBuilder
+                        .create(SpawnGroup.MONSTER, SkeletonVanguardEntity::new)
+                        .dimensions(EntityDimensions.fixed(0.7F, 2.1F)).build();
+        public static final EntityType<SummonerEntity> SUMMONER_ENTITY = FabricEntityTypeBuilder
+                        .create(SpawnGroup.MONSTER, SummonerEntity::new).dimensions(EntityDimensions.fixed(0.9F, 2.65F))
+                        .build();
+
         // public static final EntityType<GryphonEntity> GRYPHON_ENTITY =
         // FabricEntityTypeBuilder
-        // .create(SpawnGroup.CREATURE, GryphonEntity::new).trackable(74, 2)
+        // .create(SpawnGroup.CREATURE, GryphonEntity::new)
         // .dimensions(EntityDimensions.fixed(1.4F, 1.6F)).build();
-
+        // trackRangeBlocks(74)
         public static void init() {
                 Registry.register(Registry.ENTITY_TYPE, new Identifier("adventurez", "stone_golem"), STONEGOLEM_ENTITY);
                 Registry.register(Registry.ENTITY_TYPE, new Identifier("adventurez", "thrown_rock"), THROWNROCK_ENTITY);
@@ -63,6 +69,9 @@ public class EntityInit {
                                 NECROMANCER_ENTITY);
                 Registry.register(Registry.ENTITY_TYPE, new Identifier("adventurez", "wither_puppet"),
                                 WITHERPUPPET_ENTITY);
+                Registry.register(Registry.ENTITY_TYPE, new Identifier("adventurez", "skeleton_vanguard"),
+                                SKELETON_VANGUARD_ENTITY);
+                Registry.register(Registry.ENTITY_TYPE, new Identifier("adventurez", "summoner"), SUMMONER_ENTITY);
                 // Registry.register(Registry.ENTITY_TYPE, new Identifier("adventurez",
                 // "gryphon"), GRYPHON_ENTITY);
 
@@ -80,6 +89,9 @@ public class EntityInit {
                                 NecromancerEntity.createNecromancerAttributes());
                 FabricDefaultAttributeRegistry.register(WITHERPUPPET_ENTITY,
                                 WitherPuppetEntity.createWitherPuppetAttributes());
+                FabricDefaultAttributeRegistry.register(SKELETON_VANGUARD_ENTITY,
+                                SkeletonVanguardEntity.createSkeletonVanguardAttributes());
+                FabricDefaultAttributeRegistry.register(SUMMONER_ENTITY, SummonerEntity.createSummonerAttributes());
                 // FabricDefaultAttributeRegistry.register(GRYPHON_ENTITY,
                 // GryphonEntity.createGryphonAttributes());
 
@@ -99,6 +111,11 @@ public class EntityInit {
                                 NECROMANCER_ENTITY, 1447446, 15514145, new Item.Settings().group(ItemGroup.MISC)));
                 Registry.register(Registry.ITEM, new Identifier("adventurez", "spawn_wither_puppet"), new SpawnEggItem(
                                 WITHERPUPPET_ENTITY, 1250067, 3092271, new Item.Settings().group(ItemGroup.MISC)));
+                Registry.register(Registry.ITEM, new Identifier("adventurez", "spawn_skeleton_vanguard"),
+                                new SpawnEggItem(SKELETON_VANGUARD_ENTITY, 12369084, 11766305,
+                                                new Item.Settings().group(ItemGroup.MISC)));
+                Registry.register(Registry.ITEM, new Identifier("adventurez", "spawn_summoner"), new SpawnEggItem(
+                                SUMMONER_ENTITY, 12369084, 5847892, new Item.Settings().group(ItemGroup.MISC)));
                 // Registry.register(Registry.ITEM, new Identifier("adventurez",
                 // "spawn_gryphon"), new SpawnEggItem(
                 // GRYPHON_ENTITY, 1381653, 5329747, new

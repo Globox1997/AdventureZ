@@ -8,6 +8,7 @@ package net.adventurez.init;
 // import net.minecraft.entity.SpawnGroup;
 // import net.minecraft.entity.mob.ZombieEntity;
 // import net.minecraft.world.gen.feature.DefaultBiomeFeatures;
+//import net.minecraft.world.biome.BiomeKeys;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -16,10 +17,10 @@ import java.util.List;
 
 import com.google.common.collect.ImmutableMap;
 
+import net.adventurez.entity.*;
 import net.minecraft.entity.SpawnGroup;
 import net.minecraft.entity.SpawnRestriction;
 import net.minecraft.entity.mob.HostileEntity;
-import net.minecraft.entity.mob.MobEntity;
 import net.minecraft.util.registry.BuiltinRegistries;
 import net.minecraft.world.biome.Biome;
 import net.minecraft.world.Heightmap;
@@ -36,11 +37,17 @@ public class SpawnInit {
     for (Biome biome : BuiltinRegistries.BIOME) {
       if (biome.getCategory().equals(Biome.Category.NETHER)) {
         addMobSpawnToBiome(biome, SpawnGroup.MONSTER,
-            new SpawnSettings.SpawnEntry(EntityInit.SMALLSTONEGOLEM_ENTITY, 1, 1, 1),
+            new SpawnSettings.SpawnEntry(EntityInit.SMALLSTONEGOLEM_ENTITY, 5, 1, 1),
             new SpawnSettings.SpawnEntry(EntityInit.NIGHTMARE_ENTITY, 5, 1, 1),
-            new SpawnSettings.SpawnEntry(EntityInit.NECROMANCER_ENTITY, 1, 1, 1));
+            new SpawnSettings.SpawnEntry(EntityInit.NECROMANCER_ENTITY, 3, 1, 1));
+      }
+
+      if (biome.getCategory().equals(Biome.Category.ICY) || biome.getCategory().equals(Biome.Category.TAIGA)) {
+        addMobSpawnToBiome(biome, SpawnGroup.MONSTER,
+            new SpawnSettings.SpawnEntry(EntityInit.SUMMONER_ENTITY, 1, 1, 1));
       }
     }
+
   }
 
   public static void addMobSpawnToBiome(Biome biome, SpawnGroup classification, SpawnSettings.SpawnEntry... spawners) {
@@ -59,11 +66,13 @@ public class SpawnInit {
 
   public static void SpawnRestriction() {
     SpawnRestriction.register(EntityInit.NIGHTMARE_ENTITY, SpawnRestriction.Location.ON_GROUND,
-        Heightmap.Type.MOTION_BLOCKING_NO_LEAVES, MobEntity::canMobSpawn);
+        Heightmap.Type.MOTION_BLOCKING_NO_LEAVES, NightmareEntity::canSpawn);
     SpawnRestriction.register(EntityInit.SMALLSTONEGOLEM_ENTITY, SpawnRestriction.Location.ON_GROUND,
-        Heightmap.Type.MOTION_BLOCKING_NO_LEAVES, HostileEntity::canSpawnInDark);
+        Heightmap.Type.MOTION_BLOCKING_NO_LEAVES, SmallStoneGolemEntity::canSpawn);
     SpawnRestriction.register(EntityInit.NECROMANCER_ENTITY, SpawnRestriction.Location.ON_GROUND,
-        Heightmap.Type.MOTION_BLOCKING_NO_LEAVES, MobEntity::canMobSpawn);
+        Heightmap.Type.MOTION_BLOCKING_NO_LEAVES, HostileEntity::canSpawnInDark);
+    SpawnRestriction.register(EntityInit.SUMMONER_ENTITY, SpawnRestriction.Location.ON_GROUND,
+        Heightmap.Type.MOTION_BLOCKING_NO_LEAVES, SummonerEntity::canSpawn);
   }
 
 }

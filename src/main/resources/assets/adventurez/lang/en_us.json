@@ -8,6 +8,8 @@
   "entity.adventurez.soul_reaper": "Soul Reaper",
   "entity.adventurez.necromancer": "Withered Necromancer",
   "entity.adventurez.wither_puppet": "Wither Puppet",
+  "entity.adventurez.skeleton_vanguard": "Skeleton Vanguard",
+  "entity.adventurez.summoner": "Summoner",
 
   "item.adventurez.spawn_stone_golem": "Blackstone Golem Spawn Egg",
   "item.adventurez.spawn_small_stone_golem": "Mini Blackstone Golem Spawn Egg",
@@ -16,6 +18,8 @@
   "item.adventurez.spawn_soul_reaper": "Soul Reaper Spawn Egg",
   "item.adventurez.spawn_necromancer": "Withered Necromancer Spawn Egg",
   "item.adventurez.spawn_wither_puppet": "Wither Puppet Spawn Egg",
+  "item.adventurez.spawn_skeleton_vanguard": "Skeleton Vanguard Spawn Egg",
+  "item.adventurez.spawn_summoner": "Summoner Spawn Egg",
 
   "item.adventurez.gilded_stone_item": "Gilded Blackstone Shard",
   "item.adventurez.gilded_stone_item.tooltip2": "Placeable in the Stone Holder",
@@ -54,5 +58,7 @@
   "adventurez.advancements.stone_golem.title": "Blackstone Golem",
   "adventurez.advancements.stone_golem.description": "Kill the Blackrocky Golem",
 
-  "effect.adventurez.withering": "Withering"
+  "effect.adventurez.withering": "Withering",
+
+  "death.attack.rock":"%1$s was crushed by a rock"
 }

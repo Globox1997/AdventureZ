@@ -92,7 +92,7 @@ public abstract class SpellCastingEntity extends HostileEntity {
 
   public static enum Spell {
     NONE(0, 0.0D, 0.0D, 0.0D), SUMMON_PUPPET(1, 0.01D, 0.01D, 0.015D), WITHERING(2, 0.01D, 0.01D, 0.015D),
-    SHIELD(3, 0.01D, 0.01D, 0.015D), TELEPORT(4, 0.01D, 0.01D, 0.015D);
+    SHIELD(3, 0.01D, 0.01D, 0.01D), TELEPORT(4, 0.005D, 0.005D, 0.015D), THUNDERBOLT(5, 0.015D, 0.015D, 0.015D);
 
     private final int id;
     private final double[] particleVelocity;

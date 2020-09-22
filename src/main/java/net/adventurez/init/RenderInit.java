@@ -35,6 +35,10 @@ public class RenderInit {
                                 (dispatcher, context) -> new NecromancerRenderer(dispatcher));
                 EntityRendererRegistry.INSTANCE.register(EntityInit.WITHERPUPPET_ENTITY,
                                 (dispatcher, context) -> new WitherPuppetRenderer(dispatcher));
+                EntityRendererRegistry.INSTANCE.register(EntityInit.SKELETON_VANGUARD_ENTITY,
+                                (dispatcher, context) -> new SkeletonVanguardRenderer(dispatcher));
+                EntityRendererRegistry.INSTANCE.register(EntityInit.SUMMONER_ENTITY,
+                                (dispatcher, context) -> new SummonerRenderer(dispatcher));
                 // EntityRendererRegistry.INSTANCE.register(EntityInit.GRYPHON_ENTITY,
                 // (dispatcher, context) -> new GryphonRenderer(dispatcher));
 
