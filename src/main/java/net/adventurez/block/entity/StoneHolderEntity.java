@@ -112,8 +112,8 @@ public class StoneHolderEntity extends BlockEntity implements Tickable, Inventor
           BlockInit.STONE_HOLDER_ENTITY.get(world, pos.east(5).north(5)).clear();
           BlockInit.STONE_HOLDER_ENTITY.get(world, pos.west(5).north(5)).clear();
           this.clear();
-          startBuildingGolem = true;
           this.markDirty();
+          startBuildingGolem = true;
           if (world.isClient) {
             for (int counting = 0; counting < 20; counting++) {
               double d = (double) pos.getX() + (double) world.random.nextFloat();
@@ -300,6 +300,7 @@ public class StoneHolderEntity extends BlockEntity implements Tickable, Inventor
   @Override
   public void clear() {
     this.inventory.clear();
+    this.markDirty();
   }
 
   @Override
@@ -320,9 +321,7 @@ public class StoneHolderEntity extends BlockEntity implements Tickable, Inventor
   @Override
   public ItemStack removeStack(int slot, int amount) {
     ItemStack result = Inventories.splitStack(this.inventory, slot, 1);
-    if (!result.isEmpty()) {
-      markDirty();
-    }
+    this.markDirty();
     return result;
   }
 
