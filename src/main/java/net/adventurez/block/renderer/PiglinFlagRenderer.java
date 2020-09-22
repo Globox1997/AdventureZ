@@ -2,13 +2,13 @@ package net.adventurez.block.renderer;
 
 import net.adventurez.block.PiglinFlagBlock;
 import net.adventurez.block.entity.PiglinFlagEntity;
+import net.adventurez.block.renderer.layer.BlockRenderLayer;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
 import net.minecraft.block.BlockState;
 import net.minecraft.block.HorizontalFacingBlock;
 import net.minecraft.client.model.ModelPart;
 import net.minecraft.client.render.OverlayTexture;
-import net.minecraft.client.render.RenderLayer;
 import net.minecraft.client.render.VertexConsumer;
 import net.minecraft.client.render.VertexConsumerProvider;
 import net.minecraft.client.render.WorldRenderer;
@@ -16,7 +16,6 @@ import net.minecraft.client.render.block.entity.BlockEntityRenderDispatcher;
 import net.minecraft.client.render.block.entity.BlockEntityRenderer;
 import net.minecraft.client.util.math.MatrixStack;
 import net.minecraft.client.util.math.Vector3f;
-import net.minecraft.util.Identifier;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Direction;
 import net.minecraft.util.math.MathHelper;
@@ -49,8 +48,9 @@ public class PiglinFlagRenderer extends BlockEntityRenderer<PiglinFlagEntity> {
       VertexConsumerProvider vertexConsumerProvider, int light, int overlay) {
     matrices.push();
     int lightAbove = WorldRenderer.getLightmapCoordinates(entity.getWorld(), entity.getPos().up());
-    VertexConsumer vertexConsumer = vertexConsumerProvider.getBuffer(
-        RenderLayer.getEntityCutoutNoCull(new Identifier("adventurez:textures/block/piglin_flag_block.png")));
+    VertexConsumer vertexConsumer = vertexConsumerProvider
+        .getBuffer(BlockRenderLayer.getNormal("adventurez:textures/block/piglin_flag_block.png"));
+
     BlockState state = entity.getCachedState();
     Direction blockDirection = state.get(HorizontalFacingBlock.FACING);
     if (state.getBlock() instanceof PiglinFlagBlock) {
