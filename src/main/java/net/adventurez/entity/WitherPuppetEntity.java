@@ -86,7 +86,8 @@ public class WitherPuppetEntity extends HostileEntity {
       this.damage(DamageSource.STARVE, 1.0F);
     }
     if (this.owner != null && this.owner.deathTime > 0) {
-      this.damage(DamageSource.STARVE, 14.0F);
+      this.remove();
+      this.playSpawnEffects();
     }
     if (this.world.isClient) {
       for (int i = 0; i < 2; ++i) {
