@@ -211,8 +211,8 @@ public class StoneGolemEntity extends HostileEntity {
         boolean bl = false;
         Box box = this.getBoundingBox().expand(0.25D);
         Iterator<BlockPos> var8 = BlockPos
-            .iterate(MathHelper.floor(box.minX), MathHelper.floor(box.expand(-0.25D).minY), MathHelper.floor(box.minZ),
-                MathHelper.floor(box.maxX), MathHelper.floor(box.maxY), MathHelper.floor(box.maxZ))
+            .iterate(MathHelper.floor(box.minX), MathHelper.floor(box.minY + 0.25D), MathHelper.floor(box.minZ),
+                MathHelper.floor(box.maxX), MathHelper.floor(box.maxY + 0.4D), MathHelper.floor(box.maxZ))
             .iterator();
 
         label60: while (true) {
@@ -561,7 +561,7 @@ public class StoneGolemEntity extends HostileEntity {
 
     public double getSquaredMaxAttackDistance(LivingEntity entity) {
       float f = StoneGolemEntity.this.getWidth() - 0.1F;
-      return (double) (f * f * 1.2 + entity.getWidth());
+      return (double) (f * f * 1.5F + entity.getWidth());
     }
   }
 
