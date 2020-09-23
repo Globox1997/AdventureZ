@@ -6,12 +6,20 @@
   "entity.adventurez.thrown_rock": "岩石",
   "entity.adventurez.nightmare": "夜魇马",
   "entity.adventurez.soul_reaper": "灵魂收割者",
+  "entity.adventurez.necromancer": "凋零死灵法师",
+  "entity.adventurez.wither_puppet": "凋零傀儡",
+  "entity.adventurez.skeleton_vanguard": "骷髅先锋",
+  "entity.adventurez.summoner": "唤灵者",
 
   "item.adventurez.spawn_stone_golem": "黑石傀儡刷怪蛋",
   "item.adventurez.spawn_small_stone_golem": "小黑石傀儡刷怪蛋",
   "item.adventurez.spawn_piglin_beast": "猪灵兽刷怪蛋",
   "item.adventurez.spawn_nightmare": "夜魇马刷怪蛋",
   "item.adventurez.spawn_soul_reaper": "灵魂收割者刷怪蛋",
+  "item.adventurez.spawn_necromancer": "凋零死灵法师刷怪蛋",
+  "item.adventurez.spawn_wither_puppet": "凋零傀儡刷怪蛋",
+  "item.adventurez.spawn_skeleton_vanguard": "骷髅先锋刷怪蛋",
+  "item.adventurez.spawn_summoner": "唤灵者刷怪蛋",
 
   "item.adventurez.gilded_stone_item": "镶金黑石碎片",
   "item.adventurez.gilded_stone_item.tooltip2": "可放在基座上",
@@ -49,4 +57,8 @@
 
   "adventurez.advancements.stone_golem.title": "黑石傀儡",
   "adventurez.advancements.stone_golem.description": "杀死黑石傀儡"
+
+  "effect.adventurez.withering": "凋零",
+
+  "death.attack.rock":"%1$s被石头砸死了"
 }
