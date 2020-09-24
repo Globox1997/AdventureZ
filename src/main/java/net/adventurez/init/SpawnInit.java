@@ -38,8 +38,8 @@ public class SpawnInit {
       if (biome.getCategory().equals(Biome.Category.NETHER)) {
         addMobSpawnToBiome(biome, SpawnGroup.MONSTER,
             new SpawnSettings.SpawnEntry(EntityInit.SMALLSTONEGOLEM_ENTITY, 5, 1, 1),
-            new SpawnSettings.SpawnEntry(EntityInit.NIGHTMARE_ENTITY, 5, 1, 1),
-            new SpawnSettings.SpawnEntry(EntityInit.NECROMANCER_ENTITY, 3, 1, 1));
+            new SpawnSettings.SpawnEntry(EntityInit.NIGHTMARE_ENTITY, 2, 1, 1),
+            new SpawnSettings.SpawnEntry(EntityInit.NECROMANCER_ENTITY, 1, 1, 1));
       }
 
       if (biome.getCategory().equals(Biome.Category.ICY) || biome.getCategory().equals(Biome.Category.TAIGA)) {
