@@ -8,8 +8,8 @@ public class AdventureMain implements ModInitializer {
 
   @Override
   public void onInitialize() {
-
     BlockInit.init();
+    ConfigInit.init();
     EffectInit.init();
     EntityInit.init();
     ItemInit.init();
@@ -18,7 +18,6 @@ public class AdventureMain implements ModInitializer {
     SoundInit.init();
     SpawnInit.init();
     TagInit.init();
-
   }
 }
 

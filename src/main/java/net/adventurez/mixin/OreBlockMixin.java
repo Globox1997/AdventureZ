@@ -5,6 +5,7 @@ import java.util.List;
 import org.spongepowered.asm.mixin.Mixin;
 
 import net.adventurez.entity.PiglinBeastEntity;
+import net.adventurez.init.ConfigInit;
 import net.adventurez.init.EntityInit;
 import net.minecraft.block.BlockState;
 import net.minecraft.block.Blocks;
@@ -38,8 +39,8 @@ public abstract class OreBlockMixin {
           isBeastNear = true;
         }
       }
-      int spawnChanceInt = world.getRandom().nextInt(200);
-      if (spawnChanceInt == 22 && !isBeastNear) {
+      int spawnChanceInt = world.getRandom().nextInt(ConfigInit.CONFIG.piglin_beast_ore_chance);
+      if (spawnChanceInt == 0 && !isBeastNear) {
         PiglinBeastEntity beastEntity = (PiglinBeastEntity) EntityInit.PIGLINBEAST_ENTITY.create((World) world);
         for (int counter = 0; counter < 100; counter++) {
           float randomFloat = world.getRandom().nextFloat() * 6.2831855F;

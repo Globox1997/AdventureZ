@@ -21,6 +21,23 @@ dependencies {
 
 	// Fabric API
 	modImplementation "net.fabricmc.fabric-api:fabric-api:${project.fabric_version}"
+	// Config
+	modApi("me.shedaniel.cloth:config-2:${project.cloth_config_version}") {
+      exclude(group: "net.fabricmc.fabric-api")
+  }
+	include("me.shedaniel.cloth:config-2:${project.cloth_config_version}") {
+      exclude(group: "net.fabricmc.fabric-api")
+  }
+	modApi("me.sargunvohra.mcmods:autoconfig1u:${project.auto_config_version}") {
+      exclude(group: "net.fabricmc.fabric-api")
+  }
+	include("me.sargunvohra.mcmods:autoconfig1u:${project.auto_config_version}") {
+      exclude(group: "net.fabricmc.fabric-api")
+  }
+	// Modmenu dev
+	modCompile "io.github.prospector:modmenu:${project.mod_menu_version}",{
+			exclude(group: "net.fabricmc.fabric-api")
+	}
 	// GeckoLib
 	//modImplementation "com.github.bernie-g:geckolib:fabric-1.16.1-geckolib-2.0.0-beta.5"
 }

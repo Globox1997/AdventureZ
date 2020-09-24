@@ -1,7 +1,7 @@
 {
   "schemaVersion": 1,
   "id": "adventurez",
-  "version": "1.1.0",
+  "version": "1.1.1",
   "name": "AdventureZ",
   "description": "Adds deadly Creatures to Minecraft",
   "authors": [
@@ -9,7 +9,8 @@
   ],
   "contact": {
     "homepage": "https://www.curseforge.com/minecraft/mc-mods/adventurez",
-    "sources": "https://github.com/Globox1997/AdventureZ"
+    "sources": "https://github.com/Globox1997/AdventureZ",
+    "issues": "https://github.com/Globox1997/AdventureZ/issues"
   },
   "license": "GPLv3",
   "icon": "assets/adventurez/icon.png",
@@ -20,6 +21,9 @@
     ],
     "client": [
       "net.adventurez.AdventureClient"
+    ],
+    "modmenu": [
+      "net.adventurez.config.ModMenuIntegration"
     ]
   },
   "mixins": [

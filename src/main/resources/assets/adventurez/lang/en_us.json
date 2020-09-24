@@ -60,5 +60,12 @@
 
   "effect.adventurez.withering": "Withering",
 
-  "death.attack.rock":"%1$s was crushed by a rock"
+  "death.attack.rock":"%1$s was crushed by a rock",
+
+  "text.autoconfig.adventurez.title": "AdventureZ Config",
+  "text.autoconfig.adventurez.option.necromancer_spawn_weight": "Necromancer Spawn Weight",
+  "text.autoconfig.adventurez.option.nightmare_spawn_weight": "Nightmare + Reaper Spawn Weight",
+  "text.autoconfig.adventurez.option.piglin_beast_ore_chance": "Piglin Beast Ore Chance",
+  "text.autoconfig.adventurez.option.small_stone_golem_spawn_weight": "Small Stone Golem Spawn Weight",
+  "text.autoconfig.adventurez.option.summoner_spawn_weight": "Summoner Spawn Weight"
 }
