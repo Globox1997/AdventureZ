@@ -96,7 +96,7 @@ public class SummonerEntity extends SpellCastingEntity {
       BlockPos pos, Random random) {
     Optional<RegistryKey<Biome>> optional = world.method_31081(pos);
     boolean bl = (world.getDifficulty() != Difficulty.PEACEFUL && canSpawnInDark(type, world, spawnReason, pos, random)
-        && world.isSkyVisible(pos)) || spawnReason == SpawnReason.SPAWNER;
+        && world.isSkyVisible(pos) && world.getLevelProperties().isRaining()) || spawnReason == SpawnReason.SPAWNER;
     if (Objects.equals(optional, Optional.of(BiomeKeys.TAIGA))
         || Objects.equals(optional, Optional.of(BiomeKeys.SNOWY_TAIGA))
         || Objects.equals(optional, Optional.of(BiomeKeys.SNOWY_TUNDRA))
@@ -178,6 +178,9 @@ public class SummonerEntity extends SpellCastingEntity {
   @Override
   public boolean damage(DamageSource source, float amount) {
     int chance = 0;
+    if (source.equals(DamageSource.LIGHTNING_BOLT)) {
+      return false;
+    }
     if (source.isProjectile()) {
       chance = world.random.nextInt(2);
       this.gotShotByABow = true;
