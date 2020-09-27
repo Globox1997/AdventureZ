@@ -36,14 +36,14 @@ public abstract class InGameHudMixin extends DrawableHelper {
     this.client = client;
   }
 
-  @Inject(method = "render", at = @At(value = "TAIL"))
+  @Inject(method = "Lnet/minecraft/client/gui/hud/InGameHud;render(Lnet/minecraft/client/util/math/MatrixStack;F)V", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/gui/hud/InGameHud;renderHotbar(FLnet/minecraft/client/util/math/MatrixStack;)V"))
   private void renderFireIcon(MatrixStack matrixStack, float f, CallbackInfo info) {
     this.renderFireIconOverlay(matrixStack);
   }
 
   private void renderFireIconOverlay(MatrixStack matrixStack) {
     ItemStack golemChestplate = this.client.player.getEquippedStack(EquipmentSlot.CHEST);
-    if (golemChestplate.getItem().equals(ItemInit.STONE_GOLEM_CHESTPLATE)) {
+    if (golemChestplate.getItem().equals(ItemInit.STONE_GOLEM_CHESTPLATE) && !this.client.player.isCreative()) {
       CompoundTag tag = golemChestplate.getTag();
       if (tag != null && tag.contains("armor_time") && tag.contains("activating_armor")) {
         if (tag.getBoolean("activating_armor")) {
@@ -64,7 +64,7 @@ public abstract class InGameHudMixin extends DrawableHelper {
             drawSprite(matrixStack, (scaledWidth / 2) - 5, scaledHeight - 49, this.getZOffset(), 10, 10, sprite);
           } else {
             float fading = (1F - (((float) (worldTime - (savedTagInt + 599F)) / 1200F) - 0.4F));
-            RenderSystem.color4f(1.0F, 0.8F, 0.8F, fading);
+            RenderSystem.color4f(1.0F, 0.65F, 0.65F, fading);
             drawSprite(matrixStack, (scaledWidth / 2) - 5, scaledHeight - 49, this.getZOffset(), 10, 10, sprite);
           }
         }

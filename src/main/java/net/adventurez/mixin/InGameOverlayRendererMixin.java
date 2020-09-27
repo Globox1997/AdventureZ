@@ -41,7 +41,7 @@ public abstract class InGameOverlayRendererMixin {
           }
      }
 
-     @Inject(method = "renderOverlays", at = @At("HEAD"))
+     @Inject(method = "renderOverlays", at = @At(value = "INVOKE", target = "Lcom/mojang/blaze3d/systems/RenderSystem;enableAlphaTest()V"))
      private static void renderOverlaysMixin(MinecraftClient minecraftClient, MatrixStack matrixStack,
                CallbackInfo info) {
           PlayerEntity playerEntity = minecraftClient.player;
