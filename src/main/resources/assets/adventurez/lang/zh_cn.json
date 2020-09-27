@@ -65,7 +65,7 @@
   "text.autoconfig.adventurez.title": "冒险Z配置",
   "text.autoconfig.adventurez.option.necromancer_spawn_weight": "凋零死灵法师生成权重",
   "text.autoconfig.adventurez.option.nightmare_spawn_weight": "夜魇马和灵魂收割者生成权重",
-  "text.autoconfig.adventurez.option.piglin_beast_ore_chance": "猪灵兽矿石掉落机会",
+  "text.autoconfig.adventurez.option.piglin_beast_ore_chance": "猪灵兽挖矿出发生成机会",
   "text.autoconfig.adventurez.option.small_stone_golem_spawn_weight": "小黑石傀儡生成权重",
   "text.autoconfig.adventurez.option.summoner_spawn_weight": "唤灵者生成权重"
 }
