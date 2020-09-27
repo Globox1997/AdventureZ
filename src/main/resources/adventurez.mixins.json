@@ -6,7 +6,8 @@
   "mixins": [
     "PlayerEntityMixin",
     "OreBlockMixin",
-    "PiglinBrainMixin"
+    "PiglinBrainMixin",
+    "ServerWorldMixin"
   ],
   "client": [
     "ArmorFeatureRendererMixin",
