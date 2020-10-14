@@ -39,6 +39,8 @@ public class RenderInit {
                                 (dispatcher, context) -> new SkeletonVanguardRenderer(dispatcher));
                 EntityRendererRegistry.INSTANCE.register(EntityInit.SUMMONER_ENTITY,
                                 (dispatcher, context) -> new SummonerRenderer(dispatcher));
+                EntityRendererRegistry.INSTANCE.register(EntityInit.BLAZEGUARDIAN_ENTITY,
+                                (dispatcher, context) -> new BlazeGuardianRenderer(dispatcher));
                 // EntityRendererRegistry.INSTANCE.register(EntityInit.GRYPHON_ENTITY,
                 // (dispatcher, context) -> new GryphonRenderer(dispatcher));
 

@@ -15,6 +15,7 @@ import net.minecraft.entity.ai.goal.FollowTargetGoal;
 import net.minecraft.entity.ai.goal.LookAroundGoal;
 import net.minecraft.entity.ai.goal.LookAtEntityGoal;
 import net.minecraft.entity.ai.goal.MeleeAttackGoal;
+import net.minecraft.entity.ai.goal.RevengeGoal;
 import net.minecraft.entity.ai.goal.SwimGoal;
 import net.minecraft.entity.ai.goal.WanderAroundFarGoal;
 import net.minecraft.entity.ai.pathing.PathNodeType;
@@ -73,6 +74,7 @@ public class PiglinBeastEntity extends HostileEntity {
     this.goalSelector.add(7, new LookAtEntityGoal(this, MobEntity.class, 8.0F));
     this.targetSelector.add(1, new FollowTargetGoal<>(this, WitherSkeletonEntity.class, true));
     this.targetSelector.add(2, new FollowTargetGoal<>(this, PlayerEntity.class, true));
+    this.targetSelector.add(3, (new RevengeGoal(this, new Class[] { PiglinEntity.class })));
   }
 
   @Override
