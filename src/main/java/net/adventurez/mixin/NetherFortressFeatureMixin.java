@@ -28,8 +28,6 @@ public class NetherFortressFeatureMixin {
   private static List<SpawnSettings.SpawnEntry> MONSTER_SPAWNS;
   private static final List<SpawnSettings.SpawnEntry> ADDED_SPAWNS;
 
-  // public getMonsterSpawns()Ljava/util/List;
-  // Lnet/minecraft/world/gen/feature/NetherFortressFeature;getMonsterSpawns()L;
   @Inject(method = "Lnet/minecraft/world/gen/feature/NetherFortressFeature;getMonsterSpawns()Ljava/util/List;", at = @At(value = "HEAD"), cancellable = true)
   public void getMonsterSpawnsMixin(CallbackInfoReturnable<List<SpawnSettings.SpawnEntry>> info) {
     List<SpawnSettings.SpawnEntry> spawnersList = new ArrayList<>(MONSTER_SPAWNS);
