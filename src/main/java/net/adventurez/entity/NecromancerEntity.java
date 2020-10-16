@@ -38,6 +38,7 @@ import net.minecraft.util.math.MathHelper;
 import net.minecraft.world.Difficulty;
 import net.minecraft.world.ServerWorldAccess;
 import net.minecraft.world.World;
+import net.minecraft.world.biome.Biome;
 
 public class NecromancerEntity extends SpellCastingEntity {
 
@@ -73,20 +74,24 @@ public class NecromancerEntity extends SpellCastingEntity {
 
   public static boolean canSpawn(EntityType<NecromancerEntity> type, ServerWorldAccess world, SpawnReason spawnReason,
       BlockPos pos, Random random) {
-    Box box = new Box(pos);
-    List<Entity> list = world.getEntitiesByClass(NecromancerEntity.class, box.expand(60D),
-        EntityPredicates.EXCEPT_SPECTATOR);
-    boolean isNecroHere = true;
-    for (int i = 0; i < list.size(); ++i) {
-      Entity entity = (Entity) list.get(i);
-      if (entity.getType() == EntityInit.NECROMANCER_ENTITY) {
-        isNecroHere = false;
+    if (world.getBiome(pos).getCategory().equals(Biome.Category.NETHER)) {
+      Box box = new Box(pos);
+      List<Entity> list = world.getEntitiesByClass(NecromancerEntity.class, box.expand(60D),
+          EntityPredicates.EXCEPT_SPECTATOR);
+      boolean isNecroHere = true;
+      for (int i = 0; i < list.size(); ++i) {
+        Entity entity = (Entity) list.get(i);
+        if (entity.getType() == EntityInit.NECROMANCER_ENTITY) {
+          isNecroHere = false;
+        }
       }
-    }
-    boolean bl = (world.getDifficulty() != Difficulty.PEACEFUL && canSpawnInDark(type, world, spawnReason, pos, random)
-        && world.getBlockState(pos.down()).equals(Blocks.NETHER_BRICKS.getDefaultState()) && isNecroHere)
-        || spawnReason == SpawnReason.SPAWNER;
-    return bl;
+      boolean bl = (world.getDifficulty() != Difficulty.PEACEFUL
+          && canSpawnInDark(type, world, spawnReason, pos, random)
+          && world.getBlockState(pos.down()).equals(Blocks.NETHER_BRICKS.getDefaultState()) && isNecroHere)
+          || spawnReason == SpawnReason.SPAWNER;
+      return bl;
+    } else
+      return false;
 
   }
 

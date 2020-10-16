@@ -25,8 +25,9 @@ import net.minecraft.world.BlockView;
 
 import java.util.List;
 
+import org.jetbrains.annotations.Nullable;
+
 import net.adventurez.block.entity.PiglinFlagEntity;
-import net.adventurez.entity.Nullable;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
 

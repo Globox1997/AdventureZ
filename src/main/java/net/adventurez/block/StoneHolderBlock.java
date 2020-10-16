@@ -2,8 +2,9 @@ package net.adventurez.block;
 
 import java.util.List;
 
+import org.jetbrains.annotations.Nullable;
+
 import net.adventurez.block.entity.StoneHolderEntity;
-import net.adventurez.entity.Nullable;
 import net.adventurez.init.ItemInit;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;

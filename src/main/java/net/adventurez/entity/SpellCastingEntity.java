@@ -1,6 +1,9 @@
 package net.adventurez.entity;
 
 import java.util.EnumSet;
+
+import org.jetbrains.annotations.Nullable;
+
 import net.minecraft.entity.EntityType;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.ai.goal.Goal;

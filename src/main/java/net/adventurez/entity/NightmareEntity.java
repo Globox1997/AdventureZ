@@ -5,6 +5,8 @@ import java.util.Optional;
 import java.util.Random;
 import java.util.UUID;
 
+import org.jetbrains.annotations.Nullable;
+
 import net.adventurez.init.EntityInit;
 import net.adventurez.init.SoundInit;
 import net.minecraft.entity.Entity;
@@ -69,8 +71,8 @@ public class NightmareEntity extends SkeletonHorseEntity {
       SoulReaperEntity soulReaperEntity = (SoulReaperEntity) EntityInit.SOULREAPER_ENTITY.create(this.world);
       soulReaperEntity.refreshPositionAndAngles(this.getX(), this.getY(), this.getZ(), this.yaw, 0.0F);
       soulReaperEntity.initialize(serverWorldAccess, difficulty, spawnReason, (EntityData) null, (CompoundTag) null);
-
       soulReaperEntity.startRiding(this);
+      System.out.print(this);
     }
     return (EntityData) entityData;
   }
