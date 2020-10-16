@@ -1,13 +1,16 @@
 package net.adventurez.entity;
 
 import java.util.List;
+import java.util.Random;
 
 import net.adventurez.init.EffectInit;
 import net.adventurez.init.EntityInit;
 import net.minecraft.block.BlockState;
+import net.minecraft.block.Blocks;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityType;
 import net.minecraft.entity.LivingEntity;
+import net.minecraft.entity.SpawnReason;
 import net.minecraft.entity.ai.TargetPredicate;
 import net.minecraft.entity.ai.goal.FleeEntityGoal;
 import net.minecraft.entity.ai.goal.FollowTargetGoal;
@@ -30,7 +33,10 @@ import net.minecraft.server.world.ServerWorld;
 import net.minecraft.sound.SoundEvent;
 import net.minecraft.sound.SoundEvents;
 import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.math.Box;
 import net.minecraft.util.math.MathHelper;
+import net.minecraft.world.Difficulty;
+import net.minecraft.world.ServerWorldAccess;
 import net.minecraft.world.World;
 
 public class NecromancerEntity extends SpellCastingEntity {
@@ -63,6 +69,25 @@ public class NecromancerEntity extends SpellCastingEntity {
     this.targetSelector.add(2, (new RevengeGoal(this, new Class[] { WitherSkeletonEntity.class })));
     this.targetSelector.add(3,
         (new FollowTargetGoal<>(this, PlayerEntity.class, true)).setMaxTimeWithoutVisibility(300));
+  }
+
+  public static boolean canSpawn(EntityType<NecromancerEntity> type, ServerWorldAccess world, SpawnReason spawnReason,
+      BlockPos pos, Random random) {
+    Box box = new Box(pos);
+    List<Entity> list = world.getEntitiesByClass(NecromancerEntity.class, box.expand(60D),
+        EntityPredicates.EXCEPT_SPECTATOR);
+    boolean isNecroHere = true;
+    for (int i = 0; i < list.size(); ++i) {
+      Entity entity = (Entity) list.get(i);
+      if (entity.getType() == EntityInit.NECROMANCER_ENTITY) {
+        isNecroHere = false;
+      }
+    }
+    boolean bl = (world.getDifficulty() != Difficulty.PEACEFUL && canSpawnInDark(type, world, spawnReason, pos, random)
+        && world.getBlockState(pos.down()).equals(Blocks.NETHER_BRICKS.getDefaultState()) && isNecroHere)
+        || spawnReason == SpawnReason.SPAWNER;
+    return bl;
+
   }
 
   @Override

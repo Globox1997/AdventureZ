@@ -3,7 +3,6 @@ package net.adventurez.init;
 import net.adventurez.entity.*;
 import net.fabricmc.fabric.api.object.builder.v1.entity.FabricDefaultAttributeRegistry;
 import net.fabricmc.fabric.api.object.builder.v1.entity.FabricEntityTypeBuilder;
-import net.minecraft.block.Blocks;
 import net.minecraft.entity.EntityDimensions;
 import net.minecraft.entity.EntityType;
 import net.minecraft.entity.SpawnGroup;
@@ -37,8 +36,7 @@ public class EntityInit {
                         .dimensions(EntityDimensions.fixed(0.7F, 2.4F)).build();
         public static final EntityType<NecromancerEntity> NECROMANCER_ENTITY = FabricEntityTypeBuilder
                         .create(SpawnGroup.MONSTER, NecromancerEntity::new).fireImmune()
-                        .specificSpawnBlocks(Blocks.NETHER_BRICKS).dimensions(EntityDimensions.fixed(0.9F, 2.4F))
-                        .build();
+                        .dimensions(EntityDimensions.fixed(0.9F, 2.4F)).build();
         public static final EntityType<WitherPuppetEntity> WITHERPUPPET_ENTITY = FabricEntityTypeBuilder
                         .create(SpawnGroup.MONSTER, WitherPuppetEntity::new).fireImmune()
                         .dimensions(EntityDimensions.fixed(0.7F, 1.32F)).build();

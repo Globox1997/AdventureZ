@@ -49,7 +49,7 @@ public abstract class ArmorFeatureRendererMixin<T extends LivingEntity, M extend
     if (golemChestplate.getItem().equals(ItemInit.STONE_GOLEM_CHESTPLATE)) {
       if (StoneGolemArmor.fireTime(golemChestplate)) {
         VertexConsumer vertexConsumer = ItemRenderer
-            .getArmorVertexConsumer(vertexConsumerProvider,
+            .getArmorGlintConsumer(vertexConsumerProvider,
                 RenderLayer.getArmorCutoutNoCull(
                     new Identifier("minecraft:textures/models/armor/stone_golem_armor_layer_1_overlay.png")),
                 true, false);
@@ -69,7 +69,7 @@ public abstract class ArmorFeatureRendererMixin<T extends LivingEntity, M extend
     if (golemChestplate.getItem().equals(ItemInit.STONE_GOLEM_CHESTPLATE)) {
       if (StoneGolemArmor.fireTime(golemChestplate)) {
         VertexConsumer vertexConsumer = ItemRenderer
-            .getArmorVertexConsumer(vertexConsumerProvider,
+            .getArmorGlintConsumer(vertexConsumerProvider,
                 RenderLayer.getArmorCutoutNoCull(
                     new Identifier("textures/models/armor/stone_golem_armor_layer_1_overlay_helmet.png")),
                 false, false);

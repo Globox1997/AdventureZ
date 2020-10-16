@@ -15,9 +15,11 @@ public class AdventureConfig implements ConfigData {
   @ConfigEntry.BoundedDiscrete(min = 1, max = 200)
   @Comment("Chance for spawning when mining gold ore in nether")
   public int piglin_beast_ore_chance = 200;
+  public boolean piglin_beast_spawn_by_piglins = true;
   @ConfigEntry.BoundedDiscrete(min = 0, max = 100)
   public int small_stone_golem_spawn_weight = 5;
+  public boolean summoner_spawn_allow = true;
   @ConfigEntry.BoundedDiscrete(min = 0, max = 100)
-  public int summoner_spawn_weight = 1;
+  public int blaze_guardian_spawn_weight = 1;
 
 }

@@ -37,7 +37,6 @@ import net.minecraft.entity.data.TrackedData;
 import net.minecraft.entity.data.TrackedDataHandlerRegistry;
 import net.minecraft.entity.mob.HostileEntity;
 import net.minecraft.entity.mob.MobEntity;
-import net.minecraft.entity.passive.AbstractTraderEntity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.particle.ParticleTypes;
@@ -105,7 +104,6 @@ public class StoneGolemEntity extends HostileEntity {
     this.goalSelector.add(6, new LookAtEntityGoal(this, PlayerEntity.class, 60.0F));
     this.goalSelector.add(10, new LookAtEntityGoal(this, MobEntity.class, 8.0F));
     this.targetSelector.add(3, new FollowTargetGoal<>(this, PlayerEntity.class, false));
-    this.targetSelector.add(4, new FollowTargetGoal<>(this, AbstractTraderEntity.class, true));
   }
 
   @Override

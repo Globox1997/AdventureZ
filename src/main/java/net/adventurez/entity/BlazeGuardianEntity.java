@@ -97,6 +97,11 @@ public class BlazeGuardianEntity extends HostileEntity {
   }
 
   @Override
+  public boolean canImmediatelyDespawn(double distanceSquared) {
+    return false;
+  }
+
+  @Override
   public void tickMovement() {
     if (!this.onGround && this.getVelocity().y < 0.0D) {
       this.setVelocity(this.getVelocity().multiply(1.0D, 0.6D, 1.0D));

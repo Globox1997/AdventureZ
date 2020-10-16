@@ -9,6 +9,7 @@ package net.adventurez.init;
 // import net.minecraft.entity.mob.ZombieEntity;
 // import net.minecraft.world.gen.feature.DefaultBiomeFeatures;
 //import net.minecraft.world.biome.BiomeKeys;
+//import net.minecraft.entity.mob.BlazeEntity;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -39,15 +40,15 @@ public class SpawnInit {
         addMobSpawnToBiome(biome, SpawnGroup.MONSTER,
             new SpawnSettings.SpawnEntry(EntityInit.SMALLSTONEGOLEM_ENTITY,
                 ConfigInit.CONFIG.small_stone_golem_spawn_weight, 1, 1),
-            new SpawnSettings.SpawnEntry(EntityInit.NIGHTMARE_ENTITY, ConfigInit.CONFIG.nightmare_spawn_weight, 1, 1),
-            new SpawnSettings.SpawnEntry(EntityInit.NECROMANCER_ENTITY, ConfigInit.CONFIG.necromancer_spawn_weight, 1,
-                1));
+            new SpawnSettings.SpawnEntry(EntityInit.NIGHTMARE_ENTITY, ConfigInit.CONFIG.nightmare_spawn_weight, 1, 1));
       }
 
-      if (biome.getCategory().equals(Biome.Category.ICY) || biome.getCategory().equals(Biome.Category.TAIGA)) {
-        addMobSpawnToBiome(biome, SpawnGroup.MONSTER,
-            new SpawnSettings.SpawnEntry(EntityInit.SUMMONER_ENTITY, ConfigInit.CONFIG.summoner_spawn_weight, 1, 1));
-      }
+      // if (biome.getCategory().equals(Biome.Category.ICY) ||
+      // biome.getCategory().equals(Biome.Category.TAIGA)) {
+      // addMobSpawnToBiome(biome, SpawnGroup.MONSTER,
+      // new SpawnSettings.SpawnEntry(EntityInit.SUMMONER_ENTITY,
+      // ConfigInit.CONFIG.summoner_spawn_weight, 1, 1));
+      // }
     }
 
   }
@@ -72,9 +73,11 @@ public class SpawnInit {
     SpawnRestriction.register(EntityInit.SMALLSTONEGOLEM_ENTITY, SpawnRestriction.Location.ON_GROUND,
         Heightmap.Type.MOTION_BLOCKING_NO_LEAVES, SmallStoneGolemEntity::canSpawn);
     SpawnRestriction.register(EntityInit.NECROMANCER_ENTITY, SpawnRestriction.Location.ON_GROUND,
-        Heightmap.Type.MOTION_BLOCKING_NO_LEAVES, HostileEntity::canSpawnInDark);
+        Heightmap.Type.MOTION_BLOCKING_NO_LEAVES, NecromancerEntity::canSpawn);
     SpawnRestriction.register(EntityInit.SUMMONER_ENTITY, SpawnRestriction.Location.ON_GROUND,
         Heightmap.Type.MOTION_BLOCKING_NO_LEAVES, SummonerEntity::canSpawn);
+    SpawnRestriction.register(EntityInit.BLAZEGUARDIAN_ENTITY, SpawnRestriction.Location.ON_GROUND,
+        Heightmap.Type.MOTION_BLOCKING_NO_LEAVES, HostileEntity::canSpawnInDark);
   }
 
 }
