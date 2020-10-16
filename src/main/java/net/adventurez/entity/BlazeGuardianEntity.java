@@ -47,9 +47,9 @@ public class BlazeGuardianEntity extends HostileEntity {
   }
 
   public static DefaultAttributeContainer.Builder createBlazeGuardianAttributes() {
-    return HostileEntity.createHostileAttributes().add(EntityAttributes.GENERIC_ATTACK_DAMAGE, 9.0D)
-        .add(EntityAttributes.GENERIC_MOVEMENT_SPEED, 0.24D).add(EntityAttributes.GENERIC_FOLLOW_RANGE, 52.0D)
-        .add(EntityAttributes.GENERIC_ARMOR, 2.0D);
+    return HostileEntity.createHostileAttributes().add(EntityAttributes.GENERIC_MAX_HEALTH, 30.0D)
+        .add(EntityAttributes.GENERIC_ATTACK_DAMAGE, 9.0D).add(EntityAttributes.GENERIC_MOVEMENT_SPEED, 0.24D)
+        .add(EntityAttributes.GENERIC_FOLLOW_RANGE, 52.0D).add(EntityAttributes.GENERIC_ARMOR, 2.0D);
   }
 
   @Override

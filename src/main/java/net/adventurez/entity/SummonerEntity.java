@@ -19,6 +19,7 @@ import net.minecraft.entity.ai.TargetPredicate;
 import net.minecraft.entity.ai.goal.FleeEntityGoal;
 import net.minecraft.entity.ai.goal.FollowTargetGoal;
 import net.minecraft.entity.ai.goal.LookAtEntityGoal;
+import net.minecraft.entity.ai.goal.MeleeAttackGoal;
 import net.minecraft.entity.ai.goal.RevengeGoal;
 import net.minecraft.entity.ai.goal.SwimGoal;
 import net.minecraft.entity.ai.goal.WanderAroundGoal;
@@ -30,6 +31,7 @@ import net.minecraft.entity.data.TrackedData;
 import net.minecraft.entity.data.TrackedDataHandlerRegistry;
 import net.minecraft.entity.mob.HostileEntity;
 import net.minecraft.entity.mob.MobEntity;
+import net.minecraft.entity.mob.PathAwareEntity;
 import net.minecraft.entity.mob.SkeletonEntity;
 import net.minecraft.entity.mob.ZombieEntity;
 import net.minecraft.entity.player.PlayerEntity;
@@ -68,8 +70,8 @@ public class SummonerEntity extends SpellCastingEntity {
 
   public static DefaultAttributeContainer.Builder createSummonerAttributes() {
     return HostileEntity.createHostileAttributes().add(EntityAttributes.GENERIC_MAX_HEALTH, 55.0D)
-        .add(EntityAttributes.GENERIC_MOVEMENT_SPEED, 0.3D).add(EntityAttributes.GENERIC_ATTACK_DAMAGE, 5.0D)
-        .add(EntityAttributes.GENERIC_ATTACK_KNOCKBACK, 0.1D).add(EntityAttributes.GENERIC_FOLLOW_RANGE, 35.0D);
+        .add(EntityAttributes.GENERIC_MOVEMENT_SPEED, 0.3D).add(EntityAttributes.GENERIC_ATTACK_DAMAGE, 6.0D)
+        .add(EntityAttributes.GENERIC_ATTACK_KNOCKBACK, 1.5D).add(EntityAttributes.GENERIC_FOLLOW_RANGE, 35.0D);
   }
 
   @Override
@@ -77,6 +79,7 @@ public class SummonerEntity extends SpellCastingEntity {
     super.initGoals();
     this.goalSelector.add(0, new SwimGoal(this));
     this.goalSelector.add(1, new SummonerEntity.LookAtTargetGoalNecro());
+    this.goalSelector.add(2, new NormalAttack(this, 1.0D, false));
     this.goalSelector.add(2, new FleeEntityGoal<>(this, PlayerEntity.class, 8.0F, 0.7D, 0.9D));
     this.goalSelector.add(4, new SummonerEntity.SummonPuppetGoal());
     this.goalSelector.add(5, new SummonerEntity.ThunderboltSpellGoal());
@@ -480,6 +483,42 @@ public class SummonerEntity extends SpellCastingEntity {
       }
     }
     return false;
+  }
+
+  static class NormalAttack extends MeleeAttackGoal {
+    private final SummonerEntity summonerEntity;
+
+    public NormalAttack(PathAwareEntity mob, double speed, boolean pauseWhenMobIdle) {
+      super(mob, speed, pauseWhenMobIdle);
+      this.summonerEntity = (SummonerEntity) mob;
+    }
+
+    @Override
+    public boolean canStart() {
+      LivingEntity livingEntity = this.summonerEntity.getTarget();
+      if (livingEntity != null) {
+        System.out.print(livingEntity.getMovementSpeed());
+      }
+
+      return livingEntity != null && livingEntity.isAlive() && this.summonerEntity.canTarget(livingEntity)
+          && this.summonerEntity.squaredDistanceTo(livingEntity) < 4D && super.canStart();
+    }
+
+    @Override
+    public boolean shouldContinue() {
+      LivingEntity livingEntity = this.mob.getTarget();
+      if (livingEntity == null || this.summonerEntity.squaredDistanceTo(livingEntity) > 5D) {
+        return false;
+      } else if (!livingEntity.isAlive()) {
+        return false;
+      } else if (!this.mob.isInWalkTargetRange(livingEntity.getBlockPos())) {
+        return false;
+      } else {
+        return !(livingEntity instanceof PlayerEntity)
+            || !livingEntity.isSpectator() && !((PlayerEntity) livingEntity).isCreative();
+      }
+    }
+
   }
 
 }
