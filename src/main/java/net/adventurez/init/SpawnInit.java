@@ -29,6 +29,9 @@ import net.minecraft.world.biome.SpawnSettings;
 
 public class SpawnInit {
 
+  private static int smallStoneGolemSpawnWeight = ConfigInit.CONFIG.small_stone_golem_spawn_weight;
+  private static int nightmareSpawnWeight = ConfigInit.CONFIG.nightmare_spawn_weight;
+
   public static void init() {
     addSpawnEntries();
     SpawnRestriction();
@@ -38,9 +41,8 @@ public class SpawnInit {
     for (Biome biome : BuiltinRegistries.BIOME) {
       if (biome.getCategory().equals(Biome.Category.NETHER)) {
         addMobSpawnToBiome(biome, SpawnGroup.MONSTER,
-            new SpawnSettings.SpawnEntry(EntityInit.SMALLSTONEGOLEM_ENTITY,
-                ConfigInit.CONFIG.small_stone_golem_spawn_weight, 1, 1),
-            new SpawnSettings.SpawnEntry(EntityInit.NIGHTMARE_ENTITY, ConfigInit.CONFIG.nightmare_spawn_weight, 1, 1));
+            new SpawnSettings.SpawnEntry(EntityInit.SMALLSTONEGOLEM_ENTITY, smallStoneGolemSpawnWeight, 1, 1),
+            new SpawnSettings.SpawnEntry(EntityInit.NIGHTMARE_ENTITY, nightmareSpawnWeight, 1, 1));
       }
 
       // if (biome.getCategory().equals(Biome.Category.ICY) ||

@@ -26,6 +26,7 @@ import net.minecraft.world.Heightmap;
 @Mixin(OreBlock.class)
 public abstract class OreBlockMixin {
   private boolean isBeastNear = false;
+  private static int piglinBeastOreChance = ConfigInit.CONFIG.piglin_beast_ore_spawn_chance;
 
   public void onBroken(WorldAccess world, BlockPos pos, BlockState state) {
     PlayerEntity player = world.getClosestPlayer((double) pos.getX(), (double) pos.getY(), (double) pos.getZ(), 16D,
@@ -39,8 +40,8 @@ public abstract class OreBlockMixin {
           isBeastNear = true;
         }
       }
-      int spawnChanceInt = world.getRandom().nextInt(ConfigInit.CONFIG.piglin_beast_ore_chance);
-      if (spawnChanceInt == 0 && !isBeastNear) {
+      int spawnChanceInt = world.getRandom().nextInt(piglinBeastOreChance);
+      if (spawnChanceInt == 1 && !isBeastNear) {
         PiglinBeastEntity beastEntity = (PiglinBeastEntity) EntityInit.PIGLINBEAST_ENTITY.create((World) world);
         for (int counter = 0; counter < 100; counter++) {
           float randomFloat = world.getRandom().nextFloat() * 6.2831855F;

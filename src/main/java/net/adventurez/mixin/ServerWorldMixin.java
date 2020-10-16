@@ -11,6 +11,7 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import org.spongepowered.asm.mixin.injection.At;
 
 import net.adventurez.entity.SummonerEntity;
+import net.adventurez.init.ConfigInit;
 import net.adventurez.init.EntityInit;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.WorldGenerationProgressListener;
@@ -28,6 +29,7 @@ import net.minecraft.world.level.storage.LevelStorage;
 
 @Mixin(ServerWorld.class)
 public abstract class ServerWorldMixin extends World {
+  private static int summonerThunderSpawnChance = ConfigInit.CONFIG.summoner_thunder_spawn_chance;
 
   public ServerWorldMixin(MinecraftServer server, Executor workerExecutor, LevelStorage.Session session,
       ServerWorldProperties properties, RegistryKey<World> registryKey, DimensionType dimensionType,
@@ -39,14 +41,17 @@ public abstract class ServerWorldMixin extends World {
 
   @Inject(method = "Lnet/minecraft/server/world/ServerWorld;tickChunk(Lnet/minecraft/world/chunk/WorldChunk;I)V", at = @At(value = "INVOKE", target = "Lnet/minecraft/entity/LightningEntity;setCosmetic(Z)V", shift = Shift.AFTER))
   public void tickChunk(WorldChunk chunk, int randomTickSpeed, CallbackInfo info) {
-    ChunkPos chunkPos = chunk.getPos();
-    int i = chunkPos.getStartX();
-    int j = chunkPos.getStartZ();
-    BlockPos blockPos = this.getSurface(this.getRandomPosInChunk(i, 0, j, 15));
-    SummonerEntity summonerEntity = (SummonerEntity) EntityInit.SUMMONER_ENTITY.create(this);
-    summonerEntity.updatePosition((double) blockPos.getX(), (double) blockPos.getY(), (double) blockPos.getZ());
-    this.spawnEntity(summonerEntity);
-    summonerEntity.playSpawnEffects();
+    int spawnChanceInt = this.getRandom().nextInt(summonerThunderSpawnChance);
+    if (spawnChanceInt == 1) {
+      ChunkPos chunkPos = chunk.getPos();
+      int i = chunkPos.getStartX();
+      int j = chunkPos.getStartZ();
+      BlockPos blockPos = this.getSurface(this.getRandomPosInChunk(i, 0, j, 15));
+      SummonerEntity summonerEntity = (SummonerEntity) EntityInit.SUMMONER_ENTITY.create(this);
+      summonerEntity.updatePosition((double) blockPos.getX(), (double) blockPos.getY(), (double) blockPos.getZ());
+      this.spawnEntity(summonerEntity);
+      summonerEntity.playSpawnEffects();
+    }
   }
 
   @Shadow

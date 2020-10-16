@@ -8,6 +8,7 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import org.spongepowered.asm.mixin.injection.At;
 
 import net.adventurez.entity.PiglinBeastEntity;
+import net.adventurez.init.ConfigInit;
 import net.adventurez.init.EntityInit;
 import net.adventurez.init.ItemInit;
 import net.adventurez.item.armor.StoneGolemArmor;
@@ -34,24 +35,25 @@ public abstract class PlayerEntityMixin extends LivingEntity {
   private int ticker = 0;
   private int killedPiglins = 0;
   private int piglinCooldown = 0;
+  private static int piglinBeastAttackPiglinSpawnChance = ConfigInit.CONFIG.piglin_beast_attack_piglin_spawn_chance;
 
   public PlayerEntityMixin(EntityType<PlayerEntity> type, World world) {
     super(type, world);
   };
 
-  @Inject(method = "tick()V", at = @At(value = "INVOKE"))
+  @Inject(method = "tick()V", at = @At(value = "HEAD"))
   private void piglinBeastSpawn(CallbackInfo info) {
     if (!world.isClient) {
       if ((LivingEntity) (Object) this instanceof PlayerEntity) {
         if (this.getAttacking() != null && this.getAttacking() instanceof PiglinEntity) {
-          int spawnChanceInt = world.random.nextInt(2);
-          if (this.getAttacking().isDead()) {
+          int spawnChanceInt = world.random.nextInt(piglinBeastAttackPiglinSpawnChance);
+          if (this.getAttacking().isDead() && spawnChanceInt != 0) {
             ticker++;
             if (ticker == 5 && getBeasts()) {
               piglinCooldown = 12000;
               killedPiglins++;
               if (killedPiglins == 6) {
-                if (spawnChanceInt == 0) {
+                if (spawnChanceInt == 1) {
                   PiglinBeastEntity beastEntity = (PiglinBeastEntity) EntityInit.PIGLINBEAST_ENTITY.create(world);
                   for (int counter = 0; counter < 100; counter++) {
                     float randomFloat = world.random.nextFloat() * 6.2831855F;

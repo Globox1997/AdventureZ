@@ -12,12 +12,17 @@ import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 import org.spongepowered.asm.mixin.injection.At;
 
+import net.adventurez.init.ConfigInit;
 import net.adventurez.init.EntityInit;
 import net.minecraft.world.biome.SpawnSettings;
 import net.minecraft.world.gen.feature.NetherFortressFeature;
 
 @Mixin(NetherFortressFeature.class)
 public class NetherFortressFeatureMixin {
+
+  private static int blazeGuardianSpawnWeight = ConfigInit.CONFIG.blaze_guardian_spawn_weight;
+  private static int necromancerSpawnWeight = ConfigInit.CONFIG.necromancer_spawn_weight;
+
   @Shadow
   @Final
   private static List<SpawnSettings.SpawnEntry> MONSTER_SPAWNS;
@@ -31,7 +36,8 @@ public class NetherFortressFeatureMixin {
   }
 
   static {
-    ADDED_SPAWNS = ImmutableList.of(new SpawnSettings.SpawnEntry(EntityInit.NECROMANCER_ENTITY, 10, 2, 3),
-        new SpawnSettings.SpawnEntry(EntityInit.BLAZEGUARDIAN_ENTITY, 10, 2, 3));
+    ADDED_SPAWNS = ImmutableList.of(
+        new SpawnSettings.SpawnEntry(EntityInit.NECROMANCER_ENTITY, necromancerSpawnWeight, 1, 1),
+        new SpawnSettings.SpawnEntry(EntityInit.BLAZEGUARDIAN_ENTITY, blazeGuardianSpawnWeight, 1, 1));
   }
 }

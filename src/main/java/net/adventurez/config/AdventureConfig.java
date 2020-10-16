@@ -12,13 +12,17 @@ public class AdventureConfig implements ConfigData {
   public int necromancer_spawn_weight = 1;
   @ConfigEntry.BoundedDiscrete(min = 0, max = 100)
   public int nightmare_spawn_weight = 2;
-  @ConfigEntry.BoundedDiscrete(min = 1, max = 200)
-  @Comment("Chance for spawning when mining gold ore in nether")
-  public int piglin_beast_ore_chance = 200;
-  public boolean piglin_beast_spawn_by_piglins = true;
+  @ConfigEntry.BoundedDiscrete(min = 0, max = 100)
+  @Comment("Chance for spawning when mining gold ore in nether; 1/Value")
+  public int piglin_beast_ore_spawn_chance = 100;
+  @ConfigEntry.BoundedDiscrete(min = 0, max = 100)
+  @Comment("Chance for spawning when killing too many piglins; 1/Value")
+  public int piglin_beast_attack_piglin_spawn_chance = 2;
   @ConfigEntry.BoundedDiscrete(min = 0, max = 100)
   public int small_stone_golem_spawn_weight = 5;
-  public boolean summoner_spawn_allow = true;
+  @ConfigEntry.BoundedDiscrete(min = 0, max = 100)
+  @Comment("Chance for spawning when thunder occurs; 1/Value")
+  public int summoner_thunder_spawn_chance = 2;
   @ConfigEntry.BoundedDiscrete(min = 0, max = 100)
   public int blaze_guardian_spawn_weight = 1;
 
