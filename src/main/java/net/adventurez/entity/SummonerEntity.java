@@ -146,11 +146,6 @@ public class SummonerEntity extends SpellCastingEntity {
   }
 
   @Override
-  public boolean canImmediatelyDespawn(double num) {
-    return false;
-  }
-
-  @Override
   public int getLimitPerChunk() {
     return 1;
   }
