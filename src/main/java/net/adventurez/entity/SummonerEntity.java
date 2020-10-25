@@ -29,6 +29,8 @@ import net.minecraft.entity.damage.DamageSource;
 import net.minecraft.entity.data.DataTracker;
 import net.minecraft.entity.data.TrackedData;
 import net.minecraft.entity.data.TrackedDataHandlerRegistry;
+import net.minecraft.entity.effect.StatusEffectInstance;
+import net.minecraft.entity.effect.StatusEffects;
 import net.minecraft.entity.mob.HostileEntity;
 import net.minecraft.entity.mob.MobEntity;
 import net.minecraft.entity.mob.PathAwareEntity;
@@ -71,7 +73,7 @@ public class SummonerEntity extends SpellCastingEntity {
   public static DefaultAttributeContainer.Builder createSummonerAttributes() {
     return HostileEntity.createHostileAttributes().add(EntityAttributes.GENERIC_MAX_HEALTH, 55.0D)
         .add(EntityAttributes.GENERIC_MOVEMENT_SPEED, 0.3D).add(EntityAttributes.GENERIC_ATTACK_DAMAGE, 6.0D)
-        .add(EntityAttributes.GENERIC_ATTACK_KNOCKBACK, 1.5D).add(EntityAttributes.GENERIC_FOLLOW_RANGE, 35.0D);
+        .add(EntityAttributes.GENERIC_ATTACK_KNOCKBACK, 1.8D).add(EntityAttributes.GENERIC_FOLLOW_RANGE, 35.0D);
   }
 
   @Override
@@ -144,7 +146,7 @@ public class SummonerEntity extends SpellCastingEntity {
   }
 
   @Override
-  public boolean canImmediatelyDespawn(double distanceSquared) {
+  public boolean canImmediatelyDespawn(double num) {
     return false;
   }
 
@@ -365,6 +367,10 @@ public class SummonerEntity extends SpellCastingEntity {
         ((ServerWorld) world).spawnParticles(ParticleTypes.END_ROD, SummonerEntity.this.getParticleX(1.5D),
             SummonerEntity.this.getRandomBodyY(), SummonerEntity.this.getParticleZ(1.5D), 0, 0.0D, 0.0D, 0.0D, 0.0D);
       }
+      if (SummonerEntity.this.getTarget() != null) {
+        SummonerEntity.this.getTarget()
+            .addStatusEffect(new StatusEffectInstance(StatusEffects.SLOWNESS, 100, 1, false, false));
+      }
 
     }
 
@@ -496,12 +502,9 @@ public class SummonerEntity extends SpellCastingEntity {
     @Override
     public boolean canStart() {
       LivingEntity livingEntity = this.summonerEntity.getTarget();
-      if (livingEntity != null) {
-        System.out.print(livingEntity.getMovementSpeed());
-      }
 
       return livingEntity != null && livingEntity.isAlive() && this.summonerEntity.canTarget(livingEntity)
-          && this.summonerEntity.squaredDistanceTo(livingEntity) < 4D && super.canStart();
+          && this.summonerEntity.squaredDistanceTo(livingEntity) < 7.0D && super.canStart();
     }
 
     @Override
@@ -517,6 +520,11 @@ public class SummonerEntity extends SpellCastingEntity {
         return !(livingEntity instanceof PlayerEntity)
             || !livingEntity.isSpectator() && !((PlayerEntity) livingEntity).isCreative();
       }
+    }
+
+    @Override
+    public double getSquaredMaxAttackDistance(LivingEntity entity) {
+      return (double) (this.mob.getWidth() * 2.5F * this.mob.getWidth() * 2.5F + entity.getWidth());
     }
 
   }
