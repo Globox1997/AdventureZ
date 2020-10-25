@@ -26,8 +26,17 @@ public class LootInit {
 
     LootTableLoadingCallback.EVENT.register((resourceManager, lootManager, id, supplier, setter) -> {
       if (addedLootTable(id)) {
-        FabricLootPoolBuilder poolBuilder = FabricLootPoolBuilder.builder().rolls(new BinomialLootTableRange(1, 0.05F))
+        FabricLootPoolBuilder poolBuilder = FabricLootPoolBuilder.builder().rolls(new BinomialLootTableRange(1, 0.01F))
             .with(ItemEntry.builder(ItemInit.GILDED_STONE_ITEM));
+        supplier.pool(poolBuilder);
+      }
+    });
+
+    LootTableLoadingCallback.EVENT.register((resourceManager, lootManager, id, supplier, setter) -> {
+      if ("minecraft:entities/piglin_brute".equals(id.toString())) {
+        FabricLootPoolBuilder poolBuilder = FabricLootPoolBuilder.builder()
+            .rolls(BinomialLootTableRange.create(1, 0.1F)).with(ItemEntry.builder(ItemInit.GILDED_STONE_ITEM));
+
         supplier.pool(poolBuilder);
       }
     });
