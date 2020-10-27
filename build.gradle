@@ -24,16 +24,16 @@ dependencies {
 	// Config
 	modApi("me.shedaniel.cloth:config-2:${project.cloth_config_version}") {
       exclude(group: "net.fabricmc.fabric-api")
-  }
+  	}
 	include("me.shedaniel.cloth:config-2:${project.cloth_config_version}") {
       exclude(group: "net.fabricmc.fabric-api")
-  }
+  	}
 	modApi("me.sargunvohra.mcmods:autoconfig1u:${project.auto_config_version}") {
       exclude(group: "net.fabricmc.fabric-api")
-  }
+  	}
 	include("me.sargunvohra.mcmods:autoconfig1u:${project.auto_config_version}") {
       exclude(group: "net.fabricmc.fabric-api")
-  }
+  	}
 	// Modmenu dev
 	modCompile "io.github.prospector:modmenu:${project.mod_menu_version}",{
 			exclude(group: "net.fabricmc.fabric-api")
