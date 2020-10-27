@@ -37,7 +37,7 @@ import net.minecraft.entity.mob.PathAwareEntity;
 import net.minecraft.entity.mob.SkeletonEntity;
 import net.minecraft.entity.mob.ZombieEntity;
 import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.entity.projectile.ProjectileEntity;
+import net.minecraft.entity.projectile.ArrowEntity;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.Items;
 import net.minecraft.nbt.CompoundTag;
@@ -187,7 +187,7 @@ public class SummonerEntity extends SpellCastingEntity {
     }
     if (chance == 1) {
       this.world.playSoundFromEntity(null, this, SoundInit.MAGIC_SHIELD_HIT_EVENT, SoundCategory.HOSTILE, 1.0F, 1.0F);
-      if (source.getSource() != null && source.getSource() instanceof ProjectileEntity) {
+      if (source.getSource() != null && source.getSource() instanceof ArrowEntity) {
         if (!world.isClient) {
           source.getSource().remove();
         }
