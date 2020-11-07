@@ -49,6 +49,7 @@ import net.minecraft.util.math.Box;
 import net.minecraft.util.math.MathHelper;
 import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.BlockView;
+import net.minecraft.world.Difficulty;
 import net.minecraft.world.GameRules;
 import net.minecraft.world.World;
 import net.minecraft.world.WorldView;
@@ -91,7 +92,7 @@ public class StoneGolemEntity extends HostileEntity {
   public static DefaultAttributeContainer.Builder createStoneGolemAttributes() {
     return HostileEntity.createHostileAttributes().add(EntityAttributes.GENERIC_MAX_HEALTH, 600.0D)
         .add(EntityAttributes.GENERIC_MOVEMENT_SPEED, 0.24D).add(EntityAttributes.GENERIC_KNOCKBACK_RESISTANCE, 2.5D)
-        .add(EntityAttributes.GENERIC_ATTACK_DAMAGE, 12.0D).add(EntityAttributes.GENERIC_ATTACK_KNOCKBACK, 2.5D)
+        .add(EntityAttributes.GENERIC_ATTACK_DAMAGE, 12.0D).add(EntityAttributes.GENERIC_ATTACK_KNOCKBACK, 2.8D)
         .add(EntityAttributes.GENERIC_FOLLOW_RANGE, 38.0D);
   }
 
@@ -417,8 +418,16 @@ public class StoneGolemEntity extends HostileEntity {
   }
 
   @Override
-  public boolean cannotDespawn() {
-    return true;
+  public boolean canImmediatelyDespawn(double num) {
+    return false;
+  }
+
+  @Override
+  public void checkDespawn() {
+    if (this.world.getDifficulty() == Difficulty.PEACEFUL) {
+      this.remove();
+    }
+
   }
 
   @Override

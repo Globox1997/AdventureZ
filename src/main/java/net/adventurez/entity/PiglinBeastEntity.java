@@ -34,6 +34,7 @@ import net.minecraft.predicate.entity.EntityPredicates;
 import net.minecraft.sound.SoundCategory;
 import net.minecraft.sound.SoundEvent;
 import net.minecraft.util.math.BlockPos;
+import net.minecraft.world.Difficulty;
 import net.minecraft.world.GameRules;
 import net.minecraft.world.World;
 import net.minecraft.world.WorldView;
@@ -128,8 +129,16 @@ public class PiglinBeastEntity extends HostileEntity {
   }
 
   @Override
-  public boolean cannotDespawn() {
-    return true;
+  public boolean canImmediatelyDespawn(double num) {
+    return false;
+  }
+
+  @Override
+  public void checkDespawn() {
+    if (this.world.getDifficulty() == Difficulty.PEACEFUL) {
+      this.remove();
+    }
+
   }
 
   @Override
