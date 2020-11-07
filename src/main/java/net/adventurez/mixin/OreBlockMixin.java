@@ -21,17 +21,20 @@ import net.minecraft.util.math.MathHelper;
 import net.minecraft.world.SpawnHelper;
 import net.minecraft.world.World;
 import net.minecraft.world.WorldAccess;
-import net.minecraft.world.Heightmap;
 
 @Mixin(OreBlock.class)
 public abstract class OreBlockMixin {
   private boolean isBeastNear = false;
-  private static int piglinBeastOreChance = ConfigInit.CONFIG.piglin_beast_ore_spawn_chance;
 
   public void onBroken(WorldAccess world, BlockPos pos, BlockState state) {
     PlayerEntity player = world.getClosestPlayer((double) pos.getX(), (double) pos.getY(), (double) pos.getZ(), 16D,
         false);
-    if (state.isOf(Blocks.NETHER_GOLD_ORE) && !world.isClient() && player.world.getRegistryKey() == World.NETHER) {
+    if (ConfigInit.CONFIG.piglin_beast_ore_spawn_chance == 0 && player != null && player.isCreative()
+        && player.world.getRegistryKey() != World.NETHER) {
+      return;
+    }
+
+    if (state.isOf(Blocks.NETHER_GOLD_ORE) && !world.isClient()) {
       List<Entity> list = world.getEntitiesByClass(LivingEntity.class, player.getBoundingBox().expand(40D),
           EntityPredicates.EXCEPT_SPECTATOR);
       for (int i = 0; i < list.size(); ++i) {
@@ -40,14 +43,17 @@ public abstract class OreBlockMixin {
           isBeastNear = true;
         }
       }
-      int spawnChanceInt = world.getRandom().nextInt(piglinBeastOreChance);
+      int spawnChanceInt = world.getRandom().nextInt(ConfigInit.CONFIG.piglin_beast_ore_spawn_chance) + 1;
       if (spawnChanceInt == 1 && !isBeastNear) {
         PiglinBeastEntity beastEntity = (PiglinBeastEntity) EntityInit.PIGLINBEAST_ENTITY.create((World) world);
+        int posYOfPlayer = player.getBlockPos().getY();
         for (int counter = 0; counter < 100; counter++) {
           float randomFloat = world.getRandom().nextFloat() * 6.2831855F;
-          int posX = pos.getX() + MathHelper.floor(MathHelper.cos(randomFloat) * 26.0F + world.getRandom().nextInt(5));
-          int posZ = pos.getZ() + MathHelper.floor(MathHelper.sin(randomFloat) * 26.0F + world.getRandom().nextInt(5));
-          int posY = world.getTopY(Heightmap.Type.WORLD_SURFACE, posX, posZ);
+          int posX = pos.getX() + MathHelper.floor(MathHelper.cos(randomFloat) * 18.0F + world.getRandom().nextInt(16));
+          int posZ = pos.getZ() + MathHelper.floor(MathHelper.sin(randomFloat) * 18.0F + world.getRandom().nextInt(16));
+          // int posY = world.getTopY(Heightmap.Type.WORLD_SURFACE_WG, posX, posZ); doesnt
+          // work in nether
+          int posY = posYOfPlayer - 20 + world.getRandom().nextInt(40);
           BlockPos spawnPos = new BlockPos(posX, posY, posZ);
           if (world.isRegionLoaded(spawnPos.getX() - 4, spawnPos.getY() - 4, spawnPos.getZ() - 4, spawnPos.getX() + 4,
               spawnPos.getY() + 4, spawnPos.getZ() + 4)

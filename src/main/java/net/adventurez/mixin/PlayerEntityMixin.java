@@ -28,25 +28,24 @@ import net.minecraft.util.math.ChunkPos;
 import net.minecraft.util.math.MathHelper;
 import net.minecraft.world.SpawnHelper;
 import net.minecraft.world.World;
-import net.minecraft.world.Heightmap;
 
 @Mixin(PlayerEntity.class)
 public abstract class PlayerEntityMixin extends LivingEntity {
   private int ticker = 0;
   private int killedPiglins = 0;
   private int piglinCooldown = 0;
-  private static int piglinBeastAttackPiglinSpawnChance = ConfigInit.CONFIG.piglin_beast_attack_piglin_spawn_chance;
 
   public PlayerEntityMixin(EntityType<PlayerEntity> type, World world) {
     super(type, world);
   };
 
-  @Inject(method = "tick()V", at = @At(value = "HEAD"))
+  @Inject(method = "tick()V", at = @At(value = "TAIL"))
   private void piglinBeastSpawn(CallbackInfo info) {
-    if (!world.isClient) {
-      if ((LivingEntity) (Object) this instanceof PlayerEntity) {
+    if (!world.isClient && ConfigInit.CONFIG.piglin_beast_attack_piglin_spawn_chance != 0) {
+      PlayerEntity playerEntity = (PlayerEntity) (Object) this;
+      if (playerEntity != null && !playerEntity.isCreative() && playerEntity.world.getRegistryKey() == World.NETHER) {
         if (this.getAttacking() != null && this.getAttacking() instanceof PiglinEntity) {
-          int spawnChanceInt = world.random.nextInt(piglinBeastAttackPiglinSpawnChance);
+          int spawnChanceInt = world.random.nextInt(ConfigInit.CONFIG.piglin_beast_attack_piglin_spawn_chance) + 1;
           if (this.getAttacking().isDead() && spawnChanceInt != 0) {
             ticker++;
             if (ticker == 5 && getBeasts()) {
@@ -55,13 +54,14 @@ public abstract class PlayerEntityMixin extends LivingEntity {
               if (killedPiglins == 6) {
                 if (spawnChanceInt == 1) {
                   PiglinBeastEntity beastEntity = (PiglinBeastEntity) EntityInit.PIGLINBEAST_ENTITY.create(world);
+                  int posYOfPlayer = playerEntity.getBlockPos().getY();
                   for (int counter = 0; counter < 100; counter++) {
                     float randomFloat = world.random.nextFloat() * 6.2831855F;
                     int posX = this.getBlockPos().getX()
                         + MathHelper.floor(MathHelper.cos(randomFloat) * 26.0F + world.random.nextInt(5));
                     int posZ = this.getBlockPos().getZ()
                         + MathHelper.floor(MathHelper.sin(randomFloat) * 26.0F + world.random.nextInt(5));
-                    int posY = world.getTopY(Heightmap.Type.WORLD_SURFACE, posX, posZ);
+                    int posY = posYOfPlayer - 20 + world.getRandom().nextInt(40);
                     BlockPos spawnPos = new BlockPos(posX, posY, posZ);
                     if (this.world.isRegionLoaded(spawnPos.getX() - 4, spawnPos.getY() - 4, spawnPos.getZ() - 4,
                         spawnPos.getX() + 4, spawnPos.getY() + 4, spawnPos.getZ() + 4)

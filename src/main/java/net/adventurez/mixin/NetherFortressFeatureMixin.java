@@ -20,9 +20,6 @@ import net.minecraft.world.gen.feature.NetherFortressFeature;
 @Mixin(NetherFortressFeature.class)
 public class NetherFortressFeatureMixin {
 
-  private static int blazeGuardianSpawnWeight = ConfigInit.CONFIG.blaze_guardian_spawn_weight;
-  private static int necromancerSpawnWeight = ConfigInit.CONFIG.necromancer_spawn_weight;
-
   @Shadow
   @Final
   private static List<SpawnSettings.SpawnEntry> MONSTER_SPAWNS;
@@ -37,7 +34,8 @@ public class NetherFortressFeatureMixin {
 
   static {
     ADDED_SPAWNS = ImmutableList.of(
-        new SpawnSettings.SpawnEntry(EntityInit.NECROMANCER_ENTITY, necromancerSpawnWeight, 1, 1),
-        new SpawnSettings.SpawnEntry(EntityInit.BLAZEGUARDIAN_ENTITY, blazeGuardianSpawnWeight, 1, 1));
+        new SpawnSettings.SpawnEntry(EntityInit.NECROMANCER_ENTITY, ConfigInit.CONFIG.necromancer_spawn_weight, 1, 1),
+        new SpawnSettings.SpawnEntry(EntityInit.BLAZEGUARDIAN_ENTITY, ConfigInit.CONFIG.blaze_guardian_spawn_weight, 1,
+            1));
   }
 }
