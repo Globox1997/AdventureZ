@@ -73,7 +73,7 @@ public class SummonerEntity extends SpellCastingEntity {
   public static DefaultAttributeContainer.Builder createSummonerAttributes() {
     return HostileEntity.createHostileAttributes().add(EntityAttributes.GENERIC_MAX_HEALTH, 55.0D)
         .add(EntityAttributes.GENERIC_MOVEMENT_SPEED, 0.3D).add(EntityAttributes.GENERIC_ATTACK_DAMAGE, 6.0D)
-        .add(EntityAttributes.GENERIC_ATTACK_KNOCKBACK, 1.8D).add(EntityAttributes.GENERIC_FOLLOW_RANGE, 35.0D);
+        .add(EntityAttributes.GENERIC_ATTACK_KNOCKBACK, 2.2D).add(EntityAttributes.GENERIC_FOLLOW_RANGE, 35.0D);
   }
 
   @Override
