@@ -66,7 +66,7 @@ public class StoneHolderEntity extends BlockEntity implements Tickable, Inventor
     for (stoneCounter = 1; stoneCounter < 10; stoneCounter++) {
       for (stoneCounter2 = -4; stoneCounter2 < 5; stoneCounter2++) {
         BlockState stoneState = world.getBlockState(pos.north(stoneCounter).east(stoneCounter2));
-        if (stoneState.getBlock().isIn(TagInit.PLATFORM_BLOCKS)) {
+        if (stoneState.getBlock().isIn(TagInit.PLATFORM_NETHER_BLOCKS)) {
           stoneCounter3++;
         }
       }
