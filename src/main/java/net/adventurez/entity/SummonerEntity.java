@@ -287,9 +287,9 @@ public class SummonerEntity extends SpellCastingEntity {
       for (int counter = 0; counter < 100; counter++) {
         float randomFloat = world.getRandom().nextFloat() * 6.2831855F;
         int posX = SummonerEntity.this.getBlockPos().getX()
-            + MathHelper.floor(MathHelper.cos(randomFloat) * 8.0F + world.getRandom().nextInt(8));
+            + MathHelper.floor(MathHelper.cos(randomFloat) * 8.0F + world.getRandom().nextInt(12));
         int posZ = SummonerEntity.this.getBlockPos().getZ()
-            + MathHelper.floor(MathHelper.sin(randomFloat) * 8.0F + world.getRandom().nextInt(8));
+            + MathHelper.floor(MathHelper.sin(randomFloat) * 8.0F + world.getRandom().nextInt(12));
         int posY = world.getTopY(Heightmap.Type.WORLD_SURFACE, posX, posZ);
         BlockPos teleportPos = new BlockPos(posX, posY, posZ);
         if (world.isRegionLoaded(teleportPos.getX() - 4, teleportPos.getY() - 4, teleportPos.getZ() - 4,
