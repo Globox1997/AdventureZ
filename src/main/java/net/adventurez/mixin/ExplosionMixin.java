@@ -14,11 +14,8 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import org.spongepowered.asm.mixin.injection.callback.LocalCapture;
 import org.spongepowered.asm.mixin.injection.At;
 
-import net.adventurez.entity.BlazeGuardianEntity;
 import net.minecraft.entity.Entity;
-import net.minecraft.entity.mob.BlazeEntity;
-import net.minecraft.entity.mob.PiglinEntity;
-import net.minecraft.entity.mob.WitherSkeletonEntity;
+import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.explosion.Explosion;
 
@@ -36,11 +33,10 @@ public class ExplosionMixin {
   @Inject(method = "collectBlocksAndDamageEntities", at = @At(value = "INVOKE", target = "Lnet/minecraft/util/math/Vec3d;<init>(DDD)V", shift = Shift.AFTER), cancellable = true, locals = LocalCapture.CAPTURE_FAILSOFT)
   public void collectBlocksAndDamageEntitiesMixin(CallbackInfo info, Set<BlockPos> set, float q, int r, int s, int t,
       int u, int v, int w, List<Entity> list) {
-    if (this.entity != null && (this.entity instanceof BlazeGuardianEntity || this.entity instanceof PiglinEntity
-        || this.entity instanceof WitherSkeletonEntity)) {
+    if (this.entity != null) {
       for (int i = 0; i < list.size(); ++i) {
         Entity entityFromList = (Entity) list.get(i);
-        if (entityFromList instanceof BlazeEntity) {
+        if (!(entityFromList instanceof PlayerEntity)) {
           list.remove(i);
         }
       }
