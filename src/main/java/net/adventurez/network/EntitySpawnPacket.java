@@ -14,6 +14,7 @@ import net.minecraft.network.PacketByteBuf;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.math.MathHelper;
 import net.minecraft.util.registry.Registry;
+import net.minecraft.world.World;
 
 import java.util.UUID;
 
@@ -43,9 +44,9 @@ public class EntitySpawnPacket {
 		double z = byteBuf.readDouble();
 		float pitch = (byteBuf.readByte() * 360) / 256.0F;
 		float yaw = (byteBuf.readByte() * 360) / 256.0F;
-		ClientWorld world = MinecraftClient.getInstance().world;
-		Entity entity = type.create(world);
 		context.getTaskQueue().execute(() -> {
+			World world = context.getPlayer().getEntityWorld();
+			Entity entity = type.create(world);
 			if (entity != null) {
 				entity.updatePosition(x, y, z);
 				entity.updateTrackedPosition(x, y, z);
@@ -53,11 +54,8 @@ public class EntitySpawnPacket {
 				entity.yaw = yaw;
 				entity.setEntityId(entityID);
 				entity.setUuid(entityUUID);
-				if (world == null) {
-					MinecraftClient.getInstance().world.addEntity(entityID, entity);
-				} else {
-					world.addEntity(entityID, entity);
-				}
+				ClientWorld clientWorld = MinecraftClient.getInstance().world;
+				clientWorld.addEntity(entityID, entity);
 			}
 		});
 	}
