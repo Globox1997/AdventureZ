@@ -40,7 +40,7 @@ public class SpawnInit {
         addMobSpawnToBiome(biome, SpawnGroup.MONSTER,
             new SpawnSettings.SpawnEntry(EntityInit.SMALLSTONEGOLEM_ENTITY,
                 ConfigInit.CONFIG.small_stone_golem_spawn_weight, 1, 1),
-            new SpawnSettings.SpawnEntry(EntityInit.NIGHTMARE_ENTITY, ConfigInit.CONFIG.nightmare_spawn_weight, 1, 1));
+            new SpawnSettings.SpawnEntry(EntityInit.SOULREAPER_ENTITY, ConfigInit.CONFIG.nightmare_spawn_weight, 1, 1));
       }
 
       // if (biome.getCategory().equals(Biome.Category.ICY) ||
@@ -68,8 +68,6 @@ public class SpawnInit {
   }
 
   public static void SpawnRestriction() {
-    SpawnRestriction.register(EntityInit.NIGHTMARE_ENTITY, SpawnRestriction.Location.ON_GROUND,
-        Heightmap.Type.MOTION_BLOCKING_NO_LEAVES, NightmareEntity::canSpawn);
     SpawnRestriction.register(EntityInit.SMALLSTONEGOLEM_ENTITY, SpawnRestriction.Location.ON_GROUND,
         Heightmap.Type.MOTION_BLOCKING_NO_LEAVES, SmallStoneGolemEntity::canSpawn);
     SpawnRestriction.register(EntityInit.NECROMANCER_ENTITY, SpawnRestriction.Location.ON_GROUND,
@@ -80,6 +78,8 @@ public class SpawnInit {
         Heightmap.Type.MOTION_BLOCKING_NO_LEAVES, HostileEntity::canSpawnInDark);
     SpawnRestriction.register(EntityInit.PIGLINBEAST_ENTITY, SpawnRestriction.Location.ON_GROUND,
         Heightmap.Type.MOTION_BLOCKING_NO_LEAVES, HostileEntity::canSpawnIgnoreLightLevel);
+    SpawnRestriction.register(EntityInit.SOULREAPER_ENTITY, SpawnRestriction.Location.ON_GROUND,
+        Heightmap.Type.MOTION_BLOCKING_NO_LEAVES, SoulReaperEntity::canSpawn);
   }
 
 }

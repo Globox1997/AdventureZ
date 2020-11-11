@@ -1,7 +1,12 @@
 package net.adventurez.entity;
 
+import java.util.Objects;
+import java.util.Optional;
+import java.util.Random;
+
 import org.jetbrains.annotations.Nullable;
 
+import net.adventurez.init.EntityInit;
 import net.adventurez.init.SoundInit;
 import net.minecraft.block.BlockState;
 import net.minecraft.entity.Entity;
@@ -40,12 +45,17 @@ import net.minecraft.sound.SoundEvent;
 import net.minecraft.sound.SoundEvents;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.MathHelper;
+import net.minecraft.util.registry.RegistryKey;
 import net.minecraft.entity.mob.AbstractPiglinEntity;
 import net.minecraft.entity.mob.HostileEntity;
 import net.minecraft.entity.mob.PathAwareEntity;
+import net.minecraft.world.Difficulty;
+import net.minecraft.world.LightType;
 import net.minecraft.world.LocalDifficulty;
 import net.minecraft.world.ServerWorldAccess;
 import net.minecraft.world.World;
+import net.minecraft.world.biome.Biome;
+import net.minecraft.world.biome.BiomeKeys;
 
 public class SoulReaperEntity extends HostileEntity implements RangedAttackMob {
   private final BowAttackGoal<SoulReaperEntity> bowAttackGoal = new BowAttackGoal<>(this, 1.0D, 40, 15.0F);
@@ -93,7 +103,27 @@ public class SoulReaperEntity extends HostileEntity implements RangedAttackMob {
     this.updateEnchantments(difficulty);
     this.bowAttackGoal.setAttackInterval(40);
     this.goalSelector.add(4, this.bowAttackGoal);
+    if (spawnReason.equals(SpawnReason.COMMAND) || spawnReason.equals(SpawnReason.NATURAL)
+        || spawnReason.equals(SpawnReason.CHUNK_GENERATION)) {
+      NightmareEntity nightmareEntity = (NightmareEntity) EntityInit.NIGHTMARE_ENTITY.create(this.world);
+      nightmareEntity.refreshPositionAndAngles(this.getX(), this.getY(), this.getZ(), this.yaw, 0.0F);
+      nightmareEntity.initialize(serverWorldAccess, difficulty, spawnReason, (EntityData) null, (CompoundTag) null);
+      serverWorldAccess.spawnEntity(nightmareEntity);
+      this.startRiding(nightmareEntity);
+    }
+
     return entityData;
+  }
+
+  public static boolean canSpawn(EntityType<SoulReaperEntity> type, ServerWorldAccess world, SpawnReason spawnReason,
+      BlockPos pos, Random random) {
+    Optional<RegistryKey<Biome>> optional = world.method_31081(pos);
+    boolean bl = (world.getDifficulty() != Difficulty.PEACEFUL && world.getLightLevel(LightType.BLOCK, pos) < 10
+        && canMobSpawn(type, world, spawnReason, pos, random)) || spawnReason == SpawnReason.SPAWNER;
+    if (Objects.equals(optional, Optional.of(BiomeKeys.SOUL_SAND_VALLEY))) {
+      return bl;
+    } else
+      return false;
   }
 
   @Override
@@ -109,6 +139,11 @@ public class SoulReaperEntity extends HostileEntity implements RangedAttackMob {
   @Override
   public EntityGroup getGroup() {
     return EntityGroup.UNDEAD;
+  }
+
+  @Override
+  public int getLimitPerChunk() {
+    return 1;
   }
 
   @Override
