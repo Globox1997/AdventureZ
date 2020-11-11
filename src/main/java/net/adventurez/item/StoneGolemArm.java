@@ -55,10 +55,11 @@ public class StoneGolemArm extends Item {
                     float strength = getStoneStrength(stoneCounter);
                     stack.damage(1, playerEntity, (p) -> p.sendToolBreakStatus(p.getActiveHand()));
                     ThrownRockEntity rockEntity = new ThrownRockEntity(world, playerEntity);
-                    rockEntity.setProperties(playerEntity, playerEntity.pitch, playerEntity.yaw, 0.0F, strength * 1.2F, 1.0F);
+                    rockEntity.setProperties(playerEntity, playerEntity.pitch, playerEntity.yaw, 0.0F, strength * 1.2F,
+                            1.0F);
                     world.spawnEntity(rockEntity);
-                    world.playSoundFromEntity((PlayerEntity) null, rockEntity, SoundInit.ROCK_THROW_EVENT, SoundCategory.PLAYERS,
-                            1.0F, 1.0F);
+                    world.playSoundFromEntity((PlayerEntity) null, rockEntity, SoundInit.ROCK_THROW_EVENT,
+                            SoundCategory.PLAYERS, 1.0F, 1.0F);
                 }
             }
         }
@@ -85,11 +86,15 @@ public class StoneGolemArm extends Item {
         }
 
         if (world.isClient && tags != null) {
-            if (player.getItemUseTimeLeft() < 71970 && player.getItemUseTimeLeft() != 0 && player.getEquippedStack(player.getActiveHand() == Hand.MAIN_HAND  ?  EquipmentSlot.MAINHAND : EquipmentSlot.OFFHAND) == stack) {
+            if (player.getItemUseTimeLeft() < 71970 && player.getItemUseTimeLeft() != 0
+                    && player.getEquippedStack(player.getActiveHand() == Hand.MAIN_HAND ? EquipmentSlot.MAINHAND
+                            : EquipmentSlot.OFFHAND) == stack) {
                 tags.putBoolean("lavalight", true);
             }
 
-            if (tags.getBoolean("lavalight") && player.getEquippedStack(player.getActiveHand() == Hand.MAIN_HAND  ?  EquipmentSlot.MAINHAND : EquipmentSlot.OFFHAND) != stack) {
+            if (tags.getBoolean("lavalight")
+                    && player.getEquippedStack(player.getActiveHand() == Hand.MAIN_HAND ? EquipmentSlot.MAINHAND
+                            : EquipmentSlot.OFFHAND) != stack) {
                 tags.putBoolean("lavalight", false);
             }
         }
