@@ -41,6 +41,12 @@ public class RenderInit {
                                 (dispatcher, context) -> new SummonerRenderer(dispatcher));
                 EntityRendererRegistry.INSTANCE.register(EntityInit.BLAZEGUARDIAN_ENTITY,
                                 (dispatcher, context) -> new BlazeGuardianRenderer(dispatcher));
+                EntityRendererRegistry.INSTANCE.register(EntityInit.THEEYE_ENTITY,
+                                (dispatcher, context) -> new TheEyeRenderer(dispatcher));
+                EntityRendererRegistry.INSTANCE.register(EntityInit.VOID_SHADOW_ENTITY,
+                                (dispatcher, context) -> new VoidShadowRenderer(dispatcher));
+                EntityRendererRegistry.INSTANCE.register(EntityInit.TINYEYE_ENTITY,
+                                (dispatcher, context) -> new TinyEyeRenderer(dispatcher));
                 // EntityRendererRegistry.INSTANCE.register(EntityInit.GRYPHON_ENTITY,
                 // (dispatcher, context) -> new GryphonRenderer(dispatcher));
 

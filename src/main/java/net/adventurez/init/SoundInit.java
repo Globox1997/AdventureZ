@@ -68,6 +68,15 @@ public class SoundInit {
   public static final Identifier MAGIC_SHIELD_HIT = new Identifier("adventurez:magic_shield_hit");
   public static SoundEvent SPELL_CAST_SHIELD_EVENT = new SoundEvent(SPELL_CAST_SHIELD);
   public static SoundEvent MAGIC_SHIELD_HIT_EVENT = new SoundEvent(MAGIC_SHIELD_HIT);
+  // The Eye
+  public static final Identifier EYE_DEATH = new Identifier("adventurez:eye_death");
+  public static final Identifier EYE_HURT = new Identifier("adventurez:eye_hurt");
+  public static final Identifier EYE_IDLE = new Identifier("adventurez:eye_idle");
+  public static final Identifier EYE_DEATH_PLATFORM = new Identifier("adventurez:eye_death_platform");
+  public static SoundEvent EYE_DEATH_EVENT = new SoundEvent(EYE_DEATH);
+  public static SoundEvent EYE_HURT_EVENT = new SoundEvent(EYE_HURT);
+  public static SoundEvent EYE_IDLE_EVENT = new SoundEvent(EYE_IDLE);
+  public static SoundEvent EYE_DEATH_PLATFORM_EVENT = new SoundEvent(EYE_DEATH_PLATFORM);
 
   public static void init() {
     Registry.register(Registry.SOUND_EVENT, SoundInit.GOLEM_IDLE, GOLEM_IDLE_EVENT);
@@ -98,5 +107,9 @@ public class SoundInit {
     Registry.register(Registry.SOUND_EVENT, SoundInit.SOULREAPER_DEATH, SOULREAPER_DEATH_EVENT);
     Registry.register(Registry.SOUND_EVENT, SoundInit.SPELL_CAST_SHIELD, SPELL_CAST_SHIELD_EVENT);
     Registry.register(Registry.SOUND_EVENT, SoundInit.MAGIC_SHIELD_HIT, MAGIC_SHIELD_HIT_EVENT);
+    Registry.register(Registry.SOUND_EVENT, SoundInit.EYE_DEATH, EYE_DEATH_EVENT);
+    Registry.register(Registry.SOUND_EVENT, SoundInit.EYE_HURT, EYE_HURT_EVENT);
+    Registry.register(Registry.SOUND_EVENT, SoundInit.EYE_IDLE, EYE_IDLE_EVENT);
+    Registry.register(Registry.SOUND_EVENT, SoundInit.EYE_DEATH_PLATFORM, EYE_DEATH_PLATFORM_EVENT);
   }
 }

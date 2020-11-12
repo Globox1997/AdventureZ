@@ -22,7 +22,7 @@ public class AdventureConfig implements ConfigData {
   public int small_stone_golem_spawn_weight = 5;
   @ConfigEntry.BoundedDiscrete(min = 0, max = 100)
   @Comment("Chance for spawning when thunder occurs; 1/Value")
-  public int summoner_thunder_spawn_chance = 2;
+  public int summoner_thunder_spawn_chance = 4;
   @ConfigEntry.BoundedDiscrete(min = 0, max = 100)
   public int blaze_guardian_spawn_weight = 1;
 

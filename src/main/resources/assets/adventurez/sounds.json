@@ -193,5 +193,30 @@
     "sounds": [
       "adventurez:magic_shield_hit"
     ]
+  },
+  "eye_death": {
+    "sounds": [
+      "adventurez:eye_death"
+    ]
+  },
+  "eye_hurt": {
+    "sounds": [
+      "adventurez:eye_hurt1",
+      "adventurez:eye_hurt2",
+      "adventurez:eye_hurt3"
+    ]
+  },
+  "eye_idle": {
+    "sounds": [
+      "adventurez:eye_idle1",
+      "adventurez:eye_idle2",
+      "adventurez:eye_idle3",
+      "adventurez:eye_idle4"
+    ]
+  },
+  "eye_death_platform": {
+    "sounds": [
+      "adventurez:eye_death_platform"
+    ]
   }
 }

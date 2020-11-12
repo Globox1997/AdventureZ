@@ -49,6 +49,15 @@ public class EntityInit {
         public static final EntityType<BlazeGuardianEntity> BLAZEGUARDIAN_ENTITY = FabricEntityTypeBuilder
                         .create(SpawnGroup.MONSTER, BlazeGuardianEntity::new).fireImmune()
                         .dimensions(EntityDimensions.fixed(1.1F, 2.2F)).build();
+        public static final EntityType<TheEyeEntity> THEEYE_ENTITY = FabricEntityTypeBuilder
+                        .create(SpawnGroup.MONSTER, TheEyeEntity::new).fireImmune()
+                        .dimensions(EntityDimensions.fixed(2.8F, 3.5F)).build();
+        public static final EntityType<VoidShadowEntity> VOID_SHADOW_ENTITY = FabricEntityTypeBuilder
+                        .create(SpawnGroup.MONSTER, VoidShadowEntity::new).fireImmune()
+                        .dimensions(EntityDimensions.fixed(3.2F, 4.8F)).build();
+        public static final EntityType<TinyEyeEntity> TINYEYE_ENTITY = FabricEntityTypeBuilder
+                        .<TinyEyeEntity>create(SpawnGroup.MISC, TinyEyeEntity::new)
+                        .dimensions(EntityDimensions.fixed(0.4F, 0.4F)).build();
 
         // public static final EntityType<GryphonEntity> GRYPHON_ENTITY =
         // FabricEntityTypeBuilder
@@ -75,6 +84,10 @@ public class EntityInit {
                 Registry.register(Registry.ENTITY_TYPE, new Identifier("adventurez", "summoner"), SUMMONER_ENTITY);
                 Registry.register(Registry.ENTITY_TYPE, new Identifier("adventurez", "blaze_guardian"),
                                 BLAZEGUARDIAN_ENTITY);
+                Registry.register(Registry.ENTITY_TYPE, new Identifier("adventurez", "the_eye"), THEEYE_ENTITY);
+                Registry.register(Registry.ENTITY_TYPE, new Identifier("adventurez", "void_shadow"),
+                                VOID_SHADOW_ENTITY);
+                Registry.register(Registry.ENTITY_TYPE, new Identifier("adventurez", "tiny_eye"), TINYEYE_ENTITY);
                 // Registry.register(Registry.ENTITY_TYPE, new Identifier("adventurez",
                 // "gryphon"), GRYPHON_ENTITY);
 
@@ -97,6 +110,9 @@ public class EntityInit {
                 FabricDefaultAttributeRegistry.register(SUMMONER_ENTITY, SummonerEntity.createSummonerAttributes());
                 FabricDefaultAttributeRegistry.register(BLAZEGUARDIAN_ENTITY,
                                 BlazeGuardianEntity.createBlazeGuardianAttributes());
+                FabricDefaultAttributeRegistry.register(THEEYE_ENTITY, TheEyeEntity.createTheEntityAttributes());
+                FabricDefaultAttributeRegistry.register(VOID_SHADOW_ENTITY,
+                                VoidShadowEntity.createVoidShadowAttributes());
                 // FabricDefaultAttributeRegistry.register(GRYPHON_ENTITY,
                 // GryphonEntity.createGryphonAttributes());
 
@@ -123,6 +139,10 @@ public class EntityInit {
                                 SUMMONER_ENTITY, 12369084, 5847892, new Item.Settings().group(ItemGroup.MISC)));
                 Registry.register(Registry.ITEM, new Identifier("adventurez", "spawn_blaze_guardian"), new SpawnEggItem(
                                 BLAZEGUARDIAN_ENTITY, 16766248, 9122817, new Item.Settings().group(ItemGroup.MISC)));
+                Registry.register(Registry.ITEM, new Identifier("adventurez", "spawn_the_eye"), new SpawnEggItem(
+                                THEEYE_ENTITY, 1984565, 1059889, new Item.Settings().group(ItemGroup.MISC)));
+                Registry.register(Registry.ITEM, new Identifier("adventurez", "spawn_void_shadow"), new SpawnEggItem(
+                                VOID_SHADOW_ENTITY, 1441901, 393244, new Item.Settings().group(ItemGroup.MISC)));
                 // Registry.register(Registry.ITEM, new Identifier("adventurez",
                 // "spawn_gryphon"), new SpawnEggItem(
                 // GRYPHON_ENTITY, 1381653, 5329747, new

@@ -9,7 +9,8 @@
     "PiglinBrainMixin",
     "ServerWorldMixin",
     "ExplosionMixin",
-    "NetherFortressFeatureMixin"
+    "NetherFortressFeatureMixin",
+    "DragonEggBlockMixin"
   ],
   "client": [
     "ArmorFeatureRendererMixin",

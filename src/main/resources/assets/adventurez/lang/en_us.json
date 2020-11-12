@@ -11,6 +11,8 @@
   "entity.adventurez.skeleton_vanguard": "Skeleton Vanguard",
   "entity.adventurez.summoner": "Summoner",
   "entity.adventurez.blaze_guardian": "Blaze Guardian",
+  "entity.adventurez.the_eye": "The Eye",
+  "entity.adventurez.void_shadow": "Void Shadow",
 
   "item.adventurez.spawn_stone_golem": "Blackstone Golem Spawn Egg",
   "item.adventurez.spawn_small_stone_golem": "Mini Blackstone Golem Spawn Egg",
@@ -22,6 +24,8 @@
   "item.adventurez.spawn_skeleton_vanguard": "Skeleton Vanguard Spawn Egg",
   "item.adventurez.spawn_summoner": "Summoner Spawn Egg",
   "item.adventurez.spawn_blaze_guardian": "Blaze Guardian Spawn Egg",
+  "item.adventurez.spawn_the_eye": "The Eye Spawn Egg",
+  "item.adventurez.spawn_void_shadow": "Void Shadow Spawn Egg",
 
   "item.adventurez.gilded_stone_item": "Gilded Blackstone Shard",
   "item.adventurez.gilded_stone_item.tooltip2": "Placeable in the Stone Holder",
@@ -43,6 +47,7 @@
   "item.adventurez.stone_golem_armor.tooltip3": "Press %1$s to activate",
   "item.adventurez.stone_golem_armor.tooltip4": "§9Fire Resistance (0:30)",
   "item.adventurez.stone_golem_armor.tooltip5": "§cRecharge (1:00)",
+  "item.adventurez.prime_eye_item": "Prime Eye",
 
   "item.adventurez.moreinfo.tooltip": "§8Hold §6Shift §8For More Info",
   "key.adventurez.activatearmor": "Activate Armor",
@@ -63,6 +68,7 @@
   "effect.adventurez.withering": "Withering",
 
   "death.attack.rock":"%1$s was crushed by a rock",
+  "death.attack.tinyEye":"%1$s was hit too hard by a tiny eye",
 
   "text.autoconfig.adventurez.title": "AdventureZ Config",
   "text.autoconfig.adventurez.option.necromancer_spawn_weight": "Necromancer Spawn Weight",
