@@ -75,6 +75,7 @@ import org.jetbrains.annotations.Nullable;
 //world.addParticle(ParticleTypes.ENCHANT, (double)pos.getX() + 0.5D, (double)pos.getY() + 2.0D, (double)pos.getZ() + 0.5D, (double)((float)i + random.nextFloat()) - 0.5D,
 // (double)((float)k - random.nextFloat() - 1.0F), (double)((float)j + random.nextFloat()) - 0.5D);
 //import net.minecraft.block.entity.BeaconBlockEntity;
+//import net.minecraft.client.render.block.entity.BeaconBlockEntityRenderer;
 
 public class TheEyeEntity extends FlyingEntity {
     private static final TrackedData<Integer> BEAM_TARGET_ID;
@@ -104,7 +105,6 @@ public class TheEyeEntity extends FlyingEntity {
     protected void initGoals() {
         this.goalSelector.add(0, new TheEyeEntity.ShootBulletGoal());
         this.goalSelector.add(1, new TheEyeEntity.FireBeamGoal(this));
-        // this.goalSelector.add(3, new TheEyeEntity.TeleportTargetGoal(this));
         this.goalSelector.add(3, new TheEyeEntity.FlyRandomlyGoal(this));
         this.goalSelector.add(2, new TheEyeEntity.LookAtTargetGoal(this));
         this.goalSelector.add(8, new LookAroundGoal(this));
@@ -240,7 +240,6 @@ public class TheEyeEntity extends FlyingEntity {
                             break;
                         }
                     }
-                    // this.playSpawnEffects(); // other entity particle -- target
                 } else {
                     attackTpCounter++;
                 }
@@ -507,7 +506,6 @@ public class TheEyeEntity extends FlyingEntity {
 
         public FireBeamGoal(TheEyeEntity theEye) {
             this.theEye = theEye;
-            // this.setControls(EnumSet.of(Goal.Control.MOVE, Goal.Control.LOOK));
         }
 
         @Override
@@ -528,7 +526,6 @@ public class TheEyeEntity extends FlyingEntity {
 
         @Override
         public void start() {
-            System.out.print("Beam");
             this.beamTicks = -20;
             this.theEye.getNavigation().stop();
             this.theEye.getLookControl().lookAt(this.theEye.getTarget(), 90.0F, 90.0F);
@@ -544,7 +541,6 @@ public class TheEyeEntity extends FlyingEntity {
         @Override
         public void tick() {
             LivingEntity livingEntity = this.theEye.getTarget();
-            // this.theEye.getNavigation().stop();
             this.theEye.getLookControl().lookAt(livingEntity, 90.0F, 90.0F);
             if (!this.theEye.canSee(livingEntity)) {
                 this.theEye.setTarget((LivingEntity) null);
@@ -588,10 +584,7 @@ public class TheEyeEntity extends FlyingEntity {
 
         @Override
         public boolean canStart() {
-            // System.out.print(TheEyeEntity.this.getHealth() <
-            // TheEyeEntity.this.getMaxHealth() / 2);
             this.counter++;
-            // System.out.print(this.counter + ":");
             LivingEntity livingEntity = TheEyeEntity.this.getTarget();
             if (livingEntity != null && livingEntity.isAlive()
                     && TheEyeEntity.this.getHealth() < TheEyeEntity.this.getMaxHealth() / 2 && this.counter >= 400) {
@@ -600,11 +593,6 @@ public class TheEyeEntity extends FlyingEntity {
                 return false;
             }
         }
-
-        // @Override
-        // public void stop() {
-
-        // }
 
         @Override
         public void tick() {
@@ -615,18 +603,12 @@ public class TheEyeEntity extends FlyingEntity {
                     additions = 1;
                 }
                 for (int i = 0; i < 3 + additions; i++) {
-                    // TheEyeEntity.this.world.spawnEntity(new
-                    // ShulkerBulletEntity(TheEyeEntity.this.world,
-                    // TheEyeEntity.this, livingEntity, Direction.Axis.Y));
-
                     TheEyeEntity.this.world.spawnEntity(new TinyEyeEntity(TheEyeEntity.this.world, TheEyeEntity.this,
                             livingEntity, Direction.Axis.Y));
                     TheEyeEntity.this.playSound(SoundEvents.ENTITY_SHULKER_SHOOT, 2.0F,
                             (TheEyeEntity.this.random.nextFloat() - TheEyeEntity.this.random.nextFloat()) * 0.2F
                                     + 1.0F);
                 }
-
-                // System.out.print("Shoo00000000t");
                 super.tick();
                 this.counter = TheEyeEntity.this.random.nextInt(12) * 20;
             }
@@ -662,7 +644,6 @@ public class TheEyeEntity extends FlyingEntity {
 
         @Override
         public void start() {
-            // System.out.print("OK:");
             Random random = this.theEyeEntity.getRandom();
             double d = this.theEyeEntity.getX() + (double) ((random.nextFloat() * 2.0F - 1.0F) * 16.0F);
             double e = this.theEyeEntity.getY() + (double) ((random.nextFloat() * 2.0F - 1.0F) * 1.2F);
@@ -696,7 +677,6 @@ public class TheEyeEntity extends FlyingEntity {
                     double e = livingEntity.getX() - this.theEyeEntity.getX();
                     double f = livingEntity.getZ() - this.theEyeEntity.getZ();
                     this.theEyeEntity.yaw = -((float) MathHelper.atan2(e, f)) * 57.295776F;
-                    // System.out.print(this.theEyeEntity.yaw + ":Z:");
                     this.theEyeEntity.bodyYaw = this.theEyeEntity.yaw;
                 }
             }
@@ -722,7 +702,6 @@ public class TheEyeEntity extends FlyingEntity {
                             this.targetY - this.theEyeEntity.getY(), this.targetZ - this.theEyeEntity.getZ());
                     double d = vec3d.length();
                     vec3d = vec3d.normalize();
-                    // System.out.print("MOVE");
                     if (this.willCollide(vec3d, MathHelper.ceil(d))) {
                         this.theEyeEntity.setVelocity(this.theEyeEntity.getVelocity().add(vec3d.multiply(0.1D)));
                     } else {
@@ -745,77 +724,4 @@ public class TheEyeEntity extends FlyingEntity {
         }
     }
 
-    // static class TeleportTargetGoal extends Goal {
-    // private final TheEyeEntity theEyeEntity;
-    // private int counter;
-
-    // public TeleportTargetGoal(TheEyeEntity theEyeEntity) {
-    // this.theEyeEntity = theEyeEntity;
-    // this.setControls(EnumSet.of(Goal.Control.LOOK));
-    // }
-
-    // @Override
-    // public boolean canStart() {
-    // this.counter++;
-    // // System.out.print(counter + ":");
-    // LivingEntity livingEntity = theEyeEntity.getTarget();
-    // if (livingEntity != null && livingEntity.isAlive() && this.counter >= 100) {
-    // System.out.println("GO");
-    // return true;
-    // } else {
-    // return false;
-    // }
-    // }
-
-    // @Override
-    // public void start() {
-    // if (theEyeEntity.world.isClient) {
-    // theEyeEntity.despawnParticlesServer();
-    // }
-
-    // }
-
-    // // public void stop() {
-    // // }
-    // @Override
-    // public void tick() {
-    // LivingEntity livingEntity = theEyeEntity.getTarget();
-    // if (livingEntity != null) {
-    // for (int counter = 0; counter < 100; counter++) {
-    // float randomFloat = theEyeEntity.world.getRandom().nextFloat() * 6.2831855F;
-    // int posX = livingEntity.getBlockPos().getX() + MathHelper
-    // .floor(MathHelper.cos(randomFloat) * 9.0F +
-    // livingEntity.world.getRandom().nextInt(12));
-    // int posZ = livingEntity.getBlockPos().getZ() + MathHelper
-    // .floor(MathHelper.sin(randomFloat) * 9.0F +
-    // livingEntity.world.getRandom().nextInt(12));
-    // int posY = livingEntity.world.getTopY(Heightmap.Type.WORLD_SURFACE, posX,
-    // posZ);
-    // BlockPos teleportPos = new BlockPos(posX, posY, posZ);
-    // if (livingEntity.world.isRegionLoaded(teleportPos.getX() - 4,
-    // teleportPos.getY() - 4,
-    // teleportPos.getZ() - 4, teleportPos.getX() + 4, teleportPos.getY() + 4,
-    // teleportPos.getZ() + 4)
-    // && livingEntity.world.getChunkManager().shouldTickChunk(new
-    // ChunkPos(teleportPos))
-    // && SpawnHelper.canSpawn(SpawnRestriction.Location.ON_GROUND,
-    // livingEntity.world,
-    // teleportPos, EntityInit.THEEYE_ENTITY)) {
-    // theEyeEntity.lookControl.lookAt(teleportPos.getX(), teleportPos.getY(),
-    // teleportPos.getZ());
-    // livingEntity.teleport(teleportPos.getX(), teleportPos.getY(),
-    // teleportPos.getZ());
-    // livingEntity.world.playSound(null, teleportPos,
-    // SoundEvents.ENTITY_ENDERMAN_TELEPORT,
-    // SoundCategory.HOSTILE, 1.0F, 1.0F);
-    // break;
-    // }
-    // }
-    // // theEyeEntity.playSpawnEffects(); // other entity particle -- target
-    // this.counter = 0;
-    // }
-    // super.tick();
-    // }
-
-    // }
 }
