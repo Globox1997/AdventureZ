@@ -31,7 +31,6 @@ import net.minecraft.world.World;
 
 @Mixin(PlayerEntity.class)
 public abstract class PlayerEntityMixin extends LivingEntity {
-  private int ticker = 0;
   private int killedPiglins = 0;
   private int piglinCooldown = 0;
 
@@ -39,46 +38,42 @@ public abstract class PlayerEntityMixin extends LivingEntity {
     super(type, world);
   };
 
-  @Inject(method = "tick()V", at = @At(value = "TAIL"))
+  @Inject(method = "tick()V", at = @At(value = "HEAD"))
   private void piglinBeastSpawn(CallbackInfo info) {
     if (!world.isClient && ConfigInit.CONFIG.piglin_beast_attack_piglin_spawn_chance != 0) {
       PlayerEntity playerEntity = (PlayerEntity) (Object) this;
       if (playerEntity != null && !playerEntity.isCreative() && playerEntity.world.getRegistryKey() == World.NETHER) {
         if (this.getAttacking() != null && this.getAttacking() instanceof PiglinEntity) {
           int spawnChanceInt = world.random.nextInt(ConfigInit.CONFIG.piglin_beast_attack_piglin_spawn_chance) + 1;
-          if (this.getAttacking().isDead() && spawnChanceInt != 0) {
-            ticker++;
-            if (ticker == 5 && getBeasts()) {
-              piglinCooldown = 12000;
-              killedPiglins++;
-              if (killedPiglins == 6) {
-                if (spawnChanceInt == 1) {
-                  PiglinBeastEntity beastEntity = (PiglinBeastEntity) EntityInit.PIGLINBEAST_ENTITY.create(world);
-                  int posYOfPlayer = playerEntity.getBlockPos().getY();
-                  for (int counter = 0; counter < 100; counter++) {
-                    float randomFloat = world.random.nextFloat() * 6.2831855F;
-                    int posX = this.getBlockPos().getX()
-                        + MathHelper.floor(MathHelper.cos(randomFloat) * 26.0F + world.random.nextInt(5));
-                    int posZ = this.getBlockPos().getZ()
-                        + MathHelper.floor(MathHelper.sin(randomFloat) * 26.0F + world.random.nextInt(5));
-                    int posY = posYOfPlayer - 20 + world.getRandom().nextInt(40);
-                    BlockPos spawnPos = new BlockPos(posX, posY, posZ);
-                    if (this.world.isRegionLoaded(spawnPos.getX() - 4, spawnPos.getY() - 4, spawnPos.getZ() - 4,
-                        spawnPos.getX() + 4, spawnPos.getY() + 4, spawnPos.getZ() + 4)
-                        && this.world.getChunkManager().shouldTickChunk(new ChunkPos(spawnPos)) && SpawnHelper.canSpawn(
-                            SpawnRestriction.Location.ON_GROUND, this.world, spawnPos, EntityInit.PIGLINBEAST_ENTITY)) {
-                      beastEntity.refreshPositionAndAngles(spawnPos, 0.0F, 0.0F);
-                      world.spawnEntity(beastEntity);
-                      beastEntity.playSpawnEffects();
-                      break;
-                    }
+          if (this.getAttacking().isDead() && spawnChanceInt != 0 && this.getBeasts()) {
+            piglinCooldown = 12000;
+            killedPiglins++;
+            if (killedPiglins == 6) {
+              if (spawnChanceInt == 1) {
+                PiglinBeastEntity beastEntity = (PiglinBeastEntity) EntityInit.PIGLINBEAST_ENTITY.create(world);
+                int posYOfPlayer = playerEntity.getBlockPos().getY();
+                for (int counter = 0; counter < 100; counter++) {
+                  float randomFloat = world.random.nextFloat() * 6.2831855F;
+                  int posX = this.getBlockPos().getX()
+                      + MathHelper.floor(MathHelper.cos(randomFloat) * 26.0F + world.random.nextInt(5));
+                  int posZ = this.getBlockPos().getZ()
+                      + MathHelper.floor(MathHelper.sin(randomFloat) * 26.0F + world.random.nextInt(5));
+                  int posY = posYOfPlayer - 20 + world.getRandom().nextInt(40);
+                  BlockPos spawnPos = new BlockPos(posX, posY, posZ);
+                  if (this.world.isRegionLoaded(spawnPos.getX() - 4, spawnPos.getY() - 4, spawnPos.getZ() - 4,
+                      spawnPos.getX() + 4, spawnPos.getY() + 4, spawnPos.getZ() + 4)
+                      && this.world.getChunkManager().shouldTickChunk(new ChunkPos(spawnPos)) && SpawnHelper.canSpawn(
+                          SpawnRestriction.Location.ON_GROUND, this.world, spawnPos, EntityInit.PIGLINBEAST_ENTITY)) {
+                    beastEntity.refreshPositionAndAngles(spawnPos, 0.0F, 0.0F);
+                    world.spawnEntity(beastEntity);
+                    beastEntity.playSpawnEffects();
+                    break;
                   }
                 }
-                killedPiglins = 0;
-              } else if (killedPiglins > 6) {
-                killedPiglins = 0;
               }
-              ticker = 0;
+              killedPiglins = 0;
+            } else if (killedPiglins > 6) {
+              killedPiglins = 0;
             }
           }
         }
