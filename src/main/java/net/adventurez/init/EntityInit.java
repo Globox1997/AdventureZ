@@ -13,15 +13,10 @@ import net.minecraft.util.Identifier;
 import net.minecraft.util.registry.Registry;
 
 public class EntityInit {
+        // Hostile
         public static final EntityType<StoneGolemEntity> STONEGOLEM_ENTITY = FabricEntityTypeBuilder
                         .create(SpawnGroup.MONSTER, StoneGolemEntity::new).fireImmune()
                         .dimensions(EntityDimensions.fixed(3.36F, 4.44F)).build();
-        public static final EntityType<ThrownRockEntity> THROWNROCK_ENTITY = FabricEntityTypeBuilder
-                        .<ThrownRockEntity>create(SpawnGroup.MISC, ThrownRockEntity::new)
-                        .dimensions(EntityDimensions.fixed(1.5F, 1.5F)).build();
-        public static final EntityType<GildedStoneEntity> GILDEDSTONE_ENTITY = FabricEntityTypeBuilder
-                        .<GildedStoneEntity>create(SpawnGroup.MISC, GildedStoneEntity::new)
-                        .dimensions(EntityDimensions.fixed(0.4F, 0.7F)).build();
         public static final EntityType<SmallStoneGolemEntity> SMALLSTONEGOLEM_ENTITY = FabricEntityTypeBuilder
                         .create(SpawnGroup.MONSTER, SmallStoneGolemEntity::new).fireImmune()
                         .dimensions(EntityDimensions.fixed(1.2F, 1.2F)).build();
@@ -55,6 +50,20 @@ public class EntityInit {
         public static final EntityType<VoidShadowEntity> VOID_SHADOW_ENTITY = FabricEntityTypeBuilder
                         .create(SpawnGroup.MONSTER, VoidShadowEntity::new).fireImmune()
                         .dimensions(EntityDimensions.fixed(3.2F, 4.8F)).build();
+        // Passive
+        public static final EntityType<RedFungusEntity> RED_FUNGUS_ENTITY = FabricEntityTypeBuilder
+                        .create(SpawnGroup.CREATURE, RedFungusEntity::new)
+                        .dimensions(EntityDimensions.fixed(1.05F, 1.4F)).build();
+        public static final EntityType<BrownFungusEntity> BROWN_FUNGUS_ENTITY = FabricEntityTypeBuilder
+                        .create(SpawnGroup.CREATURE, BrownFungusEntity::new)
+                        .dimensions(EntityDimensions.fixed(1.35F, 1.8F)).build();
+        // Nonliving Entity
+        public static final EntityType<ThrownRockEntity> THROWNROCK_ENTITY = FabricEntityTypeBuilder
+                        .<ThrownRockEntity>create(SpawnGroup.MISC, ThrownRockEntity::new)
+                        .dimensions(EntityDimensions.fixed(1.5F, 1.5F)).build();
+        public static final EntityType<GildedStoneEntity> GILDEDSTONE_ENTITY = FabricEntityTypeBuilder
+                        .<GildedStoneEntity>create(SpawnGroup.MISC, GildedStoneEntity::new)
+                        .dimensions(EntityDimensions.fixed(0.4F, 0.7F)).build();
         public static final EntityType<TinyEyeEntity> TINYEYE_ENTITY = FabricEntityTypeBuilder
                         .<TinyEyeEntity>create(SpawnGroup.MISC, TinyEyeEntity::new)
                         .dimensions(EntityDimensions.fixed(0.4F, 0.4F)).build();
@@ -88,6 +97,9 @@ public class EntityInit {
                 Registry.register(Registry.ENTITY_TYPE, new Identifier("adventurez", "void_shadow"),
                                 VOID_SHADOW_ENTITY);
                 Registry.register(Registry.ENTITY_TYPE, new Identifier("adventurez", "tiny_eye"), TINYEYE_ENTITY);
+                Registry.register(Registry.ENTITY_TYPE, new Identifier("adventurez", "red_fungus"), RED_FUNGUS_ENTITY);
+                Registry.register(Registry.ENTITY_TYPE, new Identifier("adventurez", "brown_fungus"),
+                                BROWN_FUNGUS_ENTITY);
                 // Registry.register(Registry.ENTITY_TYPE, new Identifier("adventurez",
                 // "gryphon"), GRYPHON_ENTITY);
 
@@ -113,6 +125,9 @@ public class EntityInit {
                 FabricDefaultAttributeRegistry.register(THEEYE_ENTITY, TheEyeEntity.createTheEntityAttributes());
                 FabricDefaultAttributeRegistry.register(VOID_SHADOW_ENTITY,
                                 VoidShadowEntity.createVoidShadowAttributes());
+                FabricDefaultAttributeRegistry.register(RED_FUNGUS_ENTITY, RedFungusEntity.createRedFungusAttributes());
+                FabricDefaultAttributeRegistry.register(BROWN_FUNGUS_ENTITY,
+                                BrownFungusEntity.createBrownFungusAttributes());
                 // FabricDefaultAttributeRegistry.register(GRYPHON_ENTITY,
                 // GryphonEntity.createGryphonAttributes());
 
@@ -143,6 +158,10 @@ public class EntityInit {
                                 THEEYE_ENTITY, 1984565, 1059889, new Item.Settings().group(ItemGroup.MISC)));
                 Registry.register(Registry.ITEM, new Identifier("adventurez", "spawn_void_shadow"), new SpawnEggItem(
                                 VOID_SHADOW_ENTITY, 1441901, 393244, new Item.Settings().group(ItemGroup.MISC)));
+                Registry.register(Registry.ITEM, new Identifier("adventurez", "spawn_red_fungus"), new SpawnEggItem(
+                                RED_FUNGUS_ENTITY, 13084791, 13183785, new Item.Settings().group(ItemGroup.MISC)));
+                Registry.register(Registry.ITEM, new Identifier("adventurez", "spawn_brown_fungus"), new SpawnEggItem(
+                                BROWN_FUNGUS_ENTITY, 13084791, 9925201, new Item.Settings().group(ItemGroup.MISC)));
                 // Registry.register(Registry.ITEM, new Identifier("adventurez",
                 // "spawn_gryphon"), new SpawnEggItem(
                 // GRYPHON_ENTITY, 1381653, 5329747, new

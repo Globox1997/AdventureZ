@@ -42,6 +42,11 @@ public class SpawnInit {
                 ConfigInit.CONFIG.small_stone_golem_spawn_weight, 1, 1),
             new SpawnSettings.SpawnEntry(EntityInit.SOULREAPER_ENTITY, ConfigInit.CONFIG.nightmare_spawn_weight, 1, 1));
       }
+      if (biome.getCategory().equals(Biome.Category.MUSHROOM)) {
+        addMobSpawnToBiome(biome, SpawnGroup.CREATURE,
+            new SpawnSettings.SpawnEntry(EntityInit.BROWN_FUNGUS_ENTITY, ConfigInit.CONFIG.fungus_spawn_weight, 2, 3),
+            new SpawnSettings.SpawnEntry(EntityInit.RED_FUNGUS_ENTITY, ConfigInit.CONFIG.fungus_spawn_weight, 2, 3));
+      }
 
       // if (biome.getCategory().equals(Biome.Category.ICY) ||
       // biome.getCategory().equals(Biome.Category.TAIGA)) {
@@ -80,6 +85,10 @@ public class SpawnInit {
         Heightmap.Type.MOTION_BLOCKING_NO_LEAVES, HostileEntity::canSpawnIgnoreLightLevel);
     SpawnRestriction.register(EntityInit.SOULREAPER_ENTITY, SpawnRestriction.Location.ON_GROUND,
         Heightmap.Type.MOTION_BLOCKING_NO_LEAVES, SoulReaperEntity::canSpawn);
+    SpawnRestriction.register(EntityInit.RED_FUNGUS_ENTITY, SpawnRestriction.Location.ON_GROUND,
+        Heightmap.Type.MOTION_BLOCKING_NO_LEAVES, RedFungusEntity::canSpawn);
+    SpawnRestriction.register(EntityInit.BROWN_FUNGUS_ENTITY, SpawnRestriction.Location.ON_GROUND,
+        Heightmap.Type.MOTION_BLOCKING_NO_LEAVES, BrownFungusEntity::canSpawn);
   }
 
 }

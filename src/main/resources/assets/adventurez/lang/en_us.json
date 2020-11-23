@@ -13,6 +13,8 @@
   "entity.adventurez.blaze_guardian": "Blaze Guardian",
   "entity.adventurez.the_eye": "The Eye",
   "entity.adventurez.void_shadow": "Void Shadow",
+  "entity.adventurez.red_fungus": "Red Fungus",
+  "entity.adventurez.brown_fungus": "Brown Fungus",
 
   "item.adventurez.spawn_stone_golem": "Blackstone Golem Spawn Egg",
   "item.adventurez.spawn_small_stone_golem": "Mini Blackstone Golem Spawn Egg",
@@ -26,6 +28,8 @@
   "item.adventurez.spawn_blaze_guardian": "Blaze Guardian Spawn Egg",
   "item.adventurez.spawn_the_eye": "The Eye Spawn Egg",
   "item.adventurez.spawn_void_shadow": "Void Shadow Spawn Egg",
+  "item.adventurez.spawn_red_fungus": "Red Fungus Spawn Egg",
+  "item.adventurez.spawn_brown_fungus": "Brown Fungus Spawn Egg",
 
   "item.adventurez.gilded_stone_item": "Gilded Blackstone Shard",
   "item.adventurez.gilded_stone_item.tooltip2": "Placeable in the Stone Holder",
@@ -77,5 +81,6 @@
   "text.autoconfig.adventurez.option.piglin_beast_attack_piglin_spawn_chance": "Piglin Beast Attack Piglin Spawn Chance",
   "text.autoconfig.adventurez.option.small_stone_golem_spawn_weight": "Small Stone Golem Spawn Weight",
   "text.autoconfig.adventurez.option.summoner_thunder_spawn_chance": "Summoner Thunder Spawn Chance",
-  "text.autoconfig.adventurez.option.blaze_guardian_spawn_weight": "Blaze Guardian Spawn Weight"
+  "text.autoconfig.adventurez.option.blaze_guardian_spawn_weight": "Blaze Guardian Spawn Weight",
+  "text.autoconfig.adventurez.option.fungus_spawn_weight": "Fungus Spawn Weight"
 }

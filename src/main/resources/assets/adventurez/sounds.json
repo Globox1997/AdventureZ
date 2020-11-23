@@ -218,5 +218,26 @@
     "sounds": [
       "adventurez:eye_death_platform"
     ]
+  },
+  "fungus_idle": {
+    "sounds": [
+      "adventurez:fungus_idle1",
+      "adventurez:fungus_idle2",
+      "adventurez:fungus_idle3",
+      "adventurez:fungus_idle4"
+    ]
+  },
+  "fungus_hurt": {
+    "sounds": [
+      "adventurez:fungus_hurt1",
+      "adventurez:fungus_hurt2",
+      "adventurez:fungus_hurt3"
+    ]
+  },
+  "fungus_death": {
+    "sounds": [
+      "adventurez:fungus_death1",
+      "adventurez:fungus_death2"
+    ]
   }
 }

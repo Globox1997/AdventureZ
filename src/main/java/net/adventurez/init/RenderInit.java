@@ -47,6 +47,10 @@ public class RenderInit {
                                 (dispatcher, context) -> new VoidShadowRenderer(dispatcher));
                 EntityRendererRegistry.INSTANCE.register(EntityInit.TINYEYE_ENTITY,
                                 (dispatcher, context) -> new TinyEyeRenderer(dispatcher));
+                EntityRendererRegistry.INSTANCE.register(EntityInit.RED_FUNGUS_ENTITY,
+                                (dispatcher, context) -> new RedFungusRenderer(dispatcher));
+                EntityRendererRegistry.INSTANCE.register(EntityInit.BROWN_FUNGUS_ENTITY,
+                                (dispatcher, context) -> new BrownFungusRenderer(dispatcher));
                 // EntityRendererRegistry.INSTANCE.register(EntityInit.GRYPHON_ENTITY,
                 // (dispatcher, context) -> new GryphonRenderer(dispatcher));
 

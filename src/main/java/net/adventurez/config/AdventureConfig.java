@@ -25,5 +25,7 @@ public class AdventureConfig implements ConfigData {
   public int summoner_thunder_spawn_chance = 4;
   @ConfigEntry.BoundedDiscrete(min = 0, max = 100)
   public int blaze_guardian_spawn_weight = 1;
+  @ConfigEntry.BoundedDiscrete(min = 0, max = 100)
+  public int fungus_spawn_weight = 10;
 
 }

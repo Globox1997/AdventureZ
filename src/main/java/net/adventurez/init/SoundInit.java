@@ -77,6 +77,13 @@ public class SoundInit {
   public static SoundEvent EYE_HURT_EVENT = new SoundEvent(EYE_HURT);
   public static SoundEvent EYE_IDLE_EVENT = new SoundEvent(EYE_IDLE);
   public static SoundEvent EYE_DEATH_PLATFORM_EVENT = new SoundEvent(EYE_DEATH_PLATFORM);
+  // Fungus
+  public static final Identifier FUNGUS_IDLE = new Identifier("adventurez:fungus_idle");
+  public static final Identifier FUNGUS_HURT = new Identifier("adventurez:fungus_hurt");
+  public static final Identifier FUNGUS_DEATH = new Identifier("adventurez:fungus_death");
+  public static SoundEvent FUNGUS_IDLE_EVENT = new SoundEvent(FUNGUS_IDLE);
+  public static SoundEvent FUNGUS_HURT_EVENT = new SoundEvent(FUNGUS_HURT);
+  public static SoundEvent FUNGUS_DEATH_EVENT = new SoundEvent(FUNGUS_DEATH);
 
   public static void init() {
     Registry.register(Registry.SOUND_EVENT, SoundInit.GOLEM_IDLE, GOLEM_IDLE_EVENT);
@@ -111,5 +118,8 @@ public class SoundInit {
     Registry.register(Registry.SOUND_EVENT, SoundInit.EYE_HURT, EYE_HURT_EVENT);
     Registry.register(Registry.SOUND_EVENT, SoundInit.EYE_IDLE, EYE_IDLE_EVENT);
     Registry.register(Registry.SOUND_EVENT, SoundInit.EYE_DEATH_PLATFORM, EYE_DEATH_PLATFORM_EVENT);
+    Registry.register(Registry.SOUND_EVENT, SoundInit.FUNGUS_IDLE, FUNGUS_IDLE_EVENT);
+    Registry.register(Registry.SOUND_EVENT, SoundInit.FUNGUS_HURT, FUNGUS_HURT_EVENT);
+    Registry.register(Registry.SOUND_EVENT, SoundInit.FUNGUS_DEATH, FUNGUS_DEATH_EVENT);
   }
 }
