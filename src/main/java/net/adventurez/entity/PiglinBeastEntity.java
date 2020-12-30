@@ -86,16 +86,16 @@ public class PiglinBeastEntity extends HostileEntity {
     }
     if (this.getTarget() instanceof PlayerEntity) {
       makePiglinsAngry++;
-      if (makePiglinsAngry == 1000) {
+      if (makePiglinsAngry == 600) {
         dataTracker.set(LeadArm, 1F);
         getPiglins();
         world.playSoundFromEntity(null, this, SoundInit.PIGLINBEAST_SHOUT_EVENT, SoundCategory.HOSTILE, 1.0F, 1.0F);
         this.getAttributeInstance(EntityAttributes.GENERIC_MOVEMENT_SPEED).setBaseValue(0.0D);
       }
-      if (makePiglinsAngry > 1000) {
+      if (makePiglinsAngry > 600) {
         dataTracker.set(LeadArm, dataTracker.get(LeadArm) - 0.02F);
       }
-      if (makePiglinsAngry == 1050) {
+      if (makePiglinsAngry == 650) {
         this.getAttributeInstance(EntityAttributes.GENERIC_MOVEMENT_SPEED).setBaseValue(0.23D);
         makePiglinsAngry = 0;
       }
