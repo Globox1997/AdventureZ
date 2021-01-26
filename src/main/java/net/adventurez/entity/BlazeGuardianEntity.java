@@ -36,6 +36,7 @@ public class BlazeGuardianEntity extends HostileEntity {
   private float eyeOffset = 0.5F;
   private int eyeOffsetCooldown;
   private static final TrackedData<Byte> GUARDIAN_FLAGS;
+  private boolean isTryingToShockwave = false;
 
   public BlazeGuardianEntity(EntityType<? extends HostileEntity> entityType, World world) {
     super(entityType, world);
@@ -137,7 +138,7 @@ public class BlazeGuardianEntity extends HostileEntity {
 
     LivingEntity livingEntity = this.getTarget();
     if (livingEntity != null && livingEntity.getEyeY() > this.getEyeY() + (double) this.eyeOffset
-        && this.canTarget(livingEntity)) {
+        && this.canTarget(livingEntity) && !this.isTryingToShockwave) {
       Vec3d vec3d = this.getVelocity();
       this.setVelocity(this.getVelocity().add(0.0D, (0.30000001192092896D - vec3d.y) * 0.30000001192092896D, 0.0D));
       this.velocityDirty = true;
@@ -300,11 +301,13 @@ public class BlazeGuardianEntity extends HostileEntity {
     public void start() {
       this.explosionTicker = 20;
       this.guardian.setFireActive(true);
+      this.guardian.isTryingToShockwave = true;
     }
 
     public void stop() {
       this.guardian.setFireActive(false);
       this.explosionTicker = 0;
+      this.guardian.isTryingToShockwave = false;
     }
 
     public void tick() {
