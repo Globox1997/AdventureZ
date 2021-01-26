@@ -60,7 +60,9 @@ public class StoneHolderBlock extends Block implements BlockEntityProvider {
       BlockHitResult hit) {
     Inventory blockEntity = (Inventory) world.getBlockEntity(pos);
     ItemStack stack = blockEntity.getStack(0);
-
+    if (!world.getBlockState(pos.up()).isAir()) {
+      return ActionResult.PASS;
+    }
     if (!stack.isEmpty()) {
       player.giveItemStack(stack);
       blockEntity.clear();

@@ -26,6 +26,7 @@ import net.minecraft.util.collection.DefaultedList;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Direction;
 import net.minecraft.world.World;
+import net.minecraft.util.ItemScatterer;
 import net.minecraft.util.Tickable;
 
 public class StoneHolderEntity extends BlockEntity implements Tickable, Inventory, BlockEntityClientSerializable {
@@ -80,6 +81,10 @@ public class StoneHolderEntity extends BlockEntity implements Tickable, Inventor
   @Override
   public void tick() {
     if (!this.isEmpty()) {
+      if (!world.getBlockState(pos.up()).isAir()) {
+        ItemScatterer.spawn(world, pos, inventory);
+        tickCounter = -1;
+      }
       this.tickCounter++;
       if (tickCounter > 40) {
         this.update();
