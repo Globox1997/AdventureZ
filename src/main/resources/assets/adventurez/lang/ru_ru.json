@@ -64,7 +64,7 @@
   "block.adventurez.piglin_flag_block": "Флаг пиглинов",
   "block.adventurez.piglin_flag_block.tooltip": "Время зарядки (2:00)",
   "block.adventurez.piglin_flag_block.tooltip2": "Когда заряжен:",
-  "block.adventurez.piglin_flag_block.tooltip3": "Пиглины не нападают, когда игрок приближается",
+  "block.adventurez.piglin_flag_block.tooltip3": "Пиглины не нападают, когда игрок рядом",
 
   "adventurez.advancements.stone_golem.title": "Чернитовый Голем",
   "adventurez.advancements.stone_golem.description": "Убейте Чернитового Голема",
@@ -77,10 +77,10 @@
   "text.autoconfig.adventurez.title": "Настройка AdventureZ",
   "text.autoconfig.adventurez.option.necromancer_spawn_weight": "Возможность появления Некроманта",
   "text.autoconfig.adventurez.option.nightmare_spawn_weight": "Возможность появления Кошмара и Жнеца",
-  "text.autoconfig.adventurez.option.piglin_beast_ore_spawn_chance": "Шанс призыва Чудовищного Пиглина из руды",
+  "text.autoconfig.adventurez.option.piglin_beast_ore_spawn_chance": "Шанс призыва Чудовищного Пиглина при добыче золотой руды",
   "text.autoconfig.adventurez.option.piglin_beast_attack_piglin_spawn_chance": "Шанс призыва Чудовищного Пиглина при убийстве Пиглинов",
   "text.autoconfig.adventurez.option.small_stone_golem_spawn_weight": "Возможность появления Малого Чернитового Голема",
-  "text.autoconfig.adventurez.option.summoner_thunder_spawn_chance": "Шанс призыва Призывателя от молнии",
+  "text.autoconfig.adventurez.option.summoner_thunder_spawn_chance": "Шанс призыва Призывателя при ударе молнии",
   "text.autoconfig.adventurez.option.blaze_guardian_spawn_weight": "Возможность появления Стража Пламени",
   "text.autoconfig.adventurez.option.fungus_spawn_weight": "Возможность появления Гриба"
 }
