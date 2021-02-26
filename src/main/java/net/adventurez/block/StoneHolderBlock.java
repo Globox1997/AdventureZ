@@ -64,6 +64,9 @@ public class StoneHolderBlock extends Block implements BlockEntityProvider {
       return ActionResult.PASS;
     }
     if (!stack.isEmpty()) {
+      if (!player.getMainHandStack().isEmpty()) {
+        return ActionResult.FAIL;
+      }
       player.giveItemStack(stack);
       blockEntity.clear();
       return ActionResult.SUCCESS;
