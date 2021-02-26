@@ -240,11 +240,6 @@ public class SoulReaperEntity extends HostileEntity implements RangedAttackMob {
   }
 
   @Override
-  public boolean canImmediatelyDespawn(double distanceSquared) {
-    return false;
-  }
-
-  @Override
   public boolean canUsePortals() {
     return false;
   }
