@@ -4,16 +4,12 @@ import net.adventurez.block.renderer.*;
 import net.adventurez.entity.render.*;
 import net.adventurez.network.EntitySpawnPacket;
 import net.fabricmc.fabric.api.blockrenderlayer.v1.BlockRenderLayerMap;
+import net.fabricmc.fabric.api.client.networking.v1.ClientPlayNetworking;
 import net.fabricmc.fabric.api.client.rendereregistry.v1.BlockEntityRendererRegistry;
 import net.fabricmc.fabric.api.client.rendereregistry.v1.EntityRendererRegistry;
-import net.fabricmc.fabric.api.network.ClientSidePacketRegistry;
 import net.minecraft.client.render.RenderLayer;
 
 public class RenderInit {
-
-        public static void registerClientboundPackets() {
-                ClientSidePacketRegistry.INSTANCE.register(EntitySpawnPacket.ID, EntitySpawnPacket::onPacket);
-        }
 
         public static void init() {
 
@@ -51,11 +47,13 @@ public class RenderInit {
                                 (dispatcher, context) -> new RedFungusRenderer(dispatcher));
                 EntityRendererRegistry.INSTANCE.register(EntityInit.BROWN_FUNGUS_ENTITY,
                                 (dispatcher, context) -> new BrownFungusRenderer(dispatcher));
+                EntityRendererRegistry.INSTANCE.register(EntityInit.ORK_ENTITY,
+                                (dispatcher, context) -> new OrkRenderer(dispatcher));
                 // EntityRendererRegistry.INSTANCE.register(EntityInit.GRYPHON_ENTITY,
                 // (dispatcher, context) -> new GryphonRenderer(dispatcher));
 
                 // Network
-                registerClientboundPackets();
+                ClientPlayNetworking.registerGlobalReceiver(EntitySpawnPacket.ID, EntitySpawnPacket::onPacket);
 
                 // Blocks
                 BlockEntityRendererRegistry.INSTANCE.register(BlockInit.STONE_HOLDER_ENTITY, StoneHolderRenderer::new);

@@ -3,9 +3,10 @@ package net.adventurez.network;
 import io.netty.buffer.Unpooled;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
-import net.fabricmc.fabric.api.network.PacketContext;
-import net.fabricmc.fabric.api.network.ServerSidePacketRegistry;
+import net.fabricmc.fabric.api.networking.v1.PacketSender;
+import net.fabricmc.fabric.api.networking.v1.ServerPlayNetworking;
 import net.minecraft.client.MinecraftClient;
+import net.minecraft.client.network.ClientPlayNetworkHandler;
 import net.minecraft.client.world.ClientWorld;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityType;
@@ -31,21 +32,22 @@ public class EntitySpawnPacket {
 		buf.writeDouble(entity.getZ());
 		buf.writeByte(MathHelper.floor(entity.pitch * 256.0F / 360.0F));
 		buf.writeByte(MathHelper.floor(entity.yaw * 256.0F / 360.0F));
-		return ServerSidePacketRegistry.INSTANCE.toPacket(ID, buf);
+		return ServerPlayNetworking.createS2CPacket(ID, buf);
 	}
 
 	@Environment(EnvType.CLIENT)
-	public static void onPacket(PacketContext context, PacketByteBuf byteBuf) {
-		EntityType<?> type = Registry.ENTITY_TYPE.get(byteBuf.readVarInt());
-		UUID entityUUID = byteBuf.readUuid();
-		int entityID = byteBuf.readVarInt();
-		double x = byteBuf.readDouble();
-		double y = byteBuf.readDouble();
-		double z = byteBuf.readDouble();
-		float pitch = (byteBuf.readByte() * 360) / 256.0F;
-		float yaw = (byteBuf.readByte() * 360) / 256.0F;
-		context.getTaskQueue().execute(() -> {
-			World world = context.getPlayer().getEntityWorld();
+	public static void onPacket(MinecraftClient client, ClientPlayNetworkHandler networkHandler, PacketByteBuf buffer,
+			PacketSender sender) {
+		EntityType<?> type = Registry.ENTITY_TYPE.get(buffer.readVarInt());
+		UUID entityUUID = buffer.readUuid();
+		int entityID = buffer.readVarInt();
+		double x = buffer.readDouble();
+		double y = buffer.readDouble();
+		double z = buffer.readDouble();
+		float pitch = (buffer.readByte() * 360) / 256.0F;
+		float yaw = (buffer.readByte() * 360) / 256.0F;
+		client.execute(() -> {
+			World world = client.player.getEntityWorld();
 			Entity entity = type.create(world);
 			if (entity != null) {
 				entity.updatePosition(x, y, z);

@@ -2,9 +2,8 @@ package net.adventurez.network;
 
 import net.adventurez.init.ItemInit;
 import net.adventurez.item.armor.StoneGolemArmor;
-import net.fabricmc.fabric.api.network.ServerSidePacketRegistry;
+import net.fabricmc.fabric.api.networking.v1.ServerPlayNetworking;
 import net.minecraft.entity.EquipmentSlot;
-import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.Identifier;
 
@@ -14,8 +13,7 @@ public class KeybindPacket {
 
   public static void init() {
 
-    ServerSidePacketRegistry.INSTANCE.register(ARMOR_PACKET, (context, buffer) -> {
-      PlayerEntity player = context.getPlayer();
+    ServerPlayNetworking.registerGlobalReceiver(ARMOR_PACKET, (server, player, handler, buffer, sender) -> {
       ItemStack stack = player.getEquippedStack(EquipmentSlot.CHEST);
       if (!stack.isEmpty() && stack.getItem() == ItemInit.STONE_GOLEM_CHESTPLATE) {
         StoneGolemArmor.fireActive(player, stack);
