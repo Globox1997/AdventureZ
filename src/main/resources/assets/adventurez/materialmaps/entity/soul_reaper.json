@@ -1,0 +1,12 @@
+{
+    "map": [
+        {
+            "predicate": {
+                "materialPredicate": {
+                    "renderLayerName": "entity_glowing"
+                }
+            },
+            "material": "canvas:emissive_transform"
+        }
+    ]
+}
