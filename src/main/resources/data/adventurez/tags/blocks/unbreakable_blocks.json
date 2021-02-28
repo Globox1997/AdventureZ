@@ -7,6 +7,8 @@
     "minecraft:command_block",
     "minecraft:repeating_command_block",
     "minecraft:jigsaw",
-    "minecraft:respawn_anchor"
+    "minecraft:respawn_anchor",
+    "minecraft:end_portal",
+    "minecraft:dragon_egg"
   ]
 }
