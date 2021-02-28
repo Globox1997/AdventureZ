@@ -239,5 +239,38 @@
       "adventurez:fungus_death1",
       "adventurez:fungus_death2"
     ]
+  },
+  "orc_death": {
+    "sounds": [
+      "adventurez:orc_death1",
+      "adventurez:orc_death2",
+      "adventurez:orc_death3",
+      "adventurez:orc_death4"
+    ]
+  },
+  "orc_hurt": {
+    "sounds": [
+      "adventurez:orc_hurt1",
+      "adventurez:orc_hurt2",
+      "adventurez:orc_hurt3",
+      "adventurez:orc_hurt4",
+      "adventurez:orc_hurt5"
+    ]
+  },
+  "orc_idle": {
+    "sounds": [
+      "adventurez:orc_idle1",
+      "adventurez:orc_idle2",
+      "adventurez:orc_idle3"
+    ]
+  },
+  "orc_step": {
+    "sounds": [
+      "adventurez:orc_step1",
+      "adventurez:orc_step2",
+      "adventurez:orc_step3",
+      "adventurez:orc_step4",
+      "adventurez:orc_step5"
+    ]
   }
 }

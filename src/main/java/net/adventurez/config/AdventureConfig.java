@@ -27,5 +27,7 @@ public class AdventureConfig implements ConfigData {
   public int blaze_guardian_spawn_weight = 1;
   @ConfigEntry.BoundedDiscrete(min = 0, max = 100)
   public int fungus_spawn_weight = 10;
+  @ConfigEntry.BoundedDiscrete(min = 0, max = 100)
+  public int ork_spawn_weight = 40;
 
 }

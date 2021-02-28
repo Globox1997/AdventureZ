@@ -1,6 +1,6 @@
 package net.adventurez.init;
 
-// import net.fabricmc.fabric.api.event.registry.RegistryEntryAddedCallback;
+import net.fabricmc.fabric.api.event.registry.RegistryEntryAddedCallback;
 // import net.minecraft.util.registry.BuiltinRegistries;
 // import net.minecraft.util.registry.Registry;
 // import net.minecraft.world.biome.Biome;
@@ -27,11 +27,15 @@ import net.minecraft.world.biome.Biome;
 import net.minecraft.world.Heightmap;
 import net.minecraft.world.biome.SpawnSettings;
 
+//import net.minecraft.world.biome.DefaultBiomeCreator;
+
 public class SpawnInit {
 
   public static void init() {
     addSpawnEntries();
     SpawnRestriction();
+    RegistryEntryAddedCallback.event(BuiltinRegistries.BIOME)
+        .register((i, identifier, biome) -> SpawnInit.addSpawnEntries());
   }
 
   public static void addSpawnEntries() {
@@ -47,7 +51,10 @@ public class SpawnInit {
             new SpawnSettings.SpawnEntry(EntityInit.BROWN_FUNGUS_ENTITY, ConfigInit.CONFIG.fungus_spawn_weight, 2, 3),
             new SpawnSettings.SpawnEntry(EntityInit.RED_FUNGUS_ENTITY, ConfigInit.CONFIG.fungus_spawn_weight, 2, 3));
       }
-
+      if (biome.getCategory().equals(Biome.Category.PLAINS)) {
+        addMobSpawnToBiome(biome, SpawnGroup.MONSTER,
+            new SpawnSettings.SpawnEntry(EntityInit.ORK_ENTITY, ConfigInit.CONFIG.ork_spawn_weight, 2, 4));
+      }
       // if (biome.getCategory().equals(Biome.Category.ICY) ||
       // biome.getCategory().equals(Biome.Category.TAIGA)) {
       // addMobSpawnToBiome(biome, SpawnGroup.MONSTER,
@@ -89,6 +96,8 @@ public class SpawnInit {
         Heightmap.Type.MOTION_BLOCKING_NO_LEAVES, RedFungusEntity::canSpawn);
     SpawnRestriction.register(EntityInit.BROWN_FUNGUS_ENTITY, SpawnRestriction.Location.ON_GROUND,
         Heightmap.Type.MOTION_BLOCKING_NO_LEAVES, BrownFungusEntity::canSpawn);
+    SpawnRestriction.register(EntityInit.ORK_ENTITY, SpawnRestriction.Location.ON_GROUND,
+        Heightmap.Type.MOTION_BLOCKING_NO_LEAVES, HostileEntity::canSpawnInDark);
   }
 
 }

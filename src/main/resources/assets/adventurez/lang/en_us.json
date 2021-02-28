@@ -15,6 +15,7 @@
   "entity.adventurez.void_shadow": "Void Shadow",
   "entity.adventurez.red_fungus": "Red Fungus",
   "entity.adventurez.brown_fungus": "Brown Fungus",
+  "entity.adventurez.ork": "Ork",
 
   "item.adventurez.spawn_stone_golem": "Blackstone Golem Spawn Egg",
   "item.adventurez.spawn_small_stone_golem": "Mini Blackstone Golem Spawn Egg",
@@ -30,6 +31,7 @@
   "item.adventurez.spawn_void_shadow": "Void Shadow Spawn Egg",
   "item.adventurez.spawn_red_fungus": "Red Fungus Spawn Egg",
   "item.adventurez.spawn_brown_fungus": "Brown Fungus Spawn Egg",
+  "item.adventurez.spawn_ork": "Ork Spawn Egg",
 
   "item.adventurez.gilded_stone_item": "Gilded Blackstone Shard",
   "item.adventurez.gilded_stone_item.tooltip2": "Placeable in the Stone Holder",
@@ -68,6 +70,8 @@
 
   "adventurez.advancements.stone_golem.title": "Blackstone Golem",
   "adventurez.advancements.stone_golem.description": "Kill the Blackrocky Golem",
+  "adventurez.advancements.the_eye.title": "The Eye",
+  "adventurez.advancements.the_eye.description": "Kill the ruler of the End",
 
   "effect.adventurez.withering": "Withering",
 
@@ -82,5 +86,6 @@
   "text.autoconfig.adventurez.option.small_stone_golem_spawn_weight": "Small Stone Golem Spawn Weight",
   "text.autoconfig.adventurez.option.summoner_thunder_spawn_chance": "Summoner Thunder Spawn Chance",
   "text.autoconfig.adventurez.option.blaze_guardian_spawn_weight": "Blaze Guardian Spawn Weight",
-  "text.autoconfig.adventurez.option.fungus_spawn_weight": "Fungus Spawn Weight"
+  "text.autoconfig.adventurez.option.fungus_spawn_weight": "Fungus Spawn Weight",
+  "text.autoconfig.adventurez.option.ork_spawn_weight": "Ork Spawn Weight"
 }

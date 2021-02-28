@@ -84,6 +84,15 @@ public class SoundInit {
   public static SoundEvent FUNGUS_IDLE_EVENT = new SoundEvent(FUNGUS_IDLE);
   public static SoundEvent FUNGUS_HURT_EVENT = new SoundEvent(FUNGUS_HURT);
   public static SoundEvent FUNGUS_DEATH_EVENT = new SoundEvent(FUNGUS_DEATH);
+  // Ork
+  public static final Identifier ORC_DEATH = new Identifier("adventurez:orc_death");
+  public static final Identifier ORC_HURT = new Identifier("adventurez:orc_hurt");
+  public static final Identifier ORC_IDLE = new Identifier("adventurez:orc_idle");
+  public static final Identifier ORC_STEP = new Identifier("adventurez:orc_step");
+  public static SoundEvent ORC_DEATH_EVENT = new SoundEvent(ORC_DEATH);
+  public static SoundEvent ORC_HURT_EVENT = new SoundEvent(ORC_HURT);
+  public static SoundEvent ORC_IDLE_EVENT = new SoundEvent(ORC_IDLE);
+  public static SoundEvent ORC_STEP_EVENT = new SoundEvent(ORC_STEP);
 
   public static void init() {
     Registry.register(Registry.SOUND_EVENT, SoundInit.GOLEM_IDLE, GOLEM_IDLE_EVENT);
@@ -121,5 +130,9 @@ public class SoundInit {
     Registry.register(Registry.SOUND_EVENT, SoundInit.FUNGUS_IDLE, FUNGUS_IDLE_EVENT);
     Registry.register(Registry.SOUND_EVENT, SoundInit.FUNGUS_HURT, FUNGUS_HURT_EVENT);
     Registry.register(Registry.SOUND_EVENT, SoundInit.FUNGUS_DEATH, FUNGUS_DEATH_EVENT);
+    Registry.register(Registry.SOUND_EVENT, SoundInit.ORC_DEATH, ORC_DEATH_EVENT);
+    Registry.register(Registry.SOUND_EVENT, SoundInit.ORC_HURT, ORC_HURT_EVENT);
+    Registry.register(Registry.SOUND_EVENT, SoundInit.ORC_IDLE, ORC_IDLE_EVENT);
+    Registry.register(Registry.SOUND_EVENT, SoundInit.ORC_STEP, ORC_STEP_EVENT);
   }
 }
