@@ -14,6 +14,23 @@ minecraft {
 	accessWidener "src/main/resources/adventurez.aw"
 }
 
+repositories {
+    // where grondag's mods live
+    maven {
+    	name = "dblsaiko"
+    	url = "https://maven.dblsaiko.net/"
+    }
+    maven {
+      name = "Cotton"
+      url = "http://server.bbkr.space:8081/artifactory/libs-release/"
+    }
+    // REI, odds and ends
+    maven {
+      name = "CurseForge"
+      url = "https://minecraft.curseforge.com/api/maven"
+    }
+}
+
 dependencies {
 	minecraft "com.mojang:minecraft:${project.minecraft_version}"
 	mappings "net.fabricmc:yarn:${project.yarn_mappings}:v2"
@@ -38,6 +55,8 @@ dependencies {
 	modCompile "io.github.prospector:modmenu:${project.mod_menu_version}",{
 			exclude(group: "net.fabricmc.fabric-api")
 	}
+	// Canvas
+	modCompile "grondag:canvas-mc116:1.0.+"
 	// GeckoLib
 	//modImplementation "com.github.bernie-g:geckolib:fabric-1.16.1-geckolib-2.0.0-beta.5"
 }
