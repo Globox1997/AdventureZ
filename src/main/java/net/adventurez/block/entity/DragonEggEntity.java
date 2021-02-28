@@ -103,7 +103,7 @@ public class DragonEggEntity extends BlockEntity implements Tickable {
                     TheEyeEntity theEyeEntity = (TheEyeEntity) EntityInit.THEEYE_ENTITY.create(world);
                     theEyeEntity.refreshPositionAndAngles((double) this.getPos().getX() + 0.5D,
                             (double) this.getPos().getY() + 0.55D, (double) this.getPos().getZ() + 0.5D, 90F, 0.0F);
-                    theEyeEntity.method_6885();
+                    theEyeEntity.setEyeInvulnerabletime();
                     world.spawnEntity(theEyeEntity);
                     this.world.breakBlock(pos, false);
                 }
