@@ -6,6 +6,7 @@ import net.adventurez.entity.render.feature.layer.ExtraRenderLayer;
 import net.adventurez.entity.render.feature.layer.FadingRenderLayer;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
+import net.fabricmc.loader.api.FabricLoader;
 import net.minecraft.client.render.OverlayTexture;
 import net.minecraft.client.render.RenderLayer;
 import net.minecraft.client.render.VertexConsumer;
@@ -33,10 +34,11 @@ public class StoneGolemLavaFeatureRenderer
     if (!stoneGolemEntity.getDataTracker().get(StoneGolemEntity.halfLifeChange)) {
       int lavaFlow = stoneGolemEntity.getDataTracker().get(StoneGolemEntity.lavaTexture);
       VertexConsumer vertexConsumer = vertexConsumerProvider.getBuffer(LAVA_LAYER);
-      if (lavaFlow < 240) {
+      FabricLoader loader = FabricLoader.getInstance();
+      if (lavaFlow < 240 && !loader.isModLoaded("canvas") && !loader.isModLoaded("sodium")) {
         vertexConsumer = vertexConsumerProvider.getBuffer(FLOWING_LAVA_LAYER);
       } else {
-        lavaFlow = 15728640;
+        lavaFlow = Integer.MAX_VALUE;
       }
       this.getContextModel().render(matrixStack, vertexConsumer, lavaFlow, OverlayTexture.DEFAULT_UV, 1.0F, 1.0F, 1.0F,
           1.0F);
