@@ -295,8 +295,7 @@ public class StoneGolemEntity extends HostileEntity {
   @Override
   protected boolean isImmobile() {
     return super.isImmobile() || this.attackTick > 0 || this.stunTick > 0 || this.roarTick > 0
-        || (this.cooldown > thrownStoneCooldown - 30 && this.cooldown > 0)
-        || this.getDataTracker().get(StoneGolemEntity.inVulnerable);
+        || (this.cooldown > thrownStoneCooldown - 30 && this.cooldown > 0) || this.getDataTracker().get(inVulnerable);
   }
 
   @Override
@@ -391,7 +390,7 @@ public class StoneGolemEntity extends HostileEntity {
 
   @Override
   protected SoundEvent getAmbientSound() {
-    if (this.getDataTracker().get(StoneGolemEntity.inVulnerable)) {
+    if (this.getDataTracker().get(inVulnerable)) {
       return null;
     } else
       return SoundInit.GOLEM_IDLE_EVENT;
@@ -442,7 +441,7 @@ public class StoneGolemEntity extends HostileEntity {
 
   @Override
   public boolean damage(DamageSource source, float amount) {
-    if (this.getDataTracker().get(StoneGolemEntity.inVulnerable)) {
+    if (this.getDataTracker().get(inVulnerable)) {
       return false;
     } else
       return super.damage(source, amount);
