@@ -5,7 +5,6 @@ import java.util.Random;
 import java.util.function.Predicate;
 
 import net.adventurez.init.EntityInit;
-import net.adventurez.init.ItemInit;
 import net.adventurez.init.SoundInit;
 import net.adventurez.init.TagInit;
 import net.minecraft.block.BlockState;
@@ -186,10 +185,14 @@ public class TheEyeEntity extends FlyingEntity {
 
     @Override
     public void mobTick() {
-        this.setNoGravity(true);
+        if (!this.hasNoGravity()) {
+            this.setNoGravity(true);
+        }
+
         int j;
         if (this.getInvulnerableTimer() > 0) {
             j = this.getInvulnerableTimer() - 1;
+
             if (j <= 0) {
                 Explosion.DestructionType destructionType = this.world.getGameRules().getBoolean(
                         GameRules.DO_MOB_GRIEFING) ? Explosion.DestructionType.DESTROY : Explosion.DestructionType.NONE;
@@ -199,15 +202,11 @@ public class TheEyeEntity extends FlyingEntity {
                     this.world.syncGlobalEvent(1023, this.getBlockPos(), 0);
                 }
             }
-
+            this.getNavigation().stop();
             this.setTarget(null);
-            this.setAiDisabled(true);
             this.setInvulTimer(j);
         } else {
             super.mobTick();
-            if (this.isAiDisabled()) {
-                this.setAiDisabled(false);
-            }
             LivingEntity livingEntity = this.getTarget();
             if (livingEntity != null && livingEntity.isAlive()) {
                 if (attackTpCounter >= 120 && !this.hasBeamTarget()) {
@@ -287,7 +286,7 @@ public class TheEyeEntity extends FlyingEntity {
         return !block.isAir() && !TagInit.UNBREAKABLE_BLOCKS.contains(block.getBlock());
     }
 
-    public void method_6885() {
+    public void setEyeInvulnerabletime() {
         this.setInvulTimer(220);
     }
 
@@ -449,17 +448,21 @@ public class TheEyeEntity extends FlyingEntity {
                 for (int i = -1; i < 2; i++) {
                     for (int u = -1; u < 2; u++) {
                         for (int g = 0; g < 6; g++) {
-                            if (!world.getBlockState(deathPos.east(i).north(u).up(g)).isAir()) {
+                            if (!world.getBlockState(deathPos.east(i).north(u).up(g)).isAir() && !world
+                                    .getBlockState(deathPos.east(i).north(u).up(g)).isIn(TagInit.UNBREAKABLE_BLOCKS)) {
                                 world.breakBlock(deathPos.east(i).north(u).up(g), false);
                             }
                         }
-                        world.setBlockState(deathPos.east(i).north(u), Blocks.CRYING_OBSIDIAN.getDefaultState(), 3);
-                        world.playSound(null, deathPos, SoundEvents.BLOCK_STONE_PLACE, SoundCategory.BLOCKS, 1F, 1F);
+                        if (!world.getBlockState(deathPos.east(i).north(u)).isIn(TagInit.UNBREAKABLE_BLOCKS)) {
+                            world.setBlockState(deathPos.east(i).north(u), Blocks.CRYING_OBSIDIAN.getDefaultState(), 3);
+                            world.playSound(null, deathPos, SoundEvents.BLOCK_STONE_PLACE, SoundCategory.BLOCKS, 1F,
+                                    1F);
+                        }
                     }
                 }
                 this.placeExtraBlocks(deathPos);
                 world.setBlockState(deathPos.up(), Blocks.DRAGON_EGG.getDefaultState(), 3);
-                this.dropItem(ItemInit.PRIME_EYE_ITEM);
+                // this.dropItem(ItemInit.PRIME_EYE_ITEM); // mcfunction
                 this.remove();
             }
 
@@ -483,16 +486,34 @@ public class TheEyeEntity extends FlyingEntity {
     }
 
     private void placeExtraBlocks(BlockPos pos) {
-        world.setBlockState(pos.east(2), Blocks.CRYING_OBSIDIAN.getDefaultState(), 3);
-        world.setBlockState(pos.west(2), Blocks.CRYING_OBSIDIAN.getDefaultState(), 3);
-        world.setBlockState(pos.north(2), Blocks.CRYING_OBSIDIAN.getDefaultState(), 3);
-        world.setBlockState(pos.south(2), Blocks.CRYING_OBSIDIAN.getDefaultState(), 3);
-        world.setBlockState(pos.down().north(), Blocks.CRYING_OBSIDIAN.getDefaultState(), 3);
-        world.setBlockState(pos.down().south(), Blocks.CRYING_OBSIDIAN.getDefaultState(), 3);
-        for (int i = -1; i < 2; i++) {
-            world.setBlockState(pos.down().east(i), Blocks.CRYING_OBSIDIAN.getDefaultState(), 3);
+        // Could change it to a list
+        // List<BlockPos> list = new ArrayList<>();
+        // list.add(0, pos.east(2));
 
+        if (!world.getBlockState(pos.east(2)).isIn(TagInit.UNBREAKABLE_BLOCKS)) {
+            world.setBlockState(pos.east(2), Blocks.CRYING_OBSIDIAN.getDefaultState(), 3);
         }
+        if (!world.getBlockState(pos.west(2)).isIn(TagInit.UNBREAKABLE_BLOCKS)) {
+            world.setBlockState(pos.west(2), Blocks.CRYING_OBSIDIAN.getDefaultState(), 3);
+        }
+        if (!world.getBlockState(pos.north(2)).isIn(TagInit.UNBREAKABLE_BLOCKS)) {
+            world.setBlockState(pos.north(2), Blocks.CRYING_OBSIDIAN.getDefaultState(), 3);
+        }
+        if (!world.getBlockState(pos.south(2)).isIn(TagInit.UNBREAKABLE_BLOCKS)) {
+            world.setBlockState(pos.south(2), Blocks.CRYING_OBSIDIAN.getDefaultState(), 3);
+        }
+        if (!world.getBlockState(pos.down().north()).isIn(TagInit.UNBREAKABLE_BLOCKS)) {
+            world.setBlockState(pos.down().north(), Blocks.CRYING_OBSIDIAN.getDefaultState(), 3);
+        }
+        if (!world.getBlockState(pos.down().south()).isIn(TagInit.UNBREAKABLE_BLOCKS)) {
+            world.setBlockState(pos.down().south(), Blocks.CRYING_OBSIDIAN.getDefaultState(), 3);
+        }
+        for (int i = -1; i < 2; i++) {
+            if (!world.getBlockState(pos.down().east(i)).isIn(TagInit.UNBREAKABLE_BLOCKS)) {
+                world.setBlockState(pos.down().east(i), Blocks.CRYING_OBSIDIAN.getDefaultState(), 3);
+            }
+        }
+
     }
 
     static {
@@ -662,7 +683,7 @@ public class TheEyeEntity extends FlyingEntity {
 
         @Override
         public boolean canStart() {
-            return true;
+            return theEyeEntity.getInvulnerableTimer() <= 0;
         }
 
         @Override
