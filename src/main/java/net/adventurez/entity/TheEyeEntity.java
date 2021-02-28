@@ -75,6 +75,7 @@ import org.jetbrains.annotations.Nullable;
 // (double)((float)k - random.nextFloat() - 1.0F), (double)((float)j + random.nextFloat()) - 0.5D);
 //import net.minecraft.block.entity.BeaconBlockEntity;
 //import net.minecraft.client.render.block.entity.BeaconBlockEntityRenderer;
+import net.minecraft.entity.passive.WanderingTraderEntity;
 
 public class TheEyeEntity extends FlyingEntity {
     private static final TrackedData<Integer> BEAM_TARGET_ID;
