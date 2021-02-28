@@ -14,7 +14,7 @@ public class AdventureConfig implements ConfigData {
   public int nightmare_spawn_weight = 2;
   @ConfigEntry.BoundedDiscrete(min = 0, max = 100)
   @Comment("Chance for spawning when mining gold ore in nether; 1/Value")
-  public int piglin_beast_ore_spawn_chance = 100;
+  public int piglin_beast_ore_spawn_chance = 70;
   @ConfigEntry.BoundedDiscrete(min = 0, max = 100)
   @Comment("Chance for spawning when killing too many piglins; 1/Value")
   public int piglin_beast_attack_piglin_spawn_chance = 2;
@@ -29,5 +29,7 @@ public class AdventureConfig implements ConfigData {
   public int fungus_spawn_weight = 10;
   @ConfigEntry.BoundedDiscrete(min = 0, max = 100)
   public int ork_spawn_weight = 40;
+  public boolean allow_stone_golem_summoning = true;
+  public boolean allow_the_eye_summoning = true;
 
 }

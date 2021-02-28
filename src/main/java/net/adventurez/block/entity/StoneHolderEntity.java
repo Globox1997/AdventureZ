@@ -2,6 +2,7 @@ package net.adventurez.block.entity;
 
 import net.adventurez.entity.StoneGolemEntity;
 import net.adventurez.init.BlockInit;
+import net.adventurez.init.ConfigInit;
 import net.adventurez.init.EntityInit;
 import net.adventurez.init.SoundInit;
 import net.adventurez.init.TagInit;
@@ -85,7 +86,9 @@ public class StoneHolderEntity extends BlockEntity implements Tickable, Inventor
         ItemScatterer.spawn(world, pos, inventory);
         tickCounter = -1;
       }
-      this.tickCounter++;
+      if (ConfigInit.CONFIG.allow_stone_golem_summoning) {
+        this.tickCounter++;
+      }
       if (tickCounter > 40) {
         this.update();
         tickCounter = 0;

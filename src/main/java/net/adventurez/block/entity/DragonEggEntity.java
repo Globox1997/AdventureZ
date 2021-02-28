@@ -2,6 +2,7 @@ package net.adventurez.block.entity;
 
 import net.adventurez.entity.TheEyeEntity;
 import net.adventurez.init.BlockInit;
+import net.adventurez.init.ConfigInit;
 import net.adventurez.init.EntityInit;
 import net.adventurez.init.TagInit;
 import net.minecraft.block.BlockState;
@@ -89,7 +90,7 @@ public class DragonEggEntity extends BlockEntity implements Tickable {
             // }
 
             // }
-            if (overallTick == 100 && this.isValid(world, pos, state)) {
+            if (ConfigInit.CONFIG.allow_the_eye_summoning && overallTick == 100 && this.isValid(world, pos, state)) {
                 // if (world.isClient) {
                 // for (int i = 0; i < 20; i++) {
                 // double d = (double) pos.getX() + (double) world.random.nextFloat();
