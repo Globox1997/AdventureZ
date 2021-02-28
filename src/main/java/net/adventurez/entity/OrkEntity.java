@@ -25,6 +25,8 @@ import net.minecraft.entity.data.DataTracker;
 import net.minecraft.entity.data.TrackedData;
 import net.minecraft.entity.data.TrackedDataHandlerRegistry;
 import net.minecraft.entity.mob.HostileEntity;
+import net.minecraft.entity.passive.VillagerEntity;
+import net.minecraft.entity.passive.WanderingTraderEntity;
 import net.minecraft.world.LocalDifficulty;
 import net.minecraft.world.ServerWorldAccess;
 import net.minecraft.world.World;
@@ -47,7 +49,8 @@ public class OrkEntity extends HostileEntity {
       return HostileEntity.createHostileAttributes().add(EntityAttributes.GENERIC_MAX_HEALTH, 20.0D)
             .add(EntityAttributes.GENERIC_MOVEMENT_SPEED, 0.225D)
             .add(EntityAttributes.GENERIC_KNOCKBACK_RESISTANCE, 0.2D).add(EntityAttributes.GENERIC_ATTACK_DAMAGE, 7.0D)
-            .add(EntityAttributes.GENERIC_ATTACK_KNOCKBACK, 1D).add(EntityAttributes.GENERIC_FOLLOW_RANGE, 38.0D);
+            .add(EntityAttributes.GENERIC_ATTACK_KNOCKBACK, 1D).add(EntityAttributes.GENERIC_FOLLOW_RANGE, 38.0D)
+            .add(EntityAttributes.GENERIC_ARMOR, 1.0D);
    }
 
    @Override
@@ -62,6 +65,8 @@ public class OrkEntity extends HostileEntity {
       this.goalSelector.add(7, new LookAroundGoal(this));
       this.targetSelector.add(1, new FollowTargetGoal<>(this, PlayerEntity.class, true));
       this.targetSelector.add(2, (new RevengeGoal(this, new Class[] { OrkEntity.class })));
+      this.targetSelector.add(3, new FollowTargetGoal<>(this, WanderingTraderEntity.class, true));
+      this.targetSelector.add(4, new FollowTargetGoal<>(this, VillagerEntity.class, true));
    }
 
    @Override
