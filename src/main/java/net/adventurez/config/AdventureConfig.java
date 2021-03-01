@@ -28,7 +28,7 @@ public class AdventureConfig implements ConfigData {
   @ConfigEntry.BoundedDiscrete(min = 0, max = 100)
   public int fungus_spawn_weight = 10;
   @ConfigEntry.BoundedDiscrete(min = 0, max = 100)
-  public int ork_spawn_weight = 20;
+  public int ork_spawn_weight = 10;
   public boolean allow_stone_golem_summoning = true;
   public boolean allow_the_eye_summoning = true;
 
