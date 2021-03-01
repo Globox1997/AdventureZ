@@ -1,0 +1,20 @@
+{
+    "parent": "minecraft:recipes/root",
+    "rewards": {
+        "recipes": [
+            "adventurez:orc_leather"
+        ]
+    },
+    "criteria": {
+        "got_the_orc_skin": {
+            "trigger": "minecraft:inventory_changed",
+            "conditions": {
+                "items": [
+                    {
+                        "item": "adventurez:orc_skin_item"
+                    }
+                ]
+            }
+        }
+    }
+}

@@ -11,15 +11,18 @@ import net.minecraft.util.registry.Registry;
 
 public class ItemInit {
 
-        public static final GildedStoneItem GILDED_STONE_ITEM = new GildedStoneItem(
-                        new Item.Settings().group(ItemGroup.MISC), () -> EntityInit.GILDEDSTONE_ENTITY);
-        public static final StoneGolemHeart STONE_GOLEM_HEART = new StoneGolemHeart(
-                        new Item.Settings().group(ItemGroup.MISC));
-        public static final StoneGolemArm STONE_GOLEM_ARM = new StoneGolemArm(
-                        new Item.Settings().group(ItemGroup.COMBAT).maxDamage(2506));
-        public static final GildedNetheriteFragment GILDED_NETHERITE_FRAGMENT = new GildedNetheriteFragment(
-                        new Item.Settings().group(ItemGroup.MISC).fireproof());
-        public static final PrimeEyeItem PRIME_EYE_ITEM = new PrimeEyeItem(new Item.Settings().group(ItemGroup.MISC));
+        public static final Item GILDED_STONE_ITEM = register("gilded_stone_item", new GildedStoneItem(
+                        new Item.Settings().group(ItemGroup.MISC), () -> EntityInit.GILDEDSTONE_ENTITY));
+        public static final Item STONE_GOLEM_HEART = register("stone_golem_heart",
+                        new StoneGolemHeart(new Item.Settings().group(ItemGroup.MISC)));
+        public static final Item STONE_GOLEM_ARM = register("stone_golem_arm",
+                        new StoneGolemArm(new Item.Settings().group(ItemGroup.COMBAT).maxDamage(2506)));
+        public static final Item GILDED_NETHERITE_FRAGMENT = register("gilded_netherite_fragment",
+                        new GildedNetheriteFragment(new Item.Settings().group(ItemGroup.MISC).fireproof()));
+        public static final Item PRIME_EYE_ITEM = register("prime_eye_item",
+                        new PrimeEyeItem(new Item.Settings().group(ItemGroup.MISC)));
+        public static final Item ORC_SKIN_ITEM = register("orc_skin_item",
+                        new OrcSkinItem(new Item.Settings().group(ItemGroup.MISC)));
 
         // Armor
         public static final ArmorMaterial STONE_GOLEM_ARMOR_MATERIAL = new StoneGolemArmorMaterial();
@@ -41,12 +44,6 @@ public class ItemInit {
         }
 
         public static void init() {
-                Registry.register(Registry.ITEM, new Identifier("adventurez", "gilded_stone_item"), GILDED_STONE_ITEM);
-                Registry.register(Registry.ITEM, new Identifier("adventurez", "stone_golem_heart"), STONE_GOLEM_HEART);
-                Registry.register(Registry.ITEM, new Identifier("adventurez", "stone_golem_arm"), STONE_GOLEM_ARM);
-                Registry.register(Registry.ITEM, new Identifier("adventurez", "gilded_netherite_fragment"),
-                                GILDED_NETHERITE_FRAGMENT);
-                Registry.register(Registry.ITEM, new Identifier("adventurez", "prime_eye_item"), PRIME_EYE_ITEM);
         }
 
 }

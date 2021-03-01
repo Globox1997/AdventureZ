@@ -10,7 +10,8 @@
     "ServerWorldMixin",
     "ExplosionMixin",
     "NetherFortressFeatureMixin",
-    "DragonEggBlockMixin"
+    "DragonEggBlockMixin",
+    "BrewingRecipeRegistryMixin"
   ],
   "client": [
     "ArmorFeatureRendererMixin",

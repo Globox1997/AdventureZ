@@ -1,0 +1,12 @@
+{
+    "type": "minecraft:smithing",
+    "base": {
+        "item": "adventurez:orc_skin_item"
+    },
+    "addition": {
+        "item": "adventurez:orc_skin_item"
+    },
+    "result": {
+        "item": "minecraft:leather"
+    }
+}
