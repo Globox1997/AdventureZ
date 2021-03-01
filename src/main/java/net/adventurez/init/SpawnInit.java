@@ -53,7 +53,7 @@ public class SpawnInit {
       }
       if (biome.getCategory().equals(Biome.Category.PLAINS)) {
         addMobSpawnToBiome(biome, SpawnGroup.MONSTER,
-            new SpawnSettings.SpawnEntry(EntityInit.ORK_ENTITY, ConfigInit.CONFIG.ork_spawn_weight, 2, 4));
+            new SpawnSettings.SpawnEntry(EntityInit.ORK_ENTITY, ConfigInit.CONFIG.ork_spawn_weight, 1, 3));
       }
       // if (biome.getCategory().equals(Biome.Category.ICY) ||
       // biome.getCategory().equals(Biome.Category.TAIGA)) {
