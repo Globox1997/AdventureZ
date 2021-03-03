@@ -1,5 +1,7 @@
 package net.adventurez.entity;
 
+import java.util.Random;
+
 import org.jetbrains.annotations.Nullable;
 
 import net.adventurez.entity.goal.OrkGroupGoal;
@@ -27,6 +29,7 @@ import net.minecraft.entity.data.TrackedDataHandlerRegistry;
 import net.minecraft.entity.mob.HostileEntity;
 import net.minecraft.entity.passive.VillagerEntity;
 import net.minecraft.entity.passive.WanderingTraderEntity;
+import net.minecraft.world.Difficulty;
 import net.minecraft.world.LocalDifficulty;
 import net.minecraft.world.ServerWorldAccess;
 import net.minecraft.world.World;
@@ -67,6 +70,14 @@ public class OrkEntity extends HostileEntity {
       this.targetSelector.add(2, (new RevengeGoal(this, new Class[] { OrkEntity.class })));
       this.targetSelector.add(3, new FollowTargetGoal<>(this, WanderingTraderEntity.class, true));
       this.targetSelector.add(4, new FollowTargetGoal<>(this, VillagerEntity.class, true));
+   }
+
+   public static boolean canSpawn(EntityType<OrkEntity> type, ServerWorldAccess world, SpawnReason spawnReason,
+         BlockPos pos, Random random) {
+      boolean bl = (world.getDifficulty() != Difficulty.PEACEFUL
+            && canSpawnInDark(type, world, spawnReason, pos, random) && world.isSkyVisible(pos))
+            || spawnReason == SpawnReason.SPAWNER;
+      return bl;
    }
 
    @Override

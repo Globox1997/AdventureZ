@@ -97,7 +97,7 @@ public class SpawnInit {
     SpawnRestriction.register(EntityInit.BROWN_FUNGUS_ENTITY, SpawnRestriction.Location.ON_GROUND,
         Heightmap.Type.MOTION_BLOCKING_NO_LEAVES, BrownFungusEntity::canSpawn);
     SpawnRestriction.register(EntityInit.ORK_ENTITY, SpawnRestriction.Location.ON_GROUND,
-        Heightmap.Type.MOTION_BLOCKING_NO_LEAVES, HostileEntity::canSpawnInDark);
+        Heightmap.Type.MOTION_BLOCKING_NO_LEAVES, OrkEntity::canSpawn);
   }
 
 }
