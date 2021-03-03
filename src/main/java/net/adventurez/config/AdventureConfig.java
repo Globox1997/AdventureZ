@@ -8,6 +8,7 @@ import me.sargunvohra.mcmods.autoconfig1u.annotation.Config;
 @Config(name = "adventurez")
 @Config.Gui.Background("minecraft:textures/block/stone.png")
 public class AdventureConfig implements ConfigData {
+  @ConfigEntry.Gui.PrefixText
   @ConfigEntry.BoundedDiscrete(min = 0, max = 100)
   public int necromancer_spawn_weight = 1;
   @ConfigEntry.BoundedDiscrete(min = 0, max = 100)
