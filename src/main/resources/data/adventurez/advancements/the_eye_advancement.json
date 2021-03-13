@@ -2,7 +2,7 @@
     "parent": "minecraft:nether/summon_wither",
     "display": {
         "icon": {
-            "item": "adventurez:prime_eye_item"
+            "item": "adventurez:prime_eye"
         },
         "title": {
             "translate": "adventurez.advancements.the_eye.title"
