@@ -15,6 +15,7 @@
   "entity.adventurez.void_shadow": "Пустотная тень",
   "entity.adventurez.red_fungus": "Красный гриб",
   "entity.adventurez.brown_fungus": "Коричневый гриб",
+  "entity.adventurez.ork": "Орк",
 
   "item.adventurez.spawn_stone_golem": "Яйцо прызыва Чернитового Голема",
   "item.adventurez.spawn_small_stone_golem": "Яйцо призыва Малого Чернитового Голема",
@@ -30,6 +31,7 @@
   "item.adventurez.spawn_void_shadow": "Яйцо призыва Пустотной Тени",
   "item.adventurez.spawn_red_fungus": "Яйцо призыва Красного гриба",
   "item.adventurez.spawn_brown_fungus": "Яйцо призыва Коричневого гриба",
+  "item.adventurez.spawn_ork": "Яйцо призыва Орка",
 
   "item.adventurez.gilded_stone_item": "Позолоченный чернитовый осколок",
   "item.adventurez.gilded_stone_item.tooltip": "Размещается на чернитовом держателе",
@@ -47,6 +49,7 @@
   "item.adventurez.stone_golem_armor.tooltip3": "§9Огнестойкость (0:30)",
   "item.adventurez.stone_golem_armor.tooltip4": "§cПерезарядка (1:00)",
   "item.adventurez.prime_eye_item": "Высшее Око",
+  "item.adventurez.orc_skin_item": "Кожа орка",
 
   "item.adventurez.moreinfo.tooltip": "§8Держите §6Shift §8для большей информации",
   "item.adventurez.common_item.tooltip": "§7Common",
@@ -68,6 +71,8 @@
 
   "adventurez.advancements.stone_golem.title": "Чернитовый Голем",
   "adventurez.advancements.stone_golem.description": "Убейте Чернитового Голема",
+  "adventurez.advancements.the_eye.title": "Око",
+  "adventurez.advancements.the_eye.description": "Убить правителя Края",
 
   "effect.adventurez.withering": "Иссушение",
 
@@ -75,6 +80,7 @@
   "death.attack.tinyEye":"%1$s был избит до смерти крошечным глазом",
 
   "text.autoconfig.adventurez.title": "Настройка AdventureZ",
+  "text.autoconfig.adventurez.option.necromancer_spawn_weight.@PrefixText": "Для подтверждения настроек, перезапустите игру",
   "text.autoconfig.adventurez.option.necromancer_spawn_weight": "Возможность появления Некроманта",
   "text.autoconfig.adventurez.option.nightmare_spawn_weight": "Возможность появления Кошмара и Жнеца",
   "text.autoconfig.adventurez.option.piglin_beast_ore_spawn_chance": "Шанс призыва Чудовищного Пиглина при добыче золотой руды",
@@ -82,5 +88,8 @@
   "text.autoconfig.adventurez.option.small_stone_golem_spawn_weight": "Возможность появления Малого Чернитового Голема",
   "text.autoconfig.adventurez.option.summoner_thunder_spawn_chance": "Шанс призыва Призывателя при ударе молнии",
   "text.autoconfig.adventurez.option.blaze_guardian_spawn_weight": "Возможность появления Стража Пламени",
-  "text.autoconfig.adventurez.option.fungus_spawn_weight": "Возможность появления Гриба"
+  "text.autoconfig.adventurez.option.fungus_spawn_weight": "Возможность появления Гриба",
+  "text.autoconfig.adventurez.option.ork_spawn_weight": "Возможность появления Орка",
+  "text.autoconfig.adventurez.option.allow_stone_golem_summoning": "Призыв Чернитого Голема через ритуал",
+  "text.autoconfig.adventurez.option.allow_the_eye_summoning": "Призыв Ока через ритуал"
 }
