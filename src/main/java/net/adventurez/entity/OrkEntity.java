@@ -185,4 +185,9 @@ public class OrkEntity extends HostileEntity {
       return this.isInvulnerableTo(source) ? false : super.damage(source, amount);
    }
 
+   @Override
+   public int getLimitPerChunk() {
+      return 4;
+   }
+
 }
