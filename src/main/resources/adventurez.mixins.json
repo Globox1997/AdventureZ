@@ -11,7 +11,9 @@
     "ExplosionMixin",
     "NetherFortressFeatureMixin",
     "DragonEggBlockMixin",
-    "BrewingRecipeRegistryMixin"
+    "BrewingRecipeRegistryMixin",
+    "GiveGiftsToHeroTaskMixin",
+    "VillagerEntityMixin"
   ],
   "client": [
     "ArmorFeatureRendererMixin",
