@@ -25,10 +25,12 @@ public class TinyEyeModel<T extends Entity> extends CompositeEntityModel<T> {
         this.body.setTextureOffset(22, 0).addCuboid(5.5F, -1.0F, -1.0F, 1.0F, 3.0F, 2.0F, 0.0F);
     }
 
+    @Override
     public Iterable<ModelPart> getParts() {
         return ImmutableList.of(this.body);
     }
 
+    @Override
     public void setAngles(T bullet, float limbAngle, float limbDistance, float animationProgress, float headYaw,
             float headPitch) {
         this.body.yaw = headYaw * 0.017453292F;
