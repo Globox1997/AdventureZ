@@ -1,9 +1,11 @@
 package net.adventurez.entity;
 
 import java.util.EnumSet;
+import java.util.List;
 import java.util.Random;
 import java.util.function.Predicate;
 
+import net.adventurez.init.EffectInit;
 import net.adventurez.init.EntityInit;
 import net.adventurez.init.SoundInit;
 import net.adventurez.init.TagInit;
@@ -35,6 +37,7 @@ import net.minecraft.entity.mob.HostileEntity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.particle.ParticleTypes;
+import net.minecraft.predicate.entity.EntityPredicates;
 import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.sound.SoundCategory;
 import net.minecraft.sound.SoundEvent;
@@ -53,29 +56,6 @@ import net.minecraft.world.World;
 import net.minecraft.world.explosion.Explosion;
 import net.minecraft.world.Heightmap;
 import org.jetbrains.annotations.Nullable;
-
-// import net.minecraft.entity.boss.dragon.EnderDragonEntity;
-// import net.minecraft.entity.mob.HostileEntity;
-// import net.minecraft.world.World;
-// import net.minecraft.entity.EntityType;
-// import net.minecraft.entity.boss.ServerBossBar;
-// import net.minecraft.entity.boss.WitherEntity;
-//import net.minecraft.entity.mob.GuardianEntity;
-//import net.minecraft.entity.mob.ShulkerEntity;
-//import net.minecraft.block.DragonEggBlock;
-//import net.minecraft.entity.mob.VexEntity;
-//import net.minecraft.entity.mob.PhantomEntity;
-//import net.minecraft.entity.mob.EndermanEntity;
-// import net.minecraft.entity.mob.GhastEntity;
-// import net.minecraft.entity.mob.WitherSkeletonEntity;
-// import net.minecraft.client.render.block.entity.EnchantingTableBlockEntityRenderer;
-// import net.minecraft.block.entity.EnchantingTableBlockEntity;
-// import net.minecraft.block.EnchantingTableBlock;
-//world.addParticle(ParticleTypes.ENCHANT, (double)pos.getX() + 0.5D, (double)pos.getY() + 2.0D, (double)pos.getZ() + 0.5D, (double)((float)i + random.nextFloat()) - 0.5D,
-// (double)((float)k - random.nextFloat() - 1.0F), (double)((float)j + random.nextFloat()) - 0.5D);
-//import net.minecraft.block.entity.BeaconBlockEntity;
-//import net.minecraft.client.render.block.entity.BeaconBlockEntityRenderer;
-import net.minecraft.entity.passive.WanderingTraderEntity;
 
 public class TheEyeEntity extends FlyingEntity {
     private static final TrackedData<Integer> BEAM_TARGET_ID;
@@ -442,10 +422,22 @@ public class TheEyeEntity extends FlyingEntity {
         if (!this.world.isClient) {
             this.bossBar.setPercent(0.0F);
             BlockPos deathPos = new BlockPos(this.getX(), this.getY() - 1, this.getZ());
+            if (deathTimer == 20) {
+                Box box = new Box(this.getBlockPos());
+                List<PlayerEntity> list = world.getEntitiesByClass(PlayerEntity.class, box.expand(128D),
+                        EntityPredicates.EXCEPT_SPECTATOR);
+                for (int i = 0; i < list.size(); ++i) {
+                    PlayerEntity playerEntity = (PlayerEntity) list.get(i);
+                    if (playerEntity instanceof PlayerEntity) {
+                        playerEntity.addStatusEffect(
+                                new StatusEffectInstance(EffectInit.FAME, 48000, 0, false, false, true));
+                    }
+                }
+            }
             if (deathTimer == 140) {
                 world.playSound(null, deathPos, SoundInit.EYE_DEATH_PLATFORM_EVENT, SoundCategory.HOSTILE, 1F, 1F);
             }
-            if (deathTimer == 200) {
+            if (deathTimer >= 200) {
                 for (int i = -1; i < 2; i++) {
                     for (int u = -1; u < 2; u++) {
                         for (int g = 0; g < 6; g++) {
