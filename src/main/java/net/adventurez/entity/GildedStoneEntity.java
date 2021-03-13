@@ -90,6 +90,6 @@ public class GildedStoneEntity extends ThrownItemEntity {
 
   @Override
   protected Item getDefaultItem() {
-    return ItemInit.GILDED_STONE_ITEM;
+    return ItemInit.GILDED_STONE;
   }
 }

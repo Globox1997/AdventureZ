@@ -10,19 +10,21 @@ import net.minecraft.util.Identifier;
 import net.minecraft.util.registry.Registry;
 
 public class ItemInit {
-
-        public static final Item GILDED_STONE_ITEM = register("gilded_stone_item", new GildedStoneItem(
+        // Items
+        public static final Item GILDED_STONE = register("gilded_stone", new GildedStoneItem(
                         new Item.Settings().group(ItemGroup.MISC), () -> EntityInit.GILDEDSTONE_ENTITY));
         public static final Item STONE_GOLEM_HEART = register("stone_golem_heart",
-                        new StoneGolemHeart(new Item.Settings().group(ItemGroup.MISC)));
+                        new StoneGolemHeartItem(new Item.Settings().group(ItemGroup.MISC)));
         public static final Item STONE_GOLEM_ARM = register("stone_golem_arm",
                         new StoneGolemArm(new Item.Settings().group(ItemGroup.COMBAT).maxDamage(2506)));
         public static final Item GILDED_NETHERITE_FRAGMENT = register("gilded_netherite_fragment",
-                        new GildedNetheriteFragment(new Item.Settings().group(ItemGroup.MISC).fireproof()));
-        public static final Item PRIME_EYE_ITEM = register("prime_eye_item",
+                        new GildedNetheriteFragmentItem(new Item.Settings().group(ItemGroup.MISC).fireproof()));
+        public static final Item PRIME_EYE = register("prime_eye",
                         new PrimeEyeItem(new Item.Settings().group(ItemGroup.MISC)));
-        public static final Item ORC_SKIN_ITEM = register("orc_skin_item",
+        public static final Item ORC_SKIN = register("orc_skin",
                         new OrcSkinItem(new Item.Settings().group(ItemGroup.MISC)));
+        public static final Item DRAGON_SADDLE = register("dragon_saddle",
+                        new OrcSkinItem(new Item.Settings().group(ItemGroup.TRANSPORTATION).maxCount(1)));
 
         // Armor
         public static final ArmorMaterial STONE_GOLEM_ARMOR_MATERIAL = new StoneGolemArmorMaterial();

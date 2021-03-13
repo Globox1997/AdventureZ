@@ -16,7 +16,7 @@ import net.minecraft.util.math.BlockPos;
 
 @Environment(EnvType.CLIENT)
 public class GildedStoneRenderer extends EntityRenderer<GildedStoneEntity> {
-  private static final Identifier TEXTURE = new Identifier("adventurez:textures/item/gilded_stone_item.png");
+  private static final Identifier TEXTURE = new Identifier("adventurez:textures/item/gilded_stone.png");
   private final GildedStoneModel model = new GildedStoneModel();
 
   public GildedStoneRenderer(EntityRenderDispatcher entityRenderDispatcher) {
