@@ -2,8 +2,8 @@
 	"credit": "Made with Blockbench",
 	"texture_size": [32, 32],
 	"textures": {
-		"0": "adventurez:item/gilded_stone_item",
-		"particle": "adventurez:item/gilded_stone_item"
+		"0": "adventurez:item/gilded_stone",
+		"particle": "adventurez:item/gilded_stone"
 	},
 	"elements": [
 		{

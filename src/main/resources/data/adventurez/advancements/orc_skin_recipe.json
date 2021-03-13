@@ -2,7 +2,8 @@
     "parent": "minecraft:recipes/root",
     "rewards": {
         "recipes": [
-            "adventurez:orc_leather"
+            "adventurez:orc_leather",
+            "adventurez:dragon_saddle"
         ]
     },
     "criteria": {
@@ -11,7 +12,7 @@
             "conditions": {
                 "items": [
                     {
-                        "item": "adventurez:orc_skin_item"
+                        "item": "adventurez:orc_skin"
                     }
                 ]
             }
