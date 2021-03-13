@@ -1,0 +1,19 @@
+{
+    "type": "minecraft:crafting_shaped",
+    "pattern": [
+        "ddd",
+        "e e"
+    ],
+    "key": {
+        "d": {
+            "item": "adventurez:orc_skin"
+        },
+        "e": {
+            "item": "minecraft:iron_nugget"
+        }
+    },
+    "result": {
+        "item": "adventurez:dragon_saddle",
+        "count": 1
+    }
+}

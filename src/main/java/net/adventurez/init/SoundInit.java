@@ -93,6 +93,15 @@ public class SoundInit {
   public static SoundEvent ORC_HURT_EVENT = new SoundEvent(ORC_HURT);
   public static SoundEvent ORC_IDLE_EVENT = new SoundEvent(ORC_IDLE);
   public static SoundEvent ORC_STEP_EVENT = new SoundEvent(ORC_STEP);
+  // Dragon
+  public static final Identifier DRAGON_DEATH = new Identifier("adventurez:dragon_death");
+  public static final Identifier DRAGON_HIT = new Identifier("adventurez:dragon_hit");
+  public static final Identifier DRAGON_IDLE = new Identifier("adventurez:dragon_idle");
+  public static final Identifier DRAGON_STEP = new Identifier("adventurez:dragon_step");
+  public static SoundEvent DRAGON_DEATH_EVENT = new SoundEvent(DRAGON_DEATH);
+  public static SoundEvent DRAGON_HIT_EVENT = new SoundEvent(DRAGON_HIT);
+  public static SoundEvent DRAGON_IDLE_EVENT = new SoundEvent(DRAGON_IDLE);
+  public static SoundEvent DRAGON_STEP_EVENT = new SoundEvent(DRAGON_STEP);
 
   public static void init() {
     Registry.register(Registry.SOUND_EVENT, SoundInit.GOLEM_IDLE, GOLEM_IDLE_EVENT);
@@ -134,5 +143,9 @@ public class SoundInit {
     Registry.register(Registry.SOUND_EVENT, SoundInit.ORC_HURT, ORC_HURT_EVENT);
     Registry.register(Registry.SOUND_EVENT, SoundInit.ORC_IDLE, ORC_IDLE_EVENT);
     Registry.register(Registry.SOUND_EVENT, SoundInit.ORC_STEP, ORC_STEP_EVENT);
+    Registry.register(Registry.SOUND_EVENT, SoundInit.DRAGON_DEATH, DRAGON_DEATH_EVENT);
+    Registry.register(Registry.SOUND_EVENT, SoundInit.DRAGON_HIT, DRAGON_HIT_EVENT);
+    Registry.register(Registry.SOUND_EVENT, SoundInit.DRAGON_IDLE, DRAGON_IDLE_EVENT);
+    Registry.register(Registry.SOUND_EVENT, SoundInit.DRAGON_STEP, DRAGON_STEP_EVENT);
   }
 }

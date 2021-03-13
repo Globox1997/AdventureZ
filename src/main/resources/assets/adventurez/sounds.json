@@ -272,5 +272,34 @@
       "adventurez:orc_step4",
       "adventurez:orc_step5"
     ]
+  },
+  "dragon_death": {
+    "sounds": [
+      "adventurez:dragon_death"
+    ]
+  },
+  "dragon_hit": {
+    "sounds": [
+      "adventurez:dragon_hit1",
+      "adventurez:dragon_hit2",
+      "adventurez:dragon_hit3",
+      "adventurez:dragon_hit4"
+    ]
+  },
+  "dragon_idle": {
+    "sounds": [
+      "adventurez:dragon_idle1",
+      "adventurez:dragon_idle2",
+      "adventurez:dragon_idle3",
+      "adventurez:dragon_idle4"
+    ]
+  },
+  "dragon_step": {
+    "sounds": [
+      "adventurez:dragon_step1",
+      "adventurez:dragon_step2",
+      "adventurez:dragon_step3",
+      "adventurez:dragon_step4"
+    ]
   }
 }

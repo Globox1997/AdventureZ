@@ -71,6 +71,11 @@ public class EntityInit {
                         .<TinyEyeEntity>create(SpawnGroup.MISC, TinyEyeEntity::new)
                         .dimensions(EntityDimensions.fixed(0.4F, 0.4F)).build();
 
+        // Test
+        public static final EntityType<DragonEntity> DRAGON_ENTITY = FabricEntityTypeBuilder
+                        .<DragonEntity>create(SpawnGroup.CREATURE, DragonEntity::new)
+                        .dimensions(EntityDimensions.fixed(4.8F, 3.2F)).fireImmune().build();
+
         // public static final EntityType<GryphonEntity> GRYPHON_ENTITY =
         // FabricEntityTypeBuilder
         // .create(SpawnGroup.CREATURE, GryphonEntity::new)
@@ -104,6 +109,8 @@ public class EntityInit {
                 Registry.register(Registry.ENTITY_TYPE, new Identifier("adventurez", "brown_fungus"),
                                 BROWN_FUNGUS_ENTITY);
                 Registry.register(Registry.ENTITY_TYPE, new Identifier("adventurez", "ork"), ORK_ENTITY);
+                // Test
+                Registry.register(Registry.ENTITY_TYPE, new Identifier("adventurez", "dragon"), DRAGON_ENTITY);
                 // Registry.register(Registry.ENTITY_TYPE, new Identifier("adventurez",
                 // "gryphon"), GRYPHON_ENTITY);
 
@@ -133,6 +140,7 @@ public class EntityInit {
                 FabricDefaultAttributeRegistry.register(BROWN_FUNGUS_ENTITY,
                                 BrownFungusEntity.createBrownFungusAttributes());
                 FabricDefaultAttributeRegistry.register(ORK_ENTITY, OrkEntity.createOrkAttributes());
+                FabricDefaultAttributeRegistry.register(DRAGON_ENTITY, DragonEntity.createDragonAttributes());
                 // FabricDefaultAttributeRegistry.register(GRYPHON_ENTITY,
                 // GryphonEntity.createGryphonAttributes());
 
@@ -169,6 +177,8 @@ public class EntityInit {
                                 BROWN_FUNGUS_ENTITY, 13084791, 9925201, new Item.Settings().group(ItemGroup.MISC)));
                 Registry.register(Registry.ITEM, new Identifier("adventurez", "spawn_ork"), new SpawnEggItem(ORK_ENTITY,
                                 2255437, 3512689, new Item.Settings().group(ItemGroup.MISC)));
+                Registry.register(Registry.ITEM, new Identifier("adventurez", "spawn_dragon"), new SpawnEggItem(
+                                DRAGON_ENTITY, 1842204, 14711290, new Item.Settings().group(ItemGroup.MISC)));
                 // Registry.register(Registry.ITEM, new Identifier("adventurez",
                 // "spawn_gryphon"), new SpawnEggItem(
                 // GRYPHON_ENTITY, 1381653, 5329747, new
