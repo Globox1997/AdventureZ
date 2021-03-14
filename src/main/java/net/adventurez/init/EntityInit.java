@@ -23,9 +23,6 @@ public class EntityInit {
         public static final EntityType<PiglinBeastEntity> PIGLINBEAST_ENTITY = FabricEntityTypeBuilder
                         .create(SpawnGroup.MONSTER, PiglinBeastEntity::new).fireImmune()
                         .dimensions(EntityDimensions.fixed(1.55F, 3.35F)).build();
-        public static final EntityType<NightmareEntity> NIGHTMARE_ENTITY = FabricEntityTypeBuilder
-                        .create(SpawnGroup.MONSTER, NightmareEntity::new).fireImmune()
-                        .dimensions(EntityDimensions.fixed(1.4F, 1.6F)).build();
         public static final EntityType<SoulReaperEntity> SOULREAPER_ENTITY = FabricEntityTypeBuilder
                         .create(SpawnGroup.MONSTER, SoulReaperEntity::new).fireImmune()
                         .dimensions(EntityDimensions.fixed(0.7F, 2.4F)).build();
@@ -60,6 +57,13 @@ public class EntityInit {
         public static final EntityType<BrownFungusEntity> BROWN_FUNGUS_ENTITY = FabricEntityTypeBuilder
                         .create(SpawnGroup.CREATURE, BrownFungusEntity::new)
                         .dimensions(EntityDimensions.fixed(1.35F, 1.8F)).build();
+        public static final EntityType<NightmareEntity> NIGHTMARE_ENTITY = FabricEntityTypeBuilder
+                        .create(SpawnGroup.MONSTER, NightmareEntity::new).fireImmune()
+                        .dimensions(EntityDimensions.fixed(1.4F, 1.6F)).build();
+        public static final EntityType<DragonEntity> DRAGON_ENTITY = FabricEntityTypeBuilder
+                        .<DragonEntity>create(SpawnGroup.CREATURE, DragonEntity::new)
+                        .dimensions(EntityDimensions.fixed(4.8F, 3.2F)).fireImmune().build();
+
         // Nonliving Entity
         public static final EntityType<ThrownRockEntity> THROWNROCK_ENTITY = FabricEntityTypeBuilder
                         .<ThrownRockEntity>create(SpawnGroup.MISC, ThrownRockEntity::new)
@@ -71,16 +75,6 @@ public class EntityInit {
                         .<TinyEyeEntity>create(SpawnGroup.MISC, TinyEyeEntity::new)
                         .dimensions(EntityDimensions.fixed(0.4F, 0.4F)).build();
 
-        // Test
-        public static final EntityType<DragonEntity> DRAGON_ENTITY = FabricEntityTypeBuilder
-                        .<DragonEntity>create(SpawnGroup.CREATURE, DragonEntity::new)
-                        .dimensions(EntityDimensions.fixed(4.8F, 3.2F)).fireImmune().build();
-
-        // public static final EntityType<GryphonEntity> GRYPHON_ENTITY =
-        // FabricEntityTypeBuilder
-        // .create(SpawnGroup.CREATURE, GryphonEntity::new)
-        // .dimensions(EntityDimensions.fixed(1.4F, 1.6F)).build();
-        // trackRangeBlocks(74)
         public static void init() {
                 Registry.register(Registry.ENTITY_TYPE, new Identifier("adventurez", "stone_golem"), STONEGOLEM_ENTITY);
                 Registry.register(Registry.ENTITY_TYPE, new Identifier("adventurez", "thrown_rock"), THROWNROCK_ENTITY);
@@ -109,10 +103,7 @@ public class EntityInit {
                 Registry.register(Registry.ENTITY_TYPE, new Identifier("adventurez", "brown_fungus"),
                                 BROWN_FUNGUS_ENTITY);
                 Registry.register(Registry.ENTITY_TYPE, new Identifier("adventurez", "ork"), ORK_ENTITY);
-                // Test
                 Registry.register(Registry.ENTITY_TYPE, new Identifier("adventurez", "dragon"), DRAGON_ENTITY);
-                // Registry.register(Registry.ENTITY_TYPE, new Identifier("adventurez",
-                // "gryphon"), GRYPHON_ENTITY);
 
                 // Attributes
                 FabricDefaultAttributeRegistry.register(STONEGOLEM_ENTITY,
