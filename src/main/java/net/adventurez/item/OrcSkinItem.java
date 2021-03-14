@@ -10,6 +10,8 @@ import net.minecraft.text.Text;
 import net.minecraft.text.TranslatableText;
 import net.minecraft.world.World;
 
+//Texture made by Pois1x
+
 public class OrcSkinItem extends Item {
 
     public OrcSkinItem(Settings settings) {
