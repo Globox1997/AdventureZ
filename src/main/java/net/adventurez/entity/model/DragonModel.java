@@ -286,9 +286,10 @@ public class DragonModel<T extends DragonEntity> extends CompositeEntityModel<T>
         @Override
         public void setAngles(T entity, float limbAngle, float limbDistance, float animationProgress, float headYaw,
                         float headPitch) {
-                // spike visual bug
                 if (entity.getDataTracker().get(DragonEntity.HAS_SADDLE)) {
                         this.spike.visible = false;
+                } else {
+                        this.spike.visible = true;
                 }
 
                 // General Body
