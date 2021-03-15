@@ -66,6 +66,9 @@ import net.minecraft.world.World;
 // import net.minecraft.entity.vehicle.BoatEntity;
 // import net.minecraft.fluid.FluidState;
 // import net.minecraft.entity.boss.dragon.EnderDragonEntity;
+// import net.minecraft.entity.passive.LlamaEntity;
+// import net.minecraft.entity.passive.DonkeyEntity;
+// import net.minecraft.client.gui.screen.ingame.HorseScreen;
 
 public class DragonEntity extends PathAwareEntity {
 
@@ -170,18 +173,22 @@ public class DragonEntity extends PathAwareEntity {
       if (this.isAlive()) {
          if (this.hasPassengers() && this.canBeControlledByRider()) {
             LivingEntity livingEntity = (LivingEntity) this.getPrimaryPassenger();
-            // this.yaw = livingEntity.yaw;
             double wrapper = MathHelper.wrapDegrees(this.bodyYaw - (double) this.yaw);
-            this.yaw = (float) ((double) this.yaw + wrapper);/// (double)this.field_7708
+            this.yaw = (float) ((double) this.yaw + wrapper);
 
             this.prevYaw = this.yaw;
             this.pitch = livingEntity.pitch * 0.5F;
             this.setRotation(this.yaw, this.pitch);
-            // this.bodyYaw = this.yaw;
-            this.headYaw = livingEntity.headYaw;// this.bodyYaw;
+            this.headYaw = livingEntity.headYaw;
+            boolean shouldFlyUp = false;
+            boolean shouldFlyDown = false;
 
-            if (livingEntity instanceof ClientPlayerEntity) {
+            if (this.world.isClient && livingEntity instanceof ClientPlayerEntity) {
                ClientPlayerEntity clientPlayerEntity = (ClientPlayerEntity) livingEntity;
+               shouldFlyUp = clientPlayerEntity.input.jumping;
+               shouldFlyDown = InputUtil.isKeyPressed(MinecraftClient.getInstance().getWindow().getHandle(),
+                     this.keyBind);
+
                if (clientPlayerEntity.input.pressingLeft) {
                   turningFloat -= 0.05F;
                }
@@ -199,7 +206,6 @@ public class DragonEntity extends PathAwareEntity {
             this.yaw += MathHelper.wrapDegrees(turningFloat);
 
             float f = livingEntity.sidewaysSpeed * 0.1F;
-
             float g = livingEntity.forwardSpeed * 0.5F;
             float flySpeed = 0.0F;
             float maxForwardSpeed = 0.6F;
@@ -219,10 +225,6 @@ public class DragonEntity extends PathAwareEntity {
             if (livingEntity.forwardSpeed == 0.0F) {
                this.dragonForwardSpeed *= 0.7F;
             }
-
-            boolean shouldFlyUp = InputUtil.isKeyPressed(MinecraftClient.getInstance().getWindow().getHandle(), 32);
-            boolean shouldFlyDown = InputUtil.isKeyPressed(MinecraftClient.getInstance().getWindow().getHandle(),
-                  this.keyBind);
 
             if (shouldFlyUp && this.onGround && !this.isFlying && this.startFlyingTimer < 40) {
                this.startFlyingTimer++;
@@ -640,6 +642,11 @@ public class DragonEntity extends PathAwareEntity {
    @Override
    protected float calculateNextStepSoundDistance() {
       return (float) ((int) this.distanceTraveled + 2) - 0.01F;
+   }
+
+   @Override
+   public boolean canImmediatelyDespawn(double num) {
+      return false;
    }
 
 }
