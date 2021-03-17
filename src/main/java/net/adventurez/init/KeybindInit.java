@@ -51,10 +51,7 @@ public class KeybindInit {
 
   public static void flyDragonDown(ClientPlayerEntity player, String keyString) {
     if (player.getVehicle() != null && player.getVehicle() instanceof DragonEntity) {
-      PacketByteBuf buf = new PacketByteBuf(Unpooled.buffer());
-      buf.writeString(keyString);
-      CustomPayloadC2SPacket packet = new CustomPayloadC2SPacket(KeybindPacket.FLY_DOWN_PACKET, buf);
-      MinecraftClient.getInstance().getNetworkHandler().sendPacket(packet);
+      ((DragonEntity) player.getVehicle()).setKeyBind(keyString);
     }
   }
 
