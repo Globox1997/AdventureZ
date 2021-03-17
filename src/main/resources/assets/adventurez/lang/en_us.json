@@ -16,6 +16,7 @@
   "entity.adventurez.red_fungus": "Red Fungus",
   "entity.adventurez.brown_fungus": "Brown Fungus",
   "entity.adventurez.ork": "Ork",
+  "entity.adventurez.dragon": "Dragon",
 
   "item.adventurez.spawn_stone_golem": "Blackstone Golem Spawn Egg",
   "item.adventurez.spawn_small_stone_golem": "Mini Blackstone Golem Spawn Egg",
@@ -31,7 +32,7 @@
   "item.adventurez.spawn_void_shadow": "Void Shadow Spawn Egg",
   "item.adventurez.spawn_red_fungus": "Red Fungus Spawn Egg",
   "item.adventurez.spawn_brown_fungus": "Brown Fungus Spawn Egg",
-  "item.adventurez.spawn_ork": "Ork Spawn Egg",
+  "item.adventurez.spawn_ork": "Orc Spawn Egg",
   "item.adventurez.spawn_dragon": "Dragon Spawn Egg",
 
   "item.adventurez.gilded_stone": "Gilded Blackstone Shard",
