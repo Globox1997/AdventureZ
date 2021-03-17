@@ -121,19 +121,20 @@ public class DragonEggEntity extends BlockEntity implements Tickable {
                 } else {
                     this.hatchTick++;
                     if (this.hatchTick % 60 == 0) {
-                        // for (int i = 0; i < 20; i++) {
-                        double d = (double) pos.getX() + (double) world.random.nextFloat();
-                        double e = (double) pos.getY() + (double) world.random.nextFloat();
-                        double f = (double) pos.getZ() + (double) world.random.nextFloat();
-                        ((ServerWorld) this.world).spawnParticles(ParticleTypes.HAPPY_VILLAGER, d, e, f, 0, 0.0D, 0.0D,
-                                0.0D, 0.01D);
-                        // }
+                        for (int i = 0; i < 20; i++) {
+                            double d = (double) pos.getX() + (double) world.random.nextFloat();
+                            double e = (double) pos.getY() + (double) world.random.nextFloat();
+                            double f = (double) pos.getZ() + (double) world.random.nextFloat();
+                            ((ServerWorld) this.world).spawnParticles(ParticleTypes.HAPPY_VILLAGER, d, e, f, 0, 0.0D,
+                                    0.0D, 0.0D, 0.01D);
+                        }
                     }
                     if (this.hatchTick >= 598) {
                         world.breakBlock(this.pos, false);
                         DragonEntity dragonEntity = (DragonEntity) EntityInit.DRAGON_ENTITY.create(world);
                         dragonEntity.refreshPositionAndAngles((double) this.getPos().getX() + 0.5D,
                                 (double) this.getPos().getY() + 0.55D, (double) this.getPos().getZ() + 0.5D, 90F, 0.0F);
+                        dragonEntity.setSize(1);
                         world.spawnEntity(dragonEntity);
                     }
                 }
@@ -146,37 +147,55 @@ public class DragonEggEntity extends BlockEntity implements Tickable {
     }
 
     private void updateTheEyeSummoning() {
-        if (this.world.getRegistryKey() == World.END
-                && this.world.getBlockState(pos.down()).equals(Blocks.CRYING_OBSIDIAN.getDefaultState())) {
-            overallSummoningTick++;
-            BlockState state = this.getCachedState();
-            if (ConfigInit.CONFIG.allow_the_eye_summoning && overallSummoningTick == 20
-                    && this.isValid(world, pos, state)) {
-                summoningTick++;
-                if (world.isClient && summoningTick % 10 == 0) {
-                    // for (int i = 0; i < 20; i++) {
-                    double d = (double) pos.getX() + (double) world.random.nextFloat();
-                    double e = (double) pos.getY() + (double) world.random.nextFloat() + 1D;
-                    double f = (double) pos.getZ() + (double) world.random.nextFloat();
-                    world.addParticle(ParticleTypes.END_ROD, d, e, f, 0.0D, 1.0D, 0.0D);
-                    // }
-
+        if (ConfigInit.CONFIG.allow_the_eye_summoning) {
+            if (this.world.getBlockState(pos.down()).equals(Blocks.CRYING_OBSIDIAN.getDefaultState())
+                    && this.world.getRegistryKey() == World.END) {
+                overallSummoningTick++;
+                BlockState state = this.getCachedState();
+                if (overallSummoningTick == 20 && this.isValid(world, pos, state)) {
+                    summoningTick++;
+                    if (!world.isClient && summoningTick >= 60) {
+                        TheEyeEntity theEyeEntity = (TheEyeEntity) EntityInit.THEEYE_ENTITY.create(world);
+                        theEyeEntity.refreshPositionAndAngles((double) this.getPos().getX() + 0.5D,
+                                (double) this.getPos().getY() + 0.55D, (double) this.getPos().getZ() + 0.5D, 90F, 0.0F);
+                        theEyeEntity.setEyeInvulnerabletime();
+                        world.spawnEntity(theEyeEntity);
+                        this.world.breakBlock(pos, false);
+                    }
                 }
-                if (!world.isClient && summoningTick >= 60) {
-                    TheEyeEntity theEyeEntity = (TheEyeEntity) EntityInit.THEEYE_ENTITY.create(world);
-                    theEyeEntity.refreshPositionAndAngles((double) this.getPos().getX() + 0.5D,
-                            (double) this.getPos().getY() + 0.55D, (double) this.getPos().getZ() + 0.5D, 90F, 0.0F);
-                    theEyeEntity.setEyeInvulnerabletime();
-                    world.spawnEntity(theEyeEntity);
-                    this.world.breakBlock(pos, false);
+                if (overallSummoningTick >= 20) {
+                    overallSummoningTick = 0;
                 }
-            }
-            if (overallSummoningTick >= 20) {
-                overallSummoningTick = 0;
-            }
+                if (world.isClient && summoningTick != 0) {
+                    if (summoningTick % 10 == 0) {
+                        this.dragonAltartParticle(1);
+                    }
+                    if (summoningTick % 5 == 0) {
+                        this.dragonAltartParticle(2);
+                    }
+                }
 
+            }
         }
+    }
 
+    private void dragonAltartParticle(int distance) {
+        double d = (double) pos.east(distance).north(distance).getX() + (double) world.random.nextFloat();
+        double e = (double) pos.up(1 - distance).getY() + (double) world.random.nextFloat() * 2.0D;
+        double f = (double) pos.east(distance).north(distance).getZ() + (double) world.random.nextFloat();
+        double d1 = (double) pos.west(distance).north(distance).getX() + (double) world.random.nextFloat();
+        double e1 = (double) pos.up(1 - distance).getY() + (double) world.random.nextFloat() * 2.0D;
+        double f1 = (double) pos.west(distance).north(distance).getZ() + (double) world.random.nextFloat();
+        double d2 = (double) pos.south(distance).east(distance).getX() + (double) world.random.nextFloat();
+        double e2 = (double) pos.up(1 - distance).getY() + (double) world.random.nextFloat() * 2.0D;
+        double f2 = (double) pos.south(distance).east(distance).getZ() + (double) world.random.nextFloat();
+        double d3 = (double) pos.south(distance).west(distance).getX() + (double) world.random.nextFloat();
+        double e3 = (double) pos.up(1 - distance).getY() + (double) world.random.nextFloat() * 2.0D;
+        double f3 = (double) pos.south(distance).west(distance).getZ() + (double) world.random.nextFloat();
+        world.addParticle(ParticleTypes.END_ROD, d, e, f, 0.0D, 0.0D, 0.0D);
+        world.addParticle(ParticleTypes.END_ROD, d1, e1, f1, 0.0D, 0.0D, 0.0D);
+        world.addParticle(ParticleTypes.END_ROD, d2, e2, f2, 0.0D, 0.0D, 0.0D);
+        world.addParticle(ParticleTypes.END_ROD, d3, e3, f3, 0.0D, 0.0D, 0.0D);
     }
 
 }
