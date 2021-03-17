@@ -19,8 +19,6 @@ public class OrkRenderer extends MobEntityRenderer<OrkEntity, OrkModel<OrkEntity
 
     @Override
     public void scale(OrkEntity orkEntity, MatrixStack matrixStack, float f) {
-        // orkEntity.getSize()
-        // System.out.print(f + " ");
         matrixStack.scale(0.55F * orkEntity.getSize(), 0.55F * orkEntity.getSize(), 0.55F * orkEntity.getSize());
     }
 

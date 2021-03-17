@@ -36,17 +36,6 @@ import net.minecraft.world.World;
 import net.minecraft.world.Heightmap;
 import org.jetbrains.annotations.Nullable;
 
-// import net.minecraft.entity.projectile.ShulkerBulletEntity;
-// import net.minecraft.item.ItemStack;
-// import net.minecraft.entity.projectile.ArrowEntity;
-// import net.minecraft.entity.projectile.PersistentProjectileEntity;
-// import net.minecraft.entity.projectile.DragonFireballEntity;
-// import net.minecraft.entity.projectile.ExplosiveProjectileEntity;
-// import net.minecraft.client.render.entity.ShulkerBulletEntityRenderer;
-// import net.minecraft.command.argument.EntityAnchorArgumentType.EntityAnchor;
-// import net.minecraft.client.render.entity.FlyingItemEntityRenderer;
-// import net.minecraft.entity.projectile.ShulkerBulletEntity;
-
 public class TinyEyeEntity extends ExplosiveProjectileEntity {
 
     private Entity target;
