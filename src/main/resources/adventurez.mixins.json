@@ -13,12 +13,15 @@
     "DragonEggBlockMixin",
     "BrewingRecipeRegistryMixin",
     "GiveGiftsToHeroTaskMixin",
-    "VillagerEntityMixin"
+    "VillagerEntityMixin",
+    "ServerPlayNetworkHandlerMixin",
+    "accessor.LivingEntityAccessor"
   ],
   "client": [
     "ArmorFeatureRendererMixin",
     "InGameOverlayRendererMixin",
-    "InGameHudMixin"
+    "InGameHudMixin",
+    "ClientPlayerInteractionManagerMixin"
   ],
   "injectors": {
     "defaultRequire": 1
