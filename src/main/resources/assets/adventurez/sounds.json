@@ -301,5 +301,11 @@
       "adventurez:dragon_step3",
       "adventurez:dragon_step4"
     ]
+  },
+  "equip_chest": {
+    "sounds": [
+      "adventurez:equip_chest1",
+      "adventurez:equip_chest2"
+    ]
   }
 }

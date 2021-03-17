@@ -18,13 +18,6 @@ public class SoundInit {
   public static SoundEvent GOLEM_ROAR_EVENT = new SoundEvent(GOLEM_ROAR);
   public static SoundEvent GOLEM_DEATH_EVENT = new SoundEvent(GOLEM_DEATH);
   public static SoundEvent GOLEM_SPAWN_EVENT = new SoundEvent(GOLEM_SPAWN);
-  // Item
-  public static final Identifier ROCK_IMPACT = new Identifier("adventurez:rock_impact");
-  public static final Identifier ROCK_THROW = new Identifier("adventurez:rock_throw");
-  public static final Identifier HEART_BEAT = new Identifier("adventurez:heart_beat");
-  public static SoundEvent ROCK_IMPACT_EVENT = new SoundEvent(ROCK_IMPACT);
-  public static SoundEvent ROCK_THROW_EVENT = new SoundEvent(ROCK_THROW);
-  public static SoundEvent HEART_BEAT_EVENT = new SoundEvent(HEART_BEAT);
   // Small Golem
   public static final Identifier SMALL_GOLEM_IDLE = new Identifier("adventurez:small_golem_idle");
   public static final Identifier SMALL_GOLEM_WALK = new Identifier("adventurez:small_golem_walk");
@@ -102,6 +95,16 @@ public class SoundInit {
   public static SoundEvent DRAGON_HIT_EVENT = new SoundEvent(DRAGON_HIT);
   public static SoundEvent DRAGON_IDLE_EVENT = new SoundEvent(DRAGON_IDLE);
   public static SoundEvent DRAGON_STEP_EVENT = new SoundEvent(DRAGON_STEP);
+  // Item
+  public static final Identifier ROCK_IMPACT = new Identifier("adventurez:rock_impact");
+  public static final Identifier ROCK_THROW = new Identifier("adventurez:rock_throw");
+  public static final Identifier HEART_BEAT = new Identifier("adventurez:heart_beat");
+  public static SoundEvent ROCK_IMPACT_EVENT = new SoundEvent(ROCK_IMPACT);
+  public static SoundEvent ROCK_THROW_EVENT = new SoundEvent(ROCK_THROW);
+  public static SoundEvent HEART_BEAT_EVENT = new SoundEvent(HEART_BEAT);
+  // Item Related
+  public static final Identifier EQUIP_CHEST = new Identifier("adventurez:equip_chest");
+  public static SoundEvent EQUIP_CHEST_EVENT = new SoundEvent(EQUIP_CHEST);
 
   public static void init() {
     Registry.register(Registry.SOUND_EVENT, SoundInit.GOLEM_IDLE, GOLEM_IDLE_EVENT);
@@ -147,5 +150,6 @@ public class SoundInit {
     Registry.register(Registry.SOUND_EVENT, SoundInit.DRAGON_HIT, DRAGON_HIT_EVENT);
     Registry.register(Registry.SOUND_EVENT, SoundInit.DRAGON_IDLE, DRAGON_IDLE_EVENT);
     Registry.register(Registry.SOUND_EVENT, SoundInit.DRAGON_STEP, DRAGON_STEP_EVENT);
+    Registry.register(Registry.SOUND_EVENT, SoundInit.EQUIP_CHEST, EQUIP_CHEST_EVENT);
   }
 }
