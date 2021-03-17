@@ -12,18 +12,25 @@ import net.adventurez.entity.goal.DragonFlyRandomlyGoal;
 import net.adventurez.entity.goal.DragonSitGoal;
 import net.adventurez.init.ItemInit;
 import net.adventurez.init.SoundInit;
+import net.adventurez.mixin.accessor.LivingEntityAccessor;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
 import net.minecraft.block.BlockState;
+import net.minecraft.block.Blocks;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.network.ClientPlayerEntity;
 import net.minecraft.client.util.InputUtil;
+import net.minecraft.enchantment.EnchantmentHelper;
 import net.minecraft.entity.Dismounting;
 import net.minecraft.entity.Entity;
+import net.minecraft.entity.EntityData;
+import net.minecraft.entity.EntityDimensions;
 import net.minecraft.entity.EntityPose;
 import net.minecraft.entity.EntityType;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.MovementType;
+import net.minecraft.entity.SpawnReason;
+import net.minecraft.entity.ai.goal.LookAroundGoal;
 import net.minecraft.entity.ai.goal.LookAtEntityGoal;
 import net.minecraft.entity.ai.goal.SwimGoal;
 import net.minecraft.entity.ai.goal.WanderAroundGoal;
@@ -36,15 +43,24 @@ import net.minecraft.entity.data.TrackedDataHandlerRegistry;
 import net.minecraft.entity.mob.MobEntity;
 import net.minecraft.entity.mob.PathAwareEntity;
 import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.inventory.Inventory;
+import net.minecraft.inventory.InventoryChangedListener;
+import net.minecraft.inventory.SimpleInventory;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.Items;
 import net.minecraft.nbt.CompoundTag;
+import net.minecraft.nbt.ListTag;
 import net.minecraft.particle.ParticleEffect;
 import net.minecraft.particle.ParticleTypes;
+import net.minecraft.screen.GenericContainerScreenHandler;
+import net.minecraft.screen.SimpleNamedScreenHandlerFactory;
 import net.minecraft.server.ServerConfigHandler;
+import net.minecraft.screen.ScreenHandlerType;
 import net.minecraft.server.network.ServerPlayerEntity;
+import net.minecraft.sound.SoundCategory;
 import net.minecraft.sound.SoundEvent;
+import net.minecraft.sound.SoundEvents;
 import net.minecraft.util.ActionResult;
 import net.minecraft.util.Arm;
 import net.minecraft.util.Hand;
@@ -55,6 +71,8 @@ import net.minecraft.util.math.Direction;
 import net.minecraft.util.math.MathHelper;
 import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.GameRules;
+import net.minecraft.world.LocalDifficulty;
+import net.minecraft.world.ServerWorldAccess;
 import net.minecraft.world.World;
 
 // import net.minecraft.entity.passive.WolfEntity;
@@ -69,23 +87,22 @@ import net.minecraft.world.World;
 // import net.minecraft.entity.passive.LlamaEntity;
 // import net.minecraft.entity.passive.DonkeyEntity;
 // import net.minecraft.client.gui.screen.ingame.HorseScreen;
+//import net.minecraft.entity.mob.SlimeEntity;
 
-public class DragonEntity extends PathAwareEntity {
+public class DragonEntity extends PathAwareEntity implements InventoryChangedListener {
 
-   public static final TrackedData<Boolean> IS_FLYING = DataTracker.registerData(DragonEntity.class,
-         TrackedDataHandlerRegistry.BOOLEAN);
-   public static final TrackedData<Boolean> IS_START_FLYING = DataTracker.registerData(DragonEntity.class,
-         TrackedDataHandlerRegistry.BOOLEAN);
-   public static final TrackedData<Boolean> CLIENT_START_FLYING = DataTracker.registerData(DragonEntity.class,
-         TrackedDataHandlerRegistry.BOOLEAN);
-   public static final TrackedData<Boolean> CLIENT_END_FLYING = DataTracker.registerData(DragonEntity.class,
-         TrackedDataHandlerRegistry.BOOLEAN);
-   protected static final TrackedData<Byte> TAMEABLE_FLAGS = DataTracker.registerData(DragonEntity.class,
-         TrackedDataHandlerRegistry.BYTE);
-   protected static final TrackedData<Optional<UUID>> OWNER_UUID = DataTracker.registerData(DragonEntity.class,
-         TrackedDataHandlerRegistry.OPTIONAL_UUID);
-   public static final TrackedData<Boolean> HAS_SADDLE = DataTracker.registerData(DragonEntity.class,
-         TrackedDataHandlerRegistry.BOOLEAN);
+   public static final TrackedData<Boolean> IS_FLYING;
+   public static final TrackedData<Boolean> IS_START_FLYING;
+   public static final TrackedData<Boolean> CLIENT_START_FLYING;
+   public static final TrackedData<Boolean> CLIENT_END_FLYING;
+   public static final TrackedData<Byte> TAMEABLE_FLAGS;
+   public static final TrackedData<Optional<UUID>> OWNER_UUID;
+   public static final TrackedData<Boolean> HAS_SADDLE;
+   public static final TrackedData<Boolean> HAS_CHEST;
+   public static final TrackedData<Boolean> OTHER_EARS;
+   public static final TrackedData<Boolean> OTHER_TAIL;
+   public static final TrackedData<Boolean> OTHER_EYES;
+   public static final TrackedData<Integer> DRAGON_SIZE;
 
    private boolean sitting;
    public boolean isFlying;
@@ -96,16 +113,21 @@ public class DragonEntity extends PathAwareEntity {
    private float turningFloat;
    private boolean hasSaddle;
    private int healingFood;
+   private SimpleInventory inventory;
+   private int onGroundTicker;
+   private int dragonAge;
+   private int dragonAgeFoodBonus;
 
    public DragonEntity(EntityType<? extends PathAwareEntity> entityType, World world) {
       super(entityType, world);
       this.stepHeight = 1.0F;
+      this.onChestedStatusChanged();
    }
 
    public static DefaultAttributeContainer.Builder createDragonAttributes() {
-      return MobEntity.createMobAttributes().add(EntityAttributes.GENERIC_MAX_HEALTH, 45.0D)
-            .add(EntityAttributes.GENERIC_ATTACK_DAMAGE, 8.0D).add(EntityAttributes.GENERIC_MOVEMENT_SPEED, 0.28D)
-            .add(EntityAttributes.GENERIC_ARMOR, 4.0D).add(EntityAttributes.GENERIC_KNOCKBACK_RESISTANCE, 0.5D);
+      return MobEntity.createMobAttributes().add(EntityAttributes.GENERIC_MAX_HEALTH, 60.0D)
+            .add(EntityAttributes.GENERIC_ATTACK_DAMAGE, 9.0D).add(EntityAttributes.GENERIC_MOVEMENT_SPEED, 0.28D)
+            .add(EntityAttributes.GENERIC_ARMOR, 6.0D).add(EntityAttributes.GENERIC_KNOCKBACK_RESISTANCE, 0.5D);
    }
 
    @Override
@@ -115,8 +137,9 @@ public class DragonEntity extends PathAwareEntity {
       this.goalSelector.add(1, new DragonSitGoal(this));
       this.goalSelector.add(2, new DragonFindOwnerGoal(this, 0.1D, 10.0F, 2.0F));
       this.goalSelector.add(3, new DragonFlyRandomlyGoal(this));
-      this.goalSelector.add(5, new WanderAroundGoal(this, 0.9D));
-      this.goalSelector.add(8, new LookAtEntityGoal(this, PlayerEntity.class, 10.0F, 1.0F));
+      this.goalSelector.add(4, new WanderAroundGoal(this, 0.9D));
+      this.goalSelector.add(5, new LookAtEntityGoal(this, PlayerEntity.class, 10.0F, 0.8F));
+      this.goalSelector.add(6, new LookAroundGoal(this));
    }
 
    @Override
@@ -129,27 +152,51 @@ public class DragonEntity extends PathAwareEntity {
       this.dataTracker.startTracking(IS_START_FLYING, false);
       this.dataTracker.startTracking(CLIENT_START_FLYING, false);
       this.dataTracker.startTracking(HAS_SADDLE, false);
+      this.dataTracker.startTracking(HAS_CHEST, false);
+      this.dataTracker.startTracking(OTHER_EARS, false);
+      this.dataTracker.startTracking(OTHER_TAIL, false);
+      this.dataTracker.startTracking(OTHER_EYES, false);
+      this.dataTracker.startTracking(DRAGON_SIZE, 1);
    }
 
    @Override
    public void writeCustomDataToTag(CompoundTag tag) {
       super.writeCustomDataToTag(tag);
       if (this.getOwnerUuid() != null) {
-         tag.putUuid("Dragon_Owner", this.getOwnerUuid());
+         tag.putUuid("DragonOwner", this.getOwnerUuid());
       }
-      tag.putBoolean("Is_Flying", this.isFlying);
-      tag.putBoolean("Sitting_Dragon", this.sitting);
-      tag.putBoolean("Has_Saddle", this.hasSaddle);
+      tag.putBoolean("IsFlying", this.isFlying);
+      tag.putBoolean("SittingDragon", this.sitting);
+      tag.putBoolean("HasSaddle", this.hasSaddle);
+      tag.putBoolean("HasChest", this.hasChest());
+      if (this.hasChest()) {
+         ListTag listTag = new ListTag();
+         for (int i = 0; i < this.inventory.size(); ++i) {
+            ItemStack itemStack = this.inventory.getStack(i);
+            if (!itemStack.isEmpty()) {
+               CompoundTag compoundTag = new CompoundTag();
+               compoundTag.putByte("Slot", (byte) i);
+               itemStack.toTag(compoundTag);
+               listTag.add(compoundTag);
+            }
+         }
+         tag.put("Items", listTag);
+      }
+      tag.putInt("DragonSize", this.getSize());
+      tag.putBoolean("OtherDragonEars", this.getDataTracker().get(DragonEntity.OTHER_EARS));
+      tag.putBoolean("OtherDragonTail", this.getDataTracker().get(DragonEntity.OTHER_TAIL));
+      tag.putBoolean("OtherDragonEyes", this.getDataTracker().get(DragonEntity.OTHER_EYES));
+      tag.putInt("DragonAge", this.dragonAge);
    }
 
    @Override
    public void readCustomDataFromTag(CompoundTag tag) {
       super.readCustomDataFromTag(tag);
       UUID uUID2;
-      if (tag.containsUuid("Dragon_Owner")) {
-         uUID2 = tag.getUuid("Dragon_Owner");
+      if (tag.containsUuid("DragonOwner")) {
+         uUID2 = tag.getUuid("DragonOwner");
       } else {
-         String string = tag.getString("Dragon_Owner");
+         String string = tag.getString("DragonOwner");
          uUID2 = ServerConfigHandler.getPlayerUuidByName(this.getServer(), string);
       }
       if (uUID2 != null) {
@@ -160,12 +207,30 @@ public class DragonEntity extends PathAwareEntity {
             this.setTamed(false);
          }
       }
-      this.isFlying = tag.getBoolean("Is_Flying");
+      this.isFlying = tag.getBoolean("IsFlying");
       this.dataTracker.set(IS_FLYING, this.isFlying);
-      this.sitting = tag.getBoolean("Sitting_Dragon");
+      this.sitting = tag.getBoolean("SittingDragon");
       this.setInSittingPose(this.sitting);
-      this.hasSaddle = tag.getBoolean("Has_Saddle");
+      this.hasSaddle = tag.getBoolean("HasSaddle");
       this.dataTracker.set(HAS_SADDLE, this.hasSaddle);
+      this.setHasChest(tag.getBoolean("HasChest"));
+      if (this.hasChest()) {
+         ListTag listTag = tag.getList("Items", 10);
+         this.onChestedStatusChanged();
+
+         for (int i = 0; i < listTag.size(); ++i) {
+            CompoundTag compoundTag = listTag.getCompound(i);
+            int j = compoundTag.getByte("Slot") & 255;
+            if (j >= 0 && j < this.inventory.size()) {
+               this.inventory.setStack(j, ItemStack.fromTag(compoundTag));
+            }
+         }
+      }
+      this.setSize(tag.getInt("DragonSize"));
+      this.dataTracker.set(OTHER_EARS, tag.getBoolean("OtherDragonEars"));
+      this.dataTracker.set(OTHER_TAIL, tag.getBoolean("OtherDragonTail"));
+      this.dataTracker.set(OTHER_EYES, tag.getBoolean("OtherDragonEyes"));
+      this.dragonAge = tag.getInt("DragonAge");
    }
 
    @Override
@@ -175,20 +240,17 @@ public class DragonEntity extends PathAwareEntity {
             LivingEntity livingEntity = (LivingEntity) this.getPrimaryPassenger();
             double wrapper = MathHelper.wrapDegrees(this.bodyYaw - (double) this.yaw);
             this.yaw = (float) ((double) this.yaw + wrapper);
-
             this.prevYaw = this.yaw;
             this.pitch = livingEntity.pitch * 0.5F;
             this.setRotation(this.yaw, this.pitch);
             this.headYaw = livingEntity.headYaw;
             boolean shouldFlyUp = false;
             boolean shouldFlyDown = false;
-
+            shouldFlyUp = ((LivingEntityAccessor) livingEntity).jumping();
             if (this.world.isClient && livingEntity instanceof ClientPlayerEntity) {
                ClientPlayerEntity clientPlayerEntity = (ClientPlayerEntity) livingEntity;
-               shouldFlyUp = clientPlayerEntity.input.jumping;
                shouldFlyDown = InputUtil.isKeyPressed(MinecraftClient.getInstance().getWindow().getHandle(),
                      this.keyBind);
-
                if (clientPlayerEntity.input.pressingLeft) {
                   turningFloat -= 0.05F;
                }
@@ -226,7 +288,8 @@ public class DragonEntity extends PathAwareEntity {
                this.dragonForwardSpeed *= 0.7F;
             }
 
-            if (shouldFlyUp && this.onGround && !this.isFlying && this.startFlyingTimer < 40) {
+            if (shouldFlyUp && this.onGround && !this.isFlying && this.startFlyingTimer < 20) {
+               // && !this.getDataTracker().get(CLIENT_END_FLYING)
                this.startFlyingTimer++;
                this.getDataTracker().set(CLIENT_START_FLYING, true);
                this.getDataTracker().set(IS_START_FLYING, true);
@@ -240,15 +303,20 @@ public class DragonEntity extends PathAwareEntity {
                this.getDataTracker().set(CLIENT_START_FLYING, false);
             }
 
-            if (this.startFlyingTimer >= 40 && !this.isFlying) {
+            if (this.startFlyingTimer >= 20 && (!this.isFlying || !this.getDataTracker().get(IS_FLYING))) {
                this.isFlying = true;
                this.getDataTracker().set(IS_FLYING, true);
             }
-            if (this.isFlying && this.onGround && shouldFlyDown) {
-               this.isFlying = false;
-               this.getDataTracker().set(IS_FLYING, false);
-               this.startFlyingTimer = 0;
-               this.getDataTracker().set(CLIENT_END_FLYING, true);
+            if (this.isFlying && this.onGround) {// && shouldFlyDown only client: bad
+               this.onGroundTicker++;
+               if (this.onGroundTicker > 3) {
+                  this.onGroundTicker = 0;
+                  this.isFlying = false;
+                  this.getDataTracker().set(IS_FLYING, false);
+                  this.startFlyingTimer = 0;
+                  this.getDataTracker().set(CLIENT_END_FLYING, true);
+               }
+
             }
             if ((this.isFlying || this.getDataTracker().get(IS_FLYING)) && shouldFlyUp) {
                flySpeed = 0.1F;
@@ -290,7 +358,6 @@ public class DragonEntity extends PathAwareEntity {
                   this.getDataTracker().set(CLIENT_END_FLYING, true);
                   this.isFlying = false;
                   this.getDataTracker().set(IS_FLYING, false);
-
                }
             } else {
                this.flyingSpeed = 0.02F;
@@ -401,7 +468,16 @@ public class DragonEntity extends PathAwareEntity {
          boolean bl = this.isOwner(player) || this.isTamed() || this.dragonFood(item) && !this.isTamed();
          return bl ? ActionResult.CONSUME : ActionResult.PASS;
       } else {
-         if (this.isTamed()) {
+         if (this.isTamed() && this.getSize() > 1) {
+            if (item == Items.CHEST && !this.hasChest() && this.getSize() > 2) {
+               this.world.playSoundFromEntity((PlayerEntity) null, this, SoundInit.EQUIP_CHEST_EVENT,
+                     SoundCategory.NEUTRAL, 0.5F, 1.0F);
+               this.setHasChest(true);
+               if (!player.abilities.creativeMode) {
+                  itemStack.decrement(1);
+               }
+               return ActionResult.SUCCESS;
+            }
             if (this.dragonFood(item) && this.getHealth() < this.getMaxHealth() && player.isSneaking()) {
                if (!player.abilities.creativeMode) {
                   itemStack.decrement(1);
@@ -411,6 +487,8 @@ public class DragonEntity extends PathAwareEntity {
             } else if (!player.isSneaking()) {
                if (!this.hasSaddle) {
                   if (item == ItemInit.DRAGON_SADDLE) {
+                     this.world.playSoundFromEntity((PlayerEntity) null, this, SoundEvents.ENTITY_HORSE_SADDLE,
+                           SoundCategory.NEUTRAL, 0.8F, 1.0F);
                      if (!player.abilities.creativeMode) {
                         itemStack.decrement(1);
                      }
@@ -432,19 +510,38 @@ public class DragonEntity extends PathAwareEntity {
             } else
                return ActionResult.PASS;
          } else if (this.dragonFood(item)) {
-            if (!player.abilities.creativeMode) {
-               itemStack.decrement(1);
-            }
-            if (this.random.nextInt(8) == 0) {
-               this.setOwner(player);
-               this.navigation.stop();
-               this.setTarget((LivingEntity) null);
-               this.world.sendEntityStatus(this, (byte) 7);
-            } else {
-               this.world.sendEntityStatus(this, (byte) 6);
-            }
+            if (!this.isTamed()) {
+               if (!player.abilities.creativeMode) {
+                  itemStack.decrement(1);
+               }
+               int tamer;
+               if (item == ItemInit.ORC_SKIN) {
+                  tamer = 1;
+               } else {
+                  tamer = healingFood;
+               }
+               if (this.random.nextInt(tamer) == 0) {
+                  this.setOwner(player);
+                  this.navigation.stop();
+                  this.setTarget((LivingEntity) null);
+                  this.world.sendEntityStatus(this, (byte) 7);
+               } else {
+                  this.world.sendEntityStatus(this, (byte) 6);
+               }
 
-            return ActionResult.SUCCESS;
+               return ActionResult.SUCCESS;
+            } else {
+               if (this.canEatFood(this.dragonAge, 3, 13)) {
+                  if (!player.abilities.creativeMode) {
+                     itemStack.decrement(1);
+                  }
+                  dragonAgeFoodBonus++;
+                  return ActionResult.SUCCESS;
+               } else {
+                  return ActionResult.PASS;
+               }
+
+            }
          }
 
          return super.interactMob(player, hand);
@@ -468,10 +565,33 @@ public class DragonEntity extends PathAwareEntity {
       return false;
    }
 
-   // @Override
-   // public void tick() {
-   // super.tick();
-   // }
+   private boolean canEatFood(int age, int minAge, int maxAge) {
+      if (age < minAge || (age < maxAge && age > maxAge - (minAge * 2))) {
+         return true;
+      } else
+         return false;
+   }
+
+   @Override
+   public void tick() {
+      super.tick();
+      if (!this.world.isClient && this.getSize() < 3) {
+         if (this.age % 1200 == 0) {
+            this.dragonAge++;
+         }
+         if (this.dragonAge == 5 && this.getSize() == 1) {
+            this.setSize(2);
+         }
+         if (this.dragonAge == 15 && this.getSize() == 2) {
+            this.setSize(3);
+         }
+         if (this.dragonAgeFoodBonus > 5) {
+            this.dragonAgeFoodBonus = 0;
+            this.dragonAge++;
+            this.world.sendEntityStatus(this, (byte) 9);
+         }
+      }
+   }
 
    @Override
    public boolean isPushable() {
@@ -503,7 +623,7 @@ public class DragonEntity extends PathAwareEntity {
    @Override
    @Environment(EnvType.CLIENT)
    public void handleStatus(byte status) {
-      if (status == 7) {
+      if (status == 7 || status == 9) {
          this.showEmoteParticle(true);
       } else if (status == 6) {
          this.showEmoteParticle(false);
@@ -559,10 +679,6 @@ public class DragonEntity extends PathAwareEntity {
       return entity == this.getOwner();
    }
 
-   public boolean canAttackWithOwner(LivingEntity target, LivingEntity owner) {
-      return true;
-   }
-
    @Override
    public boolean isTeammate(Entity other) {
       if (this.isTamed()) {
@@ -610,9 +726,10 @@ public class DragonEntity extends PathAwareEntity {
 
    @Override
    protected void fall(double heightDifference, boolean onGround, BlockState landedState, BlockPos landedPosition) {
-      if (this.isFlying || this.getDataTracker().get(IS_FLYING)) {
-      } else
+      if (!this.isFlying) {
          super.fall(heightDifference, onGround, landedState, landedPosition);
+      }
+
    }
 
    public void setKeyBind(String key) {
@@ -647,6 +764,155 @@ public class DragonEntity extends PathAwareEntity {
    @Override
    public boolean canImmediatelyDespawn(double num) {
       return false;
+   }
+
+   @Override
+   public void onInventoryChanged(Inventory sender) {
+   }
+
+   private void onChestedStatusChanged() {
+      SimpleInventory simpleInventory = this.inventory;
+      this.inventory = new SimpleInventory(27);
+      if (simpleInventory != null) {
+         simpleInventory.removeListener(this);
+         int i = Math.min(simpleInventory.size(), this.inventory.size());
+
+         for (int j = 0; j < i; ++j) {
+            ItemStack itemStack = simpleInventory.getStack(j);
+            if (!itemStack.isEmpty()) {
+               this.inventory.setStack(j, itemStack.copy());
+            }
+         }
+      }
+
+      this.inventory.addListener(this);
+   }
+
+   @Override
+   protected void dropInventory() {
+      super.dropInventory();
+      if (this.inventory != null) {
+         for (int i = 0; i < this.inventory.size(); ++i) {
+            ItemStack itemStack = this.inventory.getStack(i);
+            if (!itemStack.isEmpty() && !EnchantmentHelper.hasVanishingCurse(itemStack)) {
+               this.dropStack(itemStack);
+            }
+         }
+
+      }
+      if (this.hasChest()) {
+         if (!this.world.isClient) {
+            this.dropItem(Blocks.CHEST);
+         }
+
+         this.setHasChest(false);
+      }
+   }
+
+   public boolean hasChest() {
+      return (Boolean) this.dataTracker.get(HAS_CHEST);
+   }
+
+   public void setHasChest(boolean hasChest) {
+      this.dataTracker.set(HAS_CHEST, hasChest);
+   }
+
+   public void openInventory(PlayerEntity player) {
+      if (!this.world.isClient && (!this.hasPassengers() || this.hasPassenger(player)) && this.isTamed()) {
+         player.openHandledScreen(new SimpleNamedScreenHandlerFactory(
+               (syncId, inv, p) -> new GenericContainerScreenHandler(ScreenHandlerType.GENERIC_9X3, syncId, p.inventory,
+                     this.inventory, 27 / 9),
+               this.getName()));
+      }
+
+   }
+
+   @Nullable
+   @Override
+   public EntityData initialize(ServerWorldAccess world, LocalDifficulty difficulty, SpawnReason spawnReason,
+         @Nullable EntityData entityData, @Nullable CompoundTag entityTag) {
+      this.getDataTracker().set(OTHER_EARS, world.getRandom().nextBoolean());
+      this.getDataTracker().set(OTHER_TAIL, world.getRandom().nextBoolean());
+      this.getDataTracker().set(OTHER_EYES, world.getRandom().nextBoolean());
+      if (spawnReason.equals(SpawnReason.COMMAND)) {
+         this.setSize(3);
+      }
+      return super.initialize(world, difficulty, spawnReason, entityData, entityTag);
+   }
+
+   @Override
+   public EntityDimensions getDimensions(EntityPose pose) {
+      return super.getDimensions(pose).scaled((float) this.getSize() / 3.0F);
+   }
+
+   public int getSize() {
+      return (Integer) this.dataTracker.get(DRAGON_SIZE);
+   }
+
+   public void setSize(int size) {
+      this.dataTracker.set(DRAGON_SIZE, size);
+      this.refreshPosition();
+      this.calculateDimensions();
+      this.getAttributeInstance(EntityAttributes.GENERIC_MAX_HEALTH).setBaseValue((double) (size * 20));
+      this.getAttributeInstance(EntityAttributes.GENERIC_ATTACK_DAMAGE).setBaseValue((double) size * 3);
+      this.getAttributeInstance(EntityAttributes.GENERIC_ARMOR).setBaseValue((double) size * 2);
+   }
+
+   @Override
+   public void onTrackedDataSet(TrackedData<?> data) {
+      if (DRAGON_SIZE.equals(data)) {
+         this.calculateDimensions();
+         this.yaw = this.headYaw;
+         this.bodyYaw = this.headYaw;
+      }
+      super.onTrackedDataSet(data);
+   }
+
+   @Override
+   public void calculateDimensions() {
+      double d = this.getX();
+      double e = this.getY();
+      double f = this.getZ();
+      super.calculateDimensions();
+      this.updatePosition(d, e, f);
+   }
+
+   @Override
+   protected float getSoundVolume() {
+      return 0.3F * (float) this.getSize();
+   }
+
+   @Override
+   protected float getSoundPitch() {
+      return 1.6F - ((float) 0.2F * this.getSize());
+   }
+
+   @Override
+   protected float getActiveEyeHeight(EntityPose pose, EntityDimensions dimensions) {
+      if (this.getSize() == 1) {
+         return 0.80F * dimensions.height;
+      }
+      return 0.85F * dimensions.height;
+   }
+
+   @Override
+   public double getMountedHeightOffset() {
+      return (double) this.getSize() * 1.1D * 0.71D;
+   }
+
+   static {
+      IS_FLYING = DataTracker.registerData(DragonEntity.class, TrackedDataHandlerRegistry.BOOLEAN);
+      IS_START_FLYING = DataTracker.registerData(DragonEntity.class, TrackedDataHandlerRegistry.BOOLEAN);
+      CLIENT_START_FLYING = DataTracker.registerData(DragonEntity.class, TrackedDataHandlerRegistry.BOOLEAN);
+      CLIENT_END_FLYING = DataTracker.registerData(DragonEntity.class, TrackedDataHandlerRegistry.BOOLEAN);
+      TAMEABLE_FLAGS = DataTracker.registerData(DragonEntity.class, TrackedDataHandlerRegistry.BYTE);
+      OWNER_UUID = DataTracker.registerData(DragonEntity.class, TrackedDataHandlerRegistry.OPTIONAL_UUID);
+      HAS_SADDLE = DataTracker.registerData(DragonEntity.class, TrackedDataHandlerRegistry.BOOLEAN);
+      HAS_CHEST = DataTracker.registerData(DragonEntity.class, TrackedDataHandlerRegistry.BOOLEAN);
+      OTHER_EARS = DataTracker.registerData(DragonEntity.class, TrackedDataHandlerRegistry.BOOLEAN);
+      OTHER_TAIL = DataTracker.registerData(DragonEntity.class, TrackedDataHandlerRegistry.BOOLEAN);
+      OTHER_EYES = DataTracker.registerData(DragonEntity.class, TrackedDataHandlerRegistry.BOOLEAN);
+      DRAGON_SIZE = DataTracker.registerData(DragonEntity.class, TrackedDataHandlerRegistry.INTEGER);
    }
 
 }

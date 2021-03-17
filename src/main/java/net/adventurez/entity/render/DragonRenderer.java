@@ -8,6 +8,7 @@ import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
 import net.minecraft.client.render.entity.EntityRenderDispatcher;
 import net.minecraft.client.render.entity.MobEntityRenderer;
+import net.minecraft.client.util.math.MatrixStack;
 import net.minecraft.util.Identifier;
 
 @Environment(EnvType.CLIENT)
@@ -18,6 +19,12 @@ public class DragonRenderer extends MobEntityRenderer<DragonEntity, DragonModel<
         super(entityRenderDispatcher, new DragonModel<>(), 0.7F);
         this.addFeature(new DragonEyesFeatureRenderer(this));
         this.addFeature(new DragonSaddleFeatureRenderer(this));
+    }
+
+    @Override
+    public void scale(DragonEntity dragonEntity, MatrixStack matrixStack, float f) {
+        matrixStack.scale((float) dragonEntity.getSize() / 3.0F, (float) dragonEntity.getSize() / 3.0F,
+                (float) dragonEntity.getSize() / 3.0F);
     }
 
     @Override

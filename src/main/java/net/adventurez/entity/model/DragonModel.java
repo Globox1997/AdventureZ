@@ -11,17 +11,10 @@ import net.minecraft.entity.Entity;
 import net.minecraft.sound.SoundEvents;
 import net.minecraft.util.math.MathHelper;
 
-// import net.minecraft.client.render.entity.EnderDragonEntityRenderer;
-// import net.minecraft.client.render.entity.WolfEntityRenderer;
-// import net.minecraft.entity.boss.dragon.EnderDragonEntity;
-// import net.minecraft.entity.boss.dragon.EnderDragonPart;
-// import net.minecraft.client.render.entity.WolfEntityRenderer;
-// import net.minecraft.client.render.entity.ShulkerEntityRenderer;
-// import net.minecraft.client.render.entity.model.ShulkerEntityModel;
-
 @Environment(EnvType.CLIENT)
 public class DragonModel<T extends DragonEntity> extends CompositeEntityModel<T> {
         private final ModelPart body;
+        private final ModelPart chest;
         private final ModelPart spike;
         private final ModelPart wingleft;
         private final ModelPart wingtipleft;
@@ -50,6 +43,10 @@ public class DragonModel<T extends DragonEntity> extends CompositeEntityModel<T>
         private final ModelPart neck3;
         private final ModelPart neck4;
         private final ModelPart head;
+        private final ModelPart otherears;
+        private final ModelPart otherears_r1;
+        private final ModelPart otherears_r2;
+        private final ModelPart ears;
         private final ModelPart jaw;
         private final ModelPart tail;
         private final ModelPart tail2;
@@ -57,6 +54,12 @@ public class DragonModel<T extends DragonEntity> extends CompositeEntityModel<T>
         private final ModelPart tail4;
         private final ModelPart tail5;
         private final ModelPart tail6;
+        private final ModelPart othertail;
+        private final ModelPart othertail_r1;
+        private final ModelPart othertail_r2;
+        private final ModelPart othertail_r3;
+        private final ModelPart othertail_r4;
+        private final ModelPart extratail;
         private final ModelPart tail7;
 
         private float betweenFloater;
@@ -70,13 +73,19 @@ public class DragonModel<T extends DragonEntity> extends CompositeEntityModel<T>
                 body = (new ModelPart(this)).setTextureSize(512, 512);
                 body.setPivot(0.0F, -8.0F, -2.0F);
                 body.setTextureOffset(0, 168).addCuboid(-12.0F, -11.0F, -32.0F, 24.0F, 24.0F, 64.0F, 0.0F, false);
-                body.setTextureOffset(86, 256).addCuboid(-1.0F, -17.0F, -26.0F, 2.0F, 6.0F, 12.0F, 0.0F, false);
-                body.setTextureOffset(30, 256).addCuboid(-1.0F, -17.0F, 14.0F, 2.0F, 6.0F, 12.0F, 0.0F, false);
+                body.setTextureOffset(116, 256).addCuboid(-1.0F, -17.0F, -26.0F, 2.0F, 6.0F, 12.0F, 0.0F, false);
+                body.setTextureOffset(60, 256).addCuboid(-1.0F, -17.0F, 14.0F, 2.0F, 6.0F, 12.0F, 0.0F, false);
+
+                chest = (new ModelPart(this)).setTextureSize(512, 512);
+                chest.setPivot(0.0F, 1.0F, 0.0F);
+                body.addChild(chest);
+                chest.setTextureOffset(252, 196).addCuboid(-15.0F, -11.0F, 0.0F, 3.0F, 12.0F, 14.0F, 0.0F, false);
+                chest.setTextureOffset(247, 86).addCuboid(12.0F, -11.0F, 0.0F, 3.0F, 12.0F, 14.0F, 0.0F, false);
 
                 spike = (new ModelPart(this)).setTextureSize(512, 512);
                 spike.setPivot(0.0F, -11.0F, -1.0F);
                 body.addChild(spike);
-                spike.setTextureOffset(58, 256).addCuboid(-1.0F, -6.0F, -5.0F, 2.0F, 6.0F, 12.0F, 0.0F, false);
+                spike.setTextureOffset(88, 256).addCuboid(-1.0F, -6.0F, -5.0F, 2.0F, 6.0F, 12.0F, 0.0F, false);
 
                 wingleft = (new ModelPart(this)).setTextureSize(512, 512);
                 wingleft.setPivot(-12.0F, -18.0F, -24.0F);
@@ -108,6 +117,7 @@ public class DragonModel<T extends DragonEntity> extends CompositeEntityModel<T>
                 rearlegrighttip = (new ModelPart(this)).setTextureSize(512, 512);
                 rearlegrighttip.setPivot(-1.0F, 20.327F, 1.5816F);
                 rearlegright.addChild(rearlegrighttip);
+
                 rearlegrighttip_r1 = (new ModelPart(this)).setTextureSize(512, 512);
                 rearlegrighttip_r1.setPivot(0.0F, 1.1105F, -0.517F);
                 rearlegrighttip.addChild(rearlegrighttip_r1);
@@ -145,7 +155,6 @@ public class DragonModel<T extends DragonEntity> extends CompositeEntityModel<T>
                 frontlegright_r1 = (new ModelPart(this)).setTextureSize(512, 512);
                 frontlegright_r1.setPivot(0.0F, 30.8475F, 16.5052F);
                 frontlegright.addChild(frontlegright_r1);
-
                 frontlegright_r1.setTextureOffset(252, 32).addCuboid(-4.0F, -38.2535F, -12.1057F, 8.0F, 24.0F, 8.0F,
                                 0.0F, false);
 
@@ -156,13 +165,13 @@ public class DragonModel<T extends DragonEntity> extends CompositeEntityModel<T>
                 frontlegrighttip_r1 = (new ModelPart(this)).setTextureSize(512, 512);
                 frontlegrighttip_r1.setPivot(-1.0F, -16.207F, 32.1549F);
                 frontlegrighttip.addChild(frontlegrighttip_r1);
-                frontlegrighttip_r1.setTextureOffset(253, 210).addCuboid(-2.9F, 3.0F, -39.0F, 7.0F, 17.0F, 8.0F, 0.0F,
+                frontlegrighttip_r1.setTextureOffset(0, 256).addCuboid(-2.9F, 3.0F, -39.0F, 7.0F, 17.0F, 8.0F, 0.0F,
                                 false);
 
                 frontfootright = (new ModelPart(this)).setTextureSize(512, 512);
                 frontfootright.setPivot(1.0F, 10.793F, 3.1549F);
                 frontlegrighttip.addChild(frontfootright);
-                frontfootright.setTextureOffset(144, 256).addCuboid(-4.8F, 0.0F, -15.1665F, 7.0F, 5.0F, 8.0F, 0.0F,
+                frontfootright.setTextureOffset(256, 256).addCuboid(-4.8F, 0.0F, -15.1665F, 7.0F, 5.0F, 8.0F, 0.0F,
                                 false);
                 frontfootright.setTextureOffset(240, 168).addCuboid(-4.8F, -1.0F, -7.1665F, 7.0F, 6.0F, 8.0F, 0.0F,
                                 false);
@@ -183,15 +192,15 @@ public class DragonModel<T extends DragonEntity> extends CompositeEntityModel<T>
                 frontleglefttip_r1 = (new ModelPart(this)).setTextureSize(512, 512);
                 frontleglefttip_r1.setPivot(1.0F, -16.4023F, 30.7183F);
                 frontleglefttip.addChild(frontleglefttip_r1);
-                frontleglefttip_r1.setTextureOffset(0, 256).addCuboid(-4.9F, 4.0F, -37.0F, 7.0F, 17.0F, 8.0F, 0.0F,
+                frontleglefttip_r1.setTextureOffset(30, 256).addCuboid(-4.9F, 4.0F, -37.0F, 7.0F, 17.0F, 8.0F, 0.0F,
                                 false);
 
                 frontfootleft = (new ModelPart(this)).setTextureSize(512, 512);
                 frontfootleft.setPivot(0.0F, 12.1611F, 3.9136F);
                 frontleglefttip.addChild(frontfootleft);
-                frontfootleft.setTextureOffset(256, 256).addCuboid(-3.8F, -0.3F, -14.4825F, 7.0F, 5.0F, 8.0F, 0.0F,
+                frontfootleft.setTextureOffset(256, 243).addCuboid(-3.8F, -0.3F, -14.4825F, 7.0F, 5.0F, 8.0F, 0.0F,
                                 false);
-                frontfootleft.setTextureOffset(114, 256).addCuboid(-3.8F, -1.3F, -6.4825F, 7.0F, 6.0F, 8.0F, 0.0F,
+                frontfootleft.setTextureOffset(144, 256).addCuboid(-3.8F, -1.3F, -6.4825F, 7.0F, 6.0F, 8.0F, 0.0F,
                                 false);
 
                 neck = (new ModelPart(this)).setTextureSize(512, 512);
@@ -222,10 +231,28 @@ public class DragonModel<T extends DragonEntity> extends CompositeEntityModel<T>
                 neck4.addChild(head);
                 head.setTextureOffset(112, 184).addCuboid(-8.0F, -3.0F, -30.0F, 16.0F, 7.0F, 16.0F, 0.0F, false);
                 head.setTextureOffset(168, 32).addCuboid(-10.0F, -10.0F, -16.0F, 20.0F, 18.0F, 16.0F, 0.0F, false);
-                head.setTextureOffset(174, 260).addCuboid(3.0F, -15.0F, -10.0F, 4.0F, 7.0F, 6.0F, 0.0F, false);
-                head.setTextureOffset(42, 99).addCuboid(2.0F, -5.0F, -28.0F, 3.0F, 4.0F, 4.0F, 0.0F, false);
-                head.setTextureOffset(256, 235).addCuboid(-7.0F, -15.0F, -10.0F, 4.0F, 7.0F, 6.0F, 0.0F, false);
-                head.setTextureOffset(42, 91).addCuboid(-5.0F, -5.0F, -28.0F, 3.0F, 4.0F, 4.0F, 0.0F, false);
+                head.setTextureOffset(39, 130).addCuboid(2.0F, -5.0F, -28.0F, 3.0F, 4.0F, 4.0F, 0.0F, false);
+                head.setTextureOffset(0, 123).addCuboid(-5.0F, -5.0F, -28.0F, 3.0F, 4.0F, 4.0F, 0.0F, false);
+
+                otherears = (new ModelPart(this)).setTextureSize(512, 512);
+                otherears.setPivot(0.0F, -9.0F, -7.0F);
+                head.addChild(otherears);
+
+                otherears_r1 = (new ModelPart(this)).setTextureSize(512, 512);
+                otherears_r1.setPivot(5.0F, 0.0F, 0.0F);
+                otherears.addChild(otherears_r1);
+                otherears_r1.setTextureOffset(42, 80).addCuboid(-2.0F, -13.0F, -1.0F, 4.0F, 15.0F, 3.0F, 0.0F, false);
+
+                otherears_r2 = (new ModelPart(this)).setTextureSize(512, 512);
+                otherears_r2.setPivot(-5.0F, 0.0F, 0.0F);
+                otherears.addChild(otherears_r2);
+                otherears_r2.setTextureOffset(42, 98).addCuboid(-2.0F, -13.0F, -1.0F, 4.0F, 15.0F, 3.0F, 0.0F, false);
+
+                ears = (new ModelPart(this)).setTextureSize(512, 512);
+                ears.setPivot(-5.0F, -10.0F, -6.0F);
+                head.addChild(ears);
+                ears.setTextureOffset(194, 260).addCuboid(8.0F, -5.0F, -4.0F, 4.0F, 7.0F, 6.0F, 0.0F, false);
+                ears.setTextureOffset(174, 260).addCuboid(-2.0F, -5.0F, -4.0F, 4.0F, 7.0F, 6.0F, 0.0F, false);
 
                 jaw = (new ModelPart(this)).setTextureSize(512, 512);
                 jaw.setPivot(0.0F, 6.0F, -16.0F);
@@ -253,24 +280,52 @@ public class DragonModel<T extends DragonEntity> extends CompositeEntityModel<T>
                 tail4.setPivot(-2.0F, 0.0F, 14.0F);
                 tail3.addChild(tail4);
                 tail4.setTextureOffset(215, 76).addCuboid(-2.0F, -5.0F, -1.0F, 8.0F, 9.0F, 15.0F, 0.0F, false);
-                tail4.setTextureOffset(212, 101).addCuboid(1.0F, -8.0F, 3.0F, 2.0F, 3.0F, 8.0F, 0.0F, false);
+                tail4.setTextureOffset(238, 214).addCuboid(1.0F, -8.0F, 3.0F, 2.0F, 3.0F, 8.0F, 0.0F, false);
 
                 tail5 = (new ModelPart(this)).setTextureSize(512, 512);
                 tail5.setPivot(2.0F, 0.0F, 14.0F);
                 tail4.addChild(tail5);
                 tail5.setTextureOffset(225, 51).addCuboid(-3.0F, -4.0F, -1.0F, 6.0F, 8.0F, 15.0F, 0.0F, false);
-                tail5.setTextureOffset(160, 184).addCuboid(-1.0F, -7.0F, 3.0F, 2.0F, 3.0F, 8.0F, 0.0F, false);
+                tail5.setTextureOffset(176, 227).addCuboid(-1.0F, -7.0F, 3.0F, 2.0F, 3.0F, 8.0F, 0.0F, false);
 
                 tail6 = (new ModelPart(this)).setTextureSize(512, 512);
                 tail6.setPivot(-2.0F, 0.0F, 14.0F);
                 tail5.addChild(tail6);
-                tail6.setTextureOffset(210, 32).addCuboid(4.0F, 0.0F, 0.0F, 11.0F, 0.0F, 14.0F, 0.0F, false);
-                tail6.setTextureOffset(246, 85).addCuboid(0.0F, -2.0F, -1.0F, 4.0F, 5.0F, 15.0F, 0.0F, false);
-                tail6.setTextureOffset(31, 80).addCuboid(1.0F, -5.0F, 3.0F, 2.0F, 3.0F, 8.0F, 0.0F, false);
-                tail6.setTextureOffset(29, 182).addCuboid(-10.0F, 0.0F, 0.0F, 10.0F, 0.0F, 14.0F, 0.0F, false);
+                tail6.setTextureOffset(248, 223).addCuboid(0.0F, -2.0F, -1.0F, 4.0F, 5.0F, 15.0F, 0.0F, false);
+                tail6.setTextureOffset(160, 184).addCuboid(1.0F, -5.0F, 3.0F, 2.0F, 3.0F, 8.0F, 0.0F, false);
+
+                othertail = (new ModelPart(this)).setTextureSize(512, 512);
+                othertail.setPivot(0.0F, 0.0F, 8.0F);
+                tail6.addChild(othertail);
+
+                othertail_r1 = (new ModelPart(this)).setTextureSize(512, 512);
+                othertail_r1.setPivot(2.0F, 0.0F, 0.0F);
+                othertail.addChild(othertail_r1);
+                othertail_r1.setTextureOffset(38, 207).addCuboid(-12.0F, -1.0F, -1.0F, 11.0F, 2.0F, 2.0F, 0.0F, false);
+
+                othertail_r2 = (new ModelPart(this)).setTextureSize(512, 512);
+                othertail_r2.setPivot(2.0F, 0.0F, 0.0F);
+                othertail.addChild(othertail_r2);
+                othertail_r2.setTextureOffset(206, 100).addCuboid(1.0F, -1.0F, -1.0F, 12.0F, 2.0F, 2.0F, 0.0F, false);
+
+                othertail_r3 = (new ModelPart(this)).setTextureSize(512, 512);
+                othertail_r3.setPivot(2.0F, 0.0F, -6.0F);
+                othertail.addChild(othertail_r3);
+                othertail_r3.setTextureOffset(150, 207).addCuboid(-12.0F, -1.0F, -1.0F, 11.0F, 2.0F, 2.0F, 0.0F, false);
+
+                othertail_r4 = (new ModelPart(this)).setTextureSize(512, 512);
+                othertail_r4.setPivot(2.0F, 0.0F, -6.0F);
+                othertail.addChild(othertail_r4);
+                othertail_r4.setTextureOffset(218, 107).addCuboid(1.0F, -1.0F, -1.0F, 12.0F, 2.0F, 2.0F, 0.0F, false);
+
+                extratail = (new ModelPart(this)).setTextureSize(512, 512);
+                extratail.setPivot(0.0F, 0.0F, 7.0F);
+                tail6.addChild(extratail);
+                extratail.setTextureOffset(210, 32).addCuboid(4.0F, 0.0F, -7.0F, 11.0F, 0.0F, 14.0F, 0.0F, false);
+                extratail.setTextureOffset(29, 182).addCuboid(-10.0F, 0.0F, -7.0F, 10.0F, 0.0F, 14.0F, 0.0F, false);
 
                 tail7 = (new ModelPart(this)).setTextureSize(512, 512);
-                tail7.setPivot(2.0F, 1.0F, 14.0F);
+                tail7.setPivot(2.0F, 0.0F, 14.0F);
                 tail6.addChild(tail7);
                 tail7.setTextureOffset(252, 64).addCuboid(-1.0F, -1.0F, -1.0F, 2.0F, 3.0F, 15.0F, 0.0F, false);
                 tail7.setTextureOffset(0, 0).addCuboid(0.0F, -3.0F, 5.0F, 0.0F, 2.0F, 4.0F, 0.0F, false);
@@ -286,13 +341,19 @@ public class DragonModel<T extends DragonEntity> extends CompositeEntityModel<T>
         @Override
         public void setAngles(T entity, float limbAngle, float limbDistance, float animationProgress, float headYaw,
                         float headPitch) {
-                if (entity.getDataTracker().get(DragonEntity.HAS_SADDLE)) {
-                        this.spike.visible = false;
-                } else {
-                        this.spike.visible = true;
-                }
-
+                // Extras
+                this.renderExtras(entity);
                 // General Body
+                this.otherears.pitch = -1.0036F;
+                this.otherears_r1.pitch = 0.1745F;
+                this.otherears_r1.roll = 0.2182F;
+                this.otherears_r2.pitch = 0.1745F;
+                this.otherears_r2.roll = -0.2182F;
+                this.othertail_r1.yaw = 0.7418F;
+                this.othertail_r2.yaw = -0.7418F;
+                this.othertail_r3.yaw = 0.6109F;
+                this.othertail_r4.yaw = -0.7418F;
+
                 this.rearlegright.pitch = -0.9599F;
                 this.rearlegrighttip.pitch = 1.309F;
                 this.rearlegrighttip_r1.pitch = 0.9599F;
@@ -332,18 +393,17 @@ public class DragonModel<T extends DragonEntity> extends CompositeEntityModel<T>
                 // Between Animation
                 if (entity.getDataTracker().get(DragonEntity.CLIENT_START_FLYING)) {
                         if (entity.getDataTracker().get(DragonEntity.IS_START_FLYING)) {
-                                startFlyingTicker = MathHelper.clamp(startFlyingTicker + 0.012914655172F, 0.0F,
+                                startFlyingTicker = MathHelper.clamp(startFlyingTicker + 0.0258293103448F, 0.0F,
                                                 1.4981F);
                         } else {
-                                startFlyingTicker = MathHelper.clamp(startFlyingTicker - 0.012914655172F, 0.0F,
+                                startFlyingTicker = MathHelper.clamp(startFlyingTicker - 0.0258293103448F, 0.0F,
                                                 1.4981F);
                         }
                         this.wingright.roll = 0.6981F - startFlyingTicker;
                         this.wingleft.roll = -0.6981F + startFlyingTicker;
-                        this.wingtipleft.roll = 2.618F - (startFlyingTicker * 1.320339096230F);
-                        this.wingtipright.roll = -2.618F + (startFlyingTicker * 1.320339096230F);
+                        this.wingtipleft.roll = 2.618F - (startFlyingTicker * 1.32033909618F);
+                        this.wingtipright.roll = -2.618F + (startFlyingTicker * 1.32033909618F);
                         betweenFloater = 12.566370614F * slowlyIncreasingFloat;
-                        // System.out.println(this.wingright.roll + "::" + startFlyingTicker);
                         if (this.wingright.roll <= -0.8F && startFlyingTicker >= 1.4981F && !this.isPlayingSound) {
                                 this.playDragonWingSound(entity);
                         }
@@ -361,7 +421,7 @@ public class DragonModel<T extends DragonEntity> extends CompositeEntityModel<T>
                         this.wingleft.roll = -this.wingright.roll;
                         this.wingtipleft.roll = -this.wingtipright.roll;
 
-                        if (this.wingright.roll <= -0.79F && mediumSpeedSin <= -0.999F && !this.isPlayingSound) {
+                        if (this.wingright.roll <= -0.78F && mediumSpeedSin <= -0.98F && !this.isPlayingSound) {
                                 this.playDragonWingSound(entity);
                         }
                         // Body Floating
@@ -416,8 +476,10 @@ public class DragonModel<T extends DragonEntity> extends CompositeEntityModel<T>
                         this.frontleglefttip_r1.pitch = 0.2618F;
                         this.frontfootleft.pitch = 1.4835F;
 
-                        // End of Flying Animation
-                } else if (entity.getDataTracker().get(DragonEntity.CLIENT_END_FLYING)) {
+                } else
+
+                // End of Flying Animation
+                if (entity.getDataTracker().get(DragonEntity.CLIENT_END_FLYING)) {
                         float mediumSpeedSin = MathHelper.cos(
                                         12.566370614F * slowlyIncreasingFloat - (betweenFloater + 3.1415926535897F)); // 1to-1
                         if (mediumSpeedSin < 0.02F && mediumSpeedSin > -0.02F) {
@@ -452,57 +514,7 @@ public class DragonModel<T extends DragonEntity> extends CompositeEntityModel<T>
                         if (this.wingright.roll <= -0.79F && mediumSpeedSin <= -0.999F && !this.isPlayingSound) {
                                 this.playDragonWingSound(entity);
                         }
-                        // Other End Flying Animation
 
-                        // float mediumSpeedSin = MathHelper.cos(
-                        // 12.566370614F * slowlyIncreasingFloat - (betweenFloater + 3.1415926535897F));
-                        // // 1to-1
-                        // // System.out.println(mediumSpeedSin);
-                        // // System.out.println(mediumSpeedSin);
-                        // if (mediumSpeedSin > 0.98F) {
-                        // endFlying = true;
-                        // }
-                        // if (endFlying == false) {
-                        // this.wingright.roll = mediumSpeedSin * 0.8F; // double pi inside cos does it
-                        // make faster
-                        // this.wingtipright.roll = this.wingright.roll * 0.8F;//
-                        // MathHelper.cos(6.2831855F *
-                        // // slowlyIncreasingFloat
-                        // // * 1.2F);
-                        // this.wingleft.roll = -this.wingright.roll;
-                        // this.wingtipleft.roll = -this.wingtipright.roll;
-                        // } else {
-                        // endFlyingTicker++;
-                        // // Wings
-                        // if (endFlyingTicker <= 30) {
-                        // startFlyingTicker = MathHelper.clamp(startFlyingTicker + (0.1019F / 30F),
-                        // 0.0F,
-                        // 0.1019F);
-                        // this.wingright.roll = 0.8F - startFlyingTicker;
-                        // this.wingleft.roll = -0.8F + startFlyingTicker;
-                        // // 0.64F tip has to roll 1,978 divided by time 30 = -0,0659333333F
-                        // // tip has to roll 3,258? divided by 30 = 0,1086
-                        // // this.wingtipleft.roll=2.618F - (startFlyingTicker*2.1747546893427F);
-                        // // this.wingtipright.roll=-2.618F +(startFlyingTicker*2.1747546893427F);
-
-                        // this.wingtipleft.roll = -0.64F + (startFlyingTicker * 31.97252835F);
-                        // this.wingtipright.roll = 0.64F - (startFlyingTicker * 31.97252835F);
-                        // // a * b = c; 0,003396666 * b = c
-                        // // this.wingleft.roll= -0.6981F + 0.0236F *
-                        // MathHelper.method_24504(limbAngle,
-                        // // 40.0F) * limbDistance;
-                        // // this.wingtipleft.roll=2.618F;
-                        // // this.wingright.roll=0.6981F - 0.0236F * MathHelper.method_24504(limbAngle,
-                        // // 40.0F) * limbDistance;
-                        // // this.wingtipright.roll=-2.618F;
-                        // } else {
-                        // entity.getDataTracker().set(DragonEntity.CLIENT_END_FLYING, false);
-                        // endFlyingTicker = 0;
-                        // endFlying = false;
-
-                        // }
-
-                        // }
                 } else
 
                 // Walk Animation
@@ -551,6 +563,14 @@ public class DragonModel<T extends DragonEntity> extends CompositeEntityModel<T>
                         this.tail6.yaw = 0.0436F * MathHelper.method_24504(limbAngle, 70.0F) * limbDistance;
                         this.tail7.yaw = 0.0436F * MathHelper.method_24504(limbAngle, 80.0F) * limbDistance;
 
+                        this.tail2.pivotY = 0.0F;
+                        this.tail3.pivotY = 0.0F;
+                        this.tail4.pivotY = 0.0F;
+                        this.tail5.pivotY = 0.0F;
+                        this.tail5.pivotY = 0.0F;
+                        this.tail6.pivotY = 0.0F;
+                        this.tail7.pivotY = 0.0F;
+
                         // wings
                         this.wingleft.roll = -0.6981F
                                         + 0.0236F * MathHelper.method_24504(limbAngle, 40.0F) * limbDistance;
@@ -595,6 +615,35 @@ public class DragonModel<T extends DragonEntity> extends CompositeEntityModel<T>
                                 this.delayerSoundTick = 0;
                         }
                 }
+
+        }
+
+        private void renderExtras(Entity entity) {
+                if (entity.getDataTracker().get(DragonEntity.HAS_SADDLE)) {
+                        this.spike.visible = false;
+                } else {
+                        this.spike.visible = true;
+                }
+                if (entity.getDataTracker().get(DragonEntity.HAS_CHEST)) {
+                        this.chest.visible = true;
+                } else {
+                        this.chest.visible = false;
+                }
+                if (entity.getDataTracker().get(DragonEntity.OTHER_EARS)) {
+                        this.otherears.visible = true;
+                        this.ears.visible = false;
+                } else {
+                        this.otherears.visible = false;
+                        this.ears.visible = true;
+                }
+                if (entity.getDataTracker().get(DragonEntity.OTHER_TAIL)) {
+                        this.othertail.visible = true;
+                        this.extratail.visible = false;
+                } else {
+                        this.othertail.visible = false;
+                        this.extratail.visible = true;
+                }
+
         }
 
         private void playDragonWingSound(Entity entity) {

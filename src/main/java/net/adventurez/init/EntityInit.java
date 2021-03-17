@@ -62,7 +62,7 @@ public class EntityInit {
                         .dimensions(EntityDimensions.fixed(1.4F, 1.6F)).build();
         public static final EntityType<DragonEntity> DRAGON_ENTITY = FabricEntityTypeBuilder
                         .<DragonEntity>create(SpawnGroup.CREATURE, DragonEntity::new)
-                        .dimensions(EntityDimensions.fixed(4.8F, 3.2F)).fireImmune().build();
+                        .dimensions(EntityDimensions.changing(4.8F, 3.3F)).fireImmune().build();
 
         // Nonliving Entity
         public static final EntityType<ThrownRockEntity> THROWNROCK_ENTITY = FabricEntityTypeBuilder
@@ -132,8 +132,6 @@ public class EntityInit {
                                 BrownFungusEntity.createBrownFungusAttributes());
                 FabricDefaultAttributeRegistry.register(ORK_ENTITY, OrkEntity.createOrkAttributes());
                 FabricDefaultAttributeRegistry.register(DRAGON_ENTITY, DragonEntity.createDragonAttributes());
-                // FabricDefaultAttributeRegistry.register(GRYPHON_ENTITY,
-                // GryphonEntity.createGryphonAttributes());
 
                 // Spawn Eggs
                 Registry.register(Registry.ITEM, new Identifier("adventurez", "spawn_stone_golem"), new SpawnEggItem(
@@ -170,9 +168,5 @@ public class EntityInit {
                                 2255437, 3512689, new Item.Settings().group(ItemGroup.MISC)));
                 Registry.register(Registry.ITEM, new Identifier("adventurez", "spawn_dragon"), new SpawnEggItem(
                                 DRAGON_ENTITY, 1842204, 14711290, new Item.Settings().group(ItemGroup.MISC)));
-                // Registry.register(Registry.ITEM, new Identifier("adventurez",
-                // "spawn_gryphon"), new SpawnEggItem(
-                // GRYPHON_ENTITY, 1381653, 5329747, new
-                // Item.Settings().group(ItemGroup.MISC)));
         }
 }
