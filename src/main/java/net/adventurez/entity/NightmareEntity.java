@@ -33,8 +33,8 @@ import net.minecraft.block.Blocks;
 public class NightmareEntity extends SkeletonHorseEntity {
   private int eatingGrassTicks;
   private int damageWaterTicks;
-  private static final UUID WALKINSPEEDINCREASE_ID;
-  private static final EntityAttributeModifier WALKINSPEEDINCREASE;
+  private static final UUID WALKING_SPEED_INCREASE_ID;
+  private static final EntityAttributeModifier WALKING_SPEED_INCREASE;
 
   public NightmareEntity(EntityType<? extends SkeletonHorseEntity> entityType, World world) {
     super(entityType, world);
@@ -93,11 +93,11 @@ public class NightmareEntity extends SkeletonHorseEntity {
       }
     }
     if (this.isOnSoulSpeedBlock() && !this.getAttributes()
-        .hasModifierForAttribute(EntityAttributes.GENERIC_MOVEMENT_SPEED, WALKINSPEEDINCREASE_ID)) {
-      this.getAttributeInstance(EntityAttributes.GENERIC_MOVEMENT_SPEED).addTemporaryModifier(WALKINSPEEDINCREASE);
+        .hasModifierForAttribute(EntityAttributes.GENERIC_MOVEMENT_SPEED, WALKING_SPEED_INCREASE_ID)) {
+      this.getAttributeInstance(EntityAttributes.GENERIC_MOVEMENT_SPEED).addTemporaryModifier(WALKING_SPEED_INCREASE);
     } else if (!this.isOnSoulSpeedBlock() && this.getAttributes()
-        .hasModifierForAttribute(EntityAttributes.GENERIC_MOVEMENT_SPEED, WALKINSPEEDINCREASE_ID)) {
-      this.getAttributeInstance(EntityAttributes.GENERIC_MOVEMENT_SPEED).removeModifier(WALKINSPEEDINCREASE_ID);
+        .hasModifierForAttribute(EntityAttributes.GENERIC_MOVEMENT_SPEED, WALKING_SPEED_INCREASE_ID)) {
+      this.getAttributeInstance(EntityAttributes.GENERIC_MOVEMENT_SPEED).removeModifier(WALKING_SPEED_INCREASE_ID);
     }
     super.tickMovement();
   }
@@ -174,8 +174,8 @@ public class NightmareEntity extends SkeletonHorseEntity {
   }
 
   static {
-    WALKINSPEEDINCREASE_ID = UUID.fromString("020E0DFB-87AE-8274-9556-928370E291A0");
-    WALKINSPEEDINCREASE = new EntityAttributeModifier(WALKINSPEEDINCREASE_ID, "LavaAndSoulSpeed", 0.5D,
+    WALKING_SPEED_INCREASE_ID = UUID.fromString("020E0DFB-87AE-8274-9556-928370E291A0");
+    WALKING_SPEED_INCREASE = new EntityAttributeModifier(WALKING_SPEED_INCREASE_ID, "LavaAndSoulSpeed", 0.5D,
         EntityAttributeModifier.Operation.MULTIPLY_BASE);
   }
 

@@ -39,9 +39,9 @@ import net.minecraft.sound.SoundEvent;
 import net.minecraft.util.math.BlockPos;
 
 public class OrkEntity extends HostileEntity {
-   public static final TrackedData<Integer> orkSize = DataTracker.registerData(OrkEntity.class,
+   public static final TrackedData<Integer> ORK_SIZE = DataTracker.registerData(OrkEntity.class,
          TrackedDataHandlerRegistry.INTEGER);
-   public static final TrackedData<Boolean> doubleHandAttack = DataTracker.registerData(OrkEntity.class,
+   public static final TrackedData<Boolean> DOUBLE_HAND_ATTACK = DataTracker.registerData(OrkEntity.class,
          TrackedDataHandlerRegistry.BOOLEAN);
 
    public OrkEntity(EntityType<? extends HostileEntity> entityType, World world) {
@@ -83,8 +83,8 @@ public class OrkEntity extends HostileEntity {
    @Override
    protected void initDataTracker() {
       super.initDataTracker();
-      this.dataTracker.startTracking(orkSize, 1);
-      this.dataTracker.startTracking(doubleHandAttack, false);
+      this.dataTracker.startTracking(ORK_SIZE, 1);
+      this.dataTracker.startTracking(DOUBLE_HAND_ATTACK, false);
    }
 
    @Override
@@ -102,18 +102,18 @@ public class OrkEntity extends HostileEntity {
    }
 
    public int getSize() {
-      return (Integer) this.dataTracker.get(orkSize);
+      return (Integer) this.dataTracker.get(ORK_SIZE);
    }
 
    public void setSize(int size) {
-      this.dataTracker.set(orkSize, size);
+      this.dataTracker.set(ORK_SIZE, size);
       this.refreshPosition();
       this.calculateDimensions();
    }
 
    @Override
    public void onTrackedDataSet(TrackedData<?> data) {
-      if (orkSize.equals(data)) {
+      if (ORK_SIZE.equals(data)) {
          this.calculateDimensions();
          this.yaw = this.headYaw;
          this.bodyYaw = this.headYaw;
@@ -177,10 +177,10 @@ public class OrkEntity extends HostileEntity {
 
    @Override
    public boolean damage(DamageSource source, float amount) {
-      if (this.world.random.nextInt(3) == 0 && !this.dataTracker.get(doubleHandAttack)) {
-         dataTracker.set(doubleHandAttack, true);
+      if (this.world.random.nextInt(3) == 0 && !this.dataTracker.get(DOUBLE_HAND_ATTACK)) {
+         dataTracker.set(DOUBLE_HAND_ATTACK, true);
       } else {
-         dataTracker.set(doubleHandAttack, false);
+         dataTracker.set(DOUBLE_HAND_ATTACK, false);
       }
       return this.isInvulnerableTo(source) ? false : super.damage(source, amount);
    }

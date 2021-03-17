@@ -114,7 +114,7 @@ public class SkeletonVanguardModel<T extends SkeletonVanguardEntity> extends Com
     this.leftLeg.roll = 0.0F;
     float k = MathHelper.sin(this.handSwingProgress * 3.1415927F);
     this.rightArm.pitch = -k * 1.5F;
-    float shieldSwing = vanguard.getDataTracker().get(SkeletonVanguardEntity.shieldSwing) * 2F;
+    float shieldSwing = vanguard.getDataTracker().get(SkeletonVanguardEntity.SHIELD_SWING) * 2F;
     if (shieldSwing > 0.0F) {
       this.leftArm.pitch = MathHelper.sin(shieldSwing * 3.1415927F) - 1.5708F;
     }

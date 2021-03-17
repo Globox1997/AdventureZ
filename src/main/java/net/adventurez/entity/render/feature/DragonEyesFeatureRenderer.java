@@ -19,6 +19,8 @@ public class DragonEyesFeatureRenderer extends FeatureRenderer<DragonEntity, Dra
             .getGlowing("adventurez:textures/entity/feature/dragon_eyes_feature.png");
     private static final RenderLayer FRIENDLY_EYE_LAYER = ExtraRenderLayer
             .getGlowing("adventurez:textures/entity/feature/friendly_dragon_eyes_feature.png");
+    private static final RenderLayer FRIENDLY_ORANGE_EYE_LAYER = ExtraRenderLayer
+            .getGlowing("adventurez:textures/entity/feature/friendly_orange_dragon_eyes_feature.png");
 
     public DragonEyesFeatureRenderer(
             FeatureRendererContext<DragonEntity, DragonModel<DragonEntity>> featureRendererContext) {
@@ -30,7 +32,11 @@ public class DragonEyesFeatureRenderer extends FeatureRenderer<DragonEntity, Dra
             DragonEntity dragonEntity, float f, float g, float h, float j, float k, float l) {
         VertexConsumer vertexConsumer = vertexConsumerProvider.getBuffer(EYE_LAYER);
         if (dragonEntity.isTamed()) {
-            vertexConsumer = vertexConsumerProvider.getBuffer(FRIENDLY_EYE_LAYER);
+            if (dragonEntity.getDataTracker().get(DragonEntity.OTHER_EYES)) {
+                vertexConsumer = vertexConsumerProvider.getBuffer(FRIENDLY_ORANGE_EYE_LAYER);
+            } else {
+                vertexConsumer = vertexConsumerProvider.getBuffer(FRIENDLY_EYE_LAYER);
+            }
         }
         this.getContextModel().render(matrixStack, vertexConsumer, 15728640, OverlayTexture.DEFAULT_UV, 1.0F, 1.0F,
                 1.0F, 1.0F);

@@ -23,7 +23,7 @@ import net.minecraft.world.World;
 
 public class VoidShadowEntity extends FlyingEntity {
 
-    public static final TrackedData<Boolean> halfLifeChange = DataTracker.registerData(VoidShadowEntity.class,
+    public static final TrackedData<Boolean> HALF_LIFE_CHANGE = DataTracker.registerData(VoidShadowEntity.class,
             TrackedDataHandlerRegistry.BOOLEAN);
 
     public VoidShadowEntity(EntityType<? extends FlyingEntity> entityType, World world) {
@@ -59,7 +59,7 @@ public class VoidShadowEntity extends FlyingEntity {
         super.mobTick();
         this.setNoGravity(true);
         if (this.getHealth() < this.getMaxHealth() / 2) {
-            dataTracker.set(halfLifeChange, true);
+            dataTracker.set(HALF_LIFE_CHANGE, true);
         }
 
     }
@@ -67,7 +67,7 @@ public class VoidShadowEntity extends FlyingEntity {
     @Override
     public void initDataTracker() {
         super.initDataTracker();
-        dataTracker.startTracking(halfLifeChange, false);
+        dataTracker.startTracking(HALF_LIFE_CHANGE, false);
     }
 
     @Override

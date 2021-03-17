@@ -31,8 +31,8 @@ public class StoneGolemLavaFeatureRenderer
   @Override
   public void render(MatrixStack matrixStack, VertexConsumerProvider vertexConsumerProvider, int i,
       StoneGolemEntity stoneGolemEntity, float f, float g, float h, float j, float k, float l) {
-    if (!stoneGolemEntity.getDataTracker().get(StoneGolemEntity.halfLifeChange)) {
-      int lavaFlow = stoneGolemEntity.getDataTracker().get(StoneGolemEntity.lavaTexture);
+    if (!stoneGolemEntity.getDataTracker().get(StoneGolemEntity.HALF_LIFE_CHANGE)) {
+      int lavaFlow = stoneGolemEntity.getDataTracker().get(StoneGolemEntity.LAVA_TEXTURE);
       VertexConsumer vertexConsumer = vertexConsumerProvider.getBuffer(LAVA_LAYER);
       FabricLoader loader = FabricLoader.getInstance();
       if (lavaFlow < 240 && !loader.isModLoaded("canvas") && !loader.isModLoaded("sodium")) {

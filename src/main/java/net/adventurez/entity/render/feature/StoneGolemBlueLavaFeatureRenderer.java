@@ -27,7 +27,7 @@ public class StoneGolemBlueLavaFeatureRenderer
   @Override
   public void render(MatrixStack matrixStack, VertexConsumerProvider vertexConsumerProvider, int i,
       StoneGolemEntity stoneGolemEntity, float f, float g, float h, float j, float k, float l) {
-    if (stoneGolemEntity.getDataTracker().get(StoneGolemEntity.halfLifeChange)) {
+    if (stoneGolemEntity.getDataTracker().get(StoneGolemEntity.HALF_LIFE_CHANGE)) {
       VertexConsumer vertexConsumer = vertexConsumerProvider.getBuffer(BLUE_LAVA_LAYER);
       this.getContextModel().render(matrixStack, vertexConsumer, 15728640, OverlayTexture.DEFAULT_UV, 1.0F, 1.0F, 1.0F,
           1.0F);

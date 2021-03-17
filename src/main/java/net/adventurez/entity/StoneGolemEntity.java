@@ -56,18 +56,13 @@ import net.minecraft.world.WorldView;
 import net.minecraft.entity.boss.BossBar;
 
 public class StoneGolemEntity extends HostileEntity {
-  public static final TrackedData<Integer> throwCooldown = DataTracker.registerData(StoneGolemEntity.class,
-      TrackedDataHandlerRegistry.INTEGER);
-  public static final TrackedData<Boolean> inVulnerable = DataTracker.registerData(StoneGolemEntity.class,
-      TrackedDataHandlerRegistry.BOOLEAN);
-  public static final TrackedData<Integer> inVulnerableTimer = DataTracker.registerData(StoneGolemEntity.class,
-      TrackedDataHandlerRegistry.INTEGER);
-  public static final TrackedData<Integer> lavaTexture = DataTracker.registerData(StoneGolemEntity.class,
-      TrackedDataHandlerRegistry.INTEGER);
-  public static final TrackedData<Boolean> halfLifeChange = DataTracker.registerData(StoneGolemEntity.class,
-      TrackedDataHandlerRegistry.BOOLEAN);
-  private static final UUID WALKINSPEEDINCREASE_ID;
-  private static final EntityAttributeModifier WALKINSPEEDINCREASE;
+  public static final TrackedData<Integer> THROW_COOLDOWN;
+  public static final TrackedData<Boolean> INVULNERABLE;
+  public static final TrackedData<Integer> INVULNERABLE_TIMER;
+  public static final TrackedData<Integer> LAVA_TEXTURE;
+  public static final TrackedData<Boolean> HALF_LIFE_CHANGE;
+  private static final UUID WALKING_SPEED_INCREASE_ID;
+  private static final EntityAttributeModifier WALKING_SPEED_INCREASE;
   private static final Predicate<Entity> NOT_STONEGOLEM = (entity) -> {
     return entity.isAlive() && !(entity instanceof StoneGolemEntity);
   };
@@ -151,11 +146,11 @@ public class StoneGolemEntity extends HostileEntity {
   @Override
   public void initDataTracker() {
     super.initDataTracker();
-    dataTracker.startTracking(throwCooldown, 0);
-    dataTracker.startTracking(inVulnerable, true);
-    dataTracker.startTracking(lavaTexture, 400);
-    dataTracker.startTracking(halfLifeChange, false);
-    this.dataTracker.startTracking(inVulnerableTimer, 0);
+    dataTracker.startTracking(THROW_COOLDOWN, 0);
+    dataTracker.startTracking(INVULNERABLE, true);
+    dataTracker.startTracking(LAVA_TEXTURE, 400);
+    dataTracker.startTracking(HALF_LIFE_CHANGE, false);
+    this.dataTracker.startTracking(INVULNERABLE_TIMER, 0);
   }
 
   @Override
@@ -176,7 +171,7 @@ public class StoneGolemEntity extends HostileEntity {
         this.setInvulTimer(this.getInvulnerableTimer() - 1);
       }
       if (this.getInvulnerableTimer() == 0) {
-        dataTracker.set(inVulnerable, false);
+        dataTracker.set(INVULNERABLE, false);
       }
       if (this.getInvulnerableTimer() == 0) {
         if (this.getLavaTexture() < 400) {
@@ -197,7 +192,7 @@ public class StoneGolemEntity extends HostileEntity {
           }
         }
         if (this.powerPhaseActivate == 80) {
-          dataTracker.set(halfLifeChange, true);
+          dataTracker.set(HALF_LIFE_CHANGE, true);
         }
       } else if (this.isInLava() && this.getHealth() < this.getMaxHealth()) {
         this.lavaRegenerateLife++;
@@ -255,7 +250,7 @@ public class StoneGolemEntity extends HostileEntity {
       }
       if (this.getTarget() != null && this.canSee(this.getTarget())) {
         if (this.squaredDistanceTo(getTarget()) < 1400D && this.squaredDistanceTo(getTarget()) > 100D) {
-          dataTracker.set(throwCooldown, cooldown);
+          dataTracker.set(THROW_COOLDOWN, cooldown);
           this.cooldown++;
           if (cooldown == thrownStoneCooldown - 10) {
             this.playSound(SoundInit.GOLEM_ROAR_EVENT, 1F, 1F);
@@ -267,11 +262,11 @@ public class StoneGolemEntity extends HostileEntity {
         }
       }
       if (this.isOnSoulSpeedBlock() && !this.getAttributes()
-          .hasModifierForAttribute(EntityAttributes.GENERIC_MOVEMENT_SPEED, WALKINSPEEDINCREASE_ID)) {
-        this.getAttributeInstance(EntityAttributes.GENERIC_MOVEMENT_SPEED).addTemporaryModifier(WALKINSPEEDINCREASE);
+          .hasModifierForAttribute(EntityAttributes.GENERIC_MOVEMENT_SPEED, WALKING_SPEED_INCREASE_ID)) {
+        this.getAttributeInstance(EntityAttributes.GENERIC_MOVEMENT_SPEED).addTemporaryModifier(WALKING_SPEED_INCREASE);
       } else if (!this.isOnSoulSpeedBlock() && this.getAttributes()
-          .hasModifierForAttribute(EntityAttributes.GENERIC_MOVEMENT_SPEED, WALKINSPEEDINCREASE_ID)) {
-        this.getAttributeInstance(EntityAttributes.GENERIC_MOVEMENT_SPEED).removeModifier(WALKINSPEEDINCREASE_ID);
+          .hasModifierForAttribute(EntityAttributes.GENERIC_MOVEMENT_SPEED, WALKING_SPEED_INCREASE_ID)) {
+        this.getAttributeInstance(EntityAttributes.GENERIC_MOVEMENT_SPEED).removeModifier(WALKING_SPEED_INCREASE_ID);
       }
       if (this.isInLava()) {
         this.setVelocity(this.getVelocity().multiply(1.9D));
@@ -295,7 +290,7 @@ public class StoneGolemEntity extends HostileEntity {
   @Override
   protected boolean isImmobile() {
     return super.isImmobile() || this.attackTick > 0 || this.stunTick > 0 || this.roarTick > 0
-        || (this.cooldown > thrownStoneCooldown - 30 && this.cooldown > 0) || this.getDataTracker().get(inVulnerable);
+        || (this.cooldown > thrownStoneCooldown - 30 && this.cooldown > 0) || this.getDataTracker().get(INVULNERABLE);
   }
 
   @Override
@@ -390,7 +385,7 @@ public class StoneGolemEntity extends HostileEntity {
 
   @Override
   protected SoundEvent getAmbientSound() {
-    if (this.getDataTracker().get(inVulnerable)) {
+    if (this.getDataTracker().get(INVULNERABLE)) {
       return null;
     } else
       return SoundInit.GOLEM_IDLE_EVENT;
@@ -441,7 +436,7 @@ public class StoneGolemEntity extends HostileEntity {
 
   @Override
   public boolean damage(DamageSource source, float amount) {
-    if (this.getDataTracker().get(inVulnerable)) {
+    if (this.getDataTracker().get(INVULNERABLE)) {
       return false;
     } else
       return super.damage(source, amount);
@@ -490,19 +485,19 @@ public class StoneGolemEntity extends HostileEntity {
   }
 
   public int getInvulnerableTimer() {
-    return (Integer) this.dataTracker.get(inVulnerableTimer);
+    return (Integer) this.dataTracker.get(INVULNERABLE_TIMER);
   }
 
   public void setInvulTimer(int ticks) {
-    this.dataTracker.set(inVulnerableTimer, ticks);
+    this.dataTracker.set(INVULNERABLE_TIMER, ticks);
   }
 
   public int getLavaTexture() {
-    return (Integer) this.dataTracker.get(lavaTexture);
+    return (Integer) this.dataTracker.get(LAVA_TEXTURE);
   }
 
   public void setLavaTexture(int ticks) {
-    this.dataTracker.set(lavaTexture, ticks);
+    this.dataTracker.set(LAVA_TEXTURE, ticks);
   }
 
   @Override
@@ -572,8 +567,13 @@ public class StoneGolemEntity extends HostileEntity {
   }
 
   static {
-    WALKINSPEEDINCREASE_ID = UUID.fromString("766bfa64-11f3-11ea-8d71-362b9e155667");
-    WALKINSPEEDINCREASE = new EntityAttributeModifier(WALKINSPEEDINCREASE_ID, "LavaAndSoulSpeed", 0.5D,
+    THROW_COOLDOWN = DataTracker.registerData(StoneGolemEntity.class, TrackedDataHandlerRegistry.INTEGER);
+    INVULNERABLE = DataTracker.registerData(StoneGolemEntity.class, TrackedDataHandlerRegistry.BOOLEAN);
+    INVULNERABLE_TIMER = DataTracker.registerData(StoneGolemEntity.class, TrackedDataHandlerRegistry.INTEGER);
+    LAVA_TEXTURE = DataTracker.registerData(StoneGolemEntity.class, TrackedDataHandlerRegistry.INTEGER);
+    HALF_LIFE_CHANGE = DataTracker.registerData(StoneGolemEntity.class, TrackedDataHandlerRegistry.BOOLEAN);
+    WALKING_SPEED_INCREASE_ID = UUID.fromString("766bfa64-11f3-11ea-8d71-362b9e155667");
+    WALKING_SPEED_INCREASE = new EntityAttributeModifier(WALKING_SPEED_INCREASE_ID, "LavaAndSoulSpeed", 0.5D,
         EntityAttributeModifier.Operation.MULTIPLY_BASE);
   }
 }

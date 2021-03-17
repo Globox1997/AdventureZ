@@ -111,7 +111,7 @@ public class OrkModel<T extends OrkEntity> extends CompositeEntityModel<T> {
         float k = MathHelper.sin(entity.handSwingProgress * 3.1415927F);
         if (k > 0) {
             this.rightArm.pitch = -k;
-            if (entity.getDataTracker().get(OrkEntity.doubleHandAttack)) {
+            if (entity.getDataTracker().get(OrkEntity.DOUBLE_HAND_ATTACK)) {
                 this.leftArm.pitch = -k;
             }
         }

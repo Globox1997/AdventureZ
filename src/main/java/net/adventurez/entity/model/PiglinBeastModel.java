@@ -169,7 +169,7 @@ public class PiglinBeastModel<T extends PiglinBeastEntity> extends CompositeEnti
     this.rightArm.pitch = MathHelper.cos(limbAngle * 0.6662F + 3.1415927F) * 2.0F * limbDistance * 0.3F;
     this.leftArm.pitch = -MathHelper.cos(limbAngle * 0.6662F + 3.1415927F) * 2.0F * limbDistance * 0.3F;
 
-    float attackTick = entity.getDataTracker().get(PiglinBeastEntity.AttackTickVisual);
+    float attackTick = entity.getDataTracker().get(PiglinBeastEntity.ATTACK_TICK_VISUAL);
     if (attackTick > 0F) {
       float g = attackTick;
       float h = MathHelper.sin(g * 3.1415927F);
@@ -178,7 +178,7 @@ public class PiglinBeastModel<T extends PiglinBeastEntity> extends CompositeEnti
       rightArm.roll += MathHelper.sin(attackTick * 3.1415927F) * -0.4F - limbDistance;
     }
 
-    float handUp = entity.getDataTracker().get(PiglinBeastEntity.LeadArm);
+    float handUp = entity.getDataTracker().get(PiglinBeastEntity.LEAD_ARM);
     if (handUp > 0.0F) {
       float g = handUp;
       float h = MathHelper.sin(g * 3.1415927F);

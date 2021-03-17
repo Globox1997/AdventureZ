@@ -42,9 +42,9 @@ import net.minecraft.entity.mob.PiglinEntity;
 import net.minecraft.entity.mob.WitherSkeletonEntity;
 
 public class PiglinBeastEntity extends HostileEntity {
-  public static final TrackedData<Float> AttackTickVisual = DataTracker.registerData(PiglinBeastEntity.class,
+  public static final TrackedData<Float> ATTACK_TICK_VISUAL = DataTracker.registerData(PiglinBeastEntity.class,
       TrackedDataHandlerRegistry.FLOAT);
-  public static final TrackedData<Float> LeadArm = DataTracker.registerData(PiglinBeastEntity.class,
+  public static final TrackedData<Float> LEAD_ARM = DataTracker.registerData(PiglinBeastEntity.class,
       TrackedDataHandlerRegistry.FLOAT);
   private float attackTick;
   public float armTick;
@@ -82,18 +82,18 @@ public class PiglinBeastEntity extends HostileEntity {
   public void mobTick() {
     if (attackTick > 0F) {
       attackTick = attackTick - 0.08F;
-      dataTracker.set(AttackTickVisual, attackTick);
+      dataTracker.set(ATTACK_TICK_VISUAL, attackTick);
     }
     if (this.getTarget() instanceof PlayerEntity) {
       makePiglinsAngry++;
       if (makePiglinsAngry == 600) {
-        dataTracker.set(LeadArm, 1F);
+        dataTracker.set(LEAD_ARM, 1F);
         getPiglins();
         world.playSoundFromEntity(null, this, SoundInit.PIGLINBEAST_SHOUT_EVENT, SoundCategory.HOSTILE, 1.0F, 1.0F);
         this.getAttributeInstance(EntityAttributes.GENERIC_MOVEMENT_SPEED).setBaseValue(0.0D);
       }
       if (makePiglinsAngry > 600) {
-        dataTracker.set(LeadArm, dataTracker.get(LeadArm) - 0.02F);
+        dataTracker.set(LEAD_ARM, dataTracker.get(LEAD_ARM) - 0.02F);
       }
       if (makePiglinsAngry == 650) {
         this.getAttributeInstance(EntityAttributes.GENERIC_MOVEMENT_SPEED).setBaseValue(0.23D);
@@ -119,8 +119,8 @@ public class PiglinBeastEntity extends HostileEntity {
   @Override
   public void initDataTracker() {
     super.initDataTracker();
-    dataTracker.startTracking(AttackTickVisual, 0F);
-    dataTracker.startTracking(LeadArm, 0F);
+    dataTracker.startTracking(ATTACK_TICK_VISUAL, 0F);
+    dataTracker.startTracking(LEAD_ARM, 0F);
   }
 
   @Override

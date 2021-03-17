@@ -27,7 +27,7 @@ import net.minecraft.world.World;
 
 public class SkeletonVanguardEntity extends HostileEntity {
 
-  public static final TrackedData<Float> shieldSwing = DataTracker.registerData(SkeletonVanguardEntity.class,
+  public static final TrackedData<Float> SHIELD_SWING = DataTracker.registerData(SkeletonVanguardEntity.class,
       TrackedDataHandlerRegistry.FLOAT);
 
   public SkeletonVanguardEntity(EntityType<? extends HostileEntity> entityType, World world) {
@@ -58,15 +58,15 @@ public class SkeletonVanguardEntity extends HostileEntity {
   @Override
   public void tick() {
     super.tick();
-    if (dataTracker.get(shieldSwing) > 0.0F) {
-      dataTracker.set(shieldSwing, dataTracker.get(shieldSwing) - 0.01F);
+    if (dataTracker.get(SHIELD_SWING) > 0.0F) {
+      dataTracker.set(SHIELD_SWING, dataTracker.get(SHIELD_SWING) - 0.01F);
     }
   }
 
   @Override
   public void initDataTracker() {
     super.initDataTracker();
-    dataTracker.startTracking(shieldSwing, 0.0F);
+    dataTracker.startTracking(SHIELD_SWING, 0.0F);
   }
 
   @Override
@@ -115,7 +115,7 @@ public class SkeletonVanguardEntity extends HostileEntity {
       chance = world.random.nextInt(10);
     }
     if (chance == 1) {
-      dataTracker.set(shieldSwing, 0.1F);
+      dataTracker.set(SHIELD_SWING, 0.1F);
       this.world.playSoundFromEntity(null, this, SoundEvents.ITEM_SHIELD_BLOCK, SoundCategory.HOSTILE, 1.0F, 1.0F);
       return false;
     } else

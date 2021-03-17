@@ -60,7 +60,7 @@ import net.minecraft.world.Heightmap;
 import net.minecraft.world.ServerWorldAccess;
 
 public class SummonerEntity extends SpellCastingEntity {
-  public static final TrackedData<Boolean> inVulnerableShield = DataTracker.registerData(SummonerEntity.class,
+  public static final TrackedData<Boolean> INVULNERABLE_SHIELD = DataTracker.registerData(SummonerEntity.class,
       TrackedDataHandlerRegistry.BOOLEAN);
   private int invulnerableMagicTick;
   private boolean gotShotByABow = false;
@@ -126,20 +126,20 @@ public class SummonerEntity extends SpellCastingEntity {
   @Override
   public void initDataTracker() {
     super.initDataTracker();
-    dataTracker.startTracking(inVulnerableShield, false);
+    dataTracker.startTracking(INVULNERABLE_SHIELD, false);
   }
 
   @Override
   public void mobTick() {
     super.mobTick();
-    if (dataTracker.get(inVulnerableShield)) {
+    if (dataTracker.get(INVULNERABLE_SHIELD)) {
       this.setInvulnerable(true);
       this.getAttributeInstance(EntityAttributes.GENERIC_MOVEMENT_SPEED).setBaseValue(0.0D);
       this.invulnerableMagicTick--;
       if (this.invulnerableMagicTick < 0) {
         this.setInvulnerable(false);
         this.getAttributeInstance(EntityAttributes.GENERIC_MOVEMENT_SPEED).setBaseValue(0.3D);
-        dataTracker.set(inVulnerableShield, false);
+        dataTracker.set(INVULNERABLE_SHIELD, false);
       }
     }
 
@@ -356,7 +356,7 @@ public class SummonerEntity extends SpellCastingEntity {
 
     @Override
     public void castSpell() {
-      dataTracker.set(inVulnerableShield, true);
+      dataTracker.set(INVULNERABLE_SHIELD, true);
       SummonerEntity.this.invulnerableMagicTick = 160;
       for (int i = 0; i < 60; ++i) {
         ((ServerWorld) world).spawnParticles(ParticleTypes.END_ROD, SummonerEntity.this.getParticleX(1.5D),

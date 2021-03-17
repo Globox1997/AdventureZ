@@ -27,7 +27,7 @@ public class VoidShadowBlackFeatureRenderer
     @Override
     public void render(MatrixStack matrixStack, VertexConsumerProvider vertexConsumerProvider, int i,
             VoidShadowEntity voidShadowEntity, float f, float g, float h, float j, float k, float l) {
-        if (voidShadowEntity.getDataTracker().get(VoidShadowEntity.halfLifeChange)) {
+        if (voidShadowEntity.getDataTracker().get(VoidShadowEntity.HALF_LIFE_CHANGE)) {
             VertexConsumer vertexConsumer = vertexConsumerProvider.getBuffer(BLACK_LAYER);
             this.getContextModel().render(matrixStack, vertexConsumer, 15728640, OverlayTexture.DEFAULT_UV, 1.0F, 1.0F,
                     1.0F, 1.0F);
