@@ -1,5 +1,5 @@
 plugins {
-	id 'fabric-loom' version '0.5-SNAPSHOT'
+	id 'fabric-loom' version '0.6-SNAPSHOT'
 	id 'maven-publish'
 }
 
@@ -15,20 +15,12 @@ minecraft {
 }
 
 repositories {
-    // where grondag's mods live
-    maven {
-    	name = "dblsaiko"
-    	url = "https://maven.dblsaiko.net/"
-    }
-    maven {
-      name = "Cotton"
-      url = "http://server.bbkr.space:8081/artifactory/libs-release/"
-    }
-    // REI, odds and ends
-    maven {
-      name = "CurseForge"
-      url = "https://minecraft.curseforge.com/api/maven"
-    }
+	maven { url "https://maven.shedaniel.me/" }
+	maven { url 'https://maven.blamejared.com' }
+    // Canvas
+    // maven { url = "https://maven.dblsaiko.net/" }
+    // maven { url = "http://server.bbkr.space:8081/artifactory/libs-release/" }
+    // maven { url = "https://minecraft.curseforge.com/api/maven" }
 }
 
 dependencies {
@@ -39,26 +31,20 @@ dependencies {
 	// Fabric API
 	modImplementation "net.fabricmc.fabric-api:fabric-api:${project.fabric_version}"
 	// Config
-	modApi("me.shedaniel.cloth:config-2:${project.cloth_config_version}") {
+	modApi("me.shedaniel.cloth:cloth-config-fabric:${project.cloth_config_version}") {
       exclude(group: "net.fabricmc.fabric-api")
   	}
-	include("me.shedaniel.cloth:config-2:${project.cloth_config_version}") {
-      exclude(group: "net.fabricmc.fabric-api")
-  	}
-	modApi("me.sargunvohra.mcmods:autoconfig1u:${project.auto_config_version}") {
-      exclude(group: "net.fabricmc.fabric-api")
-  	}
-	include("me.sargunvohra.mcmods:autoconfig1u:${project.auto_config_version}") {
+	include("me.shedaniel.cloth:cloth-config-fabric:${project.cloth_config_version}") {
       exclude(group: "net.fabricmc.fabric-api")
   	}
 	// Modmenu dev
 	modCompile "io.github.prospector:modmenu:${project.mod_menu_version}",{
 			exclude(group: "net.fabricmc.fabric-api")
 	}
+	// Patchouli
+	modImplementation "vazkii.patchouli:Patchouli:1.16.4-50-FABRIC"
 	// Canvas
-	modCompile "grondag:canvas-mc116:1.0.+"
-	// GeckoLib
-	//modImplementation "com.github.bernie-g:geckolib:fabric-1.16.1-geckolib-2.0.0-beta.5"
+	// modCompile "grondag:canvas-mc116:1.0.+"
 }
 
 processResources {
