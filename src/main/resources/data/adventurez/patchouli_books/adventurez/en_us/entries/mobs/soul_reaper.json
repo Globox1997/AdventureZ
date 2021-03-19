@@ -1,0 +1,16 @@
+{
+    "name": "Soul Reaper",
+    "icon": "adventurez:stone_golem_heart",
+    "category": "adventurez:mob_category",
+    "pages": [
+        {
+            "type": "text",
+            "text": "The Soul Reaper is more deadly than any other wither skeleton you have ever seen. Shooting you with withered arrows or cutting you in half with a netherite sword, it is prepared for everything. Usually it rides a Nightmare to get faster around and you will find it in the soul sand valley"
+        },
+        {
+            "type": "entity",
+            "name": "Showcase",
+            "entity": "adventurez:soul_reaper"
+        }
+    ]
+}

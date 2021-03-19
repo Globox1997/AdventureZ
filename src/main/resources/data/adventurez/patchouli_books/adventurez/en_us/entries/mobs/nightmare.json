@@ -1,0 +1,18 @@
+{
+    "name": "Nightmare",
+    "icon": "adventurez:stone_golem_heart",
+    "category": "adventurez:mob_category",
+    "pages": [
+        {
+            "type": "text",
+            "text": "The Nightmare is the mount of the Soul Reaper which can be found in soul sand valleys. It has a dark soul cause of the influence of its rider. It can be tamed"
+        },
+        {
+            "type": "entity",
+            "name": "Showcase",
+            "entity": "adventurez:nightmare",
+            "scale": 0.6,
+            "offset": 0.5
+        }
+    ]
+}

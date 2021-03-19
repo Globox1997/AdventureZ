@@ -1,0 +1,26 @@
+{
+    "name": "Summoner",
+    "icon": "adventurez:stone_golem_heart",
+    "category": "adventurez:mob_category",
+    "pages": [
+        {
+            "type": "text",
+            "text": "The Summoner will suddenly appear when you don't expect it. But only during a storm, there might be chance to see it. It also learned to handle different spells which might surprise you and Guards will get summoned during a fight"
+        },
+        {
+            "type": "entity",
+            "name": "Showcase",
+            "entity": "adventurez:summoner"
+        },
+        {
+            "type": "text",
+            "title": "Skeleton Vanguard",
+            "text": "The Vanguard will defend its summoner and attack enemies. It can parry incoming attacks with its shield"
+        },
+        {
+            "type": "entity",
+            "name": "Showcase",
+            "entity": "adventurez:skeleton_vanguard"
+        }
+    ]
+}

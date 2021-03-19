@@ -1,0 +1,28 @@
+{
+    "name": "Gilded Armor",
+    "icon": "adventurez:stone_golem_chestplate",
+    "category": "adventurez:item_category",
+    "pages": [
+        {
+            "type": "text",
+            "title": "Gilded Netherite Armor",
+            "text": "Gild your netherite armor at the smithing table. Gilded Netherite Fragments are obtained by killing the Blackstone Golem"
+        },
+        {
+            "type": "smithing",
+            "title": "Smithing",
+            "recipe": "adventurez:stone_golem_helmet",
+            "recipe2": "adventurez:stone_golem_chestplate"
+        },
+        {
+            "type": "smithing",
+            "title": "Smithing",
+            "recipe": "adventurez:stone_golem_leggings",
+            "recipe2": "adventurez:stone_golem_boots"
+        },
+        {
+            "type": "empty",
+            "draw_filler": false
+        }
+    ]
+}

@@ -1,0 +1,17 @@
+{
+    "name": "Blaze Guardian",
+    "icon": "adventurez:stone_golem_heart",
+    "category": "adventurez:mob_category",
+    "pages": [
+        {
+            "type": "text",
+            "text": "The Blaze Guardian can be found in nether fortresses and will defend it from players until death. Watch out for its flame explosion attack, it might kill you. Its surrounding shields will block some enemy attacks"
+        },
+        {
+            "type": "entity",
+            "name": "Showcase",
+            "entity": "adventurez:blaze_guardian",
+            "offset": 0.2
+        }
+    ]
+}

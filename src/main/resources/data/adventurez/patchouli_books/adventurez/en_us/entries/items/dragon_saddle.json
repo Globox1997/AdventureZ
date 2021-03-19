@@ -1,0 +1,17 @@
+{
+    "name": "Dragon Saddle",
+    "icon": "adventurez:dragon_saddle",
+    "category": "adventurez:item_category",
+    "pages": [
+        {
+            "type": "spotlight",
+            "item": "adventurez:dragon_saddle",
+            "link_recipe": true,
+            "text": "The dragon is made out of orc skin. After the Dragon grew big enough, you can put it on its back"
+        },
+        {
+            "type": "crafting",
+            "recipe": "adventurez:dragon_saddle"
+        }
+    ]
+}

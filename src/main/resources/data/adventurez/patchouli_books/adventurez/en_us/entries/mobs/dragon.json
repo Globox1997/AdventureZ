@@ -1,0 +1,28 @@
+{
+    "name": "Dragon",
+    "icon": "adventurez:stone_golem_heart",
+    "category": "adventurez:mob_category",
+    "pages": [
+        {
+            "type": "text",
+            "text": "The Dragon is the child of the all known Ender Dragon. You have to hatch the dragon egg and it will grow over time. Later it is rideable and if it's big enough, it can even carry a chest. It loves to eat Orc skin but it also has nothing against raw meat so if it's low in health, feed it"
+        },
+        {
+            "type": "entity",
+            "name": "Showcase",
+            "entity": "adventurez:dragon",
+            "scale": 1.1,
+            "offset": -1.2
+        },
+        {
+            "type": "text",
+            "title": "Egg Hatching",
+            "text": "After obtaining the dragon egg you will have to summon and kill The Eye to get the fame effect. Build a nest at your base to hatch the egg safely. If it feels your fame, it will start to emit particles"
+        },
+        {
+            "type": "text",
+            "title": "Growth",
+            "text": "After the dragon is hatched, you can feed it with orc skin to grow up faster, if it's hungry enough. It grows up in size two times until it's a big dragon. After the first stage, you can put on a dragon saddle to ride it, after the second stage you can put on a chest"
+        }
+    ]
+}

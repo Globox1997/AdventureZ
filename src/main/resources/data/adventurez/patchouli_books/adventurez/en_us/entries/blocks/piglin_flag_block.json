@@ -1,0 +1,17 @@
+{
+    "name": "Piglin Flag",
+    "icon": "adventurez:piglin_flag_block",
+    "category": "adventurez:block_category",
+    "pages": [
+        {
+            "type": "spotlight",
+            "item": "adventurez:piglin_flag_block",
+            "link_recipe": false,
+            "text": "The Piglin Flag is a rare block, dropped by the Piglin Beast. It will calm down nearby Piglins if Player gets close. 2 min charge time."
+        },
+        {
+            "type": "empty",
+            "draw_filler": false
+        }
+    ]
+}

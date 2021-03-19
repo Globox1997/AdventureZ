@@ -1,0 +1,18 @@
+{
+    "name": "Orc",
+    "icon": "adventurez:stone_golem_heart",
+    "category": "adventurez:mob_category",
+    "pages": [
+        {
+            "type": "text",
+            "text": "Orcs will roam your world. If there is a bigger Orc around, other Orcs will try to gather together. You will find them in the plains"
+        },
+        {
+            "type": "entity",
+            "name": "Showcase",
+            "entity": "adventurez:orc",
+            "scale": 1.3,
+            "offset": -0.5
+        }
+    ]
+}

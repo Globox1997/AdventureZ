@@ -1,0 +1,17 @@
+{
+    "name": "The Eye",
+    "icon": "adventurez:stone_golem_heart",
+    "category": "adventurez:mob_category",
+    "pages": [
+        {
+            "type": "text",
+            "text": "Never seen before, The Eye will drain any energy you got until you are a dead corps. Summoned at the shrine, you will get known to everybody and even Villagers will recognize your fame if you managed to kill it"
+        },
+        {
+            "type": "entity",
+            "name": "Showcase",
+            "entity": "adventurez:the_eye",
+            "offset": 0.6
+        }
+    ]
+}

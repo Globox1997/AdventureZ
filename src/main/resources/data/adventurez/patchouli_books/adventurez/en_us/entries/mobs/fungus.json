@@ -1,0 +1,25 @@
+{
+    "name": "Fungus",
+    "icon": "adventurez:stone_golem_heart",
+    "category": "adventurez:mob_category",
+    "pages": [
+        {
+            "type": "text",
+            "text": "The Red and Bown Fungus can be found on the rare mushroom islands and is usually peaceful. From time to time it poops mushrooms"
+        },
+        {
+            "type": "entity",
+            "name": "Showcase",
+            "entity": "adventurez:red_fungus"
+        },
+        {
+            "type": "entity",
+            "name": "Showcase",
+            "entity": "adventurez:brown_fungus"
+        },
+        {
+            "type": "empty",
+            "draw_filler": false
+        }
+    ]
+}

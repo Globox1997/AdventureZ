@@ -1,0 +1,19 @@
+{
+    "name": "Blackstone Holder",
+    "icon": "adventurez:stone_holder_block",
+    "category": "adventurez:block_category",
+    "pages": [
+        {
+            "type": "spotlight",
+            "title": "Blackstone Holder",
+            "item": "adventurez:stone_holder_block",
+            "link_recipe": true,
+            "text": "Contains the power to hold a Gilded Blackstone Shard. Required to summon the Blackstone Golem."
+        },
+        {
+            "type": "stonecutting",
+            "title": "Stone Cutting",
+            "recipe": "adventurez:stone_holder_block"
+        }
+    ]
+}

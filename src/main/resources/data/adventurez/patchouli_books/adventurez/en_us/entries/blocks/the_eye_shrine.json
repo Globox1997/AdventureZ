@@ -1,0 +1,54 @@
+{
+	"name": "The Eye Shrine",
+	"icon": "minecraft:dragon_egg",
+	"category": "adventurez:block_category",
+	"pages": [
+		{
+			"type": "text",
+			"title": "The Eye Shrine",
+			"text": "This shrine drains energy from the rarest block in Minecraft: The Dragon Egg. Build it inside The End to summon the deadly creature called The Eye"
+		},
+		{
+			"type": "multiblock",
+			"text": "The bottom layer can also be build out of Crying Obsidian",
+			"offset": [
+				0,
+				4,
+				0
+			],
+			"multiblock": {
+				"pattern": [
+					[
+						"     ",
+						" E E ",
+						"  D  ",
+						" E E ",
+						"     "
+					],
+					[
+						"E   E",
+						" CCC ",
+						" CCC ",
+						" CCC ",
+						"E   E"
+					],
+					[
+						"OOOOO",
+						"OOOOO",
+						"OO0OO",
+						"OOOOO",
+						"OOOOO"
+					]
+				],
+				"mapping": {
+					"O": "minecraft:obsidian",
+					"C": "minecraft:crying_obsidian",
+					"E": "minecraft:end_rod",
+					"D": "minecraft:dragon_egg",
+					"0": "minecraft:obsidian"
+				},
+				"symmetrical": true
+			}
+		}
+	]
+}

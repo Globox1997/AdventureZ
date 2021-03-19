@@ -1,0 +1,18 @@
+{
+    "name": "Piglin Beast",
+    "icon": "adventurez:stone_golem_heart",
+    "category": "adventurez:mob_category",
+    "pages": [
+        {
+            "type": "text",
+            "text": "A Beast of the Piglins! Piglins will call it, if you've killed too many of friends and sometimes they call it, when you mine gold. It can drop the Piglin Flag"
+        },
+        {
+            "type": "entity",
+            "name": "Showcase",
+            "entity": "adventurez:piglin_beast",
+            "scale": 0.9,
+            "offset": 0.3
+        }
+    ]
+}

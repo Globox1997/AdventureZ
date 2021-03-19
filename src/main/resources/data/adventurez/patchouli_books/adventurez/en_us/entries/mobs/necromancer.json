@@ -1,0 +1,28 @@
+{
+    "name": "Necromancer",
+    "icon": "adventurez:stone_golem_heart",
+    "category": "adventurez:mob_category",
+    "pages": [
+        {
+            "type": "text",
+            "text": "The dark Necromancer made nether fortresses to its home. It learned how to use dark magic and will summon Wither Puppets to protect itself from enemies"
+        },
+        {
+            "type": "entity",
+            "name": "Showcase",
+            "entity": "adventurez:necromancer",
+            "offset": 0.2
+        },
+        {
+            "type": "text",
+            "title": "Wither Puppet",
+            "text": "The Wither Puppet is controlled by its leader and infect its enemy with the witering effect. Kill its leader to destroy its will"
+        },
+        {
+            "type": "entity",
+            "name": "Showcase",
+            "entity": "adventurez:wither_puppet",
+            "scale": 1.1
+        }
+    ]
+}
