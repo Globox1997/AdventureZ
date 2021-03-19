@@ -26,13 +26,13 @@ public class PiglinFlagEntity extends BlockEntity implements Tickable {
   @Override
   public void fromTag(BlockState state, CompoundTag tag) {
     super.fromTag(state, tag);
-    flagWave = tag.getInt("flagging");
+    flagWave = tag.getInt("Flagging");
   }
 
   @Override
   public CompoundTag toTag(CompoundTag tag) {
     super.toTag(tag);
-    tag.putInt("flagging", flagWave);
+    tag.putInt("Flagging", flagWave);
     return tag;
   }
 
@@ -59,7 +59,7 @@ public class PiglinFlagEntity extends BlockEntity implements Tickable {
     if (this.flagWave < 2400) {
       this.flagWave++;
     }
-    if (flagWave == 2400 && this.world.getClosestPlayer((double) this.getPos().getX(), (double) this.getPos().getY(),
+    if (flagWave >= 2400 && this.world.getClosestPlayer((double) this.getPos().getX(), (double) this.getPos().getY(),
         (double) this.getPos().getZ(), 3D, null) != null) {
       getPiglins();
       markDirty();
