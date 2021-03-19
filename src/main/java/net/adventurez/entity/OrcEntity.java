@@ -4,7 +4,7 @@ import java.util.Random;
 
 import org.jetbrains.annotations.Nullable;
 
-import net.adventurez.entity.goal.OrkGroupGoal;
+import net.adventurez.entity.goal.OrcGroupGoal;
 import net.adventurez.entity.goal.WanderAroundVeryFarGoal;
 import net.adventurez.init.SoundInit;
 import net.minecraft.block.BlockState;
@@ -38,13 +38,13 @@ import net.minecraft.nbt.CompoundTag;
 import net.minecraft.sound.SoundEvent;
 import net.minecraft.util.math.BlockPos;
 
-public class OrkEntity extends HostileEntity {
-   public static final TrackedData<Integer> ORK_SIZE = DataTracker.registerData(OrkEntity.class,
+public class OrcEntity extends HostileEntity {
+   public static final TrackedData<Integer> ORK_SIZE = DataTracker.registerData(OrcEntity.class,
          TrackedDataHandlerRegistry.INTEGER);
-   public static final TrackedData<Boolean> DOUBLE_HAND_ATTACK = DataTracker.registerData(OrkEntity.class,
+   public static final TrackedData<Boolean> DOUBLE_HAND_ATTACK = DataTracker.registerData(OrcEntity.class,
          TrackedDataHandlerRegistry.BOOLEAN);
 
-   public OrkEntity(EntityType<? extends HostileEntity> entityType, World world) {
+   public OrcEntity(EntityType<? extends HostileEntity> entityType, World world) {
       super(entityType, world);
    }
 
@@ -61,18 +61,18 @@ public class OrkEntity extends HostileEntity {
       super.initGoals();
       this.goalSelector.add(0, new SwimGoal(this));
       this.goalSelector.add(1, new MeleeAttackGoal(this, 1.0D, true));
-      this.goalSelector.add(3, new OrkGroupGoal(this));
+      this.goalSelector.add(3, new OrcGroupGoal(this));
       this.goalSelector.add(4, new WanderAroundVeryFarGoal(this, 1.0D, 0.3F));
       this.goalSelector.add(5, new WanderAroundGoal(this, 0.9D));
       this.goalSelector.add(6, new LookAtEntityGoal(this, PlayerEntity.class, 8.0F));
       this.goalSelector.add(7, new LookAroundGoal(this));
       this.targetSelector.add(1, new FollowTargetGoal<>(this, PlayerEntity.class, true));
-      this.targetSelector.add(2, (new RevengeGoal(this, new Class[] { OrkEntity.class })));
+      this.targetSelector.add(2, (new RevengeGoal(this, new Class[] { OrcEntity.class })));
       this.targetSelector.add(3, new FollowTargetGoal<>(this, WanderingTraderEntity.class, true));
       this.targetSelector.add(4, new FollowTargetGoal<>(this, VillagerEntity.class, true));
    }
 
-   public static boolean canSpawn(EntityType<OrkEntity> type, ServerWorldAccess world, SpawnReason spawnReason,
+   public static boolean canSpawn(EntityType<OrcEntity> type, ServerWorldAccess world, SpawnReason spawnReason,
          BlockPos pos, Random random) {
       boolean bl = (world.getDifficulty() != Difficulty.PEACEFUL
             && canSpawnInDark(type, world, spawnReason, pos, random) && world.isSkyVisible(pos))

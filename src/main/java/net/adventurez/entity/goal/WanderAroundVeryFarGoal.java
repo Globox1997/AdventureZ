@@ -1,6 +1,6 @@
 package net.adventurez.entity.goal;
 
-import net.adventurez.entity.OrkEntity;
+import net.adventurez.entity.OrcEntity;
 import net.minecraft.entity.ai.TargetFinder;
 import net.minecraft.entity.ai.goal.WanderAroundGoal;
 import net.minecraft.entity.mob.PathAwareEntity;
@@ -22,14 +22,14 @@ public class WanderAroundVeryFarGoal extends WanderAroundGoal {
             Vec3d vec3d = TargetFinder.findGroundTarget(this.mob, 15, 7);
             return vec3d == null ? super.getWanderTarget() : vec3d;
         } else {
-            return this.mob.getRandom().nextFloat() >= this.probability && this.isBigOrk(mob)
+            return this.mob.getRandom().nextFloat() >= this.probability && this.isBigOrc(mob)
                     ? TargetFinder.findGroundTarget(this.mob, 16, 5)
                     : super.getWanderTarget();
         }
     }
 
-    private boolean isBigOrk(PathAwareEntity pathAwareEntity) {
-        if (pathAwareEntity instanceof OrkEntity && ((OrkEntity) pathAwareEntity).getSize() == 3) {
+    private boolean isBigOrc(PathAwareEntity pathAwareEntity) {
+        if (pathAwareEntity instanceof OrcEntity && ((OrcEntity) pathAwareEntity).getSize() == 3) {
             return true;
         } else
             return false;

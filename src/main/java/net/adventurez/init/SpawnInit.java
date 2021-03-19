@@ -53,7 +53,7 @@ public class SpawnInit {
       }
       if (biome.getCategory().equals(Biome.Category.PLAINS)) {
         addMobSpawnToBiome(biome, SpawnGroup.MONSTER,
-            new SpawnSettings.SpawnEntry(EntityInit.ORK_ENTITY, ConfigInit.CONFIG.ork_spawn_weight, 1, 3));
+            new SpawnSettings.SpawnEntry(EntityInit.ORC_ENTITY, ConfigInit.CONFIG.orc_spawn_weight, 1, 3));
       }
       // if (biome.getCategory().equals(Biome.Category.ICY) ||
       // biome.getCategory().equals(Biome.Category.TAIGA)) {
@@ -96,8 +96,8 @@ public class SpawnInit {
         Heightmap.Type.MOTION_BLOCKING_NO_LEAVES, RedFungusEntity::canSpawn);
     SpawnRestriction.register(EntityInit.BROWN_FUNGUS_ENTITY, SpawnRestriction.Location.ON_GROUND,
         Heightmap.Type.MOTION_BLOCKING_NO_LEAVES, BrownFungusEntity::canSpawn);
-    SpawnRestriction.register(EntityInit.ORK_ENTITY, SpawnRestriction.Location.ON_GROUND,
-        Heightmap.Type.MOTION_BLOCKING_NO_LEAVES, OrkEntity::canSpawn);
+    SpawnRestriction.register(EntityInit.ORC_ENTITY, SpawnRestriction.Location.ON_GROUND,
+        Heightmap.Type.MOTION_BLOCKING_NO_LEAVES, OrcEntity::canSpawn);
   }
 
 }

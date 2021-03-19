@@ -47,8 +47,8 @@ public class RenderInit {
                                 (dispatcher, context) -> new RedFungusRenderer(dispatcher));
                 EntityRendererRegistry.INSTANCE.register(EntityInit.BROWN_FUNGUS_ENTITY,
                                 (dispatcher, context) -> new BrownFungusRenderer(dispatcher));
-                EntityRendererRegistry.INSTANCE.register(EntityInit.ORK_ENTITY,
-                                (dispatcher, context) -> new OrkRenderer(dispatcher));
+                EntityRendererRegistry.INSTANCE.register(EntityInit.ORC_ENTITY,
+                                (dispatcher, context) -> new OrcRenderer(dispatcher));
                 EntityRendererRegistry.INSTANCE.register(EntityInit.DRAGON_ENTITY,
                                 (dispatcher, context) -> new DragonRenderer(dispatcher));
 

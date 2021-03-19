@@ -2,7 +2,7 @@ package net.adventurez.entity.model;
 
 import com.google.common.collect.ImmutableList;
 
-import net.adventurez.entity.OrkEntity;
+import net.adventurez.entity.OrcEntity;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
 import net.minecraft.client.model.ModelPart;
@@ -10,7 +10,7 @@ import net.minecraft.client.render.entity.model.CompositeEntityModel;
 import net.minecraft.util.math.MathHelper;
 
 @Environment(EnvType.CLIENT)
-public class OrkModel<T extends OrkEntity> extends CompositeEntityModel<T> {
+public class OrcModel<T extends OrcEntity> extends CompositeEntityModel<T> {
     private final ModelPart leftLeg;
     private final ModelPart rightLeg;
     private final ModelPart torso;
@@ -23,7 +23,7 @@ public class OrkModel<T extends OrkEntity> extends CompositeEntityModel<T> {
     private final ModelPart earright;
     private final ModelPart ear;
 
-    public OrkModel() {
+    public OrcModel() {
 
         leftLeg = (new ModelPart(this)).setTextureSize(128, 128);
         leftLeg.setPivot(-3.0F, 12.0F, 0.0F);
@@ -111,7 +111,7 @@ public class OrkModel<T extends OrkEntity> extends CompositeEntityModel<T> {
         float k = MathHelper.sin(entity.handSwingProgress * 3.1415927F);
         if (k > 0) {
             this.rightArm.pitch = -k;
-            if (entity.getDataTracker().get(OrkEntity.DOUBLE_HAND_ATTACK)) {
+            if (entity.getDataTracker().get(OrcEntity.DOUBLE_HAND_ATTACK)) {
                 this.leftArm.pitch = -k;
             }
         }
