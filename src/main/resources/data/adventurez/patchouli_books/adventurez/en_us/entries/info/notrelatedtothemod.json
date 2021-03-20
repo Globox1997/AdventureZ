@@ -1,0 +1,31 @@
+{
+    "name": "NRTTM",
+    "icon": "minecraft:paper",
+    "category": "adventurez:info_category",
+    "pages": [
+        {
+            "type": "text",
+            "text": "You may ask yourself, what does NRTTM mean... It means: Not related to the mod :D This are just some sentences I put together because I like to do it^^ First of all, thank you for playing the AdventureZ mod, I hope it will give your world a little bit more of a challenge and you like it :) But what I really want to tell you is: You are appreciated and loved as the person you are!"
+        },
+        {
+            "type": "text",
+            "text": "I know this sounds a little cheesy but thats how it is: You are loved! My name is Micha, in some games I took the name Globox (because I like the character of Rayman ;)), I'm a normal person just like you (I know everybody is special of course but you get the point) and I hope you believe deep inside yourself that you are a loved person. Hopefully by people you know closely, if not, there will be people who will love you just as you are. Why am I writing this? Good question :D"
+        },
+        {
+            "type": "text",
+            "text": "Because from time to time I feel like people believe in this specific aspect a lie, that they are not loved or something even worse. Also I think, except of human needs, love is the most important thing in life you need. It is just on my heart to say to you: You are loved! I mean, I do not know you and we might be not on a same wavelength in our personality and we would perhaps even not hang out as friends if we know each other but that doesn't change the truth about you"
+        },
+        {
+            "type": "text",
+            "text": "(which I believe and hopefully you too). You might be young or maybe a little older, at one point in your life you should figure out why and for what reason you live here in this world (basically the meaning of your life), hopefully you already found it but let me tell you something: It is a great process everybody has to go through :D (I don't know how I got to the meaning of life rith now... mh...). However I might edit this text a few times^^."
+        },
+        {
+            "type": "text",
+            "text": "I wish you the best, if you got questions about the mods or anything else, hit me up on Discord (Globox_Z #1024) or anywhere else"
+        },
+        {
+            "type": "empty",
+            "draw_filler": false
+        }
+    ]
+}
