@@ -102,5 +102,6 @@
   "text.autoconfig.adventurez.option.allow_the_eye_summoning": "Allow The Eye Summoning Ritual",
   "text.autoconfig.adventurez.option.allow_dragon_hatching": "Allow Dragon Hatching",
 
-  "text.autoconfig.adventurez.option.display_rareness": "Display Rareness"
+  "text.autoconfig.adventurez.option.display_rareness": "Display Rareness",
+  "text.autoconfig.adventurez.option.disable_armor_bonus": "Disable Armor Setbonus"
 }

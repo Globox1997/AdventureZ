@@ -47,5 +47,7 @@ public class AdventureConfig implements ConfigData {
   public boolean allow_dragon_hatching = true;
   @ConfigEntry.Category("misc")
   public boolean display_rareness = true;
+  @ConfigEntry.Category("misc")
+  public boolean disable_armor_bonus = false;
 
 }

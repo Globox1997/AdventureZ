@@ -1,5 +1,6 @@
 package net.adventurez.network;
 
+import net.adventurez.init.ConfigInit;
 import net.adventurez.init.ItemInit;
 import net.adventurez.item.armor.StoneGolemArmor;
 import net.fabricmc.fabric.api.networking.v1.ServerPlayNetworking;
@@ -14,7 +15,8 @@ public class KeybindPacket {
   public static void init() {
     ServerPlayNetworking.registerGlobalReceiver(ARMOR_PACKET, (server, player, handler, buffer, sender) -> {
       ItemStack stack = player.getEquippedStack(EquipmentSlot.CHEST);
-      if (!stack.isEmpty() && stack.getItem() == ItemInit.STONE_GOLEM_CHESTPLATE) {
+      if (!stack.isEmpty() && stack.getItem() == ItemInit.STONE_GOLEM_CHESTPLATE
+          && !ConfigInit.CONFIG.disable_armor_bonus) {
         StoneGolemArmor.fireActive(player, stack);
       }
     });
