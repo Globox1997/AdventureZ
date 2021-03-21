@@ -8,6 +8,7 @@ import net.fabricmc.api.Environment;
 import net.minecraft.client.model.ModelPart;
 import net.minecraft.client.render.entity.model.CompositeEntityModel;
 import net.minecraft.entity.Entity;
+import net.minecraft.particle.ParticleTypes;
 import net.minecraft.sound.SoundEvents;
 import net.minecraft.util.math.MathHelper;
 
@@ -68,6 +69,8 @@ public class DragonModel<T extends DragonEntity> extends CompositeEntityModel<T>
         private int endFlyingTicker;
         private boolean isPlayingSound;
         private int delayerSoundTick;
+        private boolean randomYawFire;
+        private int randomYawFireTick;
 
         public DragonModel() {
                 body = (new ModelPart(this)).setTextureSize(512, 512);
@@ -520,30 +523,30 @@ public class DragonModel<T extends DragonEntity> extends CompositeEntityModel<T>
                 // Walk Animation
                 if (!entity.isInSittingPose()) {
 
-                        float testfloat = 32.0F;
+                        float walkFloat = 32.0F;
                         this.rearlegright.pitch = -0.9599F
-                                        + 0.3F * MathHelper.method_24504(limbAngle, testfloat) * limbDistance * 1.3F;
+                                        + 0.3F * MathHelper.method_24504(limbAngle, walkFloat) * limbDistance * 1.3F;
                         this.rearlegleft.pitch = -0.9599F
-                                        - 0.3F * MathHelper.method_24504(limbAngle, testfloat) * limbDistance * 1.3F;
+                                        - 0.3F * MathHelper.method_24504(limbAngle, walkFloat) * limbDistance * 1.3F;
 
-                        this.rearfootright.pitch = -0.3491F - 0.3F * MathHelper.method_24504(limbAngle, testfloat)
+                        this.rearfootright.pitch = -0.3491F - 0.3F * MathHelper.method_24504(limbAngle, walkFloat)
                                         * limbDistance * 1.3F * 0.9F;
-                        this.rearfootleft.pitch = -0.3491F + 0.3F * MathHelper.method_24504(limbAngle, testfloat)
+                        this.rearfootleft.pitch = -0.3491F + 0.3F * MathHelper.method_24504(limbAngle, walkFloat)
                                         * limbDistance * 1.3F * 0.9F;
 
                         this.frontlegright.pitch = 0.3491F
-                                        - 0.3F * MathHelper.method_24504(limbAngle, testfloat) * limbDistance * 1.3F;
+                                        - 0.3F * MathHelper.method_24504(limbAngle, walkFloat) * limbDistance * 1.3F;
                         this.frontlegleft.pitch = 0.3491F
-                                        + 0.3F * MathHelper.method_24504(limbAngle, testfloat) * limbDistance * 1.3F;
+                                        + 0.3F * MathHelper.method_24504(limbAngle, walkFloat) * limbDistance * 1.3F;
 
-                        this.frontlegrighttip.pitch = -1.5708F + 0.3F * MathHelper.method_24504(limbAngle, testfloat)
+                        this.frontlegrighttip.pitch = -1.5708F + 0.3F * MathHelper.method_24504(limbAngle, walkFloat)
                                         * limbDistance * 1.3F * 0.8F;
-                        this.frontleglefttip.pitch = -1.5708F - 0.3F * MathHelper.method_24504(limbAngle, testfloat)
+                        this.frontleglefttip.pitch = -1.5708F - 0.3F * MathHelper.method_24504(limbAngle, walkFloat)
                                         * limbDistance * 1.3F * 0.8F;
 
-                        this.frontfootright.pitch = 1.2217F + 0.3F * MathHelper.method_24504(limbAngle, testfloat)
+                        this.frontfootright.pitch = 1.2217F + 0.3F * MathHelper.method_24504(limbAngle, walkFloat)
                                         * limbDistance * 1.3F * 0.2F;
-                        this.frontfootleft.pitch = 1.2217F - 0.3F * MathHelper.method_24504(limbAngle, testfloat)
+                        this.frontfootleft.pitch = 1.2217F - 0.3F * MathHelper.method_24504(limbAngle, walkFloat)
                                         * limbDistance * 1.3F * 0.2F;
 
                         // tail
@@ -607,6 +610,35 @@ public class DragonModel<T extends DragonEntity> extends CompositeEntityModel<T>
                         this.wingtipleft.roll = 2.618F;
                         this.wingright.roll = 0.6981F;
                         this.wingtipright.roll = -2.618F;
+
+                        // Random Yaw Fire
+                        Float yawPitch = Math.abs(MathHelper.cos(6.2831853071F * slowlyIncreasingFloat) * 0.3F);
+                        if (!this.randomYawFire && yawPitch <= 0.01F && entity.world.random.nextInt(8) == 0) {
+                                this.randomYawFire = true;
+                        }
+                        if (this.randomYawFire) {
+                                this.randomYawFireTick++;
+                                Float yawler = this.head.yaw + this.neck.yaw + this.neck2.yaw + this.neck3.yaw
+                                                + this.neck4.yaw;
+                                Float pitcher = this.head.pitch + this.neck.pitch + this.neck2.pitch + this.neck3.pitch
+                                                + this.neck4.pitch;
+                                yawler = (yawler / (float) (Math.PI)) * 1.5F;
+                                pitcher = pitcher * 3F;
+                                entity.world.addParticle(ParticleTypes.FLAME, true,
+                                                entity.getX() + Math.sin((entity.bodyYaw / 360F) * 2F * Math.PI
+                                                                + (Math.PI) + yawler) * 6D,
+                                                entity.getY() - pitcher + 2.2F,
+                                                entity.getZ() - Math.cos((entity.bodyYaw / 360F) * 2F * Math.PI
+                                                                + (Math.PI) + yawler) * 6D,
+                                                0.0D, 0.0D, 0.0D);
+
+                                this.jaw.pitch = yawPitch;
+                                if (this.randomYawFireTick > 10 && yawPitch <= 0.01F) {
+                                        this.randomYawFireTick = 0;
+                                        this.randomYawFire = false;
+                                }
+                        }
+
                 }
                 if (this.isPlayingSound == true) {
                         this.delayerSoundTick++;
