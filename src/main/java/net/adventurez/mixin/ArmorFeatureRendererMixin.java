@@ -54,8 +54,8 @@ public abstract class ArmorFeatureRendererMixin<T extends LivingEntity, M extend
                     new Identifier("minecraft:textures/models/armor/stone_golem_armor_layer_1_overlay.png")),
                 true, false);
         long worldTime = livingEntity.getEntityWorld().getTime();
-        float goodFloat = ((float) Math.floorMod((long) +worldTime, 100L) + h) / 100.0F;
-        bodyModel.render(matrixStack, vertexConsumer, (int) (((MathHelper.cos(6.2831855F * goodFloat)) * 100) + 220),
+        float goodFloat = ((float) Math.floorMod(worldTime, 800L) + h) / 100.0F;
+        bodyModel.render(matrixStack, vertexConsumer, (int) (((MathHelper.cos(goodFloat * 3.14159265F)) * 100) + 240),
             OverlayTexture.DEFAULT_UV, 1.0F, 1.0F, 1.0F, 1.0F);
       }
     }
@@ -74,8 +74,8 @@ public abstract class ArmorFeatureRendererMixin<T extends LivingEntity, M extend
                     new Identifier("textures/models/armor/stone_golem_armor_layer_1_overlay_helmet.png")),
                 false, false);
         long worldTime = livingEntity.getEntityWorld().getTime();
-        float goodFloat = ((float) Math.floorMod((long) worldTime, 100L) + h) / 100.0F;
-        bodyModel.render(matrixStack, vertexConsumer, (int) (((MathHelper.cos(6.2831855F * goodFloat)) * 100) + 220),
+        float goodFloat = ((float) Math.floorMod((long) worldTime, 800L) + h) / 100.0F;
+        bodyModel.render(matrixStack, vertexConsumer, (int) (((MathHelper.cos(goodFloat * 3.14159265F)) * 100) + 240),
             OverlayTexture.DEFAULT_UV, 1.0F, 1.0F, 1.0F, 1.0F);
 
       }
