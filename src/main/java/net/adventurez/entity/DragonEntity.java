@@ -710,6 +710,7 @@ public class DragonEntity extends PathAwareEntity implements InventoryChangedLis
    }
 
    public void setInSittingPose(boolean inSittingPose) {
+      this.sitting = inSittingPose;
       byte b = (Byte) this.dataTracker.get(TAMEABLE_FLAGS);
       if (inSittingPose) {
          this.dataTracker.set(TAMEABLE_FLAGS, (byte) (b | 1));
@@ -836,6 +837,8 @@ public class DragonEntity extends PathAwareEntity implements InventoryChangedLis
       this.getDataTracker().set(OTHER_EYES, world.getRandom().nextBoolean());
       if (spawnReason.equals(SpawnReason.COMMAND)) {
          this.setSize(3);
+      } else {
+         this.setSize(1);
       }
       return super.initialize(world, difficulty, spawnReason, entityData, entityTag);
    }

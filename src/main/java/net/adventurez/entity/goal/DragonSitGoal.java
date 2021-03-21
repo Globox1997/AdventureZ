@@ -28,7 +28,8 @@ public class DragonSitGoal extends Goal {
             return false;
         } else {
             if (this.dragonEntity.getOwner() == null) {
-                return false;
+                // Has to be true cause if Owner is not there
+                return true;
             } else {
                 return this.dragonEntity.isInSittingPose();
             }
