@@ -6,3 +6,4 @@ AdventureZ is a mod built for the [Fabric Loader](https://fabricmc.net/). It req
 
 ### License
 AdventureZ is licensed under GLPv3.
+Sound effects are either edited Minecraft Vanilla sounds or under the [SFX (Single Use) License](https://audiojungle.net/licenses/terms/audio_sfx_media_single).
