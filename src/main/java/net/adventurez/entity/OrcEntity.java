@@ -4,6 +4,7 @@ import java.util.Random;
 
 import org.jetbrains.annotations.Nullable;
 
+import net.adventurez.entity.goal.OrcAttackGoal;
 import net.adventurez.entity.goal.OrcGroupGoal;
 import net.adventurez.entity.goal.WanderAroundVeryFarGoal;
 import net.adventurez.init.SoundInit;
@@ -16,7 +17,6 @@ import net.minecraft.entity.SpawnReason;
 import net.minecraft.entity.ai.goal.FollowTargetGoal;
 import net.minecraft.entity.ai.goal.LookAroundGoal;
 import net.minecraft.entity.ai.goal.LookAtEntityGoal;
-import net.minecraft.entity.ai.goal.MeleeAttackGoal;
 import net.minecraft.entity.ai.goal.RevengeGoal;
 import net.minecraft.entity.ai.goal.SwimGoal;
 import net.minecraft.entity.ai.goal.WanderAroundGoal;
@@ -60,7 +60,7 @@ public class OrcEntity extends HostileEntity {
    public void initGoals() {
       super.initGoals();
       this.goalSelector.add(0, new SwimGoal(this));
-      this.goalSelector.add(1, new MeleeAttackGoal(this, 1.0D, true));
+      this.goalSelector.add(1, new OrcAttackGoal(this, 1.0D, true));
       this.goalSelector.add(3, new OrcGroupGoal(this));
       this.goalSelector.add(4, new WanderAroundVeryFarGoal(this, 1.0D, 0.3F));
       this.goalSelector.add(5, new WanderAroundGoal(this, 0.9D));
@@ -89,7 +89,7 @@ public class OrcEntity extends HostileEntity {
 
    @Override
    public void readCustomDataFromTag(CompoundTag tag) {
-      this.setSize(tag.getInt("OrkSize"));
+      this.setSize(tag.getInt("OrkSize"), false);
       super.readCustomDataFromTag(tag);
 
    }
@@ -105,10 +105,13 @@ public class OrcEntity extends HostileEntity {
       return (Integer) this.dataTracker.get(ORK_SIZE);
    }
 
-   public void setSize(int size) {
+   public void setSize(int size, boolean healOrc) {
       this.dataTracker.set(ORK_SIZE, size);
       this.refreshPosition();
       this.calculateDimensions();
+      if (healOrc) {
+         this.setHealth(this.getMaxHealth());
+      }
    }
 
    @Override
@@ -162,11 +165,11 @@ public class OrcEntity extends HostileEntity {
    public EntityData initialize(ServerWorldAccess world, LocalDifficulty difficulty, SpawnReason spawnReason,
          @Nullable EntityData entityData, @Nullable CompoundTag entityTag) {
       int random = this.random.nextInt(3) + 1;
-      this.setSize(random);
-      this.getAttributeInstance(EntityAttributes.GENERIC_MAX_HEALTH).setBaseValue((double) (16D + this.getSize() * 6D));
+      this.getAttributeInstance(EntityAttributes.GENERIC_MAX_HEALTH).setBaseValue((double) (16D + random * 6D));
       this.getAttributeInstance(EntityAttributes.GENERIC_MOVEMENT_SPEED)
-            .setBaseValue((double) (0.26F - 0.012F * (float) this.getSize()));
-      this.getAttributeInstance(EntityAttributes.GENERIC_ATTACK_DAMAGE).setBaseValue((double) this.getSize() * 3D + 2D);
+            .setBaseValue((double) (0.26F - 0.012F * (float) random));
+      this.getAttributeInstance(EntityAttributes.GENERIC_ATTACK_DAMAGE).setBaseValue((double) random * 3D + 2D);
+      this.setSize(random, true);
       return super.initialize(world, difficulty, spawnReason, entityData, entityTag);
    }
 
