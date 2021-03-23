@@ -581,15 +581,23 @@ public class DragonEntity extends PathAwareEntity implements InventoryChangedLis
          }
          if (this.dragonAge == 5 && this.getSize() == 1) {
             this.setSize(2);
+            this.healDragonIfGrowing();
          }
          if (this.dragonAge == 15 && this.getSize() == 2) {
             this.setSize(3);
+            this.healDragonIfGrowing();
          }
          if (this.dragonAgeFoodBonus > 5) {
             this.dragonAgeFoodBonus = 0;
             this.dragonAge++;
             this.world.sendEntityStatus(this, (byte) 9);
          }
+      }
+   }
+
+   private void healDragonIfGrowing() {
+      if (this.getHealth() < this.getMaxHealth()) {
+         this.setHealth(this.getHealth() + 20F);
       }
    }
 
