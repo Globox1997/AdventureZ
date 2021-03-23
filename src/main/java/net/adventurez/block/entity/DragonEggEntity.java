@@ -44,7 +44,7 @@ public class DragonEggEntity extends BlockEntity implements Tickable {
     @Override
     public CompoundTag toTag(CompoundTag tag) {
         super.toTag(tag);
-        tag.putBoolean("hatchAble", isHatchAble);
+        tag.putBoolean("Hatch_Able", isHatchAble);
         tag.putInt("Hatch_Tick", hatchTick);
         tag.putInt("Summoning_Tick", summoningTick);
         return tag;
