@@ -17,7 +17,6 @@
     "ServerPlayNetworkHandlerMixin",
     "SmithingScreenHandlerMixin",
     "EnderDragonFightMixin",
-    "FallingBlockEntityMixin",
     "PlayerManagerMixin",
     "accessor.LivingEntityAccessor",
     "accessor.FallingBlockAccessor"
