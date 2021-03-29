@@ -15,7 +15,12 @@
     "GiveGiftsToHeroTaskMixin",
     "VillagerEntityMixin",
     "ServerPlayNetworkHandlerMixin",
-    "accessor.LivingEntityAccessor"
+    "SmithingScreenHandlerMixin",
+    "EnderDragonFightMixin",
+    "FallingBlockEntityMixin",
+    "PlayerManagerMixin",
+    "accessor.LivingEntityAccessor",
+    "accessor.FallingBlockAccessor"
   ],
   "client": [
     "ArmorFeatureRendererMixin",
