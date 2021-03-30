@@ -49,5 +49,7 @@ public class AdventureConfig implements ConfigData {
   public boolean display_rareness = true;
   @ConfigEntry.Category("misc")
   public boolean disable_armor_bonus = false;
+  @ConfigEntry.Category("misc")
+  public boolean resummoned_ender_dragon_drops_egg = false;
 
 }
