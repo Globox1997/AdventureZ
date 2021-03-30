@@ -46,10 +46,12 @@ public abstract class ServerWorldMixin extends World {
       int i = chunkPos.getStartX();
       int j = chunkPos.getStartZ();
       BlockPos blockPos = this.getSurface(this.getRandomPosInChunk(i, 0, j, 15));
-      SummonerEntity summonerEntity = (SummonerEntity) EntityInit.SUMMONER_ENTITY.create(this);
-      summonerEntity.updatePosition((double) blockPos.getX(), (double) blockPos.getY(), (double) blockPos.getZ());
-      this.spawnEntity(summonerEntity);
-      summonerEntity.playSpawnEffects();
+      if (this.getBlockState(blockPos).isSolidBlock(this, blockPos)) {
+        SummonerEntity summonerEntity = (SummonerEntity) EntityInit.SUMMONER_ENTITY.create(this);
+        summonerEntity.updatePosition((double) blockPos.getX(), (double) blockPos.getY(), (double) blockPos.getZ());
+        this.spawnEntity(summonerEntity);
+        summonerEntity.playSpawnEffects();
+      }
     }
   }
 
