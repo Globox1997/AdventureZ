@@ -75,7 +75,8 @@ public class PiglinBeastEntity extends HostileEntity {
     this.goalSelector.add(7, new LookAtEntityGoal(this, MobEntity.class, 8.0F));
     this.targetSelector.add(1, new FollowTargetGoal<>(this, WitherSkeletonEntity.class, true));
     this.targetSelector.add(2, new FollowTargetGoal<>(this, PlayerEntity.class, true));
-    this.targetSelector.add(3, (new RevengeGoal(this, new Class[] { PiglinEntity.class })));
+    this.targetSelector.add(3, new FollowTargetGoal<>(this, BlazeGuardianEntity.class, true));
+    this.targetSelector.add(4, (new RevengeGoal(this, new Class[] { PiglinEntity.class })));
   }
 
   @Override
