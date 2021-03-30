@@ -46,7 +46,7 @@ public class EntityInit {
                         .dimensions(EntityDimensions.fixed(2.8F, 3.5F)).build();
         public static final EntityType<VoidShadowEntity> VOID_SHADOW_ENTITY = FabricEntityTypeBuilder
                         .create(SpawnGroup.MONSTER, VoidShadowEntity::new).fireImmune()
-                        .dimensions(EntityDimensions.fixed(3.2F, 4.8F)).build();
+                        .dimensions(EntityDimensions.fixed(3.4F, 5.1F)).build();
         public static final EntityType<OrcEntity> ORC_ENTITY = FabricEntityTypeBuilder
                         .create(SpawnGroup.MONSTER, OrcEntity::new).dimensions(EntityDimensions.changing(1.35F, 2.2F))
                         .build();
