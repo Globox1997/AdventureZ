@@ -37,7 +37,6 @@ import net.minecraft.util.math.MathHelper;
 import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.Difficulty;
 import net.minecraft.world.World;
-import net.voidz.init.BlockInit;
 // import net.minecraft.entity.mob.ZombieEntity;
 // import net.minecraft.entity.ai.goal.MeleeAttackGoal;
 // import net.minecraft.entity.mob.PhantomEntity;
@@ -45,6 +44,9 @@ import net.voidz.init.BlockInit;
 //import net.minecraft.entity.mob.SlimeEntity;
 import net.minecraft.entity.boss.dragon.EnderDragonEntity;
 import net.minecraft.entity.ai.goal.AttackGoal;
+import net.minecraft.block.Block;
+import net.minecraft.block.BlockState;
+import net.minecraft.block.Blocks;
 import net.minecraft.block.EndPortalBlock;
 import net.minecraft.entity.projectile.ArrowEntity;
 import net.minecraft.entity.mob.CreeperEntity;
@@ -235,6 +237,10 @@ public class VoidShadowEntity extends FlyingEntity implements Monster {
         this.portalX = x;
         this.portalY = y;
         this.portalZ = z;
+    }
+
+    public BlockPos getVoidMiddle() {
+        return new BlockPos(this.portalX, this.portalY, this.portalZ);
     }
 
     @Override
@@ -472,8 +478,16 @@ public class VoidShadowEntity extends FlyingEntity implements Monster {
                         double anotherRandom = this.voidShadow.world.random.nextDouble();
                         double anotherExtraRandom = this.voidShadow.world.random.nextDouble() - 0.5D;
                         double anotherExtraXXXRandom = this.voidShadow.world.random.nextDouble() - 0.5D;
+                        Block block;
+                        if (this.voidShadow.hasVoidMiddleCoordinates()) {
+                            block = this.voidShadow.world.getBlockState(this.voidShadow.getVoidMiddle()).getBlock();
+                        } else if (!this.voidShadow.world.getBlockState(pos.down(5)).isAir()) {
+                            block = this.voidShadow.world.getBlockState(pos.down(5)).getBlock();
+                        } else {
+                            block = Blocks.STONE;
+                        }
                         FallingBlockEntity fallingBlockEntity = new FallingBlockEntity(this.voidShadow.world,
-                                pos.getX(), pos.getY() + 3, pos.getZ(), BlockInit.VOID_BLOCK.getDefaultState());
+                                pos.getX(), pos.getY() + 3, pos.getZ(), block.getDefaultState());
                         Vec3d vec3d = new Vec3d(livingEntity.getX() - this.voidShadow.getX(),
                                 livingEntity.getY() - this.voidShadow.getY(),
                                 livingEntity.getZ() - this.voidShadow.getZ());
