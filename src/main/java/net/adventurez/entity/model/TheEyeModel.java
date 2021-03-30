@@ -52,6 +52,9 @@ public class TheEyeModel<T extends TheEyeEntity> extends CompositeEntityModel<T>
         if (eye.getHealth() < (eye.getMaxHealth() / 3) && !(eye.getDataTracker().get(TheEyeEntity.INVUL_TIMER) > 0)) {
             this.left_site.pivotX = -1.0F;
             this.right_site.pivotX = 1.0F;
+        } else {
+            this.left_site.pivotX = 0F;
+            this.right_site.pivotX = 0F;
         }
 
     }
