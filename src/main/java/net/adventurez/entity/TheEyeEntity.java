@@ -9,6 +9,7 @@ import net.adventurez.init.EffectInit;
 import net.adventurez.init.EntityInit;
 import net.adventurez.init.SoundInit;
 import net.adventurez.init.TagInit;
+import net.fabricmc.loader.api.FabricLoader;
 import net.minecraft.block.BlockState;
 import net.minecraft.block.Blocks;
 import net.minecraft.entity.Entity;
@@ -39,6 +40,7 @@ import net.minecraft.nbt.CompoundTag;
 import net.minecraft.particle.ParticleTypes;
 import net.minecraft.predicate.entity.EntityPredicates;
 import net.minecraft.server.network.ServerPlayerEntity;
+import net.minecraft.server.world.ServerWorld;
 import net.minecraft.sound.SoundCategory;
 import net.minecraft.sound.SoundEvent;
 import net.minecraft.sound.SoundEvents;
@@ -54,6 +56,8 @@ import net.minecraft.world.GameRules;
 import net.minecraft.world.SpawnHelper;
 import net.minecraft.world.World;
 import net.minecraft.world.explosion.Explosion;
+import net.voidz.init.BlockInit;
+//import net.voidz.init.BlockInit;
 import net.minecraft.world.Heightmap;
 import org.jetbrains.annotations.Nullable;
 
@@ -169,11 +173,9 @@ public class TheEyeEntity extends FlyingEntity {
         if (!this.hasNoGravity()) {
             this.setNoGravity(true);
         }
-
         int j;
         if (this.getInvulnerableTimer() > 0) {
             j = this.getInvulnerableTimer() - 1;
-
             if (j <= 0) {
                 Explosion.DestructionType destructionType = this.world.getGameRules().getBoolean(
                         GameRules.DO_MOB_GRIEFING) ? Explosion.DestructionType.DESTROY : Explosion.DestructionType.NONE;
@@ -422,7 +424,7 @@ public class TheEyeEntity extends FlyingEntity {
         if (!this.world.isClient) {
             this.bossBar.setPercent(0.0F);
             BlockPos deathPos = new BlockPos(this.getX(), this.getY() - 1, this.getZ());
-            if (deathTimer == 20) {
+            if (deathTimer == 20 && !FabricLoader.getInstance().isModLoaded("voidz")) {
                 Box box = new Box(this.getBlockPos());
                 List<PlayerEntity> list = world.getEntitiesByClass(PlayerEntity.class, box.expand(128D),
                         EntityPredicates.EXCEPT_SPECTATOR);
@@ -438,6 +440,13 @@ public class TheEyeEntity extends FlyingEntity {
                 world.playSound(null, deathPos, SoundInit.EYE_DEATH_PLATFORM_EVENT, SoundCategory.HOSTILE, 1F, 1F);
             }
             if (deathTimer >= 200) {
+                for (int o = 0; o < 5; o++) {
+                    ((ServerWorld) this.world).spawnParticles(ParticleTypes.EXPLOSION,
+                            deathPos.getX() - 1 + this.world.random.nextInt(4),
+                            deathPos.getY() - 1 + this.world.random.nextInt(4),
+                            deathPos.getZ() - 1 + this.world.random.nextInt(4), 0, 0.0D, 0.0D, 0.0D, 0.01D);
+                    world.playSound(null, deathPos, SoundEvents.ENTITY_GENERIC_EXPLODE, SoundCategory.BLOCKS, 1F, 1F);
+                }
                 for (int i = -1; i < 2; i++) {
                     for (int u = -1; u < 2; u++) {
                         for (int g = 0; g < 6; g++) {
@@ -454,7 +463,11 @@ public class TheEyeEntity extends FlyingEntity {
                     }
                 }
                 this.placeExtraBlocks(deathPos);
-                world.setBlockState(deathPos.up(), Blocks.DRAGON_EGG.getDefaultState(), 3);
+                if (FabricLoader.getInstance().isModLoaded("voidz")) {
+                    world.setBlockState(deathPos.up(), BlockInit.PORTAL_BLOCK.getDefaultState(), 3);
+                } else {
+                    world.setBlockState(deathPos.up(), Blocks.DRAGON_EGG.getDefaultState(), 3);
+                }
                 // this.dropItem(ItemInit.PRIME_EYE_ITEM); // mcfunction
                 this.remove();
             }
