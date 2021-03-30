@@ -4,6 +4,7 @@ import net.adventurez.entity.OrcEntity;
 import net.adventurez.entity.model.OrcModel;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
+import net.minecraft.client.render.VertexConsumerProvider;
 import net.minecraft.client.render.entity.EntityRenderDispatcher;
 import net.minecraft.client.render.entity.MobEntityRenderer;
 import net.minecraft.client.util.math.MatrixStack;
@@ -15,6 +16,13 @@ public class OrcRenderer extends MobEntityRenderer<OrcEntity, OrcModel<OrcEntity
 
     public OrcRenderer(EntityRenderDispatcher entityRenderDispatcher) {
         super(entityRenderDispatcher, new OrcModel<>(), 0.7F);
+    }
+
+    @Override
+    public void render(OrcEntity orcEntity, float f, float g, MatrixStack matrixStack,
+            VertexConsumerProvider vertexConsumerProvider, int i) {
+        this.shadowRadius = 0.5F * (float) orcEntity.getSize();
+        super.render(orcEntity, f, g, matrixStack, vertexConsumerProvider, i);
     }
 
     @Override

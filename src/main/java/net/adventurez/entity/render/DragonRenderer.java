@@ -6,6 +6,7 @@ import net.adventurez.entity.render.feature.DragonEyesFeatureRenderer;
 import net.adventurez.entity.render.feature.DragonSaddleFeatureRenderer;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
+import net.minecraft.client.render.VertexConsumerProvider;
 import net.minecraft.client.render.entity.EntityRenderDispatcher;
 import net.minecraft.client.render.entity.MobEntityRenderer;
 import net.minecraft.client.util.math.MatrixStack;
@@ -16,9 +17,16 @@ public class DragonRenderer extends MobEntityRenderer<DragonEntity, DragonModel<
     private static final Identifier TEXTURE = new Identifier("adventurez:textures/entity/dragon.png");
 
     public DragonRenderer(EntityRenderDispatcher entityRenderDispatcher) {
-        super(entityRenderDispatcher, new DragonModel<>(), 0.7F);
+        super(entityRenderDispatcher, new DragonModel<>(), 0.4F);
         this.addFeature(new DragonEyesFeatureRenderer(this));
         this.addFeature(new DragonSaddleFeatureRenderer(this));
+    }
+
+    @Override
+    public void render(DragonEntity dragonEntity, float f, float g, MatrixStack matrixStack,
+            VertexConsumerProvider vertexConsumerProvider, int i) {
+        this.shadowRadius = 0.6F * (float) dragonEntity.getSize();
+        super.render(dragonEntity, f, g, matrixStack, vertexConsumerProvider, i);
     }
 
     @Override
