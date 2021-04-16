@@ -15,7 +15,8 @@
   "entity.adventurez.void_shadow": "Пустотная тень",
   "entity.adventurez.red_fungus": "Красный гриб",
   "entity.adventurez.brown_fungus": "Коричневый гриб",
-  "entity.adventurez.ork": "Орк",
+  "entity.adventurez.orc": "Орк",
+  "entity.adventurez.dragon": "Дракон",
 
   "item.adventurez.spawn_stone_golem": "Яйцо прызыва Чернитового Голема",
   "item.adventurez.spawn_small_stone_golem": "Яйцо призыва Малого Чернитового Голема",
@@ -31,7 +32,8 @@
   "item.adventurez.spawn_void_shadow": "Яйцо призыва Пустотной Тени",
   "item.adventurez.spawn_red_fungus": "Яйцо призыва Красного гриба",
   "item.adventurez.spawn_brown_fungus": "Яйцо призыва Коричневого гриба",
-  "item.adventurez.spawn_ork": "Яйцо призыва Орка",
+  "item.adventurez.spawn_orc": "Яйцо призыва Орка",
+  "item.adventurez.spawn_dragon": "Яйцо призыва Дракона",
 
   "item.adventurez.gilded_stone_item": "Позолоченный чернитовый осколок",
   "item.adventurez.gilded_stone_item.tooltip": "Размещается на чернитовом держателе",
@@ -50,15 +52,18 @@
   "item.adventurez.stone_golem_armor.tooltip4": "§cПерезарядка (1:00)",
   "item.adventurez.prime_eye_item": "Высшее Око",
   "item.adventurez.orc_skin_item": "Кожа орка",
+  "item.adventurez.dragon_saddle": "Драконье седло",
 
-  "item.adventurez.moreinfo.tooltip": "§8Держите §6Shift §8для большей информации",
-  "item.adventurez.common_item.tooltip": "§7Common",
-  "item.adventurez.uncommon_item.tooltip": "§2Uncommon Material",
-  "item.adventurez.rare_item.tooltip": "§1Rare",
-  "item.adventurez.epic_item.tooltip": "§5Epic",
-  "item.adventurez.legendary_item.tooltip": "§6Legendary Material",
+  "item.adventurez.moreinfo.tooltip": "§8Зажмите §6Shift §8для большей информации",
+  "item.adventurez.common_item.tooltip": "§7Обычный",
+  "item.adventurez.uncommon_item.tooltip": "§2Необычный",
+  "item.adventurez.rare_item.tooltip": "§cРедкий",
+  "item.adventurez.epic_item.tooltip": "§5Эпический",
+  "item.adventurez.legendary_item.tooltip": "§6Легендарный",
+  
+  "category.adventurez.keybind": "AdventureZ Keybinds",
   "key.adventurez.activatearmor": "Активация брони",
-  "category.adventurez.test": "AdventureZ",
+  "key.adventurez.dragonflydown": "Полёт вниз на драконе",
 
   "block.adventurez.stone_holder_block": "Резной полированный чернитовый держатель",
   "block.adventurez.stone_holder_block.tooltip": "Разместите 4 блока в круг",
@@ -75,11 +80,14 @@
   "adventurez.advancements.the_eye.description": "Убить правителя Края",
 
   "effect.adventurez.withering": "Иссушение",
+  "effect.adventurez.fame": "Слава",
 
   "death.attack.rock":"%1$s был раздавлен чернитом",
   "death.attack.tinyEye":"%1$s был избит до смерти крошечным глазом",
 
   "text.autoconfig.adventurez.title": "Настройка AdventureZ",
+  "text.autoconfig.adventurez.category.spawn_setting": "Настройки появления",
+  "text.autoconfig.adventurez.category.misc": "Другие настройки",
   "text.autoconfig.adventurez.option.necromancer_spawn_weight.@PrefixText": "Для подтверждения настроек, перезапустите игру",
   "text.autoconfig.adventurez.option.necromancer_spawn_weight": "Возможность появления Некроманта",
   "text.autoconfig.adventurez.option.nightmare_spawn_weight": "Возможность появления Кошмара и Жнеца",
@@ -89,7 +97,12 @@
   "text.autoconfig.adventurez.option.summoner_thunder_spawn_chance": "Шанс призыва Призывателя при ударе молнии",
   "text.autoconfig.adventurez.option.blaze_guardian_spawn_weight": "Возможность появления Стража Пламени",
   "text.autoconfig.adventurez.option.fungus_spawn_weight": "Возможность появления Гриба",
-  "text.autoconfig.adventurez.option.ork_spawn_weight": "Возможность появления Орка",
+  "text.autoconfig.adventurez.option.orc_spawn_weight": "Возможность появления Орка",
   "text.autoconfig.adventurez.option.allow_stone_golem_summoning": "Призыв Чернитого Голема через ритуал",
-  "text.autoconfig.adventurez.option.allow_the_eye_summoning": "Призыв Ока через ритуал"
+  "text.autoconfig.adventurez.option.allow_the_eye_summoning": "Призыв Ока через ритуал",
+  "text.autoconfig.adventurez.option.allow_dragon_hatching": "Возможность ловли дракона",
+  
+  "text.autoconfig.adventurez.option.display_rareness": "Отображать редкость",
+  "text.autoconfig.adventurez.option.disable_armor_bonus": "Отключение бонуса брони",
+  "text.autoconfig.adventurez.option.resummoned_ender_dragon_drops_egg": "Возрожденный дракон Края оставляет яйцо"
 }
