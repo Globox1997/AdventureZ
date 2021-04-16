@@ -35,8 +35,8 @@
   "item.adventurez.spawn_orc": "Яйцо призыва Орка",
   "item.adventurez.spawn_dragon": "Яйцо призыва Дракона",
 
-  "item.adventurez.gilded_stone_item": "Позолоченный чернитовый осколок",
-  "item.adventurez.gilded_stone_item.tooltip": "Размещается на чернитовом держателе",
+  "item.adventurez.gilded_stone": "Позолоченный чернитовый осколок",
+  "item.adventurez.gilded_stone.tooltip": "Размещается на чернитовом держателе",
   "item.adventurez.stone_golem_arm": "Чернитовая рука",
   "item.adventurez.stone_golem_arm.tooltip": "Зажмите ПКМ для зарядки руки",
   "item.adventurez.stone_golem_heart": "Чернитовое сердце голема",
@@ -50,8 +50,8 @@
   "item.adventurez.stone_golem_armor.tooltip2": "Нажмите %1$s для активации",
   "item.adventurez.stone_golem_armor.tooltip3": "§9Огнестойкость (0:30)",
   "item.adventurez.stone_golem_armor.tooltip4": "§cПерезарядка (1:00)",
-  "item.adventurez.prime_eye_item": "Высшее Око",
-  "item.adventurez.orc_skin_item": "Кожа орка",
+  "item.adventurez.prime_eye": "Высшее Око",
+  "item.adventurez.orc_skin": "Кожа орка",
   "item.adventurez.dragon_saddle": "Драконье седло",
 
   "item.adventurez.moreinfo.tooltip": "§8Зажмите §6Shift §8для большей информации",
