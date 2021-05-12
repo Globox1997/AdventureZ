@@ -2,7 +2,6 @@ package net.adventurez.item;
 
 import java.util.List;
 
-import net.adventurez.init.ConfigInit;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.item.TooltipContext;
 import net.minecraft.client.util.InputUtil;
@@ -20,9 +19,7 @@ public class GildedNetheriteFragmentItem extends Item {
 
   @Override
   public void appendTooltip(ItemStack itemStack, World world, List<Text> tooltip, TooltipContext tooltipContext) {
-    if (ConfigInit.CONFIG.display_rareness) {
-      tooltip.add(new TranslatableText("item.adventurez.epic_item.tooltip"));
-    }
+    super.appendTooltip(itemStack, world, tooltip, tooltipContext);
     tooltip.add(new TranslatableText("item.adventurez.moreinfo.tooltip"));
     if (InputUtil.isKeyPressed(MinecraftClient.getInstance().getWindow().getHandle(), 340)) {
       tooltip.remove(new TranslatableText("item.adventurez.moreinfo.tooltip"));

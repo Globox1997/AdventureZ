@@ -7,7 +7,6 @@ import com.google.common.collect.ImmutableMultimap;
 import com.google.common.collect.Multimap;
 import com.google.common.collect.ImmutableMultimap.Builder;
 
-import net.adventurez.init.ConfigInit;
 import net.adventurez.init.ItemInit;
 import net.adventurez.init.KeybindInit;
 import net.minecraft.client.MinecraftClient;
@@ -64,9 +63,7 @@ public class StoneGolemArmor extends ArmorItem {
 
   @Override
   public void appendTooltip(ItemStack itemStack, World world, List<Text> tooltip, TooltipContext tooltipContext) {
-    if (ConfigInit.CONFIG.display_rareness) {
-      tooltip.add(new TranslatableText("item.adventurez.epic_item.tooltip"));
-    }
+    super.appendTooltip(itemStack, world, tooltip, tooltipContext);
     tooltip.add(new TranslatableText("item.adventurez.stone_golem_armor.tooltip"));
     tooltip.add(new TranslatableText("item.adventurez.moreinfo.tooltip"));
     if (InputUtil.isKeyPressed(MinecraftClient.getInstance().getWindow().getHandle(), 340)) {
