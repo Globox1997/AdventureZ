@@ -1,0 +1,48 @@
+{
+    "parent": "minecraft:nether/netherite_armor",
+    "display": {
+        "icon": {
+            "item": "adventurez:stone_golem_chestplate",
+            "nbt": "{Damage:0}"
+        },
+        "title": {
+            "translate": "adventurez.advancements.gilded_netherite_armor.title"
+        },
+        "description": {
+            "translate": "adventurez.advancements.gilded_netherite_armor.description"
+        },
+        "frame": "challenge",
+        "show_toast": true,
+        "announce_to_chat": true,
+        "hidden": false
+    },
+    "rewards": {
+        "experience": 100
+    },
+    "criteria": {
+        "dragon_armor": {
+            "trigger": "minecraft:inventory_changed",
+            "conditions": {
+                "items": [
+                    {
+                        "item": "adventurez:stone_golem_helmet"
+                    },
+                    {
+                        "item": "adventurez:stone_golem_chestplate"
+                    },
+                    {
+                        "item": "adventurez:stone_golem_leggings"
+                    },
+                    {
+                        "item": "adventurez:stone_golem_boots"
+                    }
+                ]
+            }
+        }
+    },
+    "requirements": [
+        [
+            "dragon_armor"
+        ]
+    ]
+}
