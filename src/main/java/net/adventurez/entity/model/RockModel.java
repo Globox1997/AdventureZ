@@ -11,17 +11,17 @@ import net.minecraft.client.util.math.MatrixStack;
 @Environment(EnvType.CLIENT)
 public class RockModel extends Model {
 
-  private final ModelPart simpleblock = new ModelPart(64, 64, 0, 0);
+  private final ModelPart modelPart = new ModelPart(64, 64, 0, 0);
 
   public RockModel() {
     super(RenderLayer::getEntitySolid);
-    this.simpleblock.addCuboid(-8.0F, -8.0F, -8.0F, 16.0F, 16.0F, 16.0F, 0.0F);
-    this.simpleblock.setPivot(0.0F, 8.0F, 0.0F);
+    this.modelPart.addCuboid(-8.0F, -8.0F, -8.0F, 16.0F, 16.0F, 16.0F, 0.0F);
+    this.modelPart.setPivot(0.0F, 8.0F, 0.0F);
   }
 
   @Override
   public void render(MatrixStack matrices, VertexConsumer vertices, int light, int overlay, float red, float green,
       float blue, float alpha) {
-    this.simpleblock.render(matrices, vertices, light, overlay, red, green, blue, alpha);
+    this.modelPart.render(matrices, vertices, light, overlay, red, green, blue, alpha);
   }
 }

@@ -12,10 +12,10 @@ import net.minecraft.client.render.entity.model.CompositeEntityModel;
 public class BlazeGuardianModel<T extends BlazeGuardianEntity> extends CompositeEntityModel<T> {
   private final ModelPart body;
   private final ModelPart head;
-  private final ModelPart shield_one;
-  private final ModelPart shield_two;
-  private final ModelPart shield_three;
-  private final ModelPart shield_four;
+  private final ModelPart shieldOne;
+  private final ModelPart shieldTwo;
+  private final ModelPart shieldThree;
+  private final ModelPart shieldFour;
 
   public BlazeGuardianModel() {
 
@@ -53,42 +53,41 @@ public class BlazeGuardianModel<T extends BlazeGuardianEntity> extends Composite
     head.setTextureOffset(38, 22).addCuboid(-1.0F, -11.0F, -4.0F, 2.0F, 1.0F, 1.0F, 0.0F, false);
     head.setTextureOffset(38, 20).addCuboid(-1.0F, -11.0F, 3.0F, 2.0F, 1.0F, 1.0F, 0.0F, false);
 
-    shield_two = (new ModelPart(this)).setTextureSize(128, 128);
-    shield_two.setPivot(0.0F, 12.0F, 0.0F);
-    shield_two.setTextureOffset(28, 0).addCuboid(-5.0F, -6.0F, -12.0F, 10.0F, 18.0F, 2.0F, 0.0F, false);
+    shieldTwo = (new ModelPart(this)).setTextureSize(128, 128);
+    shieldTwo.setPivot(0.0F, 12.0F, 0.0F);
+    shieldTwo.setTextureOffset(28, 0).addCuboid(-5.0F, -6.0F, -12.0F, 10.0F, 18.0F, 2.0F, 0.0F, false);
 
-    shield_three = (new ModelPart(this)).setTextureSize(128, 128);
-    shield_three.setPivot(0.0F, 12.0F, 0.0F);
-    shield_three.setTextureOffset(38, 38).addCuboid(-5.0F, -6.0F, 10.0F, 10.0F, 18.0F, 2.0F, 0.0F, false);
+    shieldThree = (new ModelPart(this)).setTextureSize(128, 128);
+    shieldThree.setPivot(0.0F, 12.0F, 0.0F);
+    shieldThree.setTextureOffset(38, 38).addCuboid(-5.0F, -6.0F, 10.0F, 10.0F, 18.0F, 2.0F, 0.0F, false);
 
-    shield_four = (new ModelPart(this)).setTextureSize(128, 128);
-    shield_four.setPivot(0.0F, 12.0F, 0.0F);
-    shield_four.setTextureOffset(28, 0).addCuboid(-5.0F, -6.0F, -12.0F, 10.0F, 18.0F, 2.0F, 0.0F, false);
+    shieldFour = (new ModelPart(this)).setTextureSize(128, 128);
+    shieldFour.setPivot(0.0F, 12.0F, 0.0F);
+    shieldFour.setTextureOffset(28, 0).addCuboid(-5.0F, -6.0F, -12.0F, 10.0F, 18.0F, 2.0F, 0.0F, false);
 
-    shield_one = (new ModelPart(this)).setTextureSize(128, 128);
-    shield_one.setPivot(0.0F, 12.0F, 0.0F);
-    shield_one.setTextureOffset(28, 0).addCuboid(-5.0F, -6.0F, -12.0F, 10.0F, 18.0F, 2.0F, 0.0F, false);
+    shieldOne = (new ModelPart(this)).setTextureSize(128, 128);
+    shieldOne.setPivot(0.0F, 12.0F, 0.0F);
+    shieldOne.setTextureOffset(28, 0).addCuboid(-5.0F, -6.0F, -12.0F, 10.0F, 18.0F, 2.0F, 0.0F, false);
 
   }
 
   @Override
   public Iterable<ModelPart> getParts() {
-    return ImmutableList.of(this.head, this.body, this.shield_one, this.shield_two, this.shield_three,
-        this.shield_four);
+    return ImmutableList.of(this.head, this.body, this.shieldOne, this.shieldTwo, this.shieldThree, this.shieldFour);
   }
 
   @Override
   public void setAngles(T entity, float limbAngle, float limbDistance, float animationProgress, float headYaw,
       float headPitch) {
     float f = 0.47123894F + animationProgress * 3.1415927F * -0.05F;
-    this.shield_one.pitch = -0.3927F;
-    this.shield_two.pitch = -0.3927F;
-    this.shield_three.pitch = 0.3927F;
-    this.shield_four.pitch = -0.3927F;
-    this.shield_one.yaw = f + 1.5708F;
-    this.shield_two.yaw = f - 1.5708F;
-    this.shield_three.yaw = f;
-    this.shield_four.yaw = f;
+    this.shieldOne.pitch = -0.3927F;
+    this.shieldTwo.pitch = -0.3927F;
+    this.shieldThree.pitch = 0.3927F;
+    this.shieldFour.pitch = -0.3927F;
+    this.shieldOne.yaw = f + 1.5708F;
+    this.shieldTwo.yaw = f - 1.5708F;
+    this.shieldThree.yaw = f;
+    this.shieldFour.yaw = f;
     this.head.yaw = headYaw * 0.017453292F;
     this.head.pitch = headPitch * 0.017453292F;
   }

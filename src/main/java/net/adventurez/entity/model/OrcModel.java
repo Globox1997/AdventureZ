@@ -18,9 +18,9 @@ public class OrcModel<T extends OrcEntity> extends CompositeEntityModel<T> {
     private final ModelPart rightArm;
     private final ModelPart head;
     private final ModelPart header;
-    private final ModelPart earleft;
+    private final ModelPart earLeft;
     private final ModelPart ear2;
-    private final ModelPart earright;
+    private final ModelPart earRight;
     private final ModelPart ear;
 
     public OrcModel() {
@@ -63,22 +63,22 @@ public class OrcModel<T extends OrcEntity> extends CompositeEntityModel<T> {
         head.addChild(header);
         header.setTextureOffset(28, 36).addCuboid(-4.0F, 0.0F, 0.2F, 8.0F, 6.0F, 8.0F, 0.0F, false);
 
-        earleft = (new ModelPart(this)).setTextureSize(128, 128);
-        earleft.setPivot(0.0F, 2.0F, 7.0F);
-        header.addChild(earleft);
+        earLeft = (new ModelPart(this)).setTextureSize(128, 128);
+        earLeft.setPivot(0.0F, 2.0F, 7.0F);
+        header.addChild(earLeft);
 
         ear2 = (new ModelPart(this)).setTextureSize(128, 128);
         ear2.setPivot(-2.0F, -2.0F, -1.0F);
-        earleft.addChild(ear2);
+        earLeft.addChild(ear2);
         ear2.setTextureOffset(42, 0).addCuboid(-1.0F, 0.0F, 0.0F, 1.0F, 4.0F, 4.0F, 0.0F, false);
 
-        earright = (new ModelPart(this)).setTextureSize(128, 128);
-        earright.setPivot(0.0F, -4.0F, 7.0F);
-        header.addChild(earright);
+        earRight = (new ModelPart(this)).setTextureSize(128, 128);
+        earRight.setPivot(0.0F, -4.0F, 7.0F);
+        header.addChild(earRight);
 
         ear = (new ModelPart(this)).setTextureSize(128, 128);
         ear.setPivot(2.0F, 4.0F, -1.0F);
-        earright.addChild(ear);
+        earRight.addChild(ear);
         ear.setTextureOffset(60, 47).addCuboid(0.0F, 0.0F, 0.0F, 1.0F, 4.0F, 4.0F, 0.0F, false);
     }
 
