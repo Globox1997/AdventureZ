@@ -1,9 +1,17 @@
 package net.adventurez.entity;
 
 import java.util.EnumSet;
+import java.util.Objects;
+import java.util.Optional;
+import java.util.Random;
 
+import org.jetbrains.annotations.Nullable;
+
+import net.minecraft.entity.EntityData;
 import net.minecraft.entity.EntityType;
 import net.minecraft.entity.LivingEntity;
+import net.minecraft.entity.SpawnReason;
+import net.minecraft.entity.SpawnRestriction;
 import net.minecraft.entity.ai.goal.FollowTargetGoal;
 import net.minecraft.entity.ai.goal.GoToWalkTargetGoal;
 import net.minecraft.entity.ai.goal.Goal;
@@ -20,14 +28,24 @@ import net.minecraft.entity.data.TrackedData;
 import net.minecraft.entity.data.TrackedDataHandlerRegistry;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.projectile.SmallFireballEntity;
+import net.minecraft.nbt.CompoundTag;
 import net.minecraft.particle.ParticleTypes;
 import net.minecraft.server.world.ServerWorld;
 import net.minecraft.sound.SoundCategory;
 import net.minecraft.sound.SoundEvent;
 import net.minecraft.sound.SoundEvents;
+import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.MathHelper;
 import net.minecraft.util.math.Vec3d;
+import net.minecraft.util.registry.RegistryKey;
+import net.minecraft.world.Difficulty;
+import net.minecraft.world.LightType;
+import net.minecraft.world.LocalDifficulty;
+import net.minecraft.world.ServerWorldAccess;
+import net.minecraft.world.SpawnHelper;
 import net.minecraft.world.World;
+import net.minecraft.world.biome.Biome;
+import net.minecraft.world.biome.BiomeKeys;
 import net.minecraft.world.explosion.Explosion;
 import net.minecraft.entity.mob.BlazeEntity;
 import net.minecraft.entity.mob.HostileEntity;
@@ -182,6 +200,39 @@ public class BlazeGuardianEntity extends HostileEntity {
       return false;
     } else
       return this.isInvulnerableTo(source) ? false : super.damage(source, amount);
+  }
+
+  @Nullable
+  @Override
+  public EntityData initialize(ServerWorldAccess serverWorldAccess, LocalDifficulty difficulty, SpawnReason spawnReason,
+      @Nullable EntityData entityData, @Nullable CompoundTag entityTag) {
+    if (spawnReason.equals(SpawnReason.NATURAL) || spawnReason.equals(SpawnReason.STRUCTURE)
+        || spawnReason.equals(SpawnReason.CHUNK_GENERATION)) {
+      for (int i = 0; i < serverWorldAccess.getRandom().nextInt(3) + 2; i++) {
+        for (int u = 0; u < 10; u++) {
+          BlockPos pos = new BlockPos(
+              this.getBlockPos().add(world.random.nextInt(5), world.random.nextInt(5), world.random.nextInt(5)));
+          if (SpawnHelper.canSpawn(SpawnRestriction.Location.ON_GROUND, this.world, pos, EntityType.BLAZE)) {
+            BlazeEntity blazeEntity = (BlazeEntity) EntityType.BLAZE.create(serverWorldAccess.toServerWorld());
+            blazeEntity.refreshPositionAndAngles(pos, world.random.nextFloat() * 360.0F, 0.0F);
+            serverWorldAccess.spawnEntity(blazeEntity);
+            break;
+          }
+        }
+      }
+    }
+    return super.initialize(serverWorldAccess, difficulty, spawnReason, entityData, entityTag);
+  }
+
+  public static boolean canSpawn(EntityType<BlazeGuardianEntity> type, ServerWorldAccess world, SpawnReason spawnReason,
+      BlockPos pos, Random random) {
+    Optional<RegistryKey<Biome>> optional = world.method_31081(pos);
+    boolean bl = (world.getDifficulty() != Difficulty.PEACEFUL && world.getLightLevel(LightType.BLOCK, pos) < 10
+        && canMobSpawn(type, world, spawnReason, pos, random)) || spawnReason == SpawnReason.SPAWNER;
+    if (Objects.equals(optional, Optional.of(BiomeKeys.NETHER_WASTES))) {
+      return bl;
+    } else
+      return false;
   }
 
   static {
