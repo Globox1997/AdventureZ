@@ -18,6 +18,8 @@
     "SmithingScreenHandlerMixin",
     "EnderDragonFightMixin",
     "PlayerManagerMixin",
+    "NetherPortalBlockMixin",
+    "EndPortalBlockMixin",
     "accessor.LivingEntityAccessor",
     "accessor.FallingBlockAccessor"
   ],

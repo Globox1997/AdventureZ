@@ -40,6 +40,9 @@ public class AdventureConfig implements ConfigData {
   @ConfigEntry.BoundedDiscrete(min = 0, max = 100)
   public int orc_spawn_weight = 8;
   @ConfigEntry.Category("spawn_setting")
+  @ConfigEntry.BoundedDiscrete(min = 0, max = 100)
+  public int mammoth_spawn_weight = 1;
+  @ConfigEntry.Category("spawn_setting")
   public boolean allow_stone_golem_summoning = true;
   @ConfigEntry.Category("spawn_setting")
   public boolean allow_the_eye_summoning = true;
@@ -49,5 +52,7 @@ public class AdventureConfig implements ConfigData {
   public boolean disable_armor_bonus = false;
   @ConfigEntry.Category("misc")
   public boolean resummoned_ender_dragon_drops_egg = false;
+  @ConfigEntry.Category("misc")
+  public boolean allow_ender_dragon_nether_portal = false;
 
 }
