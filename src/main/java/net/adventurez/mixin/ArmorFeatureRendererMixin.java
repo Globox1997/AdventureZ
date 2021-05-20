@@ -26,7 +26,6 @@ import net.minecraft.entity.EquipmentSlot;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.Identifier;
-import net.minecraft.util.math.MathHelper;
 
 @Environment(EnvType.CLIENT)
 @Mixin(ArmorFeatureRenderer.class)
@@ -43,7 +42,7 @@ public abstract class ArmorFeatureRendererMixin<T extends LivingEntity, M extend
   }
 
   @Inject(method = "render", at = @At("FIELD"))
-  private void gildedNetheriteActivated(MatrixStack matrixStack, VertexConsumerProvider vertexConsumerProvider, int i,
+  private void renderGlowingArmorMixin(MatrixStack matrixStack, VertexConsumerProvider vertexConsumerProvider, int i,
       T livingEntity, float f, float g, float h, float j, float k, float l, CallbackInfo info) {
     ItemStack golemChestplate = livingEntity.getEquippedStack(EquipmentSlot.CHEST);
     if (golemChestplate.getItem().equals(ItemInit.STONE_GOLEM_CHESTPLATE)) {
@@ -53,18 +52,15 @@ public abstract class ArmorFeatureRendererMixin<T extends LivingEntity, M extend
                 RenderLayer.getArmorCutoutNoCull(
                     new Identifier("minecraft:textures/models/armor/stone_golem_armor_layer_1_overlay.png")),
                 true, false);
-        long worldTime = livingEntity.getEntityWorld().getTime();
-        float goodFloat = ((float) Math.floorMod(worldTime, 800L) + h) / 100.0F;
-        bodyModel.render(matrixStack, vertexConsumer, (int) (((MathHelper.cos(goodFloat * 3.14159265F)) * 100) + 240),
-            OverlayTexture.DEFAULT_UV, 1.0F, 1.0F, 1.0F, 1.0F);
+        bodyModel.render(matrixStack, vertexConsumer, 220, OverlayTexture.DEFAULT_UV, 1.0F, 1.0F, 1.0F, 1.0F);
       }
     }
 
   }
 
   @Inject(method = "render", at = @At("TAIL"))
-  private void gildedNetheriteActivatedHelmet(MatrixStack matrixStack, VertexConsumerProvider vertexConsumerProvider,
-      int i, T livingEntity, float f, float g, float h, float j, float k, float l, CallbackInfo info) {
+  private void renderGlowingHelmetMixin(MatrixStack matrixStack, VertexConsumerProvider vertexConsumerProvider, int i,
+      T livingEntity, float f, float g, float h, float j, float k, float l, CallbackInfo info) {
     ItemStack golemChestplate = livingEntity.getEquippedStack(EquipmentSlot.CHEST);
     if (golemChestplate.getItem().equals(ItemInit.STONE_GOLEM_CHESTPLATE)) {
       if (StoneGolemArmor.fireTime(golemChestplate)) {
@@ -73,10 +69,7 @@ public abstract class ArmorFeatureRendererMixin<T extends LivingEntity, M extend
                 RenderLayer.getArmorCutoutNoCull(
                     new Identifier("textures/models/armor/stone_golem_armor_layer_1_overlay_helmet.png")),
                 false, false);
-        long worldTime = livingEntity.getEntityWorld().getTime();
-        float goodFloat = ((float) Math.floorMod((long) worldTime, 800L) + h) / 100.0F;
-        bodyModel.render(matrixStack, vertexConsumer, (int) (((MathHelper.cos(goodFloat * 3.14159265F)) * 100) + 240),
-            OverlayTexture.DEFAULT_UV, 1.0F, 1.0F, 1.0F, 1.0F);
+        bodyModel.render(matrixStack, vertexConsumer, 220, OverlayTexture.DEFAULT_UV, 1.0F, 1.0F, 1.0F, 1.0F);
 
       }
     }

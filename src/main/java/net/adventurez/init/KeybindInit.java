@@ -4,6 +4,7 @@ import org.lwjgl.glfw.GLFW;
 
 import io.netty.buffer.Unpooled;
 import net.adventurez.entity.DragonEntity;
+import net.adventurez.item.armor.StoneGolemArmor;
 import net.adventurez.network.KeybindPacket;
 import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientTickEvents;
 import net.fabricmc.fabric.api.client.keybinding.v1.KeyBindingHelper;
@@ -11,8 +12,6 @@ import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.network.ClientPlayerEntity;
 import net.minecraft.client.options.KeyBinding;
 import net.minecraft.client.util.InputUtil;
-import net.minecraft.entity.EquipmentSlot;
-import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.network.PacketByteBuf;
 import net.minecraft.network.packet.c2s.play.CustomPayloadC2SPacket;
 
@@ -56,21 +55,11 @@ public class KeybindInit {
   }
 
   public static void activateArmor(ClientPlayerEntity player) {
-    if (fullNetheriteArmor(player)) {
+    if (StoneGolemArmor.fullGolemArmor(player)) {
       PacketByteBuf buf = new PacketByteBuf(Unpooled.buffer());
       CustomPayloadC2SPacket packet = new CustomPayloadC2SPacket(KeybindPacket.ARMOR_PACKET, buf);
       MinecraftClient.getInstance().getNetworkHandler().sendPacket(packet);
     }
-  }
-
-  private static boolean fullNetheriteArmor(PlayerEntity playerEntity) {
-    if (playerEntity.getEquippedStack(EquipmentSlot.HEAD).getItem().equals(ItemInit.STONE_GOLEM_HELMET)
-        && playerEntity.getEquippedStack(EquipmentSlot.CHEST).getItem().equals(ItemInit.STONE_GOLEM_CHESTPLATE)
-        && playerEntity.getEquippedStack(EquipmentSlot.LEGS).getItem().equals(ItemInit.STONE_GOLEM_LEGGINGS)
-        && playerEntity.getEquippedStack(EquipmentSlot.FEET).getItem().equals(ItemInit.STONE_GOLEM_BOOTS)) {
-      return true;
-    } else
-      return false;
   }
 
 }

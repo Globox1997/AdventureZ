@@ -68,7 +68,7 @@ public class StoneGolemArmor extends ArmorItem {
     tooltip.add(new TranslatableText("item.adventurez.moreinfo.tooltip"));
     if (InputUtil.isKeyPressed(MinecraftClient.getInstance().getWindow().getHandle(), 340)) {
       tooltip.remove(new TranslatableText("item.adventurez.moreinfo.tooltip"));
-      tooltip.add(new TranslatableText("item.adventurez.stone_golem_armor.tooltip"));
+      tooltip.remove(new TranslatableText("item.adventurez.stone_golem_armor.tooltip"));
       tooltip.add(new TranslatableText("item.adventurez.stone_golem_armor.tooltip2",
           KeybindInit.armorKeyBind.getBoundKeyLocalizedText()));
       tooltip.add(new TranslatableText("item.adventurez.stone_golem_armor.tooltip3"));
@@ -78,22 +78,22 @@ public class StoneGolemArmor extends ArmorItem {
 
   @Override
   public void inventoryTick(ItemStack stack, World world, Entity entity, int slot, boolean selected) {
-    CompoundTag tag = stack.getTag();
-    if (tag != null && tag.contains("armor_time")) {
-      if (tag.getInt("armor_time") + 1800 < (int) world.getTime() && tag.getBoolean("activating_armor")) {
-        tag.putBoolean("activating_armor", false);
-      }
-      if (tag.getInt("armor_time") + 600 < (int) world.getTime() && tag.getBoolean("activating_armor")) {
-        entity.setFireTicks(0);
-        tag.putBoolean("activating_armor_visuals", false);
+    if (stack.getItem() == ItemInit.STONE_GOLEM_CHESTPLATE) {
+      CompoundTag tag = stack.getTag();
+      if (tag != null && tag.contains("armor_time")) {
+        if (tag.getBoolean("activating_armor") && tag.getInt("armor_time") + 2400 < (int) world.getTime()) {
+          tag.putBoolean("activating_armor", false);
+        }
+        if (tag.getBoolean("activating_armor") && tag.getInt("armor_time") + 1200 < (int) world.getTime()) {
+          entity.setFireTicks(0);
+          tag.putBoolean("activating_armor_visuals", false);
+        }
       }
     }
   }
 
   public static void fireActive(PlayerEntity player, ItemStack stack) {
-    StatusEffectInstance fire = new StatusEffectInstance(StatusEffect.byRawId(12), 600, 0, false, false);
-    if (stack.getItem() != ItemInit.STONE_GOLEM_CHESTPLATE)
-      return;
+    StatusEffectInstance fire = new StatusEffectInstance(StatusEffect.byRawId(12), 1200, 0, false, false);
     CompoundTag tag = stack.getTag();
     if (tag != null && tag.contains("activating_armor")) {
       if (tag.getBoolean("activating_armor") == false) {
@@ -123,6 +123,16 @@ public class StoneGolemArmor extends ArmorItem {
       }
     }
     return false;
+  }
+
+  public static boolean fullGolemArmor(PlayerEntity playerEntity) {
+    if (playerEntity.getEquippedStack(EquipmentSlot.HEAD).getItem().equals(ItemInit.STONE_GOLEM_HELMET)
+        && playerEntity.getEquippedStack(EquipmentSlot.CHEST).getItem().equals(ItemInit.STONE_GOLEM_CHESTPLATE)
+        && playerEntity.getEquippedStack(EquipmentSlot.LEGS).getItem().equals(ItemInit.STONE_GOLEM_LEGGINGS)
+        && playerEntity.getEquippedStack(EquipmentSlot.FEET).getItem().equals(ItemInit.STONE_GOLEM_BOOTS)) {
+      return true;
+    } else
+      return false;
   }
 
 }

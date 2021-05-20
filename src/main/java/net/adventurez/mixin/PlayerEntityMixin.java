@@ -4,7 +4,9 @@ import java.util.List;
 
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.Inject;
+import org.spongepowered.asm.mixin.injection.At.Shift;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
+import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 import org.spongepowered.asm.mixin.injection.At;
 
 import net.adventurez.entity.PiglinBeastEntity;
@@ -18,11 +20,14 @@ import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityType;
 import net.minecraft.entity.EquipmentSlot;
 import net.minecraft.entity.LivingEntity;
+import net.minecraft.entity.SpawnReason;
 import net.minecraft.entity.mob.PiglinEntity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.ItemStack;
 import net.minecraft.predicate.entity.EntityPredicates;
+import net.minecraft.server.world.ServerWorld;
 import net.minecraft.entity.SpawnRestriction;
+import net.minecraft.entity.damage.DamageSource;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.ChunkPos;
 import net.minecraft.util.math.MathHelper;
@@ -38,8 +43,17 @@ public abstract class PlayerEntityMixin extends LivingEntity {
     super(type, world);
   };
 
-  @Inject(method = "tick()V", at = @At(value = "HEAD"))
-  private void piglinBeastSpawn(CallbackInfo info) {
+  @Inject(method = "damage", at = @At(value = "INVOKE", target = "Lnet/minecraft/entity/player/PlayerEntity;dropShoulderEntities()V", shift = Shift.AFTER), cancellable = true)
+  private void damageMixin(DamageSource source, float amount, CallbackInfoReturnable<Boolean> info) {
+    if (this.getEquippedStack(EquipmentSlot.CHEST).getItem() == ItemInit.STONE_GOLEM_CHESTPLATE) {
+      if (StoneGolemArmor.fullGolemArmor((PlayerEntity) (Object) this) && this.world.random.nextFloat() <= 0.3F) {
+        info.setReturnValue(false);
+      }
+    }
+  }
+
+  @Inject(method = "tickMovement", at = @At(value = "TAIL"))
+  private void tickMovementMixin(CallbackInfo info) {
     if (!world.isClient && ConfigInit.CONFIG.piglin_beast_attack_piglin_spawn_chance != 0) {
       PlayerEntity playerEntity = (PlayerEntity) (Object) this;
       if (playerEntity != null && !playerEntity.isCreative() && playerEntity.world.getRegistryKey() == World.NETHER) {
@@ -64,7 +78,9 @@ public abstract class PlayerEntityMixin extends LivingEntity {
                       spawnPos.getX() + 4, spawnPos.getY() + 4, spawnPos.getZ() + 4)
                       && this.world.getChunkManager().shouldTickChunk(new ChunkPos(spawnPos)) && SpawnHelper.canSpawn(
                           SpawnRestriction.Location.ON_GROUND, this.world, spawnPos, EntityInit.PIGLINBEAST_ENTITY)) {
-                    beastEntity.refreshPositionAndAngles(spawnPos, 0.0F, 0.0F);
+                    beastEntity.refreshPositionAndAngles(spawnPos, world.random.nextFloat() * 360.0F, 0.0F);
+                    beastEntity.initialize(((ServerWorld) this.world),
+                        this.world.getLocalDifficulty(this.getBlockPos()), SpawnReason.EVENT, null, null);
                     world.spawnEntity(beastEntity);
                     beastEntity.playSpawnEffects();
                     break;
