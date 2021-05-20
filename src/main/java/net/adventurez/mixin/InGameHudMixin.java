@@ -22,7 +22,6 @@ import net.minecraft.entity.EquipmentSlot;
 import net.minecraft.entity.effect.StatusEffects;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.CompoundTag;
-import net.minecraft.util.math.MathHelper;
 
 @Environment(EnvType.CLIENT)
 @Mixin(InGameHud.class)
@@ -53,17 +52,17 @@ public abstract class InGameHudMixin extends DrawableHelper {
           Sprite sprite = this.client.getStatusEffectSpriteManager().getSprite(StatusEffects.FIRE_RESISTANCE);
           this.client.getTextureManager().bindTexture(sprite.getAtlas().getId());
           int savedTagInt = tag.getInt("armor_time");
-          int multiplier = 2;
 
-          if (savedTagInt + 600 > worldTime) {
-            if (savedTagInt + 540 < worldTime) {
+          if (savedTagInt + 1200 > worldTime) {
+            int multiplier = 2;
+            if (savedTagInt + 1100 < worldTime) {
               multiplier = 4;
             }
-            float pulsating = MathHelper.sin((float) ((worldTime * multiplier) - (savedTagInt - 1F)) / 6.2831855F);
+            float pulsating = (float) Math.sin((float) ((worldTime * multiplier) - (savedTagInt - 1)) / 6.2831855F);
             RenderSystem.color4f(1.0F, 1.0F, 1.0F, pulsating + 0.5F);
             drawSprite(matrixStack, (scaledWidth / 2) - 5, scaledHeight - 49, this.getZOffset(), 10, 10, sprite);
           } else {
-            float fading = (1F - (((float) (worldTime - (savedTagInt + 599F)) / 1200F) - 0.4F));
+            float fading = (1F - (((float) (worldTime - (savedTagInt + 1199F)) / 1200F) - 0.4F));
             RenderSystem.color4f(1.0F, 0.65F, 0.65F, fading);
             drawSprite(matrixStack, (scaledWidth / 2) - 5, scaledHeight - 49, this.getZOffset(), 10, 10, sprite);
           }
