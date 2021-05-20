@@ -75,20 +75,6 @@ import net.minecraft.world.LocalDifficulty;
 import net.minecraft.world.ServerWorldAccess;
 import net.minecraft.world.World;
 
-// import net.minecraft.entity.passive.WolfEntity;
-// import net.minecraft.entity.passive.HorseBaseEntity;
-// import net.minecraft.entity.passive.HorseEntity;
-// import net.minecraft.entity.passive.TameableEntity;
-// import net.minecraft.entity.mob.FlyingEntity;
-// import net.minecraft.entity.mob.GhastEntity;
-// import net.minecraft.entity.vehicle.BoatEntity;
-// import net.minecraft.fluid.FluidState;
-// import net.minecraft.entity.boss.dragon.EnderDragonEntity;
-// import net.minecraft.entity.passive.LlamaEntity;
-// import net.minecraft.entity.passive.DonkeyEntity;
-// import net.minecraft.client.gui.screen.ingame.HorseScreen;
-//import net.minecraft.entity.mob.SlimeEntity;
-
 public class DragonEntity extends PathAwareEntity implements InventoryChangedListener {
 
    public static final TrackedData<Boolean> IS_FLYING;
@@ -909,6 +895,14 @@ public class DragonEntity extends PathAwareEntity implements InventoryChangedLis
    @Override
    public double getMountedHeightOffset() {
       return (double) this.getSize() * 1.1D * 0.71D;
+   }
+
+   @Override
+   public boolean damage(DamageSource source, float amount) {
+      if (source == DamageSource.IN_WALL) {
+         return false;
+      }
+      return this.isInvulnerableTo(source) ? false : super.damage(source, amount);
    }
 
    static {
