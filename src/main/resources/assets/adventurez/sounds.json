@@ -307,5 +307,34 @@
       "adventurez:equip_chest1",
       "adventurez:equip_chest2"
     ]
+  },
+  "mammoth_hit": {
+    "sounds": [
+      "adventurez:mammoth_hit1",
+      "adventurez:mammoth_hit2",
+      "adventurez:mammoth_hit3"
+    ]
+  },
+  "mammoth_idle": {
+    "sounds": [
+      "adventurez:mammoth_idle1",
+      "adventurez:mammoth_idle2",
+      "adventurez:mammoth_idle3",
+      "adventurez:mammoth_idle4"
+    ]
+  },
+  "mammoth_death": {
+    "sounds": [
+      "adventurez:mammoth_death1",
+      "adventurez:mammoth_death2",
+      "adventurez:mammoth_death3"
+    ]
+  },
+  "mammoth_baby_idle": {
+    "sounds": [
+      "adventurez:mammoth_baby_idle1",
+      "adventurez:mammoth_baby_idle2",
+      "adventurez:mammoth_baby_idle3"
+    ]
   }
 }

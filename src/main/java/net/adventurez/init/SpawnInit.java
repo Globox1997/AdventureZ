@@ -1,15 +1,6 @@
 package net.adventurez.init;
 
 import net.fabricmc.fabric.api.event.registry.RegistryEntryAddedCallback;
-// import net.minecraft.util.registry.BuiltinRegistries;
-// import net.minecraft.util.registry.Registry;
-// import net.minecraft.world.biome.Biome;
-// import net.minecraft.world.biome.Biomes;
-// import net.minecraft.entity.SpawnGroup;
-// import net.minecraft.entity.mob.ZombieEntity;
-// import net.minecraft.world.gen.feature.DefaultBiomeFeatures;
-//import net.minecraft.world.biome.BiomeKeys;
-//import net.minecraft.entity.mob.BlazeEntity;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -22,12 +13,22 @@ import net.adventurez.entity.*;
 import net.minecraft.entity.SpawnGroup;
 import net.minecraft.entity.SpawnRestriction;
 import net.minecraft.entity.mob.HostileEntity;
+import net.minecraft.entity.passive.AnimalEntity;
 import net.minecraft.util.registry.BuiltinRegistries;
 import net.minecraft.world.biome.Biome;
 import net.minecraft.world.Heightmap;
 import net.minecraft.world.biome.SpawnSettings;
 
 //import net.minecraft.world.biome.DefaultBiomeCreator;
+// import net.minecraft.util.registry.BuiltinRegistries;
+// import net.minecraft.util.registry.Registry;
+// import net.minecraft.world.biome.Biome;
+// import net.minecraft.world.biome.Biomes;
+// import net.minecraft.entity.SpawnGroup;
+// import net.minecraft.entity.mob.ZombieEntity;
+// import net.minecraft.world.gen.feature.DefaultBiomeFeatures;
+//import net.minecraft.world.biome.BiomeKeys;
+//import net.minecraft.entity.mob.BlazeEntity;
 
 public class SpawnInit {
 
@@ -57,12 +58,10 @@ public class SpawnInit {
         addMobSpawnToBiome(biome, SpawnGroup.MONSTER,
             new SpawnSettings.SpawnEntry(EntityInit.ORC_ENTITY, ConfigInit.CONFIG.orc_spawn_weight, 1, 3));
       }
-      // if (biome.getCategory().equals(Biome.Category.ICY) ||
-      // biome.getCategory().equals(Biome.Category.TAIGA)) {
-      // addMobSpawnToBiome(biome, SpawnGroup.MONSTER,
-      // new SpawnSettings.SpawnEntry(EntityInit.SUMMONER_ENTITY,
-      // ConfigInit.CONFIG.summoner_spawn_weight, 1, 1));
-      // }
+      if (biome.getCategory().equals(Biome.Category.ICY) || biome.getCategory().equals(Biome.Category.TAIGA)) {
+        addMobSpawnToBiome(biome, SpawnGroup.MONSTER,
+            new SpawnSettings.SpawnEntry(EntityInit.MAMMOTH_ENTITY, ConfigInit.CONFIG.mammoth_spawn_weight, 2, 3));
+      }
     }
 
   }
@@ -100,6 +99,8 @@ public class SpawnInit {
         Heightmap.Type.MOTION_BLOCKING_NO_LEAVES, BrownFungusEntity::canSpawn);
     SpawnRestriction.register(EntityInit.ORC_ENTITY, SpawnRestriction.Location.ON_GROUND,
         Heightmap.Type.MOTION_BLOCKING_NO_LEAVES, OrcEntity::canSpawn);
+    SpawnRestriction.register(EntityInit.MAMMOTH_ENTITY, SpawnRestriction.Location.ON_GROUND,
+        Heightmap.Type.MOTION_BLOCKING_NO_LEAVES, AnimalEntity::isValidNaturalSpawn);
   }
 
 }

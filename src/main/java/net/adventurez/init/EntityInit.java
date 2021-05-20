@@ -46,7 +46,7 @@ public class EntityInit {
                         .dimensions(EntityDimensions.fixed(2.8F, 3.5F)).build();
         public static final EntityType<VoidShadowEntity> VOID_SHADOW_ENTITY = FabricEntityTypeBuilder
                         .create(SpawnGroup.MONSTER, VoidShadowEntity::new).fireImmune()
-                        .dimensions(EntityDimensions.fixed(3.4F, 5.1F)).build();
+                        .dimensions(EntityDimensions.fixed(10.2F, 15.3F)).build();// 3.4F, 5.1F
         public static final EntityType<OrcEntity> ORC_ENTITY = FabricEntityTypeBuilder
                         .create(SpawnGroup.MONSTER, OrcEntity::new).dimensions(EntityDimensions.changing(1.35F, 2.2F))
                         .build();
@@ -58,11 +58,14 @@ public class EntityInit {
                         .create(SpawnGroup.CREATURE, BrownFungusEntity::new)
                         .dimensions(EntityDimensions.fixed(1.35F, 1.8F)).build();
         public static final EntityType<NightmareEntity> NIGHTMARE_ENTITY = FabricEntityTypeBuilder
-                        .create(SpawnGroup.MONSTER, NightmareEntity::new).fireImmune()
+                        .create(SpawnGroup.CREATURE, NightmareEntity::new).fireImmune()
                         .dimensions(EntityDimensions.fixed(1.4F, 1.6F)).build();
         public static final EntityType<DragonEntity> DRAGON_ENTITY = FabricEntityTypeBuilder
                         .<DragonEntity>create(SpawnGroup.CREATURE, DragonEntity::new)
                         .dimensions(EntityDimensions.changing(4.8F, 3.3F)).fireImmune().build();
+        public static final EntityType<MammothEntity> MAMMOTH_ENTITY = FabricEntityTypeBuilder
+                        .create(SpawnGroup.CREATURE, MammothEntity::new)
+                        .dimensions(EntityDimensions.changing(2.8F, 3.5F)).build();
 
         // Nonliving Entity
         public static final EntityType<ThrownRockEntity> THROWNROCK_ENTITY = FabricEntityTypeBuilder
@@ -104,6 +107,7 @@ public class EntityInit {
                                 BROWN_FUNGUS_ENTITY);
                 Registry.register(Registry.ENTITY_TYPE, new Identifier("adventurez", "orc"), ORC_ENTITY);
                 Registry.register(Registry.ENTITY_TYPE, new Identifier("adventurez", "dragon"), DRAGON_ENTITY);
+                Registry.register(Registry.ENTITY_TYPE, new Identifier("adventurez", "mammoth"), MAMMOTH_ENTITY);
 
                 // Attributes
                 FabricDefaultAttributeRegistry.register(STONEGOLEM_ENTITY,
@@ -132,6 +136,7 @@ public class EntityInit {
                                 BrownFungusEntity.createBrownFungusAttributes());
                 FabricDefaultAttributeRegistry.register(ORC_ENTITY, OrcEntity.createOrkAttributes());
                 FabricDefaultAttributeRegistry.register(DRAGON_ENTITY, DragonEntity.createDragonAttributes());
+                FabricDefaultAttributeRegistry.register(MAMMOTH_ENTITY, MammothEntity.createMammothAttributes());
 
                 // Spawn Eggs
                 Registry.register(Registry.ITEM, new Identifier("adventurez", "spawn_stone_golem"), new SpawnEggItem(
@@ -168,5 +173,7 @@ public class EntityInit {
                                 2255437, 3512689, new Item.Settings().group(ItemGroup.MISC)));
                 Registry.register(Registry.ITEM, new Identifier("adventurez", "spawn_dragon"), new SpawnEggItem(
                                 DRAGON_ENTITY, 1842204, 14711290, new Item.Settings().group(ItemGroup.MISC)));
+                Registry.register(Registry.ITEM, new Identifier("adventurez", "spawn_mammoth"), new SpawnEggItem(
+                                MAMMOTH_ENTITY, 4732462, 6376763, new Item.Settings().group(ItemGroup.MISC)));
         }
 }

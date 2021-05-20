@@ -51,6 +51,8 @@ public class RenderInit {
                                 (dispatcher, context) -> new OrcRenderer(dispatcher));
                 EntityRendererRegistry.INSTANCE.register(EntityInit.DRAGON_ENTITY,
                                 (dispatcher, context) -> new DragonRenderer(dispatcher));
+                EntityRendererRegistry.INSTANCE.register(EntityInit.MAMMOTH_ENTITY,
+                                (dispatcher, context) -> new MammothRenderer(dispatcher));
 
                 // Network
                 ClientPlayNetworking.registerGlobalReceiver(EntitySpawnPacket.ID, EntitySpawnPacket::onPacket);

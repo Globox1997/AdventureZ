@@ -95,6 +95,15 @@ public class SoundInit {
   public static SoundEvent DRAGON_HIT_EVENT = new SoundEvent(DRAGON_HIT);
   public static SoundEvent DRAGON_IDLE_EVENT = new SoundEvent(DRAGON_IDLE);
   public static SoundEvent DRAGON_STEP_EVENT = new SoundEvent(DRAGON_STEP);
+  // Mammoth
+  public static final Identifier MAMMOTH_HIT = new Identifier("adventurez:mammoth_hit");
+  public static final Identifier MAMMOTH_IDLE = new Identifier("adventurez:mammoth_idle");
+  public static final Identifier MAMMOTH_DEATH = new Identifier("adventurez:mammoth_death");
+  public static final Identifier MAMMOTH_BABY_IDLE = new Identifier("adventurez:mammoth_baby_idle");
+  public static SoundEvent MAMMOTH_HIT_EVENT = new SoundEvent(MAMMOTH_HIT);
+  public static SoundEvent MAMMOTH_IDLE_EVENT = new SoundEvent(MAMMOTH_IDLE);
+  public static SoundEvent MAMMOTH_DEATH_EVENT = new SoundEvent(MAMMOTH_DEATH);
+  public static SoundEvent MAMMOTH_BABY_IDLE_EVENT = new SoundEvent(MAMMOTH_BABY_IDLE);
   // Item
   public static final Identifier ROCK_IMPACT = new Identifier("adventurez:rock_impact");
   public static final Identifier ROCK_THROW = new Identifier("adventurez:rock_throw");
@@ -151,5 +160,9 @@ public class SoundInit {
     Registry.register(Registry.SOUND_EVENT, SoundInit.DRAGON_IDLE, DRAGON_IDLE_EVENT);
     Registry.register(Registry.SOUND_EVENT, SoundInit.DRAGON_STEP, DRAGON_STEP_EVENT);
     Registry.register(Registry.SOUND_EVENT, SoundInit.EQUIP_CHEST, EQUIP_CHEST_EVENT);
+    Registry.register(Registry.SOUND_EVENT, SoundInit.MAMMOTH_HIT, MAMMOTH_HIT_EVENT);
+    Registry.register(Registry.SOUND_EVENT, SoundInit.MAMMOTH_IDLE, MAMMOTH_IDLE_EVENT);
+    Registry.register(Registry.SOUND_EVENT, SoundInit.MAMMOTH_DEATH, MAMMOTH_DEATH_EVENT);
+    Registry.register(Registry.SOUND_EVENT, SoundInit.MAMMOTH_BABY_IDLE, MAMMOTH_BABY_IDLE_EVENT);
   }
 }
