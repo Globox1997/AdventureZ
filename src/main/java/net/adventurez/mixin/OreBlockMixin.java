@@ -12,9 +12,11 @@ import net.minecraft.block.Blocks;
 import net.minecraft.block.OreBlock;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.LivingEntity;
+import net.minecraft.entity.SpawnReason;
 import net.minecraft.entity.SpawnRestriction;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.predicate.entity.EntityPredicates;
+import net.minecraft.server.world.ServerWorld;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.ChunkPos;
 import net.minecraft.util.math.MathHelper;
@@ -23,7 +25,7 @@ import net.minecraft.world.World;
 import net.minecraft.world.WorldAccess;
 
 @Mixin(OreBlock.class)
-public abstract class OreBlockMixin {
+public class OreBlockMixin {
   private boolean isBeastNear = false;
 
   public void onBroken(WorldAccess world, BlockPos pos, BlockState state) {
@@ -60,6 +62,8 @@ public abstract class OreBlockMixin {
               && world.getChunkManager().shouldTickChunk(new ChunkPos(spawnPos)) && SpawnHelper
                   .canSpawn(SpawnRestriction.Location.ON_GROUND, world, spawnPos, EntityInit.PIGLINBEAST_ENTITY)) {
             beastEntity.refreshPositionAndAngles(spawnPos, 0.0F, 0.0F);
+            beastEntity.initialize(((ServerWorld) world), world.getLocalDifficulty(spawnPos), SpawnReason.EVENT, null,
+                null);
             world.spawnEntity(beastEntity);
             beastEntity.playSpawnEffects();
             break;

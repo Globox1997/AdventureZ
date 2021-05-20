@@ -418,17 +418,22 @@ public class SummonerEntity extends SpellCastingEntity {
             -2 + SummonerEntity.this.random.nextInt(5));
         if (SummonerEntity.this.getHealth() <= 40.0F || SummonerEntity.this.getEntityWorld().isDay()) {
           SkeletonVanguardEntity skeletonVanguardEntity = (SkeletonVanguardEntity) EntityInit.SKELETON_VANGUARD_ENTITY
-              .create(SummonerEntity.this.world);
+              .create(serverWorld);
           skeletonVanguardEntity.refreshPositionAndAngles(blockPos, 0.0F, 0.0F);
+          skeletonVanguardEntity.initialize(serverWorld, serverWorld.getLocalDifficulty(blockPos), SpawnReason.EVENT,
+              null, null);
           serverWorld.spawnEntityAndPassengers(skeletonVanguardEntity);
         } else {
-          ZombieEntity zombieEntity = (ZombieEntity) EntityType.ZOMBIE.create(SummonerEntity.this.world);
+          ZombieEntity zombieEntity = (ZombieEntity) EntityType.ZOMBIE.create(serverWorld);
           zombieEntity.refreshPositionAndAngles(blockPos, 0.0F, 0.0F);
+          zombieEntity.initialize(serverWorld, serverWorld.getLocalDifficulty(blockPos), SpawnReason.EVENT, null, null);
           serverWorld.spawnEntityAndPassengers(zombieEntity);
           int skeletonChance = world.getRandom().nextInt(8);
           if (skeletonChance == 0) {
-            SkeletonEntity skeletonEntity = (SkeletonEntity) EntityType.SKELETON.create(SummonerEntity.this.world);
+            SkeletonEntity skeletonEntity = (SkeletonEntity) EntityType.SKELETON.create(serverWorld);
             skeletonEntity.refreshPositionAndAngles(blockPos, 0.0F, 0.0F);
+            skeletonEntity.initialize(serverWorld, serverWorld.getLocalDifficulty(blockPos), SpawnReason.EVENT, null,
+                null);
             if (SummonerEntity.this.gotShotByABow) {
               skeletonEntity.equipStack(EquipmentSlot.MAINHAND, new ItemStack(Items.BOW));
             }

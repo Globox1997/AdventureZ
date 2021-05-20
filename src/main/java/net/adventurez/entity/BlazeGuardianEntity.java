@@ -215,6 +215,8 @@ public class BlazeGuardianEntity extends HostileEntity {
           if (SpawnHelper.canSpawn(SpawnRestriction.Location.ON_GROUND, this.world, pos, EntityType.BLAZE)) {
             BlazeEntity blazeEntity = (BlazeEntity) EntityType.BLAZE.create(serverWorldAccess.toServerWorld());
             blazeEntity.refreshPositionAndAngles(pos, world.random.nextFloat() * 360.0F, 0.0F);
+            blazeEntity.initialize(serverWorldAccess, this.world.getLocalDifficulty(pos), SpawnReason.NATURAL, null,
+                null);
             serverWorldAccess.spawnEntity(blazeEntity);
             break;
           }

@@ -256,8 +256,8 @@ public class NecromancerEntity extends SpellCastingEntity {
       for (int i = 0; i < 3; ++i) {
         BlockPos blockPos = NecromancerEntity.this.getBlockPos().add(-2 + NecromancerEntity.this.random.nextInt(5), 1,
             -2 + NecromancerEntity.this.random.nextInt(5));
-        WitherPuppetEntity puppet = (WitherPuppetEntity) EntityInit.WITHERPUPPET_ENTITY
-            .create(NecromancerEntity.this.world);
+        WitherPuppetEntity puppet = (WitherPuppetEntity) EntityInit.WITHERPUPPET_ENTITY.create(serverWorld);
+        puppet.initialize(serverWorld, serverWorld.getLocalDifficulty(blockPos), SpawnReason.EVENT, null, null);
         puppet.refreshPositionAndAngles(blockPos, 0.0F, 0.0F);
         puppet.setOwner(NecromancerEntity.this);
         puppet.setLifeTicks(20 * (40 + NecromancerEntity.this.random.nextInt(90)));
@@ -265,8 +265,10 @@ public class NecromancerEntity extends SpellCastingEntity {
         int skeletonChance = world.getRandom().nextInt(14);
         if (skeletonChance == 0) {
           WitherSkeletonEntity witherSkeletonEntity = (WitherSkeletonEntity) EntityType.WITHER_SKELETON
-              .create(NecromancerEntity.this.world);
+              .create(serverWorld);
           witherSkeletonEntity.refreshPositionAndAngles(blockPos, 0.0F, 0.0F);
+          witherSkeletonEntity.initialize(serverWorld, serverWorld.getLocalDifficulty(blockPos), SpawnReason.EVENT,
+              null, null);
           serverWorld.spawnEntityAndPassengers(witherSkeletonEntity);
         }
       }

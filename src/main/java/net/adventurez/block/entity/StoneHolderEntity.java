@@ -15,12 +15,14 @@ import net.minecraft.block.entity.BlockEntity;
 import net.minecraft.block.enums.BlockHalf;
 import net.minecraft.block.enums.SlabType;
 import net.minecraft.block.enums.StairShape;
+import net.minecraft.entity.SpawnReason;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.inventory.Inventories;
 import net.minecraft.inventory.Inventory;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.particle.ParticleTypes;
+import net.minecraft.server.world.ServerWorld;
 import net.minecraft.sound.SoundCategory;
 import net.minecraft.sound.SoundEvents;
 import net.minecraft.util.collection.DefaultedList;
@@ -232,6 +234,8 @@ public class StoneHolderEntity extends BlockEntity implements Tickable, Inventor
         StoneGolemEntity stoneGolemEntity = (StoneGolemEntity) EntityInit.STONEGOLEM_ENTITY.create(world);
         BlockPos spawnPos = new BlockPos(pos.getX(), pos.getY() + 1, pos.getZ() - 5);
         stoneGolemEntity.refreshPositionAndAngles(spawnPos, 0.0F, 0.0F);
+        stoneGolemEntity.initialize(((ServerWorld) this.world), this.world.getLocalDifficulty(pos),
+            SpawnReason.STRUCTURE, null, null);
         stoneGolemEntity.sendtoEntity();
         world.spawnEntity(stoneGolemEntity);
         world.playSound(null, pos, SoundInit.GOLEM_SPAWN_EVENT, SoundCategory.HOSTILE, 1F, 1F);

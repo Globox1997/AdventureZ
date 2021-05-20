@@ -17,6 +17,7 @@ import net.minecraft.entity.EntityGroup;
 import net.minecraft.entity.EntityPose;
 import net.minecraft.entity.EntityType;
 import net.minecraft.entity.LivingEntity;
+import net.minecraft.entity.SpawnReason;
 import net.minecraft.entity.ai.goal.FollowTargetGoal;
 import net.minecraft.entity.ai.goal.LookAtEntityGoal;
 import net.minecraft.entity.ai.goal.MeleeAttackGoal;
@@ -37,6 +38,7 @@ import net.minecraft.entity.data.TrackedData;
 import net.minecraft.entity.data.TrackedDataHandlerRegistry;
 import net.minecraft.entity.mob.HostileEntity;
 import net.minecraft.entity.mob.MobEntity;
+import net.minecraft.entity.passive.IronGolemEntity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.particle.ParticleTypes;
@@ -87,7 +89,7 @@ public class StoneGolemEntity extends HostileEntity {
   public static DefaultAttributeContainer.Builder createStoneGolemAttributes() {
     return HostileEntity.createHostileAttributes().add(EntityAttributes.GENERIC_MAX_HEALTH, 600.0D)
         .add(EntityAttributes.GENERIC_MOVEMENT_SPEED, 0.24D).add(EntityAttributes.GENERIC_KNOCKBACK_RESISTANCE, 2.5D)
-        .add(EntityAttributes.GENERIC_ATTACK_DAMAGE, 12.0D).add(EntityAttributes.GENERIC_ATTACK_KNOCKBACK, 2.8D)
+        .add(EntityAttributes.GENERIC_ATTACK_DAMAGE, 14.0D).add(EntityAttributes.GENERIC_ATTACK_KNOCKBACK, 2.8D)
         .add(EntityAttributes.GENERIC_FOLLOW_RANGE, 38.0D);
   }
 
@@ -95,11 +97,12 @@ public class StoneGolemEntity extends HostileEntity {
   public void initGoals() {
     super.initGoals();
     this.goalSelector.add(0, new SwimGoal(this));
-    this.goalSelector.add(4, new StoneGolemEntity.AttackGoal());
-    this.goalSelector.add(5, new WanderAroundFarGoal(this, 0.6D));
-    this.goalSelector.add(6, new LookAtEntityGoal(this, PlayerEntity.class, 60.0F));
-    this.goalSelector.add(10, new LookAtEntityGoal(this, MobEntity.class, 8.0F));
-    this.targetSelector.add(3, new FollowTargetGoal<>(this, PlayerEntity.class, false));
+    this.goalSelector.add(1, new StoneGolemEntity.AttackGoal());
+    this.goalSelector.add(2, new WanderAroundFarGoal(this, 0.6D));
+    this.goalSelector.add(3, new LookAtEntityGoal(this, PlayerEntity.class, 60.0F));
+    this.goalSelector.add(4, new LookAtEntityGoal(this, MobEntity.class, 8.0F));
+    this.targetSelector.add(1, new FollowTargetGoal<>(this, PlayerEntity.class, false));
+    this.targetSelector.add(2, new FollowTargetGoal<>(this, IronGolemEntity.class, true));
   }
 
   @Override
@@ -323,7 +326,7 @@ public class StoneGolemEntity extends HostileEntity {
       Entity entity;
       for (Iterator<Entity> var2 = list.iterator(); var2.hasNext(); this.knockBack(entity)) {
         entity = (Entity) var2.next();
-        entity.damage(DamageSource.mob(this), 8.0F);
+        entity.damage(DamageSource.mob(this), 10.0F);
         entity.setVelocity(entity.getVelocity().add(0.0D, 0.63D, 0.0D));
       }
 
@@ -521,12 +524,16 @@ public class StoneGolemEntity extends HostileEntity {
         this.onKilledBy(livingEntity);
         SmallStoneGolemEntity smallStoneGolemEntity = (SmallStoneGolemEntity) EntityInit.SMALLSTONEGOLEM_ENTITY
             .create(this.world);
-        SmallStoneGolemEntity smallStoneGolemEntity2 = (SmallStoneGolemEntity) EntityInit.SMALLSTONEGOLEM_ENTITY
+        SmallStoneGolemEntity smallStoneGolemEntitySecond = (SmallStoneGolemEntity) EntityInit.SMALLSTONEGOLEM_ENTITY
             .create(this.world);
         smallStoneGolemEntity.refreshPositionAndAngles(this.getBlockPos().east(), 0.0F, 0.0F);
-        smallStoneGolemEntity2.refreshPositionAndAngles(this.getBlockPos().west(), 0.0F, 0.0F);
+        smallStoneGolemEntitySecond.refreshPositionAndAngles(this.getBlockPos().west(), 0.0F, 0.0F);
+        smallStoneGolemEntity.initialize(((ServerWorld) this.world), this.world.getLocalDifficulty(this.getBlockPos()),
+            SpawnReason.EVENT, null, null);
+        smallStoneGolemEntitySecond.initialize(((ServerWorld) this.world),
+            this.world.getLocalDifficulty(this.getBlockPos()), SpawnReason.EVENT, null, null);
         this.world.spawnEntity(smallStoneGolemEntity);
-        this.world.spawnEntity(smallStoneGolemEntity2);
+        this.world.spawnEntity(smallStoneGolemEntitySecond);
       }
 
       this.world.sendEntityStatus(this, (byte) 3);

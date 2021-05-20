@@ -12,6 +12,7 @@ import net.adventurez.init.TagInit;
 import net.minecraft.block.BlockState;
 import net.minecraft.block.Blocks;
 import net.minecraft.block.entity.BlockEntity;
+import net.minecraft.entity.SpawnReason;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.particle.ParticleTypes;
@@ -134,6 +135,8 @@ public class DragonEggEntity extends BlockEntity implements Tickable {
                         DragonEntity dragonEntity = (DragonEntity) EntityInit.DRAGON_ENTITY.create(world);
                         dragonEntity.refreshPositionAndAngles((double) this.getPos().getX() + 0.5D,
                                 (double) this.getPos().getY() + 0.55D, (double) this.getPos().getZ() + 0.5D, 90F, 0.0F);
+                        dragonEntity.initialize(((ServerWorld) this.world), this.world.getLocalDifficulty(pos),
+                                SpawnReason.STRUCTURE, null, null);
                         dragonEntity.setSize(1);
                         world.spawnEntity(dragonEntity);
                     }
@@ -158,6 +161,8 @@ public class DragonEggEntity extends BlockEntity implements Tickable {
                         TheEyeEntity theEyeEntity = (TheEyeEntity) EntityInit.THEEYE_ENTITY.create(world);
                         theEyeEntity.refreshPositionAndAngles((double) this.getPos().getX() + 0.5D,
                                 (double) this.getPos().getY() + 0.55D, (double) this.getPos().getZ() + 0.5D, 90F, 0.0F);
+                        theEyeEntity.initialize(((ServerWorld) this.world), this.world.getLocalDifficulty(pos),
+                                SpawnReason.STRUCTURE, null, null);
                         theEyeEntity.setEyeInvulnerabletime();
                         world.spawnEntity(theEyeEntity);
                         this.world.breakBlock(pos, false);

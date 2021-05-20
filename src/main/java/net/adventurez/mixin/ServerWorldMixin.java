@@ -13,6 +13,7 @@ import org.spongepowered.asm.mixin.injection.At;
 import net.adventurez.entity.SummonerEntity;
 import net.adventurez.init.ConfigInit;
 import net.adventurez.init.EntityInit;
+import net.minecraft.entity.SpawnReason;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.WorldGenerationProgressListener;
 import net.minecraft.server.world.ServerWorld;
@@ -49,6 +50,8 @@ public abstract class ServerWorldMixin extends World {
       if (this.getBlockState(blockPos).isSolidBlock(this, blockPos)) {
         SummonerEntity summonerEntity = (SummonerEntity) EntityInit.SUMMONER_ENTITY.create(this);
         summonerEntity.updatePosition((double) blockPos.getX(), (double) blockPos.getY(), (double) blockPos.getZ());
+        summonerEntity.initialize((ServerWorld) (Object) this, this.getLocalDifficulty(blockPos), SpawnReason.EVENT,
+            null, null);
         this.spawnEntity(summonerEntity);
         summonerEntity.playSpawnEffects();
       }
