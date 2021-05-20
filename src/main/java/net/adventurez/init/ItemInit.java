@@ -20,7 +20,7 @@ public class ItemInit {
         public static final Item GILDED_NETHERITE_FRAGMENT = register("gilded_netherite_fragment",
                         new GildedNetheriteFragmentItem(new Item.Settings().group(ItemGroup.MISC).fireproof()));
         public static final Item PRIME_EYE = register("prime_eye",
-                        new PrimeEyeItem(new Item.Settings().group(ItemGroup.MISC)));
+                        new PrimeEyeItem(new Item.Settings().group(ItemGroup.MISC).maxDamage(16)));
         public static final Item ORC_SKIN = register("orc_skin",
                         new OrcSkinItem(new Item.Settings().group(ItemGroup.MISC)));
         public static final Item DRAGON_SADDLE = register("dragon_saddle",
