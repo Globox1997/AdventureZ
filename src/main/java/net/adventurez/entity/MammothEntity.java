@@ -69,7 +69,7 @@ public class MammothEntity extends AnimalEntity implements Angerable {
 
     @Override
     public boolean isBreedingItem(ItemStack stack) {
-        return stack.getItem() == Items.GRASS || stack.getItem() == Items.FERN;
+        return stack.getItem() == Items.GRASS || stack.getItem() == Items.FERN || stack.getItem() == Items.TALL_GRASS;
     }
 
     @Override
