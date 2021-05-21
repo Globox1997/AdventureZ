@@ -45,11 +45,9 @@ dependencies {
 	// Patchouli
 	modImplementation "vazkii.patchouli:Patchouli:1.16.4-50-FABRIC"
 	// VoidZ
-	modCompile "com.github.Globox1997:VoidZ:1.0.1",{
+	modCompile "com.github.Globox1997:VoidZ:e9abbc0cab",{
 		exclude(group: "net.fabricmc.fabric-api")
-		exclude(group: "vazkii.patchouli")
-		exclude(group: "io.github.prospector")
-		exclude(group: "com.github.Globox1997",module:"AdventureZ")
+		exclude(module:"AdventureZ")
 	}
 	// Canvas
 	// modCompile "grondag:canvas-mc116:1.0.+"
