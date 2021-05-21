@@ -4,6 +4,7 @@ import net.adventurez.entity.ThrownRockEntity;
 import net.adventurez.entity.model.RockModel;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
+import net.fabricmc.loader.api.FabricLoader;
 import net.minecraft.client.render.OverlayTexture;
 import net.minecraft.client.render.VertexConsumer;
 import net.minecraft.client.render.VertexConsumerProvider;
@@ -12,10 +13,12 @@ import net.minecraft.client.render.entity.EntityRenderer;
 import net.minecraft.client.util.math.MatrixStack;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.math.BlockPos;
+import net.voidz.init.BlockInit;
 
 @Environment(EnvType.CLIENT)
 public class ThrownRockRenderer extends EntityRenderer<ThrownRockEntity> {
-   private static final Identifier TEXTURE = new Identifier("adventurez:textures/entity/thrown_rock.png");
+   private static final Identifier GOLEM_TEXTURE = new Identifier("adventurez:textures/entity/thrown_golem_rock.png");
+   private static final Identifier VOID_TEXTURE = new Identifier("adventurez:textures/entity/thrown_void_rock.png");
    private final RockModel model = new RockModel();
 
    public ThrownRockRenderer(EntityRenderDispatcher entityRenderDispatcher) {
@@ -43,6 +46,11 @@ public class ThrownRockRenderer extends EntityRenderer<ThrownRockEntity> {
 
    @Override
    public Identifier getTexture(ThrownRockEntity ThrownRockEntity) {
-      return TEXTURE;
+      if (FabricLoader.getInstance().isModLoaded("voidz")
+            && ThrownRockEntity.getStack().getItem() == BlockInit.VOID_BLOCK.asItem()
+            || ThrownRockEntity.getStack().getItem() == BlockInit.INFESTED_VOID_BLOCK.asItem()) {
+         return VOID_TEXTURE;
+      } else
+         return GOLEM_TEXTURE;
    }
 }

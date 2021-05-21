@@ -54,11 +54,11 @@ public class StoneGolemArm extends Item {
                 if (!world.isClient) {
                     float strength = getStoneStrength(stoneCounter);
                     stack.damage(1, playerEntity, (p) -> p.sendToolBreakStatus(p.getActiveHand()));
-                    ThrownRockEntity rockEntity = new ThrownRockEntity(world, playerEntity);
-                    rockEntity.setProperties(playerEntity, playerEntity.pitch, playerEntity.yaw, 0.0F, strength * 1.2F,
-                            1.0F);
-                    world.spawnEntity(rockEntity);
-                    world.playSoundFromEntity((PlayerEntity) null, rockEntity, SoundInit.ROCK_THROW_EVENT,
+                    ThrownRockEntity thrownRockEntity = new ThrownRockEntity(world, playerEntity);
+                    thrownRockEntity.setProperties(playerEntity, playerEntity.pitch, playerEntity.yaw, 0.0F,
+                            strength * 1.2F, 1.0F);
+                    world.spawnEntity(thrownRockEntity);
+                    world.playSoundFromEntity((PlayerEntity) null, thrownRockEntity, SoundInit.ROCK_THROW_EVENT,
                             SoundCategory.PLAYERS, 1.0F, 1.0F);
                 }
             }

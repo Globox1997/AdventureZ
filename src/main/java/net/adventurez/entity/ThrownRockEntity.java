@@ -26,6 +26,7 @@ import net.minecraft.util.hit.HitResult;
 import net.minecraft.world.World;
 
 public class ThrownRockEntity extends ThrownItemEntity {
+
    public ThrownRockEntity(EntityType<? extends ThrownRockEntity> entityType, World world) {
       super(entityType, world);
    }
@@ -89,26 +90,27 @@ public class ThrownRockEntity extends ThrownItemEntity {
       super.onEntityHit(entityHitResult);
       if (!this.world.isClient) {
          Entity entity = entityHitResult.getEntity();
-         Entity entity2 = this.getOwner();
-         boolean bl2;
-         DamageSource damageSource = createDamageSource(this, entity2 == null ? this : entity2);
-         if (entity2 instanceof LivingEntity) {
-            LivingEntity livingEntity = (LivingEntity) entity2;
-            bl2 = entity.damage(damageSource, 16F);
+         Entity owner = this.getOwner();
+         DamageSource damageSource = createDamageSource(this, owner == null ? this : owner);
+         if (owner instanceof LivingEntity) {
+            LivingEntity livingEntity = (LivingEntity) owner;
             if (entity.damage(damageSource, 16F)) {
                if (entity.isAlive()) {
                   this.dealDamage(livingEntity, entity);
                }
             }
-         } else {
-            bl2 = entity.damage(damageSource, 16F);
          }
-
-         if (bl2 && entity instanceof LivingEntity) {
-            ((LivingEntity) entity).addStatusEffect(new StatusEffectInstance(StatusEffects.MINING_FATIGUE, 2000, 2));
-            ((LivingEntity) entity).addStatusEffect(new StatusEffectInstance(StatusEffects.BLINDNESS, 50, 0));
-            ((LivingEntity) entity).addStatusEffect(new StatusEffectInstance(StatusEffects.SLOWNESS, 200, 0));
-            ((LivingEntity) entity).addStatusEffect(new StatusEffectInstance(StatusEffects.HUNGER, 600, 1));
+         if (entity instanceof LivingEntity) {
+            LivingEntity livingEntity = (LivingEntity) entity;
+            int slownessAddition = 400;
+            if (this.getStack().getItem() == this.getDefaultItem()) {
+               livingEntity.addStatusEffect(new StatusEffectInstance(StatusEffects.MINING_FATIGUE, 2000, 2));
+               slownessAddition = 200;
+            }
+            livingEntity.addStatusEffect(new StatusEffectInstance(StatusEffects.BLINDNESS, 50, 0));
+            livingEntity.addStatusEffect(
+                  new StatusEffectInstance(StatusEffects.SLOWNESS, slownessAddition, slownessAddition / 200 - 1));
+            livingEntity.addStatusEffect(new StatusEffectInstance(StatusEffects.HUNGER, 600, 1));
          }
 
       }
