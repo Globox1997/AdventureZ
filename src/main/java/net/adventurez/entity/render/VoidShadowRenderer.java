@@ -23,7 +23,7 @@ public class VoidShadowRenderer extends MobEntityRenderer<VoidShadowEntity, Void
 
     @Override
     public void scale(VoidShadowEntity voidShadowEntity, MatrixStack matrixStack, float f) {
-        matrixStack.scale(3.0F, 3.0F, 3.0F);
+        matrixStack.scale(9.0F, 9.0F, 9.0F);
     }
 
     @Override
