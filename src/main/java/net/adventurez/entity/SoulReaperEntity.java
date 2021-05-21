@@ -117,7 +117,7 @@ public class SoulReaperEntity extends HostileEntity implements RangedAttackMob {
 
   public static boolean canSpawn(EntityType<SoulReaperEntity> type, ServerWorldAccess world, SpawnReason spawnReason,
       BlockPos pos, Random random) {
-    Optional<RegistryKey<Biome>> optional = world.method_31081(pos);
+    Optional<RegistryKey<Biome>> optional = world.getBiomeKey(pos);
     boolean bl = (world.getDifficulty() != Difficulty.PEACEFUL && world.getLightLevel(LightType.BLOCK, pos) < 10
         && canMobSpawn(type, world, spawnReason, pos, random)) || spawnReason == SpawnReason.SPAWNER;
     if (Objects.equals(optional, Optional.of(BiomeKeys.SOUL_SAND_VALLEY))) {

@@ -99,7 +99,7 @@ public class SummonerEntity extends SpellCastingEntity {
 
   public static boolean canSpawn(EntityType<SummonerEntity> type, ServerWorldAccess world, SpawnReason spawnReason,
       BlockPos pos, Random random) {
-    Optional<RegistryKey<Biome>> optional = world.method_31081(pos);
+    Optional<RegistryKey<Biome>> optional = world.getBiomeKey(pos);
     boolean bl = (world.getDifficulty() != Difficulty.PEACEFUL && canSpawnInDark(type, world, spawnReason, pos, random)
         && world.isSkyVisible(pos) && world.getLevelProperties().isRaining()) || spawnReason == SpawnReason.SPAWNER;
     if (Objects.equals(optional, Optional.of(BiomeKeys.TAIGA))

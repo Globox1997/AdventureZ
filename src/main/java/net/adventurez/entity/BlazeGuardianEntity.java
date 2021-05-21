@@ -228,7 +228,7 @@ public class BlazeGuardianEntity extends HostileEntity {
 
   public static boolean canSpawn(EntityType<BlazeGuardianEntity> type, ServerWorldAccess world, SpawnReason spawnReason,
       BlockPos pos, Random random) {
-    Optional<RegistryKey<Biome>> optional = world.method_31081(pos);
+    Optional<RegistryKey<Biome>> optional = world.getBiomeKey(pos);
     boolean bl = (world.getDifficulty() != Difficulty.PEACEFUL && world.getLightLevel(LightType.BLOCK, pos) < 10
         && canMobSpawn(type, world, spawnReason, pos, random)) || spawnReason == SpawnReason.SPAWNER;
     if (Objects.equals(optional, Optional.of(BiomeKeys.NETHER_WASTES))) {
