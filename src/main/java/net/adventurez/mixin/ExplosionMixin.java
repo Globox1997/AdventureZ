@@ -1,5 +1,6 @@
 package net.adventurez.mixin;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
 
@@ -15,6 +16,7 @@ import org.spongepowered.asm.mixin.injection.callback.LocalCapture;
 import org.spongepowered.asm.mixin.injection.At;
 
 import net.adventurez.entity.BlazeGuardianEntity;
+import net.adventurez.entity.VoidFragmentEntity;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.util.math.BlockPos;
@@ -31,15 +33,19 @@ public class ExplosionMixin {
     this.entity = entity;
   }
 
-  @Inject(method = "collectBlocksAndDamageEntities", at = @At(value = "INVOKE", target = "Lnet/minecraft/util/math/Vec3d;<init>(DDD)V", shift = Shift.AFTER), locals = LocalCapture.CAPTURE_FAILSOFT)
+  @Inject(method = "collectBlocksAndDamageEntities", at = @At(value = "INVOKE", target = "Lnet/minecraft/util/math/Vec3d;<init>(DDD)V", shift = Shift.AFTER, ordinal = 0), locals = LocalCapture.CAPTURE_FAILSOFT)
   public void collectBlocksAndDamageEntitiesMixin(CallbackInfo info, Set<BlockPos> set, float q, int r, int s, int t,
       int u, int v, int w, List<Entity> list) {
-    if (this.entity != null && this.entity instanceof BlazeGuardianEntity) {
-      for (int i = 0; i < list.size(); ++i) {
-        Entity entityFromList = (Entity) list.get(i);
-        if (!(entityFromList instanceof PlayerEntity)) {
-          list.remove(i);
+    if (this.entity != null) {
+      if (this.entity instanceof BlazeGuardianEntity || this.entity instanceof VoidFragmentEntity) {
+        List<Entity> removeList = new ArrayList<Entity>();
+        for (int i = 0; i < list.size(); ++i) {
+          Entity entityFromList = (Entity) list.get(i);
+          if (!(entityFromList instanceof PlayerEntity)) {
+            removeList.add(entityFromList);
+          }
         }
+        list.removeAll(removeList);
       }
     }
   }
