@@ -5,6 +5,7 @@ import java.util.List;
 import java.util.Random;
 import java.util.function.Predicate;
 
+import net.adventurez.entity.nonliving.TinyEyeEntity;
 import net.adventurez.init.EffectInit;
 import net.adventurez.init.EntityInit;
 import net.adventurez.init.SoundInit;
@@ -57,7 +58,6 @@ import net.minecraft.world.SpawnHelper;
 import net.minecraft.world.World;
 import net.minecraft.world.explosion.Explosion;
 import net.voidz.init.BlockInit;
-//import net.voidz.init.BlockInit;
 import net.minecraft.world.Heightmap;
 import org.jetbrains.annotations.Nullable;
 
@@ -207,7 +207,7 @@ public class TheEyeEntity extends FlyingEntity {
                                 teleportPos.getZ() + 4)
                                 && livingEntity.world.getChunkManager().shouldTickChunk(new ChunkPos(teleportPos))
                                 && SpawnHelper.canSpawn(SpawnRestriction.Location.ON_GROUND, livingEntity.world,
-                                        teleportPos, EntityInit.THEEYE_ENTITY)) {
+                                        teleportPos, EntityInit.THE_EYE_ENTITY)) {
                             this.lookControl.lookAt(teleportPos.getX(), teleportPos.getY(), teleportPos.getZ());
                             if (!world.isClient) {
                                 livingEntity.teleport(teleportPos.getX(), teleportPos.getY(), teleportPos.getZ());

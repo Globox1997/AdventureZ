@@ -2,7 +2,7 @@ package net.adventurez.item;
 
 import java.util.List;
 
-import net.adventurez.entity.ThrownRockEntity;
+import net.adventurez.entity.nonliving.ThrownRockEntity;
 import net.adventurez.init.SoundInit;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.item.TooltipContext;

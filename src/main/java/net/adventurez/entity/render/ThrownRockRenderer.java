@@ -1,7 +1,7 @@
 package net.adventurez.entity.render;
 
-import net.adventurez.entity.ThrownRockEntity;
 import net.adventurez.entity.model.RockModel;
+import net.adventurez.entity.nonliving.ThrownRockEntity;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
 import net.fabricmc.loader.api.FabricLoader;

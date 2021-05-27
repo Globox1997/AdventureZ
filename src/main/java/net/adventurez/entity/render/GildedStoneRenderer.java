@@ -1,7 +1,7 @@
 package net.adventurez.entity.render;
 
-import net.adventurez.entity.GildedStoneEntity;
 import net.adventurez.entity.model.GildedStoneModel;
+import net.adventurez.entity.nonliving.GildedStoneEntity;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
 import net.minecraft.client.render.OverlayTexture;

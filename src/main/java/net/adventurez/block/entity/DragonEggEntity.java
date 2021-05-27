@@ -158,7 +158,7 @@ public class DragonEggEntity extends BlockEntity implements Tickable {
                 if (overallSummoningTick == 20 && this.isValid(world, pos, state)) {
                     summoningTick++;
                     if (!world.isClient && summoningTick >= 60) {
-                        TheEyeEntity theEyeEntity = (TheEyeEntity) EntityInit.THEEYE_ENTITY.create(world);
+                        TheEyeEntity theEyeEntity = (TheEyeEntity) EntityInit.THE_EYE_ENTITY.create(world);
                         theEyeEntity.refreshPositionAndAngles((double) this.getPos().getX() + 0.5D,
                                 (double) this.getPos().getY() + 0.55D, (double) this.getPos().getZ() + 0.5D, 90F, 0.0F);
                         theEyeEntity.initialize(((ServerWorld) this.world), this.world.getLocalDifficulty(pos),

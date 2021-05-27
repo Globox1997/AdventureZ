@@ -37,7 +37,7 @@ public class RenderInit {
                                 (dispatcher, context) -> new SummonerRenderer(dispatcher));
                 EntityRendererRegistry.INSTANCE.register(EntityInit.BLAZEGUARDIAN_ENTITY,
                                 (dispatcher, context) -> new BlazeGuardianRenderer(dispatcher));
-                EntityRendererRegistry.INSTANCE.register(EntityInit.THEEYE_ENTITY,
+                EntityRendererRegistry.INSTANCE.register(EntityInit.THE_EYE_ENTITY,
                                 (dispatcher, context) -> new TheEyeRenderer(dispatcher));
                 EntityRendererRegistry.INSTANCE.register(EntityInit.VOID_SHADOW_ENTITY,
                                 (dispatcher, context) -> new VoidShadowRenderer(dispatcher));
@@ -53,6 +53,14 @@ public class RenderInit {
                                 (dispatcher, context) -> new DragonRenderer(dispatcher));
                 EntityRendererRegistry.INSTANCE.register(EntityInit.MAMMOTH_ENTITY,
                                 (dispatcher, context) -> new MammothRenderer(dispatcher));
+                EntityRendererRegistry.INSTANCE.register(EntityInit.VOID_FRAGMENT_ENTITY,
+                                (dispatcher, context) -> new VoidFragmentRenderer(dispatcher));
+                EntityRendererRegistry.INSTANCE.register(EntityInit.VOID_SHADE_ENTITY,
+                                (dispatcher, context) -> new VoidShadeRenderer(dispatcher));
+                EntityRendererRegistry.INSTANCE.register(EntityInit.VOID_BULLET_ENTITY,
+                                (dispatcher, context) -> new VoidBulletRenderer(dispatcher));
+                EntityRendererRegistry.INSTANCE.register(EntityInit.FIRE_BREATH_ENTITY,
+                                (dispatcher, context) -> new FireBreathRenderer(dispatcher));
 
                 // Network
                 ClientPlayNetworking.registerGlobalReceiver(EntitySpawnPacket.ID, EntitySpawnPacket::onPacket);

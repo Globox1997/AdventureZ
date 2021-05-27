@@ -1,7 +1,7 @@
 package net.adventurez.entity.render;
 
-import net.adventurez.entity.TinyEyeEntity;
 import net.adventurez.entity.model.TinyEyeModel;
+import net.adventurez.entity.nonliving.TinyEyeEntity;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
 import net.minecraft.client.render.OverlayTexture;
