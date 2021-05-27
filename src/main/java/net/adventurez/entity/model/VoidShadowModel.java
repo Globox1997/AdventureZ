@@ -179,20 +179,33 @@ public class VoidShadowModel<T extends VoidShadowEntity> extends CompositeEntity
         this.bone10.pivotY = 24F + MathHelper.cos(0.8F + animationProgress / 12.5663706F) / 1.2F;
         this.bone11.pivotY = 24F + MathHelper.sin(0.6F + animationProgress / 12.5663706F) / 0.9F;
         this.bone12.pivotY = 24F + MathHelper.cos(0.4F + animationProgress / 12.5663706F) / 1.15F;
+        this.rightArm.roll = 0.0F;
+        this.leftArm.roll = 0.0F;
 
         if (shadow.getDataTracker().get(VoidShadowEntity.IS_THROWING_BLOCKS)) {
             throwingBlocksTicker = MathHelper.clamp(throwingBlocksTicker + 0.05817666666666F, 0.0F, 1.7453F);
         } else {
             throwingBlocksTicker = MathHelper.clamp(throwingBlocksTicker - 0.05817666666666F, 0.0F, 1.7453F);
         }
-        if (shadow.getDataTracker().get(VoidShadowEntity.HOVERING_MAGIC_HANDS)) {
 
-        }
         this.rightArm.pitch = -throwingBlocksTicker;
         this.leftArm.pitch = this.rightArm.pitch;
-
         this.rightArm.yaw = -throwingBlocksTicker * 0.20002291869F;
         this.leftArm.yaw = throwingBlocksTicker * 0.20002291869F;
+
+        if (shadow.getDataTracker().get(VoidShadowEntity.HOVERING_MAGIC_HANDS)) {
+            this.rightArm.roll = -2.4871F - MathHelper.cos(animationProgress * 0.3662F) * 0.1F;
+            this.leftArm.roll = 2.4871F + MathHelper.cos(animationProgress * 0.3662F) * 0.1F;
+            this.rightArm.pitch = -MathHelper.cos(animationProgress * 0.1662F) * 0.25F;
+            this.leftArm.pitch = MathHelper.cos(animationProgress * 0.1662F) * 0.25F;
+            // this.rightAttackingArm.pitch = MathHelper.cos(animationProgress * 0.6662F) *
+            // 0.25F;
+            // this.leftAttackingArm.pitch = MathHelper.cos(animationProgress * 0.6662F) *
+            // 0.25F;
+        } else if (shadow.getDataTracker().get(VoidShadowEntity.CIRCLING_HANDS)) {
+            this.rightArm.roll = -1.5708F;
+            this.leftArm.roll = 1.5708F;
+        }
 
         // this.rightArm.pitch = this.handSwingProgress;
 

@@ -294,6 +294,11 @@
       "adventurez:dragon_idle4"
     ]
   },
+  "dragon_breath": {
+    "sounds": [
+      "adventurez:dragon_breath"
+    ]
+  },
   "dragon_step": {
     "sounds": [
       "adventurez:dragon_step1",
@@ -335,6 +340,45 @@
       "adventurez:mammoth_baby_idle1",
       "adventurez:mammoth_baby_idle2",
       "adventurez:mammoth_baby_idle3"
+    ]
+  },
+  "shadow_cast": {
+    "sounds": [
+      {
+        "name": "adventurez:shadow_cast1",
+        "attenuation_distance": 50
+      },
+      {
+        "name": "adventurez:shadow_cast2",
+        "attenuation_distance": 50
+      }
+    ]
+  },
+  "shadow_prepare": {
+    "sounds": [
+      {
+        "name": "adventurez:shadow_prepare1",
+        "attenuation_distance": 50
+      },
+      {
+        "name": "adventurez:shadow_prepare2",
+        "attenuation_distance": 50
+      }
+    ]
+  },
+  "shadow_idle": {
+    "sounds": [
+      "adventurez:shadow_idle1",
+      "adventurez:shadow_idle2",
+      "adventurez:shadow_idle3"
+    ]
+  },
+  "shadow_death": {
+    "sounds": [
+      {
+        "name": "adventurez:shadow_death",
+        "attenuation_distance": 50
+      }
     ]
   }
 }

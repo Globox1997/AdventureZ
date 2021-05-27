@@ -91,10 +91,12 @@ public class SoundInit {
   public static final Identifier DRAGON_HIT = new Identifier("adventurez:dragon_hit");
   public static final Identifier DRAGON_IDLE = new Identifier("adventurez:dragon_idle");
   public static final Identifier DRAGON_STEP = new Identifier("adventurez:dragon_step");
+  public static final Identifier DRAGON_BREATH = new Identifier("adventurez:dragon_breath");
   public static SoundEvent DRAGON_DEATH_EVENT = new SoundEvent(DRAGON_DEATH);
   public static SoundEvent DRAGON_HIT_EVENT = new SoundEvent(DRAGON_HIT);
   public static SoundEvent DRAGON_IDLE_EVENT = new SoundEvent(DRAGON_IDLE);
   public static SoundEvent DRAGON_STEP_EVENT = new SoundEvent(DRAGON_STEP);
+  public static SoundEvent DRAGON_BREATH_EVENT = new SoundEvent(DRAGON_BREATH);
   // Mammoth
   public static final Identifier MAMMOTH_HIT = new Identifier("adventurez:mammoth_hit");
   public static final Identifier MAMMOTH_IDLE = new Identifier("adventurez:mammoth_idle");
@@ -104,6 +106,15 @@ public class SoundInit {
   public static SoundEvent MAMMOTH_IDLE_EVENT = new SoundEvent(MAMMOTH_IDLE);
   public static SoundEvent MAMMOTH_DEATH_EVENT = new SoundEvent(MAMMOTH_DEATH);
   public static SoundEvent MAMMOTH_BABY_IDLE_EVENT = new SoundEvent(MAMMOTH_BABY_IDLE);
+  // Void Shadow
+  public static final Identifier SHADOW_CAST = new Identifier("adventurez:shadow_cast");
+  public static final Identifier SHADOW_PREPARE = new Identifier("adventurez:shadow_prepare");
+  public static final Identifier SHADOW_IDLE = new Identifier("adventurez:shadow_idle");
+  public static final Identifier SHADOW_DEATH = new Identifier("adventurez:shadow_death");
+  public static SoundEvent SHADOW_CAST_EVENT = new SoundEvent(SHADOW_CAST);
+  public static SoundEvent SHADOW_PREPARE_EVENT = new SoundEvent(SHADOW_PREPARE);
+  public static SoundEvent SHADOW_IDLE_EVENT = new SoundEvent(SHADOW_IDLE);
+  public static SoundEvent SHADOW_DEATH_EVENT = new SoundEvent(SHADOW_DEATH);
   // Item
   public static final Identifier ROCK_IMPACT = new Identifier("adventurez:rock_impact");
   public static final Identifier ROCK_THROW = new Identifier("adventurez:rock_throw");
@@ -164,5 +175,6 @@ public class SoundInit {
     Registry.register(Registry.SOUND_EVENT, SoundInit.MAMMOTH_IDLE, MAMMOTH_IDLE_EVENT);
     Registry.register(Registry.SOUND_EVENT, SoundInit.MAMMOTH_DEATH, MAMMOTH_DEATH_EVENT);
     Registry.register(Registry.SOUND_EVENT, SoundInit.MAMMOTH_BABY_IDLE, MAMMOTH_BABY_IDLE_EVENT);
+    Registry.register(Registry.SOUND_EVENT, SoundInit.DRAGON_BREATH, DRAGON_BREATH_EVENT);
   }
 }

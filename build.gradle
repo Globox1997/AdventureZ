@@ -45,7 +45,7 @@ dependencies {
 	// Patchouli
 	modImplementation "vazkii.patchouli:Patchouli:1.16.4-50-FABRIC"
 	// VoidZ
-	modCompile "com.github.Globox1997:VoidZ:e9abbc0cab",{
+	modCompile "com.github.Globox1997:VoidZ:9523db2d69",{
 		exclude(group: "net.fabricmc.fabric-api")
 		exclude(module:"AdventureZ")
 	}
