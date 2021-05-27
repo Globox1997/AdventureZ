@@ -1,0 +1,306 @@
+package net.adventurez.entity.nonliving;
+
+import java.util.UUID;
+
+import net.adventurez.init.EntityInit;
+import net.adventurez.network.EntitySpawnPacket;
+import net.fabricmc.api.EnvType;
+import net.fabricmc.api.Environment;
+import net.minecraft.entity.Entity;
+import net.minecraft.entity.EntityType;
+import net.minecraft.entity.LivingEntity;
+import net.minecraft.entity.SpawnRestriction;
+import net.minecraft.entity.damage.DamageSource;
+import net.minecraft.entity.damage.EntityDamageSource;
+import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.entity.projectile.ArrowEntity;
+import net.minecraft.entity.projectile.ExplosiveProjectileEntity;
+import net.minecraft.entity.projectile.ProjectileUtil;
+import net.minecraft.nbt.CompoundTag;
+import net.minecraft.network.Packet;
+import net.minecraft.server.world.ServerWorld;
+import net.minecraft.sound.SoundCategory;
+import net.minecraft.sound.SoundEvents;
+import net.minecraft.util.hit.BlockHitResult;
+import net.minecraft.util.hit.EntityHitResult;
+import net.minecraft.util.hit.HitResult;
+import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.math.ChunkPos;
+import net.minecraft.util.math.Direction;
+import net.minecraft.util.math.MathHelper;
+import net.minecraft.util.math.Vec3d;
+import net.minecraft.world.Difficulty;
+import net.minecraft.world.SpawnHelper;
+import net.minecraft.world.World;
+import net.minecraft.world.Heightmap;
+import org.jetbrains.annotations.Nullable;
+
+public class TinyEyeEntity extends ExplosiveProjectileEntity {
+
+    private Entity target;
+    @Nullable
+    private Direction direction;
+    private int stepCount;
+    private double targetX;
+    private double targetY;
+    private double targetZ;
+    @Nullable
+    private UUID targetUuid;
+
+    public TinyEyeEntity(EntityType<? extends TinyEyeEntity> entityType, World world) {
+        super(entityType, world);
+    }
+
+    @Environment(EnvType.CLIENT)
+    public TinyEyeEntity(World world, double x, double y, double z, double velocityX, double velocityY,
+            double velocityZ) {
+        this(EntityInit.TINYEYE_ENTITY, world);
+        this.refreshPositionAndAngles(x, y, z, this.yaw, this.pitch);
+        this.setVelocity(velocityX, velocityY, velocityZ);
+    }
+
+    public TinyEyeEntity(World world, LivingEntity owner, Entity target, Direction.Axis axis) {
+        this(EntityInit.TINYEYE_ENTITY, world);
+        this.setOwner(owner);
+        BlockPos blockPos = owner.getBlockPos();
+        double d = (double) blockPos.getX() + 0.5D;
+        double e = (double) blockPos.getY() + 0.5D;
+        double f = (double) blockPos.getZ() + 0.5D;
+        this.refreshPositionAndAngles(d, e, f, this.yaw, this.pitch);
+        this.target = target;
+        this.direction = Direction.UP;
+        this.movingAround();
+    }
+
+    @Override
+    public SoundCategory getSoundCategory() {
+        return SoundCategory.HOSTILE;
+    }
+
+    @Override
+    public void writeCustomDataToTag(CompoundTag tag) {
+        super.writeCustomDataToTag(tag);
+        if (this.target != null) {
+            tag.putUuid("Target", this.target.getUuid());
+        }
+
+        if (this.direction != null) {
+            tag.putInt("Dir", this.direction.getId());
+        }
+
+        tag.putInt("Steps", this.stepCount);
+        tag.putDouble("TXD", this.targetX);
+        tag.putDouble("TYD", this.targetY);
+        tag.putDouble("TZD", this.targetZ);
+    }
+
+    @Override
+    public void readCustomDataFromTag(CompoundTag tag) {
+        super.readCustomDataFromTag(tag);
+        this.stepCount = tag.getInt("Steps");
+        this.targetX = tag.getDouble("TXD");
+        this.targetY = tag.getDouble("TYD");
+        this.targetZ = tag.getDouble("TZD");
+        if (tag.contains("Dir", 99)) {
+            this.direction = Direction.byId(tag.getInt("Dir"));
+        }
+
+        if (tag.containsUuid("Target")) {
+            this.targetUuid = tag.getUuid("Target");
+        }
+
+    }
+
+    @Override
+    protected void initDataTracker() {
+    }
+
+    private void movingAround() {
+        double d = 0.5D;
+        BlockPos blockPos2;
+        if (this.target == null) {
+            blockPos2 = this.getBlockPos().down();
+        } else {
+            d = (double) this.target.getHeight() * 0.5D;
+            blockPos2 = new BlockPos(this.target.getX(), this.target.getY() + d, this.target.getZ());
+        }
+
+        double e = (double) blockPos2.getX() + 0.5D;
+        double f = (double) blockPos2.getY() + d;
+        double g = (double) blockPos2.getZ() + 0.5D;
+        double h = e - this.getX();
+        double j = f - this.getY();
+        double k = g - this.getZ();
+        double l = (double) MathHelper.sqrt(h * h + j * j + k * k);
+        if (l == 0.0D) {
+            this.targetX = 0.0D;
+            this.targetY = 0.0D;
+            this.targetZ = 0.0D;
+        } else {
+            this.targetX = h / l * 0.15D;
+            this.targetY = j / l * 0.15D;
+            this.targetZ = k / l * 0.15D;
+        }
+
+        this.velocityDirty = true;
+        this.stepCount = 10 + this.random.nextInt(5) * 10;
+    }
+
+    @Override
+    public void checkDespawn() {
+        if (this.world.getDifficulty() == Difficulty.PEACEFUL) {
+            this.remove();
+        }
+
+    }
+
+    @Override
+    public void tick() {
+        Vec3d vec3d;
+        if (!this.world.isClient) {
+            if (this.target == null && this.targetUuid != null) {
+                this.target = ((ServerWorld) this.world).getEntity(this.targetUuid);
+                if (this.target == null) {
+                    this.targetUuid = null;
+                }
+            }
+
+            if (this.target == null || !this.target.isAlive()
+                    || this.target instanceof PlayerEntity && ((PlayerEntity) this.target).isSpectator()) {
+                if (!this.hasNoGravity()) {
+                    this.setVelocity(this.getVelocity().add(0.0D, -0.04D, 0.0D));
+                }
+            } else {
+                this.targetX = MathHelper.clamp(this.targetX * 1.025D, -1.0D, 1.0D);
+                this.targetY = MathHelper.clamp(this.targetY * 1.025D, -1.0D, 1.0D);
+                this.targetZ = MathHelper.clamp(this.targetZ * 1.025D, -1.0D, 1.0D);
+                vec3d = this.getVelocity();
+                this.setVelocity(vec3d.add((this.targetX - vec3d.x) * 0.2D, (this.targetY - vec3d.y) * 0.2D,
+                        (this.targetZ - vec3d.z) * 0.2D));
+            }
+
+            HitResult hitResult = ProjectileUtil.getCollision(this, this::method_26958);
+            if (hitResult.getType() != HitResult.Type.MISS) {
+                this.onCollision(hitResult);
+            }
+        }
+
+        this.checkBlockCollision();
+        vec3d = this.getVelocity();
+        this.updatePosition(this.getX() + vec3d.x, this.getY() + vec3d.y, this.getZ() + vec3d.z);
+        ProjectileUtil.method_7484(this, 0.5F);
+        if (this.world.isClient) {
+        } else if (this.target != null && !this.target.removed) {
+            if (this.stepCount > 0) {
+                --this.stepCount;
+                if (this.stepCount == 0) {
+                    this.movingAround();
+                }
+            }
+
+            if (this.direction != null) {
+                BlockPos blockPos = this.getBlockPos();
+                Direction.Axis axis = this.direction.getAxis();
+                if (this.world.isTopSolid(blockPos.offset(this.direction), this)) {
+                    this.movingAround();
+                } else {
+                    BlockPos blockPos2 = this.target.getBlockPos();
+                    if (axis == Direction.Axis.X && blockPos.getX() == blockPos2.getX()
+                            || axis == Direction.Axis.Z && blockPos.getZ() == blockPos2.getZ()
+                            || axis == Direction.Axis.Y && blockPos.getY() == blockPos2.getY()) {
+                        this.movingAround();
+                    }
+                }
+            }
+        }
+
+    }
+
+    @Override
+    public boolean method_26958(Entity entity) {
+        return super.method_26958(entity) && !entity.noClip;
+    }
+
+    @Override
+    public boolean isOnFire() {
+        return false;
+    }
+
+    @Environment(EnvType.CLIENT)
+    public boolean shouldRender(double distance) {
+        return distance < 16384.0D;
+    }
+
+    @Override
+    public float getBrightnessAtEyes() {
+        return 1.0F;
+    }
+
+    @Override
+    public void onEntityHit(EntityHitResult entityHitResult) {
+        super.onEntityHit(entityHitResult);
+        Entity entity = this.getOwner();
+        Entity hittedEntity = entityHitResult.getEntity();
+        if (!this.world.isClient && entity != null && hittedEntity != entity && !(hittedEntity instanceof TinyEyeEntity)
+                || hittedEntity instanceof ArrowEntity) {
+            this.playSound(SoundEvents.ENTITY_ENDER_EYE_DEATH, 1.0F, 1.0F);
+            if (hittedEntity instanceof LivingEntity) {
+                this.teleportEntityRandom((LivingEntity) hittedEntity);
+                hittedEntity.damage(createDamageSource(this), 1.0F);
+            }
+            this.remove();
+        }
+
+    }
+
+    public static DamageSource createDamageSource(Entity entity) {
+        return new EntityDamageSource("tinyEye", entity).setProjectile();
+    }
+
+    private void teleportEntityRandom(LivingEntity livingEntity) {
+        for (int counter = 0; counter < 100; counter++) {
+            float randomFloat = this.world.getRandom().nextFloat() * 6.2831855F;
+            int posX = livingEntity.getBlockPos().getX()
+                    + MathHelper.floor(MathHelper.cos(randomFloat) * 9.0F + livingEntity.world.getRandom().nextInt(30));
+            int posZ = livingEntity.getBlockPos().getZ()
+                    + MathHelper.floor(MathHelper.sin(randomFloat) * 9.0F + livingEntity.world.getRandom().nextInt(30));
+            int posY = livingEntity.world.getTopY(Heightmap.Type.WORLD_SURFACE, posX, posZ);
+            BlockPos teleportPos = new BlockPos(posX, posY, posZ);
+            if (livingEntity.world.isRegionLoaded(teleportPos.getX() - 4, teleportPos.getY() - 4,
+                    teleportPos.getZ() - 4, teleportPos.getX() + 4, teleportPos.getY() + 4, teleportPos.getZ() + 4)
+                    && livingEntity.world.getChunkManager().shouldTickChunk(new ChunkPos(teleportPos))
+                    && SpawnHelper.canSpawn(SpawnRestriction.Location.ON_GROUND, livingEntity.world, teleportPos,
+                            EntityType.PLAYER)) {
+                if (!world.isClient) {
+                    livingEntity.teleport(teleportPos.getX(), teleportPos.getY(), teleportPos.getZ());
+                }
+                livingEntity.world.playSound(null, teleportPos, SoundEvents.ENTITY_ENDERMAN_TELEPORT,
+                        SoundCategory.HOSTILE, 1.0F, 1.0F);
+                break;
+            }
+        }
+    }
+
+    @Override
+    public void onBlockHit(BlockHitResult blockHitResult) {
+        super.onBlockHit(blockHitResult);
+        this.playSound(SoundEvents.ENTITY_ENDER_EYE_DEATH, 1.0F, 1.0F);
+        this.remove();
+    }
+
+    @Override
+    public void onCollision(HitResult hitResult) {
+        super.onCollision(hitResult);
+    }
+
+    @Override
+    public boolean collides() {
+        return true;
+    }
+
+    @Override
+    public Packet<?> createSpawnPacket() {
+        return EntitySpawnPacket.createPacket(this);
+    }
+
+}
