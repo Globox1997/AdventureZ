@@ -37,32 +37,21 @@ import net.minecraft.world.World;
 @Mixin(PlayerEntity.class)
 public abstract class PlayerEntityMixin extends LivingEntity {
   private int killedPiglins = 0;
-  private int piglinCooldown = 0;
 
   public PlayerEntityMixin(EntityType<PlayerEntity> type, World world) {
     super(type, world);
   };
 
-  @Inject(method = "damage", at = @At(value = "INVOKE", target = "Lnet/minecraft/entity/player/PlayerEntity;dropShoulderEntities()V", shift = Shift.AFTER), cancellable = true)
-  private void damageMixin(DamageSource source, float amount, CallbackInfoReturnable<Boolean> info) {
-    if (this.getEquippedStack(EquipmentSlot.CHEST).getItem() == ItemInit.STONE_GOLEM_CHESTPLATE) {
-      if (StoneGolemArmor.fullGolemArmor((PlayerEntity) (Object) this) && this.world.random.nextFloat() <= 0.3F) {
-        info.setReturnValue(false);
-      }
-    }
-  }
-
-  @Inject(method = "tickMovement", at = @At(value = "TAIL"))
-  private void tickMovementMixin(CallbackInfo info) {
+  @Inject(method = "attack", at = @At(value = "HEAD"))
+  private void attackMixin(Entity target, CallbackInfo info) {
     if (!world.isClient && ConfigInit.CONFIG.piglin_beast_attack_piglin_spawn_chance != 0) {
       PlayerEntity playerEntity = (PlayerEntity) (Object) this;
       if (playerEntity != null && !playerEntity.isCreative() && playerEntity.world.getRegistryKey() == World.NETHER) {
         if (this.getAttacking() != null && this.getAttacking() instanceof PiglinEntity) {
           int spawnChanceInt = world.random.nextInt(ConfigInit.CONFIG.piglin_beast_attack_piglin_spawn_chance) + 1;
           if (this.getAttacking().isDead() && spawnChanceInt != 0 && this.getBeasts()) {
-            piglinCooldown = 12000;
             killedPiglins++;
-            if (killedPiglins == 6) {
+            if (killedPiglins >= 6) {
               if (spawnChanceInt == 1) {
                 PiglinBeastEntity beastEntity = (PiglinBeastEntity) EntityInit.PIGLINBEAST_ENTITY.create(world);
                 int posYOfPlayer = playerEntity.getBlockPos().getY();
@@ -88,17 +77,18 @@ public abstract class PlayerEntityMixin extends LivingEntity {
                 }
               }
               killedPiglins = 0;
-            } else if (killedPiglins > 6) {
-              killedPiglins = 0;
             }
           }
         }
-        if (piglinCooldown > 0) {
-          if (piglinCooldown == 1) {
-            killedPiglins = 0;
-          }
-          piglinCooldown--;
-        }
+      }
+    }
+  }
+
+  @Inject(method = "damage", at = @At(value = "INVOKE", target = "Lnet/minecraft/entity/player/PlayerEntity;dropShoulderEntities()V", shift = Shift.AFTER), cancellable = true)
+  private void damageMixin(DamageSource source, float amount, CallbackInfoReturnable<Boolean> info) {
+    if (this.getEquippedStack(EquipmentSlot.CHEST).getItem() == ItemInit.STONE_GOLEM_CHESTPLATE) {
+      if (StoneGolemArmor.fullGolemArmor((PlayerEntity) (Object) this) && this.world.random.nextFloat() <= 0.3F) {
+        info.setReturnValue(false);
       }
     }
   }
