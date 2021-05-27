@@ -5,7 +5,7 @@
     "pages": [
         {
             "type": "text",
-            "text": "Not used yet but WIP"
+            "text": "The Void Shadow is the final end boss in Minecraft seen in a different void than the one you probably know. You will get known to everybody and even Villagers will recognize your fame if you managed to kill it. A portal to the dimension will get spawned when The Eye gets killed"
         },
         {
             "type": "entity",
@@ -13,6 +13,38 @@
             "entity": "adventurez:void_shadow",
             "scale": 0.8,
             "offset": 0.8
+        },
+        {
+            "type": "text",
+            "title": "Void Shade",
+            "text": "The Void Shade is a mob which chases after your life. It will shoot void bullets which can be blocked by punching them"
+        },
+        {
+            "type": "entity",
+            "name": "Showcase",
+            "entity": "adventurez:void_shade"
+        },
+        {
+            "type": "text",
+            "title": "Void Fragment",
+            "text": "Void Fragments will spawn during the fight against the Void Shadow. Don't get to close to them, this book warned you! The bigger fragments are called Void Orbs and can only get killed by void bullets but will damage the Shadow"
+        },
+        {
+            "type": "entity",
+            "name": "Showcase",
+            "entity": "adventurez:void_fragment",
+            "scale": 0.6
+        },
+        {
+            "type": "link",
+            "title": "VoidZ Addon",
+            "text": "You have to download and install the VoidZ mod cause the Void Shadow will spawn in a new dimension only used for the fight. The Reason for it to be an addon is, Fabric has its dimension api which may not get updated quickly when a bigger update is done",
+            "url": "https://www.curseforge.com/minecraft/mc-mods/voidz",
+            "link_text": "VoidZ Mod Page"
+        },
+        {
+            "type": "empty",
+            "draw_filler": false
         }
     ]
 }

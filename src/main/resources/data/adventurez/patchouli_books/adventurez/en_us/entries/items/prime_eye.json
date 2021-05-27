@@ -1,0 +1,16 @@
+{
+    "name": "Prime Eye",
+    "icon": "adventurez:prime_eye",
+    "category": "adventurez:item_category",
+    "pages": [
+        {
+            "type": "spotlight",
+            "item": "adventurez:prime_eye",
+            "text": "The Prime Eye is the remnant of The Eye and can get dropped by it. Fill it up with Ender Pearls at the smithing table, it does less damage to you when you throw it"
+        },
+        {
+            "type": "empty",
+            "draw_filler": false
+        }
+    ]
+}

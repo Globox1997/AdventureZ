@@ -1,0 +1,17 @@
+{
+    "name": "Mammoth",
+    "icon": "adventurez:stone_golem_heart",
+    "category": "adventurez:mob_category",
+    "pages": [
+        {
+            "type": "text",
+            "text": "Mammoths are friendly mobs, can be bred with grass and found in very cold environments"
+        },
+        {
+            "type": "entity",
+            "name": "Showcase",
+            "entity": "adventurez:mammoth",
+            "scale": 0.8
+        }
+    ]
+}

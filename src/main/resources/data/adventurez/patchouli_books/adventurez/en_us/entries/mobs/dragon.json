@@ -17,12 +17,12 @@
         {
             "type": "text",
             "title": "Egg Hatching",
-            "text": "After obtaining the dragon egg you will have to summon and kill The Eye to get the fame effect. Build a nest at your base to hatch the egg safely. If it feels your fame, it will start to emit particles"
+            "text": "After obtaining the dragon egg you will have to summon and kill The Eye to get the fame effect. If VoidZ is installed, you have to kill the Void Shadow instead. Build a nest at your base to hatch the egg safely. If it feels your fame, it will start to hatch and emit particles"
         },
         {
             "type": "text",
             "title": "Growth",
-            "text": "After the dragon is hatched, you can feed it with orc skin to grow up faster, if it's hungry enough. It grows up in size two times until it's a big dragon. After the first stage, you can put on a dragon saddle to ride it, after the second stage you can put on a chest"
+            "text": "After the dragon is hatched, you can feed it with orc skin to grow up faster, if it's hungry enough. It grows up in size two times until it's a big dragon. After the first stage, you can put on a dragon saddle to ride it, after the second stage you can put on a chest and it is old enough to breath fire"
         }
     ]
 }
