@@ -91,7 +91,7 @@ public class StoneHolderEntity extends BlockEntity implements Tickable, Inventor
       if (ConfigInit.CONFIG.allow_stone_golem_summoning) {
         this.tickCounter++;
       }
-      if (tickCounter > 40) {
+      if (tickCounter > 40 && this.world.getRegistryKey() == World.NETHER) {
         this.update();
         tickCounter = 0;
       }
