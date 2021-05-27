@@ -24,7 +24,9 @@ public class ItemInit {
         public static final Item ORC_SKIN = register("orc_skin",
                         new OrcSkinItem(new Item.Settings().group(ItemGroup.MISC)));
         public static final Item DRAGON_SADDLE = register("dragon_saddle",
-                        new OrcSkinItem(new Item.Settings().group(ItemGroup.TRANSPORTATION).maxCount(1)));
+                        new DragonSaddleItem(new Item.Settings().group(ItemGroup.TRANSPORTATION).maxCount(1)));
+        public static final Item SOURCE_STONE = register("source_stone",
+                        new SourceStoneItem(new Item.Settings().group(ItemGroup.MISC).maxCount(1)));
 
         // Armor
         public static final ArmorMaterial STONE_GOLEM_ARMOR_MATERIAL = new StoneGolemArmorMaterial();
