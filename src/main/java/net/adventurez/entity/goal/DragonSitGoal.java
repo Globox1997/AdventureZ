@@ -29,6 +29,7 @@ public class DragonSitGoal extends Goal {
         } else {
             if (this.dragonEntity.getOwner() == null) {
                 // Has to be true cause if Owner is not there
+                // Only if owner is there, dragon can get set to walk
                 return true;
             } else {
                 return this.dragonEntity.isInSittingPose();

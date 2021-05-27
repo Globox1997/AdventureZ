@@ -10,6 +10,7 @@ import com.google.common.collect.UnmodifiableIterator;
 import net.adventurez.entity.goal.DragonFindOwnerGoal;
 import net.adventurez.entity.goal.DragonFlyRandomlyGoal;
 import net.adventurez.entity.goal.DragonSitGoal;
+import net.adventurez.entity.nonliving.FireBreathEntity;
 import net.adventurez.init.ItemInit;
 import net.adventurez.init.SoundInit;
 import net.adventurez.mixin.accessor.LivingEntityAccessor;
@@ -89,6 +90,7 @@ public class DragonEntity extends PathAwareEntity implements InventoryChangedLis
    public static final TrackedData<Boolean> OTHER_TAIL;
    public static final TrackedData<Boolean> OTHER_EYES;
    public static final TrackedData<Integer> DRAGON_SIZE;
+   public static final TrackedData<Boolean> FIRE_BREATH;
 
    private boolean sitting;
    public boolean isFlying;
@@ -103,6 +105,8 @@ public class DragonEntity extends PathAwareEntity implements InventoryChangedLis
    private int onGroundTicker;
    private int dragonAge;
    private int dragonAgeFoodBonus;
+   private int fireBreathCooldown;
+   public boolean fireBreathActive;
 
    public DragonEntity(EntityType<? extends PathAwareEntity> entityType, World world) {
       super(entityType, world);
@@ -143,6 +147,7 @@ public class DragonEntity extends PathAwareEntity implements InventoryChangedLis
       this.dataTracker.startTracking(OTHER_TAIL, false);
       this.dataTracker.startTracking(OTHER_EYES, false);
       this.dataTracker.startTracking(DRAGON_SIZE, 1);
+      this.dataTracker.startTracking(FIRE_BREATH, false);
    }
 
    @Override
@@ -438,7 +443,36 @@ public class DragonEntity extends PathAwareEntity implements InventoryChangedLis
          player.pitch = this.pitch;
          player.startRiding(this);
       }
+   }
 
+   public void dragonFireBreath() {
+      if (this.fireBreathCooldown <= 60) {
+         this.fireBreathCooldown++;
+         if (!this.world.isClient) {
+            if (this.fireBreathCooldown == 1) {
+               this.world.playSoundFromEntity((PlayerEntity) null, this, SoundInit.DRAGON_BREATH_EVENT,
+                     SoundCategory.HOSTILE, 1.0F, 1.0F);
+            }
+            if (this.fireBreathCooldown % 3 == 0) {
+               Vec3d vec3d = this.getRotationVector(prevPitch, headYaw);
+               Vec3d otherVec3d = this.getRotationVector(prevPitch, bodyYaw);
+               vec3d = vec3d.add(otherVec3d);
+               FireBreathEntity fireBreathEntity = new FireBreathEntity(world, this, vec3d.x, vec3d.y, vec3d.z);
+               fireBreathEntity.refreshPositionAndAngles(this.getX() + vec3d.x * 3D,
+                     this.getY() + this.getBoundingBox().getYLength() * 0.65D
+                           + (this.pitch > 0F ? -this.pitch / 40F : -this.pitch / 80F),
+                     this.getZ() + vec3d.z * 3D, this.yaw, this.pitch);
+
+               world.spawnEntity(fireBreathEntity);
+            }
+         } else {
+            if (!this.getDataTracker().get(FIRE_BREATH)) {
+               this.getDataTracker().set(FIRE_BREATH, true);
+            }
+         }
+      } else {
+         this.fireBreathActive = false;
+      }
    }
 
    @Override
@@ -454,7 +488,8 @@ public class DragonEntity extends PathAwareEntity implements InventoryChangedLis
          boolean bl = this.isOwner(player) || this.isTamed() || this.dragonFood(item) && !this.isTamed();
          return bl ? ActionResult.CONSUME : ActionResult.PASS;
       } else {
-         if (this.isTamed() && this.getSize() > 1) {
+         // Check for owner
+         if (this.isTamed() && this.getSize() > 1 && this.isOwner(player)) {
             if (item == Items.CHEST && !this.hasChest() && this.getSize() > 2) {
                this.world.playSoundFromEntity((PlayerEntity) null, this, SoundInit.EQUIP_CHEST_EVENT,
                      SoundCategory.NEUTRAL, 0.5F, 1.0F);
@@ -561,23 +596,38 @@ public class DragonEntity extends PathAwareEntity implements InventoryChangedLis
    @Override
    public void tick() {
       super.tick();
-      if (!this.world.isClient && this.getSize() < 3) {
-         if (this.age % 1200 == 0) {
-            this.dragonAge++;
+      if (!this.world.isClient) {
+         if (this.getSize() < 3) {
+            if (this.age % 1200 == 0) {
+               this.dragonAge++;
+            }
+            if (this.dragonAge == 5 && this.getSize() == 1) {
+               this.setSize(2);
+               this.healDragonIfGrowing();
+            }
+            if (this.dragonAge == 15 && this.getSize() == 2) {
+               this.setSize(3);
+               this.healDragonIfGrowing();
+            }
+            if (this.dragonAgeFoodBonus > 5) {
+               this.dragonAgeFoodBonus = 0;
+               this.dragonAge++;
+               this.world.sendEntityStatus(this, (byte) 9);
+            }
          }
-         if (this.dragonAge == 5 && this.getSize() == 1) {
-            this.setSize(2);
-            this.healDragonIfGrowing();
+      }
+
+      if (this.fireBreathCooldown > 60) {
+         this.fireBreathCooldown++;
+         if (this.getDataTracker().get(FIRE_BREATH)) {
+            this.getDataTracker().set(FIRE_BREATH, false);
          }
-         if (this.dragonAge == 15 && this.getSize() == 2) {
-            this.setSize(3);
-            this.healDragonIfGrowing();
+         if (this.fireBreathCooldown >= 120) {
+            this.fireBreathCooldown = 0;
          }
-         if (this.dragonAgeFoodBonus > 5) {
-            this.dragonAgeFoodBonus = 0;
-            this.dragonAge++;
-            this.world.sendEntityStatus(this, (byte) 9);
-         }
+      }
+      if (this.fireBreathActive) {
+         this.dragonFireBreath();
       }
    }
 
@@ -918,6 +968,7 @@ public class DragonEntity extends PathAwareEntity implements InventoryChangedLis
       OTHER_TAIL = DataTracker.registerData(DragonEntity.class, TrackedDataHandlerRegistry.BOOLEAN);
       OTHER_EYES = DataTracker.registerData(DragonEntity.class, TrackedDataHandlerRegistry.BOOLEAN);
       DRAGON_SIZE = DataTracker.registerData(DragonEntity.class, TrackedDataHandlerRegistry.INTEGER);
+      FIRE_BREATH = DataTracker.registerData(DragonEntity.class, TrackedDataHandlerRegistry.BOOLEAN);
    }
 
 }

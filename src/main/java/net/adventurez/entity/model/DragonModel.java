@@ -390,6 +390,12 @@ public class DragonModel<T extends DragonEntity> extends CompositeEntityModel<T>
                 this.neck3.pitch = headPitch * 0.0017453292F;
                 this.neck4.pitch = headPitch * 0.0017453292F;
 
+                // Fire Breath
+                Boolean isFireBreathing = entity.getDataTracker().get(DragonEntity.FIRE_BREATH);
+                if (isFireBreathing) {
+                        this.jaw.pitch = 0.4F;
+                }
+
                 float slowlyIncreasingFloat = ((float) Math.floorMod(entity.world.getTime(), 100L) + animationProgress)
                                 / 100.0F;
 
@@ -445,7 +451,9 @@ public class DragonModel<T extends DragonEntity> extends CompositeEntityModel<T>
                         this.neck4.pivotY = -headFloat * 0.9F;
                         this.head.pivotY = -headFloat * 0.8F;
                         // yaw
-                        this.jaw.pitch = -headFloat * 0.3F;
+                        if (!isFireBreathing) {
+                                this.jaw.pitch = -headFloat * 0.3F;
+                        }
                         // tail
                         this.tail2.pivotY = MathHelper.cos(6.2831855F * slowlyIncreasingFloat - (6.2831855F / 3));
                         this.tail3.pivotY = MathHelper.cos(6.2831855F * slowlyIncreasingFloat - (6.2831855F / 3));
@@ -583,7 +591,9 @@ public class DragonModel<T extends DragonEntity> extends CompositeEntityModel<T>
                         this.wingTipRight.roll = -2.618F;
 
                         // Jaw
-                        this.jaw.pitch = 0.0F;
+                        if (!isFireBreathing) {
+                                this.jaw.pitch = 0.0F;
+                        }
                 } else
 
                 // Sitting Position Animation
@@ -614,7 +624,7 @@ public class DragonModel<T extends DragonEntity> extends CompositeEntityModel<T>
                         // Random Yaw Fire
                         Float yawPitch = Math.abs(MathHelper.cos(6.2831853071F * slowlyIncreasingFloat) * 0.3F);
                         if (entity.getSize() == 3 && !this.randomYawFire && yawPitch <= 0.01F
-                                        && entity.world.random.nextInt(8) == 0) {
+                                        && entity.world.random.nextInt(8) == 0 && !isFireBreathing) {
                                 this.randomYawFire = true;
                         }
                         if (this.randomYawFire) {
@@ -634,7 +644,7 @@ public class DragonModel<T extends DragonEntity> extends CompositeEntityModel<T>
                                                 0.0D, 0.0D, 0.0D);
 
                                 this.jaw.pitch = yawPitch;
-                                if (this.randomYawFireTick > 10 && yawPitch <= 0.01F) {
+                                if ((this.randomYawFireTick > 10 && yawPitch <= 0.01F) || isFireBreathing) {
                                         this.randomYawFireTick = 0;
                                         this.randomYawFire = false;
                                 }
