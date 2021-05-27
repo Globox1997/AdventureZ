@@ -78,6 +78,8 @@
   "adventurez.advancements.stone_golem.description": "Убейте Чернитового Голема",
   "adventurez.advancements.the_eye.title": "Око",
   "adventurez.advancements.the_eye.description": "Убить правителя Края",
+  "adventurez.advancements.gilded_netherite_armor.title": "Во всеоружии",
+  "adventurez.advancements.gilded_netherite_armor.description": "Соберите полный комплект позолоченной незеритовой брони",
 
   "effect.adventurez.withering": "Иссушение",
   "effect.adventurez.fame": "Слава",
@@ -102,7 +104,6 @@
   "text.autoconfig.adventurez.option.allow_the_eye_summoning": "Призыв Ока через ритуал",
   "text.autoconfig.adventurez.option.allow_dragon_hatching": "Возможность ловли дракона",
   
-  "text.autoconfig.adventurez.option.display_rareness": "Отображать редкость",
   "text.autoconfig.adventurez.option.disable_armor_bonus": "Отключение бонуса брони",
   "text.autoconfig.adventurez.option.resummoned_ender_dragon_drops_egg": "Возрожденный дракон Края оставляет яйцо"
 }
