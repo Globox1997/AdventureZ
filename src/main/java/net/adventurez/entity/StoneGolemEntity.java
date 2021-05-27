@@ -5,6 +5,7 @@ import java.util.List;
 import java.util.UUID;
 import java.util.function.Predicate;
 
+import net.adventurez.entity.nonliving.ThrownRockEntity;
 import net.adventurez.init.EntityInit;
 import net.adventurez.init.SoundInit;
 import net.adventurez.init.TagInit;
@@ -14,7 +15,6 @@ import net.minecraft.block.Block;
 import net.minecraft.block.BlockState;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityGroup;
-import net.minecraft.entity.EntityPose;
 import net.minecraft.entity.EntityType;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.SpawnReason;
@@ -505,40 +505,21 @@ public class StoneGolemEntity extends HostileEntity {
 
   @Override
   public void onDeath(DamageSource source) {
-    if (!this.removed && !this.dead) {
-      Entity entity = source.getAttacker();
-      LivingEntity livingEntity = this.getPrimeAdversary();
-
-      if (this.scoreAmount >= 0 && livingEntity != null) {
-        livingEntity.updateKilledAdvancementCriterion(this, this.scoreAmount, source);
-      }
-
-      if (entity != null) {
-        entity.onKilledOther((ServerWorld) this.world, this);
-      }
-
-      this.dead = true;
-      this.getDamageTracker().update();
-      if (!this.world.isClient) {
-        this.drop(source);
-        this.onKilledBy(livingEntity);
-        SmallStoneGolemEntity smallStoneGolemEntity = (SmallStoneGolemEntity) EntityInit.SMALLSTONEGOLEM_ENTITY
-            .create(this.world);
-        SmallStoneGolemEntity smallStoneGolemEntitySecond = (SmallStoneGolemEntity) EntityInit.SMALLSTONEGOLEM_ENTITY
-            .create(this.world);
-        smallStoneGolemEntity.refreshPositionAndAngles(this.getBlockPos().east(), 0.0F, 0.0F);
-        smallStoneGolemEntitySecond.refreshPositionAndAngles(this.getBlockPos().west(), 0.0F, 0.0F);
-        smallStoneGolemEntity.initialize(((ServerWorld) this.world), this.world.getLocalDifficulty(this.getBlockPos()),
-            SpawnReason.EVENT, null, null);
-        smallStoneGolemEntitySecond.initialize(((ServerWorld) this.world),
-            this.world.getLocalDifficulty(this.getBlockPos()), SpawnReason.EVENT, null, null);
-        this.world.spawnEntity(smallStoneGolemEntity);
-        this.world.spawnEntity(smallStoneGolemEntitySecond);
-      }
-
-      this.world.sendEntityStatus(this, (byte) 3);
-      this.setPose(EntityPose.DYING);
+    if (!this.world.isClient) {
+      SmallStoneGolemEntity smallStoneGolemEntity = (SmallStoneGolemEntity) EntityInit.SMALLSTONEGOLEM_ENTITY
+          .create(this.world);
+      SmallStoneGolemEntity smallStoneGolemEntitySecond = (SmallStoneGolemEntity) EntityInit.SMALLSTONEGOLEM_ENTITY
+          .create(this.world);
+      smallStoneGolemEntity.refreshPositionAndAngles(this.getBlockPos().east(), 0.0F, 0.0F);
+      smallStoneGolemEntitySecond.refreshPositionAndAngles(this.getBlockPos().west(), 0.0F, 0.0F);
+      smallStoneGolemEntity.initialize(((ServerWorld) this.world), this.world.getLocalDifficulty(this.getBlockPos()),
+          SpawnReason.EVENT, null, null);
+      smallStoneGolemEntitySecond.initialize(((ServerWorld) this.world),
+          this.world.getLocalDifficulty(this.getBlockPos()), SpawnReason.EVENT, null, null);
+      this.world.spawnEntity(smallStoneGolemEntity);
+      this.world.spawnEntity(smallStoneGolemEntitySecond);
     }
+    super.onDeath(source);
   }
 
   static class PathNodeMaker extends LandPathNodeMaker {
