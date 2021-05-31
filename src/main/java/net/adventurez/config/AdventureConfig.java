@@ -38,7 +38,7 @@ public class AdventureConfig implements ConfigData {
   public int fungus_spawn_weight = 10;
   @ConfigEntry.Category("spawn_setting")
   @ConfigEntry.BoundedDiscrete(min = 0, max = 100)
-  public int orc_spawn_weight = 8;
+  public int orc_spawn_weight = 5;
   @ConfigEntry.Category("spawn_setting")
   @ConfigEntry.BoundedDiscrete(min = 0, max = 100)
   public int mammoth_spawn_weight = 1;

@@ -103,13 +103,14 @@ public class FireBreathEntity extends ExplosiveProjectileEntity {
         Entity hittedEntity = entityHitResult.getEntity();
         if (!this.world.isClient && entity != null && hittedEntity instanceof LivingEntity) {
             hittedEntity.setOnFireFor(8);
+            hittedEntity.damage(createDamageSource(this), 3.0F);
             this.remove();
         }
 
     }
 
     public static DamageSource createDamageSource(Entity entity) {
-        return new EntityDamageSource("voidBullet", entity).setProjectile();
+        return new EntityDamageSource("fireBreath", entity).setProjectile();
     }
 
     @Override
