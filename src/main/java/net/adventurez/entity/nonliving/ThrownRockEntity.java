@@ -40,7 +40,7 @@ public class ThrownRockEntity extends ThrownItemEntity {
    }
 
    @Override
-   protected Item getDefaultItem() {
+   public Item getDefaultItem() {
       return Items.BLACKSTONE;
    }
 
