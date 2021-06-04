@@ -14,11 +14,11 @@ public class AdventureConfig implements ConfigData {
   public int necromancer_spawn_weight = 1;
   @ConfigEntry.Category("spawn_setting")
   @ConfigEntry.BoundedDiscrete(min = 0, max = 100)
-  public int nightmare_spawn_weight = 2;
+  public int nightmare_spawn_weight = 5;
   @ConfigEntry.Category("spawn_setting")
   @ConfigEntry.BoundedDiscrete(min = 0, max = 100)
   @Comment("Chance for spawning when mining gold ore in nether; 1/Value")
-  public int piglin_beast_ore_spawn_chance = 70;
+  public int piglin_beast_ore_spawn_chance = 30;
   @ConfigEntry.Category("spawn_setting")
   @ConfigEntry.BoundedDiscrete(min = 0, max = 100)
   @Comment("Chance for spawning when killing too many piglins; 1/Value")
@@ -35,10 +35,10 @@ public class AdventureConfig implements ConfigData {
   public int blaze_guardian_spawn_weight = 1;
   @ConfigEntry.Category("spawn_setting")
   @ConfigEntry.BoundedDiscrete(min = 0, max = 100)
-  public int fungus_spawn_weight = 10;
+  public int fungus_spawn_weight = 8;
   @ConfigEntry.Category("spawn_setting")
   @ConfigEntry.BoundedDiscrete(min = 0, max = 100)
-  public int orc_spawn_weight = 5;
+  public int orc_spawn_weight = 10;
   @ConfigEntry.Category("spawn_setting")
   @ConfigEntry.BoundedDiscrete(min = 0, max = 100)
   public int mammoth_spawn_weight = 1;
