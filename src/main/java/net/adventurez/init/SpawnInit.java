@@ -19,54 +19,43 @@ import net.minecraft.world.biome.Biome;
 import net.minecraft.world.Heightmap;
 import net.minecraft.world.biome.SpawnSettings;
 
-//import net.minecraft.world.biome.DefaultBiomeCreator;
-// import net.minecraft.util.registry.BuiltinRegistries;
-// import net.minecraft.util.registry.Registry;
-// import net.minecraft.world.biome.Biome;
-// import net.minecraft.world.biome.Biomes;
-// import net.minecraft.entity.SpawnGroup;
-// import net.minecraft.entity.mob.ZombieEntity;
-// import net.minecraft.world.gen.feature.DefaultBiomeFeatures;
-//import net.minecraft.world.biome.BiomeKeys;
-//import net.minecraft.entity.mob.BlazeEntity;
-
 public class SpawnInit {
 
   public static void init() {
-    addSpawnEntries();
-    SpawnRestriction();
+    setSpawnRestriction();
+    for (Biome biome : BuiltinRegistries.BIOME) {
+      addSpawnEntries(biome);
+    }
     RegistryEntryAddedCallback.event(BuiltinRegistries.BIOME)
-        .register((i, identifier, biome) -> SpawnInit.addSpawnEntries());
+        .register((i, identifier, biome) -> SpawnInit.addSpawnEntries(biome));
   }
 
-  public static void addSpawnEntries() {
-    for (Biome biome : BuiltinRegistries.BIOME) {
-      if (biome.getCategory().equals(Biome.Category.NETHER)) {
-        addMobSpawnToBiome(biome, SpawnGroup.MONSTER,
-            new SpawnSettings.SpawnEntry(EntityInit.SMALLSTONEGOLEM_ENTITY,
-                ConfigInit.CONFIG.small_stone_golem_spawn_weight, 1, 1),
-            new SpawnSettings.SpawnEntry(EntityInit.BLAZEGUARDIAN_ENTITY, ConfigInit.CONFIG.blaze_guardian_spawn_weight,
-                1, 1),
-            new SpawnSettings.SpawnEntry(EntityInit.SOULREAPER_ENTITY, ConfigInit.CONFIG.nightmare_spawn_weight, 1, 1));
-      }
-      if (biome.getCategory().equals(Biome.Category.MUSHROOM)) {
-        addMobSpawnToBiome(biome, SpawnGroup.CREATURE,
-            new SpawnSettings.SpawnEntry(EntityInit.BROWN_FUNGUS_ENTITY, ConfigInit.CONFIG.fungus_spawn_weight, 2, 3),
-            new SpawnSettings.SpawnEntry(EntityInit.RED_FUNGUS_ENTITY, ConfigInit.CONFIG.fungus_spawn_weight, 2, 3));
-      }
-      if (biome.getCategory().equals(Biome.Category.PLAINS)) {
-        addMobSpawnToBiome(biome, SpawnGroup.MONSTER,
-            new SpawnSettings.SpawnEntry(EntityInit.ORC_ENTITY, ConfigInit.CONFIG.orc_spawn_weight, 1, 3));
-      }
-      if (biome.getCategory().equals(Biome.Category.ICY) || biome.getCategory().equals(Biome.Category.TAIGA)) {
-        addMobSpawnToBiome(biome, SpawnGroup.MONSTER,
-            new SpawnSettings.SpawnEntry(EntityInit.MAMMOTH_ENTITY, ConfigInit.CONFIG.mammoth_spawn_weight, 2, 3));
-      }
+  private static void addSpawnEntries(Biome biome) {
+    if (biome.getCategory().equals(Biome.Category.NETHER)) {
+      addMobSpawnToBiome(biome, SpawnGroup.MONSTER,
+          new SpawnSettings.SpawnEntry(EntityInit.SMALLSTONEGOLEM_ENTITY,
+              ConfigInit.CONFIG.small_stone_golem_spawn_weight, 1, 1),
+          new SpawnSettings.SpawnEntry(EntityInit.BLAZEGUARDIAN_ENTITY, ConfigInit.CONFIG.blaze_guardian_spawn_weight,
+              1, 1),
+          new SpawnSettings.SpawnEntry(EntityInit.SOULREAPER_ENTITY, ConfigInit.CONFIG.nightmare_spawn_weight, 1, 1));
+    }
+    if (biome.getCategory().equals(Biome.Category.MUSHROOM)) {
+      addMobSpawnToBiome(biome, SpawnGroup.CREATURE,
+          new SpawnSettings.SpawnEntry(EntityInit.BROWN_FUNGUS_ENTITY, ConfigInit.CONFIG.fungus_spawn_weight, 2, 3),
+          new SpawnSettings.SpawnEntry(EntityInit.RED_FUNGUS_ENTITY, ConfigInit.CONFIG.fungus_spawn_weight, 2, 3));
+    }
+    if (biome.getCategory().equals(Biome.Category.PLAINS)) {
+      addMobSpawnToBiome(biome, SpawnGroup.MONSTER,
+          new SpawnSettings.SpawnEntry(EntityInit.ORC_ENTITY, ConfigInit.CONFIG.orc_spawn_weight, 1, 3));
+    }
+    if (biome.getCategory().equals(Biome.Category.ICY) || biome.getCategory().equals(Biome.Category.TAIGA)) {
+      addMobSpawnToBiome(biome, SpawnGroup.MONSTER,
+          new SpawnSettings.SpawnEntry(EntityInit.MAMMOTH_ENTITY, ConfigInit.CONFIG.mammoth_spawn_weight, 2, 3));
     }
 
   }
 
-  public static void addMobSpawnToBiome(Biome biome, SpawnGroup classification, SpawnSettings.SpawnEntry... spawners) {
+  private static void addMobSpawnToBiome(Biome biome, SpawnGroup classification, SpawnSettings.SpawnEntry... spawners) {
     convertImmutableSpawners(biome);
     List<SpawnSettings.SpawnEntry> spawnersList = new ArrayList<>(
         biome.getSpawnSettings().spawners.get(classification));
@@ -80,7 +69,7 @@ public class SpawnInit {
     }
   }
 
-  public static void SpawnRestriction() {
+  private static void setSpawnRestriction() {
     SpawnRestriction.register(EntityInit.SMALLSTONEGOLEM_ENTITY, SpawnRestriction.Location.ON_GROUND,
         Heightmap.Type.MOTION_BLOCKING_NO_LEAVES, SmallStoneGolemEntity::canSpawn);
     SpawnRestriction.register(EntityInit.NECROMANCER_ENTITY, SpawnRestriction.Location.ON_GROUND,
