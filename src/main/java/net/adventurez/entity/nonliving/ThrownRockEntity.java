@@ -15,6 +15,7 @@ import net.minecraft.entity.damage.ProjectileDamageSource;
 import net.minecraft.entity.effect.StatusEffectInstance;
 import net.minecraft.entity.effect.StatusEffects;
 import net.minecraft.item.Item;
+import net.minecraft.item.ItemStack;
 import net.minecraft.item.Items;
 import net.minecraft.network.Packet;
 import net.minecraft.particle.BlockStateParticleEffect;
@@ -79,6 +80,13 @@ public class ThrownRockEntity extends ThrownItemEntity {
       }
    }
 
+   // Causes crash if not overridden, maybe due to getStack client?
+   @Override
+   public ItemStack getStack() {
+      ItemStack itemStack = this.getItem();
+      return itemStack.isEmpty() ? new ItemStack(this.getDefaultItem()) : itemStack;
+   }
+
    @Override
    protected void onEntityHit(EntityHitResult entityHitResult) {
       super.onEntityHit(entityHitResult);
@@ -97,6 +105,7 @@ public class ThrownRockEntity extends ThrownItemEntity {
          if (entity instanceof LivingEntity) {
             LivingEntity livingEntity = (LivingEntity) entity;
             int slownessAddition = 400;
+
             if (this.getStack().getItem() == this.getDefaultItem()) {
                livingEntity.addStatusEffect(new StatusEffectInstance(StatusEffects.MINING_FATIGUE, 2000, 2));
                slownessAddition = 200;
@@ -110,7 +119,7 @@ public class ThrownRockEntity extends ThrownItemEntity {
       }
    }
 
-   public static DamageSource createDamageSource(Entity entity, Entity owner) {
+   private DamageSource createDamageSource(Entity entity, Entity owner) {
       return new ProjectileDamageSource("rock", entity, owner).setProjectile();
    }
 

@@ -10,6 +10,7 @@ import net.minecraft.client.render.VertexConsumerProvider;
 import net.minecraft.client.render.entity.EntityRenderDispatcher;
 import net.minecraft.client.render.entity.EntityRenderer;
 import net.minecraft.client.util.math.MatrixStack;
+import net.minecraft.entity.FlyingItemEntity;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.math.BlockPos;
 
@@ -39,12 +40,11 @@ public class ThrownRockRenderer extends EntityRenderer<ThrownRockEntity> {
       matrixStack.scale(1.5F, 1.5F, 1.5F);
       matrixStack.pop();
       super.render(thrownRockEntity, f, g, matrixStack, vertexConsumerProvider, i);
-
    }
 
    @Override
    public Identifier getTexture(ThrownRockEntity thrownRockEntity) {
-      if (thrownRockEntity.getStack().getItem() == thrownRockEntity.getDefaultItem()) {
+      if (((FlyingItemEntity) thrownRockEntity).getStack().getItem() == thrownRockEntity.getDefaultItem()) {
          return GOLEM_TEXTURE;
       } else
          return VOID_TEXTURE;
