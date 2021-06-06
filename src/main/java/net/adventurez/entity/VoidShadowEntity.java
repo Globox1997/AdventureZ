@@ -484,7 +484,7 @@ public class VoidShadowEntity extends FlyingEntity implements Monster {
                     this.voidShadowEntity.setVelocity(this.voidShadowEntity.getVelocity().add(vec3d.multiply(0.1D)));
                 } else {
                     this.voidShadowEntity
-                            .setVelocity(this.voidShadowEntity.getVelocity().add(vec3d.multiply(0.1D).negate()));
+                            .setVelocity(this.voidShadowEntity.getVelocity().add(vec3d.multiply(0.1D).multiply(-1.0D)));
                     // Max partly Vector is 0.21 ca
                 }
 
