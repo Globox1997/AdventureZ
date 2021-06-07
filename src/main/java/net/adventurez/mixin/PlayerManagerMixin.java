@@ -21,7 +21,7 @@ import net.minecraft.util.math.Vec3d;
 public class PlayerManagerMixin {
 
     @Inject(method = "respawnPlayer", at = @At(value = "TAIL"), locals = LocalCapture.CAPTURE_FAILSOFT)
-    private void respawnPlayerMixinSS(ServerPlayerEntity player, boolean alive,
+    private void respawnPlayerMixin(ServerPlayerEntity player, boolean alive,
             CallbackInfoReturnable<ServerPlayerEntity> info, BlockPos blockPos, float f, boolean bl,
             ServerWorld serverWorld, Optional<Vec3d> optional2,
             ServerPlayerInteractionManager serverPlayerInteractionManager2, ServerWorld serverWorld2,
