@@ -16,7 +16,7 @@ import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.projectile.ArrowEntity;
 import net.minecraft.entity.projectile.ExplosiveProjectileEntity;
 import net.minecraft.entity.projectile.ProjectileUtil;
-import net.minecraft.nbt.CompoundTag;
+import net.minecraft.nbt.NbtCompound;
 import net.minecraft.network.Packet;
 import net.minecraft.server.world.ServerWorld;
 import net.minecraft.sound.SoundCategory;
@@ -25,7 +25,6 @@ import net.minecraft.util.hit.BlockHitResult;
 import net.minecraft.util.hit.EntityHitResult;
 import net.minecraft.util.hit.HitResult;
 import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.math.ChunkPos;
 import net.minecraft.util.math.Direction;
 import net.minecraft.util.math.MathHelper;
 import net.minecraft.util.math.Vec3d;
@@ -52,10 +51,9 @@ public class TinyEyeEntity extends ExplosiveProjectileEntity {
     }
 
     @Environment(EnvType.CLIENT)
-    public TinyEyeEntity(World world, double x, double y, double z, double velocityX, double velocityY,
-            double velocityZ) {
+    public TinyEyeEntity(World world, double x, double y, double z, double velocityX, double velocityY, double velocityZ) {
         this(EntityInit.TINYEYE_ENTITY, world);
-        this.refreshPositionAndAngles(x, y, z, this.yaw, this.pitch);
+        this.refreshPositionAndAngles(x, y, z, this.getYaw(), this.getPitch());
         this.setVelocity(velocityX, velocityY, velocityZ);
     }
 
@@ -66,7 +64,7 @@ public class TinyEyeEntity extends ExplosiveProjectileEntity {
         double d = (double) blockPos.getX() + 0.5D;
         double e = (double) blockPos.getY() + 0.5D;
         double f = (double) blockPos.getZ() + 0.5D;
-        this.refreshPositionAndAngles(d, e, f, this.yaw, this.pitch);
+        this.refreshPositionAndAngles(d, e, f, this.getYaw(), this.getPitch());
         this.target = target;
         this.direction = Direction.UP;
         this.movingAround();
@@ -78,8 +76,8 @@ public class TinyEyeEntity extends ExplosiveProjectileEntity {
     }
 
     @Override
-    public void writeCustomDataToTag(CompoundTag tag) {
-        super.writeCustomDataToTag(tag);
+    public void writeCustomDataToNbt(NbtCompound tag) {
+        super.writeCustomDataToNbt(tag);
         if (this.target != null) {
             tag.putUuid("Target", this.target.getUuid());
         }
@@ -95,8 +93,8 @@ public class TinyEyeEntity extends ExplosiveProjectileEntity {
     }
 
     @Override
-    public void readCustomDataFromTag(CompoundTag tag) {
-        super.readCustomDataFromTag(tag);
+    public void readCustomDataFromNbt(NbtCompound tag) {
+        super.readCustomDataFromNbt(tag);
         this.stepCount = tag.getInt("Steps");
         this.targetX = tag.getDouble("TXD");
         this.targetY = tag.getDouble("TYD");
@@ -131,7 +129,7 @@ public class TinyEyeEntity extends ExplosiveProjectileEntity {
         double h = e - this.getX();
         double j = f - this.getY();
         double k = g - this.getZ();
-        double l = (double) MathHelper.sqrt(h * h + j * j + k * k);
+        double l = (double) MathHelper.sqrt((float) (h * h + j * j + k * k));
         if (l == 0.0D) {
             this.targetX = 0.0D;
             this.targetY = 0.0D;
@@ -149,7 +147,7 @@ public class TinyEyeEntity extends ExplosiveProjectileEntity {
     @Override
     public void checkDespawn() {
         if (this.world.getDifficulty() == Difficulty.PEACEFUL) {
-            this.remove();
+            this.discard();
         }
 
     }
@@ -165,8 +163,7 @@ public class TinyEyeEntity extends ExplosiveProjectileEntity {
                 }
             }
 
-            if (this.target == null || !this.target.isAlive()
-                    || this.target instanceof PlayerEntity && ((PlayerEntity) this.target).isSpectator()) {
+            if (this.target == null || !this.target.isAlive() || this.target instanceof PlayerEntity && ((PlayerEntity) this.target).isSpectator()) {
                 if (!this.hasNoGravity()) {
                     this.setVelocity(this.getVelocity().add(0.0D, -0.04D, 0.0D));
                 }
@@ -175,11 +172,10 @@ public class TinyEyeEntity extends ExplosiveProjectileEntity {
                 this.targetY = MathHelper.clamp(this.targetY * 1.025D, -1.0D, 1.0D);
                 this.targetZ = MathHelper.clamp(this.targetZ * 1.025D, -1.0D, 1.0D);
                 vec3d = this.getVelocity();
-                this.setVelocity(vec3d.add((this.targetX - vec3d.x) * 0.2D, (this.targetY - vec3d.y) * 0.2D,
-                        (this.targetZ - vec3d.z) * 0.2D));
+                this.setVelocity(vec3d.add((this.targetX - vec3d.x) * 0.2D, (this.targetY - vec3d.y) * 0.2D, (this.targetZ - vec3d.z) * 0.2D));
             }
 
-            HitResult hitResult = ProjectileUtil.getCollision(this, this::method_26958);
+            HitResult hitResult = ProjectileUtil.getCollision(this, this::canHit);
             if (hitResult.getType() != HitResult.Type.MISS) {
                 this.onCollision(hitResult);
             }
@@ -190,7 +186,7 @@ public class TinyEyeEntity extends ExplosiveProjectileEntity {
         this.updatePosition(this.getX() + vec3d.x, this.getY() + vec3d.y, this.getZ() + vec3d.z);
         ProjectileUtil.method_7484(this, 0.5F);
         if (this.world.isClient) {
-        } else if (this.target != null && !this.target.removed) {
+        } else if (this.target != null && !this.target.isRemoved()) {
             if (this.stepCount > 0) {
                 --this.stepCount;
                 if (this.stepCount == 0) {
@@ -205,8 +201,7 @@ public class TinyEyeEntity extends ExplosiveProjectileEntity {
                     this.movingAround();
                 } else {
                     BlockPos blockPos2 = this.target.getBlockPos();
-                    if (axis == Direction.Axis.X && blockPos.getX() == blockPos2.getX()
-                            || axis == Direction.Axis.Z && blockPos.getZ() == blockPos2.getZ()
+                    if (axis == Direction.Axis.X && blockPos.getX() == blockPos2.getX() || axis == Direction.Axis.Z && blockPos.getZ() == blockPos2.getZ()
                             || axis == Direction.Axis.Y && blockPos.getY() == blockPos2.getY()) {
                         this.movingAround();
                     }
@@ -217,8 +212,8 @@ public class TinyEyeEntity extends ExplosiveProjectileEntity {
     }
 
     @Override
-    public boolean method_26958(Entity entity) {
-        return super.method_26958(entity) && !entity.noClip;
+    public boolean canHit(Entity entity) {
+        return super.canHit(entity) && !entity.noClip;
     }
 
     @Override
@@ -241,14 +236,13 @@ public class TinyEyeEntity extends ExplosiveProjectileEntity {
         super.onEntityHit(entityHitResult);
         Entity entity = this.getOwner();
         Entity hittedEntity = entityHitResult.getEntity();
-        if (!this.world.isClient && entity != null && hittedEntity != entity && !(hittedEntity instanceof TinyEyeEntity)
-                || hittedEntity instanceof ArrowEntity) {
+        if (!this.world.isClient && entity != null && hittedEntity != entity && !(hittedEntity instanceof TinyEyeEntity) || hittedEntity instanceof ArrowEntity) {
             this.playSound(SoundEvents.ENTITY_ENDER_EYE_DEATH, 1.0F, 1.0F);
             if (hittedEntity instanceof LivingEntity) {
                 this.teleportEntityRandom((LivingEntity) hittedEntity);
                 hittedEntity.damage(createDamageSource(this), 1.0F);
             }
-            this.remove();
+            this.discard();
         }
 
     }
@@ -260,22 +254,16 @@ public class TinyEyeEntity extends ExplosiveProjectileEntity {
     private void teleportEntityRandom(LivingEntity livingEntity) {
         for (int counter = 0; counter < 100; counter++) {
             float randomFloat = this.world.getRandom().nextFloat() * 6.2831855F;
-            int posX = livingEntity.getBlockPos().getX()
-                    + MathHelper.floor(MathHelper.cos(randomFloat) * 9.0F + livingEntity.world.getRandom().nextInt(30));
-            int posZ = livingEntity.getBlockPos().getZ()
-                    + MathHelper.floor(MathHelper.sin(randomFloat) * 9.0F + livingEntity.world.getRandom().nextInt(30));
+            int posX = livingEntity.getBlockPos().getX() + MathHelper.floor(MathHelper.cos(randomFloat) * 9.0F + livingEntity.world.getRandom().nextInt(30));
+            int posZ = livingEntity.getBlockPos().getZ() + MathHelper.floor(MathHelper.sin(randomFloat) * 9.0F + livingEntity.world.getRandom().nextInt(30));
             int posY = livingEntity.world.getTopY(Heightmap.Type.WORLD_SURFACE, posX, posZ);
             BlockPos teleportPos = new BlockPos(posX, posY, posZ);
-            if (livingEntity.world.isRegionLoaded(teleportPos.getX() - 4, teleportPos.getY() - 4,
-                    teleportPos.getZ() - 4, teleportPos.getX() + 4, teleportPos.getY() + 4, teleportPos.getZ() + 4)
-                    && livingEntity.world.getChunkManager().shouldTickChunk(new ChunkPos(teleportPos))
-                    && SpawnHelper.canSpawn(SpawnRestriction.Location.ON_GROUND, livingEntity.world, teleportPos,
-                            EntityType.PLAYER)) {
+            if (livingEntity.world.isRegionLoaded(teleportPos.getX() - 4, teleportPos.getY() - 4, teleportPos.getZ() - 4, teleportPos.getX() + 4, teleportPos.getY() + 4, teleportPos.getZ() + 4)
+                    && SpawnHelper.canSpawn(SpawnRestriction.Location.ON_GROUND, livingEntity.world, teleportPos, EntityType.PLAYER)) {
                 if (!world.isClient) {
                     livingEntity.teleport(teleportPos.getX(), teleportPos.getY(), teleportPos.getZ());
                 }
-                livingEntity.world.playSound(null, teleportPos, SoundEvents.ENTITY_ENDERMAN_TELEPORT,
-                        SoundCategory.HOSTILE, 1.0F, 1.0F);
+                livingEntity.world.playSound(null, teleportPos, SoundEvents.ENTITY_ENDERMAN_TELEPORT, SoundCategory.HOSTILE, 1.0F, 1.0F);
                 break;
             }
         }
@@ -285,7 +273,7 @@ public class TinyEyeEntity extends ExplosiveProjectileEntity {
     public void onBlockHit(BlockHitResult blockHitResult) {
         super.onBlockHit(blockHitResult);
         this.playSound(SoundEvents.ENTITY_ENDER_EYE_DEATH, 1.0F, 1.0F);
-        this.remove();
+        this.discard();
     }
 
     @Override

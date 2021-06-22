@@ -20,45 +20,44 @@ import net.minecraft.world.World;
 import java.util.UUID;
 
 public class EntitySpawnPacket {
-	public static final Identifier ID = new Identifier("adventurez", "adventurespawn_entity");
+    public static final Identifier ID = new Identifier("adventurez", "adventurespawn_entity");
 
-	public static Packet<?> createPacket(Entity entity) {
-		PacketByteBuf buf = new PacketByteBuf(Unpooled.buffer());
-		buf.writeVarInt(Registry.ENTITY_TYPE.getRawId(entity.getType()));
-		buf.writeUuid(entity.getUuid());
-		buf.writeVarInt(entity.getEntityId());
-		buf.writeDouble(entity.getX());
-		buf.writeDouble(entity.getY());
-		buf.writeDouble(entity.getZ());
-		buf.writeByte(MathHelper.floor(entity.pitch * 256.0F / 360.0F));
-		buf.writeByte(MathHelper.floor(entity.yaw * 256.0F / 360.0F));
-		return ServerPlayNetworking.createS2CPacket(ID, buf);
-	}
+    public static Packet<?> createPacket(Entity entity) {
+        PacketByteBuf buf = new PacketByteBuf(Unpooled.buffer());
+        buf.writeVarInt(Registry.ENTITY_TYPE.getRawId(entity.getType()));
+        buf.writeUuid(entity.getUuid());
+        buf.writeVarInt(entity.getId());
+        buf.writeDouble(entity.getX());
+        buf.writeDouble(entity.getY());
+        buf.writeDouble(entity.getZ());
+        buf.writeByte(MathHelper.floor(entity.getPitch() * 256.0F / 360.0F));
+        buf.writeByte(MathHelper.floor(entity.getYaw() * 256.0F / 360.0F));
+        return ServerPlayNetworking.createS2CPacket(ID, buf);
+    }
 
-	@Environment(EnvType.CLIENT)
-	public static void onPacket(MinecraftClient client, ClientPlayNetworkHandler networkHandler, PacketByteBuf buffer,
-			PacketSender sender) {
-		EntityType<?> type = Registry.ENTITY_TYPE.get(buffer.readVarInt());
-		UUID entityUUID = buffer.readUuid();
-		int entityID = buffer.readVarInt();
-		double x = buffer.readDouble();
-		double y = buffer.readDouble();
-		double z = buffer.readDouble();
-		float pitch = (buffer.readByte() * 360) / 256.0F;
-		float yaw = (buffer.readByte() * 360) / 256.0F;
-		client.execute(() -> {
-			World world = client.player.getEntityWorld();
-			Entity entity = type.create(world);
-			if (entity != null) {
-				entity.updatePosition(x, y, z);
-				entity.updateTrackedPosition(x, y, z);
-				entity.pitch = pitch;
-				entity.yaw = yaw;
-				entity.setEntityId(entityID);
-				entity.setUuid(entityUUID);
-				ClientWorld clientWorld = MinecraftClient.getInstance().world;
-				clientWorld.addEntity(entityID, entity);
-			}
-		});
-	}
+    @Environment(EnvType.CLIENT)
+    public static void onPacket(MinecraftClient client, ClientPlayNetworkHandler networkHandler, PacketByteBuf buffer, PacketSender sender) {
+        EntityType<?> type = Registry.ENTITY_TYPE.get(buffer.readVarInt());
+        UUID entityUUID = buffer.readUuid();
+        int entityID = buffer.readVarInt();
+        double x = buffer.readDouble();
+        double y = buffer.readDouble();
+        double z = buffer.readDouble();
+        float pitch = (buffer.readByte() * 360) / 256.0F;
+        float yaw = (buffer.readByte() * 360) / 256.0F;
+        client.execute(() -> {
+            World world = client.player.getEntityWorld();
+            Entity entity = type.create(world);
+            if (entity != null) {
+                entity.updatePosition(x, y, z);
+                entity.updateTrackedPosition(x, y, z);
+                entity.setPitch(pitch);
+                entity.setYaw(yaw);
+                entity.setId(entityID);
+                entity.setUuid(entityUUID);
+                ClientWorld clientWorld = MinecraftClient.getInstance().world;
+                clientWorld.addEntity(entityID, entity);
+            }
+        });
+    }
 }

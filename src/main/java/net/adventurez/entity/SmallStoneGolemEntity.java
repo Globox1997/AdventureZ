@@ -32,75 +32,71 @@ import net.minecraft.world.biome.BiomeKeys;
 
 public class SmallStoneGolemEntity extends HostileEntity {
 
-  public SmallStoneGolemEntity(EntityType<? extends SmallStoneGolemEntity> entityType, World world) {
-    super(entityType, world);
-    this.stepHeight = 1.0F;
-  }
+    public SmallStoneGolemEntity(EntityType<? extends SmallStoneGolemEntity> entityType, World world) {
+        super(entityType, world);
+        this.stepHeight = 1.0F;
+    }
 
-  @Override
-  protected void initGoals() {
-    super.initGoals();
-    this.goalSelector.add(0, new SwimGoal(this));
-    this.goalSelector.add(1, new MeleeAttackGoal(this, 0.85D, true));
-    this.goalSelector.add(5, new WanderAroundFarGoal(this, 0.85D));
-    this.goalSelector.add(6, new LookAtEntityGoal(this, PlayerEntity.class, 6.0F));
-    this.goalSelector.add(10, new LookAtEntityGoal(this, MobEntity.class, 8.0F));
-    this.targetSelector.add(3, new FollowTargetGoal<>(this, PlayerEntity.class, true));
-  }
+    @Override
+    protected void initGoals() {
+        super.initGoals();
+        this.goalSelector.add(0, new SwimGoal(this));
+        this.goalSelector.add(1, new MeleeAttackGoal(this, 0.85D, true));
+        this.goalSelector.add(5, new WanderAroundFarGoal(this, 0.85D));
+        this.goalSelector.add(6, new LookAtEntityGoal(this, PlayerEntity.class, 6.0F));
+        this.goalSelector.add(10, new LookAtEntityGoal(this, MobEntity.class, 8.0F));
+        this.targetSelector.add(3, new FollowTargetGoal<>(this, PlayerEntity.class, true));
+    }
 
-  public static DefaultAttributeContainer.Builder createSmallStoneGolemAttributes() {
-    return HostileEntity.createHostileAttributes().add(EntityAttributes.GENERIC_MAX_HEALTH, 50.0D)
-        .add(EntityAttributes.GENERIC_MOVEMENT_SPEED, 0.27D).add(EntityAttributes.GENERIC_KNOCKBACK_RESISTANCE, 2.5D)
-        .add(EntityAttributes.GENERIC_ATTACK_DAMAGE, 6.0D).add(EntityAttributes.GENERIC_ATTACK_KNOCKBACK, 1.0D)
-        .add(EntityAttributes.GENERIC_FOLLOW_RANGE, 38.0D);
-  }
+    public static DefaultAttributeContainer.Builder createSmallStoneGolemAttributes() {
+        return HostileEntity.createHostileAttributes().add(EntityAttributes.GENERIC_MAX_HEALTH, 50.0D).add(EntityAttributes.GENERIC_MOVEMENT_SPEED, 0.27D)
+                .add(EntityAttributes.GENERIC_KNOCKBACK_RESISTANCE, 2.5D).add(EntityAttributes.GENERIC_ATTACK_DAMAGE, 6.0D).add(EntityAttributes.GENERIC_ATTACK_KNOCKBACK, 1.0D)
+                .add(EntityAttributes.GENERIC_FOLLOW_RANGE, 38.0D);
+    }
 
-  public static boolean canSpawn(EntityType<SmallStoneGolemEntity> type, ServerWorldAccess world,
-      SpawnReason spawnReason, BlockPos pos, Random random) {
-    Optional<RegistryKey<Biome>> optional = world.getBiomeKey(pos);
-    boolean bl = (world.getDifficulty() != Difficulty.PEACEFUL && isSpawnDark(world, pos, random)
-        && canMobSpawn(type, world, spawnReason, pos, random)) || spawnReason == SpawnReason.SPAWNER;
-    if (Objects.equals(optional, Optional.of(BiomeKeys.BASALT_DELTAS))) {
-      return bl;
-    } else
-      return false;
-  }
+    public static boolean canSpawn(EntityType<SmallStoneGolemEntity> type, ServerWorldAccess world, SpawnReason spawnReason, BlockPos pos, Random random) {
+        Optional<RegistryKey<Biome>> optional = world.getBiomeKey(pos);
+        boolean bl = (world.getDifficulty() != Difficulty.PEACEFUL && isSpawnDark(world, pos, random) && canMobSpawn(type, world, spawnReason, pos, random)) || spawnReason == SpawnReason.SPAWNER;
+        if (Objects.equals(optional, Optional.of(BiomeKeys.BASALT_DELTAS))) {
+            return bl;
+        } else
+            return false;
+    }
 
-  @Override
-  protected SoundEvent getAmbientSound() {
-    return SoundInit.SMALL_GOLEM_IDLE_EVENT;
-  }
+    @Override
+    protected SoundEvent getAmbientSound() {
+        return SoundInit.SMALL_GOLEM_IDLE_EVENT;
+    }
 
-  @Override
-  protected SoundEvent getHurtSound(DamageSource source) {
-    return SoundInit.SMALL_GOLEM_HIT_EVENT;
-  }
+    @Override
+    protected SoundEvent getHurtSound(DamageSource source) {
+        return SoundInit.SMALL_GOLEM_HIT_EVENT;
+    }
 
-  @Override
-  protected SoundEvent getDeathSound() {
-    return SoundInit.SMALL_GOLEM_DEATH_EVENT;
-  }
+    @Override
+    protected SoundEvent getDeathSound() {
+        return SoundInit.SMALL_GOLEM_DEATH_EVENT;
+    }
 
-  @Override
-  protected void playStepSound(BlockPos pos, BlockState state) {
-    this.playSound(SoundInit.SMALL_GOLEM_WALK_EVENT, 0.15F, 1.0F);
-  }
+    @Override
+    protected void playStepSound(BlockPos pos, BlockState state) {
+        this.playSound(SoundInit.SMALL_GOLEM_WALK_EVENT, 0.15F, 1.0F);
+    }
 
-  @Override
-  public EntityGroup getGroup() {
-    return EntityGroup.DEFAULT;
-  }
+    @Override
+    public EntityGroup getGroup() {
+        return EntityGroup.DEFAULT;
+    }
 
-  @Override
-  public int getLimitPerChunk() {
-    return 1;
-  }
+    @Override
+    public int getLimitPerChunk() {
+        return 1;
+    }
 
-  @Override
-  public boolean canSpawn(WorldView view) {
-    BlockPos posentity = new BlockPos(this.getX(), this.getY(), this.getZ());
-    return view.intersectsEntities(this) && !world.containsFluid(this.getBoundingBox())
-        && this.world.getBlockState(posentity).getBlock().canMobSpawnInside();
-  }
+    @Override
+    public boolean canSpawn(WorldView view) {
+        BlockPos posentity = new BlockPos(this.getX(), this.getY(), this.getZ());
+        return view.intersectsEntities(this) && !world.containsFluid(this.getBoundingBox()) && this.world.getBlockState(posentity).getBlock().canMobSpawnInside();
+    }
 
 }

@@ -20,8 +20,7 @@ public class ClientPlayerInteractionManagerMixin {
 
     @Inject(method = "hasRidingInventory", at = @At(value = "HEAD"), cancellable = true)
     public void hasRidingInventoryMixin(CallbackInfoReturnable<Boolean> info) {
-        if (this.client.player.hasVehicle() && this.client.player.getVehicle() instanceof DragonEntity
-                && ((DragonEntity) this.client.player.getVehicle()).hasChest()) {
+        if (this.client.player.hasVehicle() && this.client.player.getVehicle() instanceof DragonEntity && ((DragonEntity) this.client.player.getVehicle()).hasChest()) {
             info.setReturnValue(true);
         }
     }

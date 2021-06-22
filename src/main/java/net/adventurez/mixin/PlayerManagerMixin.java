@@ -12,7 +12,6 @@ import net.adventurez.init.EffectInit;
 import net.minecraft.entity.effect.StatusEffectInstance;
 import net.minecraft.server.PlayerManager;
 import net.minecraft.server.network.ServerPlayerEntity;
-import net.minecraft.server.network.ServerPlayerInteractionManager;
 import net.minecraft.server.world.ServerWorld;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Vec3d;
@@ -21,14 +20,10 @@ import net.minecraft.util.math.Vec3d;
 public class PlayerManagerMixin {
 
     @Inject(method = "respawnPlayer", at = @At(value = "TAIL"), locals = LocalCapture.CAPTURE_FAILSOFT)
-    private void respawnPlayerMixin(ServerPlayerEntity player, boolean alive,
-            CallbackInfoReturnable<ServerPlayerEntity> info, BlockPos blockPos, float f, boolean bl,
-            ServerWorld serverWorld, Optional<Vec3d> optional2,
-            ServerPlayerInteractionManager serverPlayerInteractionManager2, ServerWorld serverWorld2,
-            ServerPlayerEntity serverPlayerEntity) {
+    private void respawnPlayerMixin(ServerPlayerEntity player, boolean alive, CallbackInfoReturnable<ServerPlayerEntity> info, BlockPos blockPos, float f, boolean bl, ServerWorld serverWorld,
+            Optional<Vec3d> optional2, ServerWorld serverWorld2, ServerPlayerEntity serverPlayerEntity) {
         if (alive && player.hasStatusEffect(EffectInit.FAME)) {
-            serverPlayerEntity.addStatusEffect(new StatusEffectInstance(EffectInit.FAME,
-                    player.getStatusEffect(EffectInit.FAME).getDuration(), 0, false, false, true));
+            serverPlayerEntity.addStatusEffect(new StatusEffectInstance(EffectInit.FAME, player.getStatusEffect(EffectInit.FAME).getDuration(), 0, false, false, true));
         }
     }
 

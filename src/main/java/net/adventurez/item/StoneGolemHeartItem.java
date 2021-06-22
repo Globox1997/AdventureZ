@@ -9,15 +9,15 @@ import net.minecraft.world.World;
 
 public class StoneGolemHeartItem extends Item {
 
-  public StoneGolemHeartItem(Settings settings) {
-    super(settings);
-  }
-
-  @Override
-  public void inventoryTick(ItemStack stack, World world, Entity entity, int slot, boolean selected) {
-    if ((int) world.getTime() % 100 == 0) {
-      world.playSound(null, entity.getBlockPos(), SoundInit.HEART_BEAT_EVENT, SoundCategory.AMBIENT, 1F, 1F);
+    public StoneGolemHeartItem(Settings settings) {
+        super(settings);
     }
-  }
+
+    @Override
+    public void inventoryTick(ItemStack stack, World world, Entity entity, int slot, boolean selected) {
+        if ((int) world.getTime() % 100 == 0) {
+            world.playSound(null, entity.getBlockPos(), SoundInit.HEART_BEAT_EVENT, SoundCategory.AMBIENT, 1F, 1F);
+        }
+    }
 
 }

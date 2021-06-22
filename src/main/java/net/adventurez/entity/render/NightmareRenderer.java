@@ -4,23 +4,24 @@ import net.adventurez.entity.NightmareEntity;
 import net.adventurez.entity.render.feature.NightmareEyesFeatureRenderer;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
-import net.minecraft.client.render.entity.EntityRenderDispatcher;
+import net.minecraft.client.render.entity.EntityRendererFactory;
 import net.minecraft.client.render.entity.HorseBaseEntityRenderer;
+import net.minecraft.client.render.entity.model.EntityModelLayers;
 import net.minecraft.client.render.entity.model.HorseEntityModel;
 import net.minecraft.util.Identifier;
 
 @Environment(EnvType.CLIENT)
-public final class NightmareRenderer
-    extends HorseBaseEntityRenderer<NightmareEntity, HorseEntityModel<NightmareEntity>> {
-  private static final Identifier TEXTURE = new Identifier("adventurez:textures/entity/nightmare.png");
+public final class NightmareRenderer extends HorseBaseEntityRenderer<NightmareEntity, HorseEntityModel<NightmareEntity>> {
 
-  public NightmareRenderer(EntityRenderDispatcher entityRenderDispatcher) {
-    super(entityRenderDispatcher, new HorseEntityModel<>(0.0F), 1.1F);
-    this.addFeature(new NightmareEyesFeatureRenderer(this));
-  }
+    private static final Identifier TEXTURE = new Identifier("adventurez:textures/entity/nightmare.png");
 
-  @Override
-  public Identifier getTexture(NightmareEntity nightmareEntity) {
-    return TEXTURE;
-  }
+    public NightmareRenderer(EntityRendererFactory.Context context) {
+        super(context, new HorseEntityModel<NightmareEntity>(context.getPart(EntityModelLayers.HORSE)), 1.1F);
+        this.addFeature(new NightmareEyesFeatureRenderer(this));
+    }
+
+    @Override
+    public Identifier getTexture(NightmareEntity nightmareEntity) {
+        return TEXTURE;
+    }
 }

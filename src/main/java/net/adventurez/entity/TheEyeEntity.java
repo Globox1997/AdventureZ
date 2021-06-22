@@ -37,7 +37,7 @@ import net.minecraft.entity.effect.StatusEffectInstance;
 import net.minecraft.entity.mob.FlyingEntity;
 import net.minecraft.entity.mob.HostileEntity;
 import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.nbt.CompoundTag;
+import net.minecraft.nbt.NbtCompound;
 import net.minecraft.particle.ParticleTypes;
 import net.minecraft.predicate.entity.EntityPredicates;
 import net.minecraft.server.network.ServerPlayerEntity;
@@ -48,7 +48,6 @@ import net.minecraft.sound.SoundEvents;
 import net.minecraft.text.Text;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Box;
-import net.minecraft.util.math.ChunkPos;
 import net.minecraft.util.math.Direction;
 import net.minecraft.util.math.MathHelper;
 import net.minecraft.util.math.Vec3d;
@@ -73,16 +72,14 @@ public class TheEyeEntity extends FlyingEntity {
 
     public TheEyeEntity(EntityType<? extends TheEyeEntity> entityType, World world) {
         super(entityType, world);
-        this.bossBar = (ServerBossBar) (new ServerBossBar(this.getDisplayName(), BossBar.Color.PURPLE,
-                BossBar.Style.PROGRESS));
+        this.bossBar = (ServerBossBar) (new ServerBossBar(this.getDisplayName(), BossBar.Color.PURPLE, BossBar.Style.PROGRESS));
         this.experiencePoints = 80;
         this.moveControl = new TheEyeEntity.EyeMoveControl(this);
     }
 
     public static DefaultAttributeContainer.Builder createTheEntityAttributes() {
-        return HostileEntity.createHostileAttributes().add(EntityAttributes.GENERIC_MAX_HEALTH, 800.0D)
-                .add(EntityAttributes.GENERIC_MOVEMENT_SPEED, 0.35D).add(EntityAttributes.GENERIC_FOLLOW_RANGE, 60.0D)
-                .add(EntityAttributes.GENERIC_ARMOR, 5.0D);
+        return HostileEntity.createHostileAttributes().add(EntityAttributes.GENERIC_MAX_HEALTH, 800.0D).add(EntityAttributes.GENERIC_MOVEMENT_SPEED, 0.35D)
+                .add(EntityAttributes.GENERIC_FOLLOW_RANGE, 60.0D).add(EntityAttributes.GENERIC_ARMOR, 5.0D);
     }
 
     @Override
@@ -103,14 +100,14 @@ public class TheEyeEntity extends FlyingEntity {
     }
 
     @Override
-    public void writeCustomDataToTag(CompoundTag tag) {
-        super.writeCustomDataToTag(tag);
+    public void writeCustomDataToNbt(NbtCompound tag) {
+        super.writeCustomDataToNbt(tag);
         tag.putInt("Invul", this.getInvulnerableTimer());
     }
 
     @Override
-    public void readCustomDataFromTag(CompoundTag tag) {
-        super.readCustomDataFromTag(tag);
+    public void readCustomDataFromNbt(NbtCompound tag) {
+        super.readCustomDataFromNbt(tag);
         this.setInvulTimer(tag.getInt("Invul"));
         if (this.hasCustomName()) {
             this.bossBar.setName(this.getDisplayName());
@@ -159,7 +156,7 @@ public class TheEyeEntity extends FlyingEntity {
             }
             vec3d = new Vec3d(vec3d.x, d, vec3d.z);
             Vec3d vec3d2 = new Vec3d(entity.getX() - this.getX(), 0.0D, entity.getZ() - this.getZ());
-            if (squaredHorizontalLength(vec3d2) > 16.0D) {
+            if (squaredDistanceTo(vec3d2) > 16.0D) {
                 Vec3d vec3d3 = vec3d2.normalize();
                 vec3d = vec3d.add(vec3d3.x * 0.05D - vec3d.x * 0.05D, 0.0D, vec3d3.z * 0.05D - vec3d.z * 0.05D);
             }
@@ -177,10 +174,8 @@ public class TheEyeEntity extends FlyingEntity {
         if (this.getInvulnerableTimer() > 0) {
             j = this.getInvulnerableTimer() - 1;
             if (j <= 0) {
-                Explosion.DestructionType destructionType = this.world.getGameRules().getBoolean(
-                        GameRules.DO_MOB_GRIEFING) ? Explosion.DestructionType.DESTROY : Explosion.DestructionType.NONE;
-                this.world.createExplosion(this, this.getX(), this.getEyeY(), this.getZ(), 7.0F, false,
-                        destructionType);
+                Explosion.DestructionType destructionType = this.world.getGameRules().getBoolean(GameRules.DO_MOB_GRIEFING) ? Explosion.DestructionType.DESTROY : Explosion.DestructionType.NONE;
+                this.world.createExplosion(this, this.getX(), this.getEyeY(), this.getZ(), 7.0F, false, destructionType);
                 if (!this.isSilent()) {
                     this.world.syncGlobalEvent(1023, this.getBlockPos(), 0);
                 }
@@ -195,25 +190,17 @@ public class TheEyeEntity extends FlyingEntity {
                 if (attackTpCounter >= 120 && !this.hasBeamTarget()) {
                     for (int counter = 0; counter < 100; counter++) {
                         float randomFloat = this.world.getRandom().nextFloat() * 6.2831855F;
-                        int posX = livingEntity.getBlockPos().getX() + MathHelper
-                                .floor(MathHelper.cos(randomFloat) * 9.0F + livingEntity.world.getRandom().nextInt(12));
-                        int posZ = livingEntity.getBlockPos().getZ() + MathHelper
-                                .floor(MathHelper.sin(randomFloat) * 9.0F + livingEntity.world.getRandom().nextInt(12));
-                        int posY = livingEntity.world.getTopY(Heightmap.Type.WORLD_SURFACE, posX, posZ) + 10
-                                + livingEntity.world.getRandom().nextInt(12);
+                        int posX = livingEntity.getBlockPos().getX() + MathHelper.floor(MathHelper.cos(randomFloat) * 9.0F + livingEntity.world.getRandom().nextInt(12));
+                        int posZ = livingEntity.getBlockPos().getZ() + MathHelper.floor(MathHelper.sin(randomFloat) * 9.0F + livingEntity.world.getRandom().nextInt(12));
+                        int posY = livingEntity.world.getTopY(Heightmap.Type.WORLD_SURFACE, posX, posZ) + 10 + livingEntity.world.getRandom().nextInt(12);
                         BlockPos teleportPos = new BlockPos(posX, posY, posZ);
-                        if (livingEntity.world.isRegionLoaded(teleportPos.getX() - 4, teleportPos.getY() - 4,
-                                teleportPos.getZ() - 4, teleportPos.getX() + 4, teleportPos.getY() + 4,
-                                teleportPos.getZ() + 4)
-                                && livingEntity.world.getChunkManager().shouldTickChunk(new ChunkPos(teleportPos))
-                                && SpawnHelper.canSpawn(SpawnRestriction.Location.ON_GROUND, livingEntity.world,
-                                        teleportPos, EntityInit.THE_EYE_ENTITY)) {
+                        if (livingEntity.world.isRegionLoaded(teleportPos.getX() - 4, teleportPos.getY() - 4, teleportPos.getZ() - 4, teleportPos.getX() + 4, teleportPos.getY() + 4,
+                                teleportPos.getZ() + 4) && SpawnHelper.canSpawn(SpawnRestriction.Location.ON_GROUND, livingEntity.world, teleportPos, EntityInit.THE_EYE_ENTITY)) {
                             this.lookControl.lookAt(teleportPos.getX(), teleportPos.getY(), teleportPos.getZ());
                             if (!world.isClient) {
                                 livingEntity.teleport(teleportPos.getX(), teleportPos.getY(), teleportPos.getZ());
                             }
-                            livingEntity.world.playSound(null, teleportPos, SoundEvents.ENTITY_ENDERMAN_TELEPORT,
-                                    SoundCategory.HOSTILE, 1.0F, 1.0F);
+                            livingEntity.world.playSound(null, teleportPos, SoundEvents.ENTITY_ENDERMAN_TELEPORT, SoundCategory.HOSTILE, 1.0F, 1.0F);
                             if (this.world.isClient) {
                                 this.despawnParticlesServer(livingEntity);
                             }
@@ -295,8 +282,7 @@ public class TheEyeEntity extends FlyingEntity {
             } else {
                 Entity entity2;
                 entity2 = source.getAttacker();
-                if (entity2 != null && !(entity2 instanceof PlayerEntity) && entity2 instanceof LivingEntity
-                        && ((LivingEntity) entity2).getGroup() == this.getGroup()) {
+                if (entity2 != null && !(entity2 instanceof PlayerEntity) && entity2 instanceof LivingEntity && ((LivingEntity) entity2).getGroup() == this.getGroup()) {
                     return false;
                 } else {
                     if (this.field_7082 <= 0) {
@@ -322,12 +308,12 @@ public class TheEyeEntity extends FlyingEntity {
     @Override
     public void checkDespawn() {
         if (this.world.getDifficulty() == Difficulty.PEACEFUL) {
-            this.remove();
+            this.discard();
         }
     }
 
     @Override
-    public boolean handleFallDamage(float fallDistance, float damageMultiplier) {
+    public boolean handleFallDamage(float fallDistance, float damageMultiplier, DamageSource damageSource) {
         return false;
     }
 
@@ -426,13 +412,11 @@ public class TheEyeEntity extends FlyingEntity {
             BlockPos deathPos = new BlockPos(this.getX(), this.getY() - 1, this.getZ());
             if (deathTimer == 20 && !FabricLoader.getInstance().isModLoaded("voidz")) {
                 Box box = new Box(this.getBlockPos());
-                List<PlayerEntity> list = world.getEntitiesByClass(PlayerEntity.class, box.expand(128D),
-                        EntityPredicates.EXCEPT_SPECTATOR);
+                List<PlayerEntity> list = world.getEntitiesByClass(PlayerEntity.class, box.expand(128D), EntityPredicates.EXCEPT_SPECTATOR);
                 for (int i = 0; i < list.size(); ++i) {
                     PlayerEntity playerEntity = (PlayerEntity) list.get(i);
                     if (playerEntity instanceof PlayerEntity) {
-                        playerEntity.addStatusEffect(
-                                new StatusEffectInstance(EffectInit.FAME, 48000, 0, false, false, true));
+                        playerEntity.addStatusEffect(new StatusEffectInstance(EffectInit.FAME, 48000, 0, false, false, true));
                     }
                 }
             }
@@ -441,24 +425,20 @@ public class TheEyeEntity extends FlyingEntity {
             }
             if (deathTimer >= 200) {
                 for (int o = 0; o < 5; o++) {
-                    ((ServerWorld) this.world).spawnParticles(ParticleTypes.EXPLOSION,
-                            deathPos.getX() - 1 + this.world.random.nextInt(4),
-                            deathPos.getY() - 1 + this.world.random.nextInt(4),
+                    ((ServerWorld) this.world).spawnParticles(ParticleTypes.EXPLOSION, deathPos.getX() - 1 + this.world.random.nextInt(4), deathPos.getY() - 1 + this.world.random.nextInt(4),
                             deathPos.getZ() - 1 + this.world.random.nextInt(4), 0, 0.0D, 0.0D, 0.0D, 0.01D);
                     world.playSound(null, deathPos, SoundEvents.ENTITY_GENERIC_EXPLODE, SoundCategory.BLOCKS, 1F, 1F);
                 }
                 for (int i = -1; i < 2; i++) {
                     for (int u = -1; u < 2; u++) {
                         for (int g = 0; g < 6; g++) {
-                            if (!world.getBlockState(deathPos.east(i).north(u).up(g)).isAir() && !world
-                                    .getBlockState(deathPos.east(i).north(u).up(g)).isIn(TagInit.UNBREAKABLE_BLOCKS)) {
+                            if (!world.getBlockState(deathPos.east(i).north(u).up(g)).isAir() && !world.getBlockState(deathPos.east(i).north(u).up(g)).isIn(TagInit.UNBREAKABLE_BLOCKS)) {
                                 world.breakBlock(deathPos.east(i).north(u).up(g), false);
                             }
                         }
                         if (!world.getBlockState(deathPos.east(i).north(u)).isIn(TagInit.UNBREAKABLE_BLOCKS)) {
                             world.setBlockState(deathPos.east(i).north(u), Blocks.CRYING_OBSIDIAN.getDefaultState(), 3);
-                            world.playSound(null, deathPos, SoundEvents.BLOCK_STONE_PLACE, SoundCategory.BLOCKS, 1F,
-                                    1F);
+                            world.playSound(null, deathPos, SoundEvents.BLOCK_STONE_PLACE, SoundCategory.BLOCKS, 1F, 1F);
                         }
                     }
                 }
@@ -469,7 +449,7 @@ public class TheEyeEntity extends FlyingEntity {
                     world.setBlockState(deathPos.up(), Blocks.DRAGON_EGG.getDefaultState(), 3);
                 }
                 // this.dropItem(ItemInit.PRIME_EYE_ITEM); // mcfunction
-                this.remove();
+                this.discard();
             }
 
         }
@@ -481,12 +461,9 @@ public class TheEyeEntity extends FlyingEntity {
             double d = this.random.nextGaussian() * 0.025D;
             double e = this.random.nextGaussian() * 0.025D;
             double f = this.random.nextGaussian() * 0.025D;
-            double x = MathHelper.nextDouble(random, entity.getBoundingBox().minX - 1.5D,
-                    entity.getBoundingBox().maxX + 1.5D);
-            double y = MathHelper.nextDouble(random, entity.getBoundingBox().minY - 1.5D,
-                    entity.getBoundingBox().maxY + 1.5D);
-            double z = MathHelper.nextDouble(random, entity.getBoundingBox().minZ - 1.5D,
-                    entity.getBoundingBox().maxZ + 1.5D);
+            double x = MathHelper.nextDouble(random, entity.getBoundingBox().minX - 1.5D, entity.getBoundingBox().maxX + 1.5D);
+            double y = MathHelper.nextDouble(random, entity.getBoundingBox().minY - 1.5D, entity.getBoundingBox().maxY + 1.5D);
+            double z = MathHelper.nextDouble(random, entity.getBoundingBox().minZ - 1.5D, entity.getBoundingBox().maxZ + 1.5D);
             entity.world.addParticle(ParticleTypes.PORTAL, x, y, z, d, e, f);
         }
     }
@@ -547,8 +524,7 @@ public class TheEyeEntity extends FlyingEntity {
             if (this.theEye.gotDamage()) {
                 return false;
             }
-            return super.shouldContinue() && this.theEye.squaredDistanceTo(this.theEye.getTarget()) > 8.0D
-                    && livingEntity != null && livingEntity.getY() < this.theEye.getY();
+            return super.shouldContinue() && this.theEye.squaredDistanceTo(this.theEye.getTarget()) > 8.0D && livingEntity != null && livingEntity.getY() < this.theEye.getY();
         }
 
         @Override
@@ -574,15 +550,14 @@ public class TheEyeEntity extends FlyingEntity {
             } else {
                 ++this.beamTicks;
                 if (this.beamTicks == 0) {
-                    this.theEye.setBeamTarget(this.theEye.getTarget().getEntityId());
+                    this.theEye.setBeamTarget(this.theEye.getTarget().getId());
                 } else if (this.beamTicks >= this.theEye.getWarmupTime()) {
                     float f = 4.0F;
                     if (this.theEye.world.getDifficulty() == Difficulty.HARD) {
                         f += 1.0F;
                     }
                     livingEntity.damage(DamageSource.magic(this.theEye, this.theEye), f);
-                    livingEntity.damage(DamageSource.mob(this.theEye),
-                            (float) this.theEye.getAttributeValue(EntityAttributes.GENERIC_ATTACK_DAMAGE));
+                    livingEntity.damage(DamageSource.mob(this.theEye), (float) this.theEye.getAttributeValue(EntityAttributes.GENERIC_ATTACK_DAMAGE));
                     this.theEye.setTarget((LivingEntity) null);
                 }
 
@@ -613,8 +588,7 @@ public class TheEyeEntity extends FlyingEntity {
         public boolean canStart() {
             this.counter++;
             LivingEntity livingEntity = TheEyeEntity.this.getTarget();
-            if (livingEntity != null && livingEntity.isAlive()
-                    && TheEyeEntity.this.getHealth() < TheEyeEntity.this.getMaxHealth() / 2 && this.counter >= 400) {
+            if (livingEntity != null && livingEntity.isAlive() && TheEyeEntity.this.getHealth() < TheEyeEntity.this.getMaxHealth() / 2 && this.counter >= 400) {
                 return TheEyeEntity.this.world.getDifficulty() != Difficulty.PEACEFUL;
             } else {
                 return false;
@@ -630,11 +604,8 @@ public class TheEyeEntity extends FlyingEntity {
                     additions = 1;
                 }
                 for (int i = 0; i < 3 + additions; i++) {
-                    TheEyeEntity.this.world.spawnEntity(new TinyEyeEntity(TheEyeEntity.this.world, TheEyeEntity.this,
-                            livingEntity, Direction.Axis.Y));
-                    TheEyeEntity.this.playSound(SoundEvents.ENTITY_SHULKER_SHOOT, 2.0F,
-                            (TheEyeEntity.this.random.nextFloat() - TheEyeEntity.this.random.nextFloat()) * 0.2F
-                                    + 1.0F);
+                    TheEyeEntity.this.world.spawnEntity(new TinyEyeEntity(TheEyeEntity.this.world, TheEyeEntity.this, livingEntity, Direction.Axis.Y));
+                    TheEyeEntity.this.playSound(SoundEvents.ENTITY_SHULKER_SHOOT, 2.0F, (TheEyeEntity.this.random.nextFloat() - TheEyeEntity.this.random.nextFloat()) * 0.2F + 1.0F);
                 }
                 super.tick();
                 this.counter = TheEyeEntity.this.random.nextInt(12) * 20;
@@ -696,15 +667,15 @@ public class TheEyeEntity extends FlyingEntity {
         public void tick() {
             if (this.theEyeEntity.getTarget() == null) {
                 Vec3d vec3d = this.theEyeEntity.getVelocity();
-                this.theEyeEntity.yaw = -((float) MathHelper.atan2(vec3d.x, vec3d.z)) * 57.295776F;
-                this.theEyeEntity.bodyYaw = this.theEyeEntity.yaw;
+                this.theEyeEntity.setYaw(-((float) MathHelper.atan2(vec3d.x, vec3d.z)) * 57.295776F);
+                this.theEyeEntity.bodyYaw = this.theEyeEntity.getYaw();
             } else {
                 LivingEntity livingEntity = this.theEyeEntity.getTarget();
                 if (livingEntity.squaredDistanceTo(this.theEyeEntity) < 4096.0D) {
                     double e = livingEntity.getX() - this.theEyeEntity.getX();
                     double f = livingEntity.getZ() - this.theEyeEntity.getZ();
-                    this.theEyeEntity.yaw = -((float) MathHelper.atan2(e, f)) * 57.295776F;
-                    this.theEyeEntity.bodyYaw = this.theEyeEntity.yaw;
+                    this.theEyeEntity.setYaw(-((float) MathHelper.atan2(e, f)) * 57.295776F);
+                    this.theEyeEntity.bodyYaw = this.theEyeEntity.getYaw();
                 }
             }
 
@@ -725,8 +696,7 @@ public class TheEyeEntity extends FlyingEntity {
             if (this.state == MoveControl.State.MOVE_TO) {
                 if (this.collisionCheckCooldown-- <= 0) {
                     this.collisionCheckCooldown += this.theEyeEntity.getRandom().nextInt(5) + 2;
-                    Vec3d vec3d = new Vec3d(this.targetX - this.theEyeEntity.getX(),
-                            this.targetY - this.theEyeEntity.getY(), this.targetZ - this.theEyeEntity.getZ());
+                    Vec3d vec3d = new Vec3d(this.targetX - this.theEyeEntity.getX(), this.targetY - this.theEyeEntity.getY(), this.targetZ - this.theEyeEntity.getZ());
                     double d = vec3d.length();
                     vec3d = vec3d.normalize();
                     if (this.willCollide(vec3d, MathHelper.ceil(d))) {

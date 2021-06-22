@@ -25,16 +25,24 @@
             "conditions": {
                 "items": [
                     {
-                        "item": "adventurez:stone_golem_helmet"
+                        "items": [
+                            "adventurez:stone_golem_helmet"
+                        ]
                     },
                     {
-                        "item": "adventurez:stone_golem_chestplate"
+                        "items": [
+                            "adventurez:stone_golem_chestplate"
+                        ]
                     },
                     {
-                        "item": "adventurez:stone_golem_leggings"
+                        "items": [
+                            "adventurez:stone_golem_leggings"
+                        ]
                     },
                     {
-                        "item": "adventurez:stone_golem_boots"
+                        "items": [
+                            "adventurez:stone_golem_boots"
+                        ]
                     }
                 ]
             }

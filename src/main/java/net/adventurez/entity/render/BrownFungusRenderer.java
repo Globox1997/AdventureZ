@@ -2,9 +2,10 @@ package net.adventurez.entity.render;
 
 import net.adventurez.entity.BrownFungusEntity;
 import net.adventurez.entity.model.BrownFungusModel;
+import net.adventurez.init.RenderInit;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
-import net.minecraft.client.render.entity.EntityRenderDispatcher;
+import net.minecraft.client.render.entity.EntityRendererFactory;
 import net.minecraft.client.render.entity.MobEntityRenderer;
 import net.minecraft.client.util.math.MatrixStack;
 import net.minecraft.util.Identifier;
@@ -13,8 +14,8 @@ import net.minecraft.util.Identifier;
 public class BrownFungusRenderer extends MobEntityRenderer<BrownFungusEntity, BrownFungusModel<BrownFungusEntity>> {
     private static final Identifier TEXTURE = new Identifier("adventurez:textures/entity/brown_fungus.png");
 
-    public BrownFungusRenderer(EntityRenderDispatcher entityRenderDispatcher) {
-        super(entityRenderDispatcher, new BrownFungusModel<>(), 0.4F);
+    public BrownFungusRenderer(EntityRendererFactory.Context context) {
+        super(context, new BrownFungusModel<>(context.getPart(RenderInit.BROWN_FUNGUS_LAYER)), 0.4F);
     }
 
     @Override

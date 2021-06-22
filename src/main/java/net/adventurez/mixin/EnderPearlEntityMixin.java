@@ -24,7 +24,7 @@ public abstract class EnderPearlEntityMixin extends ThrownItemEntity {
     protected void onCollisionMixin(HitResult hitResult, CallbackInfo info) {
         if (this.getItem().getItem() == ItemInit.PRIME_EYE) {
             this.getOwner().damage(DamageSource.FALL, 2.0F);
-            this.remove();
+            this.discard();
             info.cancel();
         }
     }

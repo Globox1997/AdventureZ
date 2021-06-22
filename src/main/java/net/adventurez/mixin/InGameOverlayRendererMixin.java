@@ -18,6 +18,7 @@ import net.minecraft.client.render.BufferBuilder;
 import net.minecraft.client.render.BufferRenderer;
 import net.minecraft.client.render.Tessellator;
 import net.minecraft.client.render.VertexFormats;
+import net.minecraft.client.render.VertexFormat;
 import net.minecraft.client.util.math.MatrixStack;
 import net.minecraft.entity.EquipmentSlot;
 import net.minecraft.entity.player.PlayerEntity;
@@ -28,51 +29,45 @@ import net.minecraft.util.math.Matrix4f;
 @Environment(EnvType.CLIENT)
 @Mixin(InGameOverlayRenderer.class)
 public abstract class InGameOverlayRendererMixin {
-     private static final Identifier WITHERED_TEXTURE = new Identifier("adventurez:textures/misc/dark.png");
+    private static final Identifier WITHERED_TEXTURE = new Identifier("adventurez:textures/misc/dark.png");
 
-     @Inject(method = "renderOverlays", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/network/ClientPlayerEntity;isOnFire()Z"), cancellable = true)
-     private static void fireOverlayMixin(MinecraftClient minecraftClient, MatrixStack matrixStack, CallbackInfo info) {
-          PlayerEntity playerEntity = minecraftClient.player;
-          ItemStack golemChestplate = playerEntity.getEquippedStack(EquipmentSlot.CHEST);
-          boolean fireActivated = golemChestplate.getItem().equals(ItemInit.STONE_GOLEM_CHESTPLATE)
-                    && StoneGolemArmor.fireTime(golemChestplate);
-          if (fireActivated) {
-               info.cancel();
-          }
-     }
+    @Inject(method = "renderOverlays", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/network/ClientPlayerEntity;isOnFire()Z"), cancellable = true)
+    private static void fireOverlayMixin(MinecraftClient minecraftClient, MatrixStack matrixStack, CallbackInfo info) {
+        PlayerEntity playerEntity = minecraftClient.player;
+        ItemStack golemChestplate = playerEntity.getEquippedStack(EquipmentSlot.CHEST);
+        boolean fireActivated = golemChestplate.getItem().equals(ItemInit.STONE_GOLEM_CHESTPLATE) && StoneGolemArmor.fireTime(golemChestplate);
+        if (fireActivated) {
+            info.cancel();
+        }
+    }
 
-     @Inject(method = "renderOverlays", at = @At(value = "INVOKE", target = "Lcom/mojang/blaze3d/systems/RenderSystem;enableAlphaTest()V"))
-     private static void renderOverlaysMixin(MinecraftClient minecraftClient, MatrixStack matrixStack,
-               CallbackInfo info) {
-          PlayerEntity playerEntity = minecraftClient.player;
-          if (playerEntity.hasStatusEffect(EffectInit.WITHERING)) {
-               int duration = playerEntity.getStatusEffect(EffectInit.WITHERING).getDuration();
-               renderWitheredOverlay(minecraftClient, matrixStack, duration);
-          }
-     }
+    @Inject(method = "renderOverlays", at = @At(value = "TAIL"))
+    private static void renderOverlaysMixin(MinecraftClient minecraftClient, MatrixStack matrixStack, CallbackInfo info) {
+        PlayerEntity playerEntity = minecraftClient.player;
+        if (!playerEntity.isSpectator() && playerEntity.hasStatusEffect(EffectInit.WITHERING)) {
+            int duration = playerEntity.getStatusEffect(EffectInit.WITHERING).getDuration();
+            renderWitheredOverlay(minecraftClient, matrixStack, duration);
+        }
+    }
 
-     private static void renderWitheredOverlay(MinecraftClient minecraftClient, MatrixStack matrixStack, int duration) {
-          RenderSystem.enableTexture();
-          minecraftClient.getTextureManager().bindTexture(WITHERED_TEXTURE);
-          BufferBuilder bufferBuilder = Tessellator.getInstance().getBuffer();
-          float f = minecraftClient.player.getBrightnessAtEyes();
-          RenderSystem.enableBlend();
-          RenderSystem.defaultBlendFunc();
-          float m = -minecraftClient.player.yaw / 64.0F;
-          float n = minecraftClient.player.pitch / 64.0F;
-          Matrix4f matrix4f = matrixStack.peek().getModel();
-          float colorBlend = (float) duration / 200.0F;
-          bufferBuilder.begin(7, VertexFormats.POSITION_COLOR_TEXTURE);
-          bufferBuilder.vertex(matrix4f, -1.0F, -1.0F, -0.5F).color(f, f, f, colorBlend).texture(4.0F + m, 4.0F + n)
-                    .next();
-          bufferBuilder.vertex(matrix4f, 1.0F, -1.0F, -0.5F).color(f, f, f, colorBlend).texture(0.0F + m, 4.0F + n)
-                    .next();
-          bufferBuilder.vertex(matrix4f, 1.0F, 1.0F, -0.5F).color(f, f, f, colorBlend).texture(0.0F + m, 0.0F + n)
-                    .next();
-          bufferBuilder.vertex(matrix4f, -1.0F, 1.0F, -0.5F).color(f, f, f, colorBlend).texture(4.0F + m, 0.0F + n)
-                    .next();
-          bufferBuilder.end();
-          BufferRenderer.draw(bufferBuilder);
-          RenderSystem.disableBlend();
-     }
+    private static void renderWitheredOverlay(MinecraftClient minecraftClient, MatrixStack matrixStack, int duration) {
+        RenderSystem.enableTexture();
+        RenderSystem.setShaderTexture(0, WITHERED_TEXTURE);
+        BufferBuilder bufferBuilder = Tessellator.getInstance().getBuffer();
+        float f = minecraftClient.player.getBrightnessAtEyes();
+        RenderSystem.enableBlend();
+        RenderSystem.defaultBlendFunc();
+        float m = -minecraftClient.player.getYaw() / 64.0F;
+        float n = minecraftClient.player.getPitch() / 64.0F;
+        Matrix4f matrix4f = matrixStack.peek().getModel();
+        float colorBlend = (float) duration / 200.0F;
+        bufferBuilder.begin(VertexFormat.DrawMode.QUADS, VertexFormats.POSITION_COLOR_TEXTURE);
+        bufferBuilder.vertex(matrix4f, -1.0F, -1.0F, -0.5F).color(f, f, f, colorBlend).texture(4.0F + m, 4.0F + n).next();
+        bufferBuilder.vertex(matrix4f, 1.0F, -1.0F, -0.5F).color(f, f, f, colorBlend).texture(0.0F + m, 4.0F + n).next();
+        bufferBuilder.vertex(matrix4f, 1.0F, 1.0F, -0.5F).color(f, f, f, colorBlend).texture(0.0F + m, 0.0F + n).next();
+        bufferBuilder.vertex(matrix4f, -1.0F, 1.0F, -0.5F).color(f, f, f, colorBlend).texture(4.0F + m, 0.0F + n).next();
+        bufferBuilder.end();
+        BufferRenderer.draw(bufferBuilder);
+        RenderSystem.disableBlend();
+    }
 }

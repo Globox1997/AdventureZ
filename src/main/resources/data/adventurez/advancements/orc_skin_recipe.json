@@ -12,7 +12,9 @@
             "conditions": {
                 "items": [
                     {
-                        "item": "adventurez:orc_skin"
+                        "items": [
+                            "adventurez:orc_skin"
+                        ]
                     }
                 ]
             }

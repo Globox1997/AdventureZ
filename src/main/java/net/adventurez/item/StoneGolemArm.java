@@ -24,7 +24,7 @@ import net.minecraft.util.TypedActionResult;
 import net.minecraft.util.UseAction;
 import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.World;
-import net.minecraft.nbt.CompoundTag;
+import net.minecraft.nbt.NbtCompound;
 
 public class StoneGolemArm extends Item {
 
@@ -44,7 +44,7 @@ public class StoneGolemArm extends Item {
 
     @Override
     public void onStoppedUsing(ItemStack stack, World world, LivingEntity user, int remainingUseTicks) {
-        CompoundTag tags = stack.getTag();
+        NbtCompound tags = stack.getTag();
         if (user instanceof PlayerEntity) {
             PlayerEntity playerEntity = (PlayerEntity) user;
             int stoneCounter;
@@ -55,11 +55,9 @@ public class StoneGolemArm extends Item {
                     float strength = getStoneStrength(stoneCounter);
                     stack.damage(1, playerEntity, (p) -> p.sendToolBreakStatus(p.getActiveHand()));
                     ThrownRockEntity thrownRockEntity = new ThrownRockEntity(world, playerEntity);
-                    thrownRockEntity.setProperties(playerEntity, playerEntity.pitch, playerEntity.yaw, 0.0F,
-                            strength * 1.2F, 1.0F);
+                    thrownRockEntity.setProperties(playerEntity, playerEntity.getPitch(), playerEntity.getYaw(), 0.0F, strength * 1.2F, 1.0F);
                     world.spawnEntity(thrownRockEntity);
-                    world.playSoundFromEntity((PlayerEntity) null, thrownRockEntity, SoundInit.ROCK_THROW_EVENT,
-                            SoundCategory.PLAYERS, 1.0F, 1.0F);
+                    world.playSoundFromEntity((PlayerEntity) null, thrownRockEntity, SoundInit.ROCK_THROW_EVENT, SoundCategory.PLAYERS, 1.0F, 1.0F);
                 }
             }
         }
@@ -79,7 +77,7 @@ public class StoneGolemArm extends Item {
     @Override
     public void inventoryTick(ItemStack stack, World world, Entity entity, int slot, boolean selected) {
         PlayerEntity player = (PlayerEntity) entity;
-        CompoundTag tags = stack.getTag();
+        NbtCompound tags = stack.getTag();
         StatusEffectInstance slowness = new StatusEffectInstance(StatusEffect.byRawId(2), 9, 0, false, false);
         if (selected && !world.isClient) {
             player.addStatusEffect(slowness);
@@ -87,14 +85,11 @@ public class StoneGolemArm extends Item {
 
         if (world.isClient && tags != null) {
             if (player.getItemUseTimeLeft() < 71970 && player.getItemUseTimeLeft() != 0
-                    && player.getEquippedStack(player.getActiveHand() == Hand.MAIN_HAND ? EquipmentSlot.MAINHAND
-                            : EquipmentSlot.OFFHAND) == stack) {
+                    && player.getEquippedStack(player.getActiveHand() == Hand.MAIN_HAND ? EquipmentSlot.MAINHAND : EquipmentSlot.OFFHAND) == stack) {
                 tags.putBoolean("lavalight", true);
             }
 
-            if (tags.getBoolean("lavalight")
-                    && player.getEquippedStack(player.getActiveHand() == Hand.MAIN_HAND ? EquipmentSlot.MAINHAND
-                            : EquipmentSlot.OFFHAND) != stack) {
+            if (tags.getBoolean("lavalight") && player.getEquippedStack(player.getActiveHand() == Hand.MAIN_HAND ? EquipmentSlot.MAINHAND : EquipmentSlot.OFFHAND) != stack) {
                 tags.putBoolean("lavalight", false);
             }
         }

@@ -10,5 +10,4 @@ public interface LivingEntityAccessor {
 
     @Accessor("jumping")
     boolean jumping();
-
 }

@@ -5,7 +5,12 @@ import com.google.common.collect.ImmutableList;
 import net.adventurez.entity.VoidFragmentEntity;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
+import net.minecraft.client.model.ModelData;
 import net.minecraft.client.model.ModelPart;
+import net.minecraft.client.model.ModelPartBuilder;
+import net.minecraft.client.model.ModelPartData;
+import net.minecraft.client.model.ModelTransform;
+import net.minecraft.client.model.TexturedModelData;
 import net.minecraft.client.render.entity.model.CompositeEntityModel;
 import net.minecraft.entity.Entity;
 import net.minecraft.util.math.MathHelper;
@@ -13,38 +18,27 @@ import net.minecraft.util.math.MathHelper;
 @Environment(EnvType.CLIENT)
 public class VoidFragmentModel<T extends Entity> extends CompositeEntityModel<T> {
     private final ModelPart body;
-	private final ModelPart orbBody;
+    private final ModelPart orbBody;
 
-    public VoidFragmentModel() {
-        // this.body = (new ModelPart(this)).setTextureSize(64, 64);
-        // this.body.setPivot(0.0F, 24.0F, 0.0F);
-        // this.body.setTextureOffset(0, 4).addCuboid(-1.0F, -2.0F, -1.0F, 2.0F, 2.0F, 2.0F, 0.0F, false);
-        // this.body.setTextureOffset(30, 30).addCuboid(-3.0F, -4.0F, -3.0F, 6.0F, 2.0F, 6.0F, 0.0F, false);
-        // this.body.setTextureOffset(0, 30).addCuboid(-5.0F, -6.0F, -5.0F, 10.0F, 2.0F, 10.0F, 0.0F, false);
-        // this.body.setTextureOffset(0, 0).addCuboid(-7.0F, -10.0F, -7.0F, 14.0F, 4.0F, 14.0F, 0.0F, false);
-        // this.body.setTextureOffset(0, 18).addCuboid(-5.0F, -12.0F, -5.0F, 10.0F, 2.0F, 10.0F, 0.0F, false);
-        // this.body.setTextureOffset(30, 18).addCuboid(-3.0F, -14.0F, -3.0F, 6.0F, 2.0F, 6.0F, 0.0F, false);
-        // this.body.setTextureOffset(0, 0).addCuboid(-1.0F, -16.0F, -1.0F, 2.0F, 2.0F, 2.0F, 0.0F, false);
+    public VoidFragmentModel(ModelPart root) {
+        this.body = root.getChild("body");
+        this.orbBody = root.getChild("orbBody");
+    }
 
-		body = (new ModelPart(this)).setTextureSize(128, 128);
-		body.setPivot(0.0F, 24.0F, 0.0F);
-		body.setTextureOffset(6, 10).addCuboid(-1.0F, -2.0F, -1.0F, 2.0F, 2.0F, 2.0F, 0.0F, false);
-		body.setTextureOffset(56, 12).addCuboid(-3.0F, -4.0F, -3.0F, 6.0F, 2.0F, 6.0F, 0.0F, false);
-		body.setTextureOffset(42, 20).addCuboid(-5.0F, -6.0F, -5.0F, 10.0F, 2.0F, 10.0F, 0.0F, false);
-		body.setTextureOffset(0, 20).addCuboid(-7.0F, -10.0F, -7.0F, 14.0F, 4.0F, 14.0F, 0.0F, false);
-		body.setTextureOffset(42, 0).addCuboid(-5.0F, -12.0F, -5.0F, 10.0F, 2.0F, 10.0F, 0.0F, false);
-		body.setTextureOffset(48, 52).addCuboid(-3.0F, -14.0F, -3.0F, 6.0F, 2.0F, 6.0F, 0.0F, false);
-		body.setTextureOffset(6, 4).addCuboid(-1.0F, -16.0F, -1.0F, 2.0F, 2.0F, 2.0F, 0.0F, false);
-
-		orbBody = (new ModelPart(this)).setTextureSize(128, 128);
-		orbBody.setPivot(0.0F, 24.0F, 0.0F);
-		orbBody.setTextureOffset(0, 6).addCuboid(-1.0F, -4.0F, -1.0F, 2.0F, 4.0F, 2.0F, 0.0F, false);
-		orbBody.setTextureOffset(24, 52).addCuboid(-3.0F, -8.0F, -3.0F, 6.0F, 4.0F, 6.0F, 0.0F, false);
-		orbBody.setTextureOffset(40, 38).addCuboid(-5.0F, -12.0F, -5.0F, 10.0F, 4.0F, 10.0F, 0.0F, false);
-		orbBody.setTextureOffset(0, 0).addCuboid(-7.0F, -18.0F, -7.0F, 14.0F, 6.0F, 14.0F, 0.0F, false);
-		orbBody.setTextureOffset(0, 38).addCuboid(-5.0F, -22.0F, -5.0F, 10.0F, 4.0F, 10.0F, 0.0F, false);
-		orbBody.setTextureOffset(0, 52).addCuboid(-3.0F, -26.0F, -3.0F, 6.0F, 4.0F, 6.0F, 0.0F, false);
-		orbBody.setTextureOffset(0, 0).addCuboid(-1.0F, -30.0F, -1.0F, 2.0F, 4.0F, 2.0F, 0.0F, false);
+    public static TexturedModelData getTexturedModelData() {
+        ModelData modelData = new ModelData();
+        ModelPartData modelPartData = modelData.getRoot();
+        modelPartData.addChild("body",
+                ModelPartBuilder.create().uv(6, 10).cuboid(-1.0F, -2.0F, -1.0F, 2.0F, 2.0F, 2.0F).uv(56, 12).cuboid(-3.0F, -4.0F, -3.0F, 6.0F, 2.0F, 6.0F).uv(42, 20)
+                        .cuboid(-5.0F, -6.0F, -5.0F, 10.0F, 2.0F, 10.0F).uv(0, 20).cuboid(-7.0F, -10.0F, -7.0F, 14.0F, 4.0F, 14.0F).uv(42, 0).cuboid(-5.0F, -12.0F, -5.0F, 10.0F, 2.0F, 10.0F)
+                        .uv(48, 52).cuboid(-3.0F, -14.0F, -3.0F, 6.0F, 2.0F, 6.0F).uv(6, 4).cuboid(-1.0F, -16.0F, -1.0F, 2.0F, 2.0F, 2.0F),
+                ModelTransform.pivot(0.0F, 24.0F, 0.0F));
+        modelPartData.addChild("orbBody",
+                ModelPartBuilder.create().uv(0, 6).cuboid(-1.0F, -4.0F, -1.0F, 2.0F, 4.0F, 2.0F).uv(24, 52).cuboid(-3.0F, -8.0F, -3.0F, 6.0F, 4.0F, 6.0F).uv(40, 38)
+                        .cuboid(-5.0F, -12.0F, -5.0F, 10.0F, 4.0F, 10.0F).uv(0, 0).cuboid(-7.0F, -18.0F, -7.0F, 14.0F, 6.0F, 14.0F).uv(0, 38).cuboid(-5.0F, -22.0F, -5.0F, 10.0F, 4.0F, 10.0F)
+                        .uv(0, 52).cuboid(-3.0F, -26.0F, -3.0F, 6.0F, 4.0F, 6.0F).uv(0, 0).cuboid(-1.0F, -30.0F, -1.0F, 2.0F, 4.0F, 2.0F),
+                ModelTransform.pivot(0.0F, 24.0F, 0.0F));
+        return TexturedModelData.of(modelData, 128, 128);
     }
 
     @Override
@@ -53,8 +47,7 @@ public class VoidFragmentModel<T extends Entity> extends CompositeEntityModel<T>
     }
 
     @Override
-    public void setAngles(T entity, float limbAngle, float limbDistance, float animationProgress, float headYaw,
-            float headPitch) {
+    public void setAngles(T entity, float limbAngle, float limbDistance, float animationProgress, float headYaw, float headPitch) {
         this.body.pivotY = 23.0F + MathHelper.cos(animationProgress * 0.1662F) * 0.6F;
         this.orbBody.pivotY = 23.0F + MathHelper.cos(animationProgress * 0.1662F) * 0.6F;
         if (entity.getDataTracker().get(VoidFragmentEntity.IS_VOID_ORB)) {

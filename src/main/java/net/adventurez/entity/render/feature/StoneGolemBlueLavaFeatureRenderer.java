@@ -14,24 +14,19 @@ import net.minecraft.client.render.entity.feature.FeatureRendererContext;
 import net.minecraft.client.util.math.MatrixStack;
 
 @Environment(EnvType.CLIENT)
-public class StoneGolemBlueLavaFeatureRenderer
-    extends FeatureRenderer<StoneGolemEntity, StoneGolemModel<StoneGolemEntity>> {
-  private static final RenderLayer BLUE_LAVA_LAYER = ExtraRenderLayer
-      .getGlowing("adventurez:textures/entity/feature/blue_lava_feature_golem.png");
+public class StoneGolemBlueLavaFeatureRenderer extends FeatureRenderer<StoneGolemEntity, StoneGolemModel<StoneGolemEntity>> {
+    private static final RenderLayer BLUE_LAVA_LAYER = ExtraRenderLayer.getGlowing("adventurez:textures/entity/feature/blue_lava_feature_golem.png");
 
-  public StoneGolemBlueLavaFeatureRenderer(
-      FeatureRendererContext<StoneGolemEntity, StoneGolemModel<StoneGolemEntity>> featureRendererContext) {
-    super(featureRendererContext);
-  }
-
-  @Override
-  public void render(MatrixStack matrixStack, VertexConsumerProvider vertexConsumerProvider, int i,
-      StoneGolemEntity stoneGolemEntity, float f, float g, float h, float j, float k, float l) {
-    if (stoneGolemEntity.getDataTracker().get(StoneGolemEntity.HALF_LIFE_CHANGE)) {
-      VertexConsumer vertexConsumer = vertexConsumerProvider.getBuffer(BLUE_LAVA_LAYER);
-      this.getContextModel().render(matrixStack, vertexConsumer, 15728640, OverlayTexture.DEFAULT_UV, 1.0F, 1.0F, 1.0F,
-          1.0F);
+    public StoneGolemBlueLavaFeatureRenderer(FeatureRendererContext<StoneGolemEntity, StoneGolemModel<StoneGolemEntity>> featureRendererContext) {
+        super(featureRendererContext);
     }
-  }
+
+    @Override
+    public void render(MatrixStack matrixStack, VertexConsumerProvider vertexConsumerProvider, int i, StoneGolemEntity stoneGolemEntity, float f, float g, float h, float j, float k, float l) {
+        if (stoneGolemEntity.getDataTracker().get(StoneGolemEntity.HALF_LIFE_CHANGE)) {
+            VertexConsumer vertexConsumer = vertexConsumerProvider.getBuffer(BLUE_LAVA_LAYER);
+            this.getContextModel().render(matrixStack, vertexConsumer, 15728640, OverlayTexture.DEFAULT_UV, 1.0F, 1.0F, 1.0F, 1.0F);
+        }
+    }
 
 }

@@ -22,8 +22,8 @@ public abstract class VillagerEntityMixin extends MerchantEntity {
         super(entityType, world);
     }
 
-    @Inject(method = "prepareRecipesFor", at = @At(value = "TAIL"))
-    private void prepareRecipesForMixin(PlayerEntity player, CallbackInfo info) {
+    @Inject(method = "prepareOffersFor", at = @At(value = "TAIL"))
+    private void prepareOffersForMixin(PlayerEntity player, CallbackInfo info) {
         if (player.hasStatusEffect(EffectInit.FAME) && !player.hasStatusEffect(StatusEffects.HERO_OF_THE_VILLAGE)) {
             Iterator<TradeOffer> var5 = this.getOffers().iterator();
 

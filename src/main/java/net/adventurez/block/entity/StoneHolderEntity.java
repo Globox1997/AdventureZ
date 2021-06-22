@@ -20,7 +20,7 @@ import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.inventory.Inventories;
 import net.minecraft.inventory.Inventory;
 import net.minecraft.item.ItemStack;
-import net.minecraft.nbt.CompoundTag;
+import net.minecraft.nbt.NbtCompound;
 import net.minecraft.particle.ParticleTypes;
 import net.minecraft.server.world.ServerWorld;
 import net.minecraft.sound.SoundCategory;
@@ -30,37 +30,44 @@ import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Direction;
 import net.minecraft.world.World;
 import net.minecraft.util.ItemScatterer;
-import net.minecraft.util.Tickable;
 
-public class StoneHolderEntity extends BlockEntity implements Tickable, Inventory, BlockEntityClientSerializable {
+public class StoneHolderEntity extends BlockEntity implements Inventory, BlockEntityClientSerializable {
   private DefaultedList<ItemStack> inventory;
   private boolean startBuildingGolem = false;
   private int buildGolemCounter = 0;
   private int tickCounter = 0;
 
-  public StoneHolderEntity() {
-    super(BlockInit.STONE_HOLDER_ENTITY);
+  public StoneHolderEntity(BlockPos pos, BlockState state) {
+    super(BlockInit.STONE_HOLDER_ENTITY, pos, state);
     this.inventory = DefaultedList.ofSize(1, ItemStack.EMPTY);
   }
 
   @Override
-  public void fromTag(BlockState state, CompoundTag tag) {
-    super.fromTag(state, tag);
+  public void readNbt(NbtCompound nbt) {
+    super.readNbt(nbt);
     inventory.clear();
-    Inventories.fromTag(tag, inventory);
-    buildGolemCounter = tag.getInt("buildcounter");
-    tickCounter = tag.getInt("tickcounter");
-    startBuildingGolem = tag.getBoolean("startbuilding");
+    Inventories.readNbt(nbt, inventory);
+    buildGolemCounter = nbt.getInt("buildcounter");
+    tickCounter = nbt.getInt("tickcounter");
+    startBuildingGolem = nbt.getBoolean("startbuilding");
   }
 
   @Override
-  public CompoundTag toTag(CompoundTag tag) {
-    super.toTag(tag);
-    Inventories.toTag(tag, inventory);
-    tag.putInt("buildcounter", buildGolemCounter);
-    tag.putInt("tickcounter", tickCounter);
-    tag.putBoolean("startbuilding", startBuildingGolem);
-    return tag;
+  public NbtCompound writeNbt(NbtCompound nbt) {
+    super.writeNbt(nbt);
+    Inventories.writeNbt(nbt, inventory);
+    nbt.putInt("buildcounter", buildGolemCounter);
+    nbt.putInt("tickcounter", tickCounter);
+    nbt.putBoolean("startbuilding", startBuildingGolem);
+    return nbt;
+  }
+
+  public static void clientTick(World world, BlockPos pos, BlockState state, StoneHolderEntity blockEntity) {
+    blockEntity.tick();
+  }
+
+  public static void serverTick(World world, BlockPos pos, BlockState state, StoneHolderEntity blockEntity) {
+    blockEntity.tick();
   }
 
   public boolean isValid(World world, BlockPos pos, BlockState state) {
@@ -70,7 +77,7 @@ public class StoneHolderEntity extends BlockEntity implements Tickable, Inventor
     for (stoneCounter = 1; stoneCounter < 10; stoneCounter++) {
       for (stoneCounter2 = -4; stoneCounter2 < 5; stoneCounter2++) {
         BlockState stoneState = world.getBlockState(pos.north(stoneCounter).east(stoneCounter2));
-        if (stoneState.getBlock().isIn(TagInit.PLATFORM_NETHER_BLOCKS)) {
+        if (stoneState.isIn(TagInit.PLATFORM_NETHER_BLOCKS)) {
           stoneCounter3++;
         }
       }
@@ -81,7 +88,6 @@ public class StoneHolderEntity extends BlockEntity implements Tickable, Inventor
     return false;
   }
 
-  @Override
   public void tick() {
     if (!this.isEmpty()) {
       if (!world.getBlockState(pos.up()).isAir()) {
@@ -109,14 +115,11 @@ public class StoneHolderEntity extends BlockEntity implements Tickable, Inventor
     BlockState north = world.getBlockState(pos.north(10));
     BlockState east = world.getBlockState(pos.east(5).north(5));
     BlockState west = world.getBlockState(pos.west(5).north(5));
-    if (north.getBlock() == BlockInit.STONE_HOLDER_BLOCK && east.getBlock() == BlockInit.STONE_HOLDER_BLOCK
-        && west.getBlock() == BlockInit.STONE_HOLDER_BLOCK) {
+    if (north.getBlock() == BlockInit.STONE_HOLDER_BLOCK && east.getBlock() == BlockInit.STONE_HOLDER_BLOCK && west.getBlock() == BlockInit.STONE_HOLDER_BLOCK) {
       if (world.isClient) {
         // Visuals?
       }
-      if (!this.isEmpty() && !BlockInit.STONE_HOLDER_ENTITY.get(world, secondHolderPos).isEmpty()
-          && !BlockInit.STONE_HOLDER_ENTITY.get(world, thirdHolderPos).isEmpty()
-          && !BlockInit.STONE_HOLDER_ENTITY.get(world, fourthHolderPos).isEmpty()) {
+      if (!this.isEmpty() && !BlockInit.STONE_HOLDER_ENTITY.get(world, secondHolderPos).isEmpty() && !BlockInit.STONE_HOLDER_ENTITY.get(world, thirdHolderPos).isEmpty() && !BlockInit.STONE_HOLDER_ENTITY.get(world, fourthHolderPos).isEmpty()) {
         if (this.isValid(world, pos, state)) {
           BlockInit.STONE_HOLDER_ENTITY.get(world, pos.north(10)).clear();
           BlockInit.STONE_HOLDER_ENTITY.get(world, pos.east(5).north(5)).clear();
@@ -162,10 +165,8 @@ public class StoneHolderEntity extends BlockEntity implements Tickable, Inventor
       if (buildGolemCounter == 30) {
         world.setBlockState(pos.up().north(2).east(2), Blocks.BLACKSTONE_STAIRS.getDefaultState(), 3);
         world.setBlockState(pos.up().north(2).west(2), Blocks.BLACKSTONE_STAIRS.getDefaultState(), 3);
-        world.setBlockState(pos.up().north(3).east(2), Blocks.BLACKSTONE_STAIRS.getDefaultState()
-            .with(StairsBlock.HALF, BlockHalf.TOP).with(StairsBlock.FACING, Direction.SOUTH), 3);
-        world.setBlockState(pos.up().north(3).west(2), Blocks.BLACKSTONE_STAIRS.getDefaultState()
-            .with(StairsBlock.HALF, BlockHalf.TOP).with(StairsBlock.FACING, Direction.SOUTH), 3);
+        world.setBlockState(pos.up().north(3).east(2), Blocks.BLACKSTONE_STAIRS.getDefaultState().with(StairsBlock.HALF, BlockHalf.TOP).with(StairsBlock.FACING, Direction.SOUTH), 3);
+        world.setBlockState(pos.up().north(3).west(2), Blocks.BLACKSTONE_STAIRS.getDefaultState().with(StairsBlock.HALF, BlockHalf.TOP).with(StairsBlock.FACING, Direction.SOUTH), 3);
         world.setBlockState(pos.up().north(7).east(), Blocks.BLACKSTONE.getDefaultState(), 3);
         world.setBlockState(pos.up().north(7).west(), Blocks.BLACKSTONE.getDefaultState(), 3);
         world.playSound(null, pos, SoundEvents.BLOCK_STONE_PLACE, SoundCategory.BLOCKS, 1F, 1F);
@@ -174,14 +175,10 @@ public class StoneHolderEntity extends BlockEntity implements Tickable, Inventor
       if (buildGolemCounter == 60) {
         world.setBlockState(pos.up(2).north(3).east(2), Blocks.BLACKSTONE_STAIRS.getDefaultState(), 3);
         world.setBlockState(pos.up(2).north(3).west(2), Blocks.BLACKSTONE_STAIRS.getDefaultState(), 3);
-        world.setBlockState(pos.up(2).north(4).east(2), Blocks.BLACKSTONE_STAIRS.getDefaultState()
-            .with(StairsBlock.HALF, BlockHalf.TOP).with(StairsBlock.FACING, Direction.SOUTH), 3);
-        world.setBlockState(pos.up(2).north(4).west(2), Blocks.BLACKSTONE_STAIRS.getDefaultState()
-            .with(StairsBlock.HALF, BlockHalf.TOP).with(StairsBlock.FACING, Direction.SOUTH), 3);
-        world.setBlockState(pos.up(2).north(6).east(),
-            Blocks.BLACKSTONE_SLAB.getDefaultState().with(SlabBlock.TYPE, SlabType.TOP), 3);
-        world.setBlockState(pos.up(2).north(6).west(),
-            Blocks.BLACKSTONE_SLAB.getDefaultState().with(SlabBlock.TYPE, SlabType.TOP), 3);
+        world.setBlockState(pos.up(2).north(4).east(2), Blocks.BLACKSTONE_STAIRS.getDefaultState().with(StairsBlock.HALF, BlockHalf.TOP).with(StairsBlock.FACING, Direction.SOUTH), 3);
+        world.setBlockState(pos.up(2).north(4).west(2), Blocks.BLACKSTONE_STAIRS.getDefaultState().with(StairsBlock.HALF, BlockHalf.TOP).with(StairsBlock.FACING, Direction.SOUTH), 3);
+        world.setBlockState(pos.up(2).north(6).east(), Blocks.BLACKSTONE_SLAB.getDefaultState().with(SlabBlock.TYPE, SlabType.TOP), 3);
+        world.setBlockState(pos.up(2).north(6).west(), Blocks.BLACKSTONE_SLAB.getDefaultState().with(SlabBlock.TYPE, SlabType.TOP), 3);
         world.setBlockState(pos.up(2).north(7).east(), Blocks.BLACKSTONE.getDefaultState(), 3);
         world.setBlockState(pos.up(2).north(7).west(), Blocks.BLACKSTONE.getDefaultState(), 3);
         world.playSound(null, pos, SoundEvents.BLOCK_STONE_PLACE, SoundCategory.BLOCKS, 1F, 1F);
@@ -194,10 +191,8 @@ public class StoneHolderEntity extends BlockEntity implements Tickable, Inventor
         world.setBlockState(pos.up(3).north(5).west(2), Blocks.BLACKSTONE.getDefaultState(), 3);
         world.setBlockState(pos.up(3).north(6).east(2), Blocks.BLACKSTONE.getDefaultState(), 3);
         world.setBlockState(pos.up(3).north(6).west(2), Blocks.BLACKSTONE.getDefaultState(), 3);
-        world.setBlockState(pos.up(3).north(7).east(),
-            Blocks.BLACKSTONE_STAIRS.getDefaultState().with(StairsBlock.FACING, Direction.SOUTH), 3);
-        world.setBlockState(pos.up(3).north(7).west(),
-            Blocks.BLACKSTONE_STAIRS.getDefaultState().with(StairsBlock.FACING, Direction.SOUTH), 3);
+        world.setBlockState(pos.up(3).north(7).east(), Blocks.BLACKSTONE_STAIRS.getDefaultState().with(StairsBlock.FACING, Direction.SOUTH), 3);
+        world.setBlockState(pos.up(3).north(7).west(), Blocks.BLACKSTONE_STAIRS.getDefaultState().with(StairsBlock.FACING, Direction.SOUTH), 3);
         for (int i = -1; i < 2; i++) {
           world.setBlockState(pos.up(3).north(5).east(i), Blocks.BLACKSTONE.getDefaultState(), 3);
           world.setBlockState(pos.up(3).north(6).east(i), Blocks.BLACKSTONE.getDefaultState(), 3);
@@ -206,18 +201,13 @@ public class StoneHolderEntity extends BlockEntity implements Tickable, Inventor
       }
       // Fourth Layer
       if (buildGolemCounter == 120) {
-        world.setBlockState(pos.up(4).north(5).east(2),
-            Blocks.BLACKSTONE_STAIRS.getDefaultState().with(StairsBlock.FACING, Direction.WEST), 3);
-        world.setBlockState(pos.up(4).north(5).west(2),
-            Blocks.BLACKSTONE_STAIRS.getDefaultState().with(StairsBlock.FACING, Direction.EAST), 3);
-        world.setBlockState(pos.up(4).north(6).east(2), Blocks.BLACKSTONE_STAIRS.getDefaultState()
-            .with(StairsBlock.FACING, Direction.WEST).with(StairsBlock.SHAPE, StairShape.OUTER_LEFT), 3);
-        world.setBlockState(pos.up(4).north(6).west(2), Blocks.BLACKSTONE_STAIRS.getDefaultState()
-            .with(StairsBlock.FACING, Direction.EAST).with(StairsBlock.SHAPE, StairShape.OUTER_RIGHT), 3);
+        world.setBlockState(pos.up(4).north(5).east(2), Blocks.BLACKSTONE_STAIRS.getDefaultState().with(StairsBlock.FACING, Direction.WEST), 3);
+        world.setBlockState(pos.up(4).north(5).west(2), Blocks.BLACKSTONE_STAIRS.getDefaultState().with(StairsBlock.FACING, Direction.EAST), 3);
+        world.setBlockState(pos.up(4).north(6).east(2), Blocks.BLACKSTONE_STAIRS.getDefaultState().with(StairsBlock.FACING, Direction.WEST).with(StairsBlock.SHAPE, StairShape.OUTER_LEFT), 3);
+        world.setBlockState(pos.up(4).north(6).west(2), Blocks.BLACKSTONE_STAIRS.getDefaultState().with(StairsBlock.FACING, Direction.EAST).with(StairsBlock.SHAPE, StairShape.OUTER_RIGHT), 3);
         for (int i = -1; i < 2; i++) {
           world.setBlockState(pos.up(4).north(5).east(i), Blocks.BLACKSTONE.getDefaultState(), 3);
-          world.setBlockState(pos.up(4).north(6).east(i),
-              Blocks.BLACKSTONE_STAIRS.getDefaultState().with(StairsBlock.FACING, Direction.SOUTH), 3);
+          world.setBlockState(pos.up(4).north(6).east(i), Blocks.BLACKSTONE_STAIRS.getDefaultState().with(StairsBlock.FACING, Direction.SOUTH), 3);
         }
         world.setBlockState(pos.up(4).north(4), Blocks.BLACKSTONE.getDefaultState(), 3);
         world.setBlockState(pos.up(5).north(4), Blocks.BLACKSTONE_SLAB.getDefaultState(), 3);
@@ -234,8 +224,7 @@ public class StoneHolderEntity extends BlockEntity implements Tickable, Inventor
         StoneGolemEntity stoneGolemEntity = (StoneGolemEntity) EntityInit.STONEGOLEM_ENTITY.create(world);
         BlockPos spawnPos = new BlockPos(pos.getX(), pos.getY() + 1, pos.getZ() - 5);
         stoneGolemEntity.refreshPositionAndAngles(spawnPos, 0.0F, 0.0F);
-        stoneGolemEntity.initialize(((ServerWorld) this.world), this.world.getLocalDifficulty(pos),
-            SpawnReason.STRUCTURE, null, null);
+        stoneGolemEntity.initialize(((ServerWorld) this.world), this.world.getLocalDifficulty(pos), SpawnReason.STRUCTURE, null, null);
         stoneGolemEntity.sendtoEntity();
         world.spawnEntity(stoneGolemEntity);
         world.playSound(null, pos, SoundInit.GOLEM_SPAWN_EVENT, SoundCategory.HOSTILE, 1F, 1F);
@@ -355,17 +344,16 @@ public class StoneHolderEntity extends BlockEntity implements Tickable, Inventor
   }
 
   @Override
-  public void fromClientTag(CompoundTag tag) {
+  public void fromClientTag(NbtCompound tag) {
     inventory.clear();
-    Inventories.fromTag(tag, inventory);
+    Inventories.readNbt(tag, inventory);
     buildGolemCounter = tag.getInt("buildcounter");
     startBuildingGolem = tag.getBoolean("startbuilding");
   }
 
   @Override
-  public CompoundTag toClientTag(CompoundTag tag) {
-    super.toTag(tag);
-    Inventories.toTag(tag, inventory);
+  public NbtCompound toClientTag(NbtCompound tag) {
+    Inventories.writeNbt(tag, inventory);
     tag.putInt("buildcounter", buildGolemCounter);
     tag.putBoolean("startbuilding", startBuildingGolem);
     return tag;

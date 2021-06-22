@@ -34,18 +34,18 @@ import net.minecraft.entity.mob.MobEntity;
 import net.minecraft.entity.mob.PathAwareEntity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.Items;
-import net.minecraft.nbt.CompoundTag;
+import net.minecraft.nbt.NbtCompound;
 import net.minecraft.recipe.Ingredient;
 import net.minecraft.server.world.ServerWorld;
 import net.minecraft.sound.SoundEvent;
 import net.minecraft.sound.SoundEvents;
 import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.math.IntRange;
+import net.minecraft.util.math.intprovider.UniformIntProvider;
 import net.minecraft.world.World;
 import net.minecraft.world.WorldAccess;
 
 public class BrownFungusEntity extends PathAwareEntity implements Angerable {
-    private static final IntRange ANGER_TIME_RANGE;
+    private static final UniformIntProvider ANGER_TIME_RANGE;
     private int angerTime;
     private UUID angryAt;
 
@@ -63,19 +63,16 @@ public class BrownFungusEntity extends PathAwareEntity implements Angerable {
         this.goalSelector.add(6, new LookAtEntityGoal(this, PlayerEntity.class, 6.0F));
         this.goalSelector.add(7, new LookAroundGoal(this));
         this.targetSelector.add(1, new UniversalAngerGoal<>(this, true));
-        this.targetSelector.add(2,
-                new FollowTargetGoal<>(this, PlayerEntity.class, 10, true, false, this::shouldAngerAt));
+        this.targetSelector.add(2, new FollowTargetGoal<>(this, PlayerEntity.class, 10, true, false, this::shouldAngerAt));
         this.targetSelector.add(3, (new RevengeGoal(this, new Class[0])).setGroupRevenge());
     }
 
     public static DefaultAttributeContainer.Builder createBrownFungusAttributes() {
-        return MobEntity.createMobAttributes().add(EntityAttributes.GENERIC_MAX_HEALTH, 10.0D)
-                .add(EntityAttributes.GENERIC_MOVEMENT_SPEED, 0.2D).add(EntityAttributes.GENERIC_ATTACK_DAMAGE, 1.0D)
+        return MobEntity.createMobAttributes().add(EntityAttributes.GENERIC_MAX_HEALTH, 10.0D).add(EntityAttributes.GENERIC_MOVEMENT_SPEED, 0.2D).add(EntityAttributes.GENERIC_ATTACK_DAMAGE, 1.0D)
                 .add(EntityAttributes.GENERIC_FOLLOW_RANGE, 32.0D);
     }
 
-    public static boolean canSpawn(EntityType<BrownFungusEntity> type, WorldAccess world, SpawnReason spawnReason,
-            BlockPos pos, Random random) {
+    public static boolean canSpawn(EntityType<BrownFungusEntity> type, WorldAccess world, SpawnReason spawnReason, BlockPos pos, Random random) {
         return world.getBlockState(pos.down()).isOf(Blocks.MYCELIUM) && world.getBaseLightLevel(pos, 0) > 8;
     }
 
@@ -100,15 +97,15 @@ public class BrownFungusEntity extends PathAwareEntity implements Angerable {
     }
 
     @Override
-    public void writeCustomDataToTag(CompoundTag tag) {
-        super.writeCustomDataToTag(tag);
-        this.angerToTag(tag);
+    public void writeCustomDataToNbt(NbtCompound nbt) {
+        super.writeCustomDataToNbt(nbt);
+        this.writeAngerToNbt(nbt);
     }
 
     @Override
-    public void readCustomDataFromTag(CompoundTag tag) {
-        super.readCustomDataFromTag(tag);
-        this.angerFromTag((ServerWorld) this.world, tag);
+    public void readCustomDataFromNbt(NbtCompound nbt) {
+        super.readCustomDataFromNbt(nbt);
+        this.readAngerFromNbt((ServerWorld) this.world, nbt);
     }
 
     @Override
@@ -117,8 +114,7 @@ public class BrownFungusEntity extends PathAwareEntity implements Angerable {
         if (!this.world.isClient) {
             this.tickAngerLogic((ServerWorld) this.world, true);
             int randomMushroom = this.world.random.nextInt(20000);
-            if (randomMushroom == 1997 && world.getBlockState(this.getBlockPos().down()).isOf(Blocks.MYCELIUM)
-                    && this.world.getBlockState(this.getBlockPos()).isAir()) {
+            if (randomMushroom == 1997 && world.getBlockState(this.getBlockPos().down()).isOf(Blocks.MYCELIUM) && this.world.getBlockState(this.getBlockPos()).isAir()) {
                 this.world.setBlockState(this.getBlockPos(), Blocks.BROWN_MUSHROOM.getDefaultState());
             }
         }
@@ -136,7 +132,7 @@ public class BrownFungusEntity extends PathAwareEntity implements Angerable {
 
     @Override
     public void chooseRandomAngerTime() {
-        this.setAngerTime(ANGER_TIME_RANGE.choose(this.random));
+        this.setAngerTime(ANGER_TIME_RANGE.get(this.random));
     }
 
     @Override
@@ -170,15 +166,15 @@ public class BrownFungusEntity extends PathAwareEntity implements Angerable {
     }
 
     @Override
-    public void dealDamage(LivingEntity attacker, Entity target) {
-        LivingEntity livingEntity = (LivingEntity) target;
-        int randomPoison = this.world.random.nextInt(160);
-        if (randomPoison > 120) {
-            StatusEffectInstance statusEffectInstance = new StatusEffectInstance(StatusEffect.byRawId(19), randomPoison,
-                    0, false, false);
-            livingEntity.addStatusEffect(statusEffectInstance);
+    public boolean tryAttack(Entity target) {
+        if (!super.tryAttack(target)) {
+            return false;
+        } else {
+            if (!this.world.isClient && target instanceof LivingEntity && this.world.random.nextInt(160) > 100) {
+                ((LivingEntity) target).addStatusEffect(new StatusEffectInstance(StatusEffect.byRawId(19), 80 + this.world.random.nextInt(100), 0, false, false), this);
+            }
+            return true;
         }
-
     }
 
     static {

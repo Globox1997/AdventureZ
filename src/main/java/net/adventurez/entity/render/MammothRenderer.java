@@ -2,9 +2,10 @@ package net.adventurez.entity.render;
 
 import net.adventurez.entity.MammothEntity;
 import net.adventurez.entity.model.MammothModel;
+import net.adventurez.init.RenderInit;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
-import net.minecraft.client.render.entity.EntityRenderDispatcher;
+import net.minecraft.client.render.entity.EntityRendererFactory;
 import net.minecraft.client.render.entity.MobEntityRenderer;
 import net.minecraft.client.util.math.MatrixStack;
 import net.minecraft.util.Identifier;
@@ -13,8 +14,8 @@ import net.minecraft.util.Identifier;
 public class MammothRenderer extends MobEntityRenderer<MammothEntity, MammothModel<MammothEntity>> {
     private static final Identifier TEXTURE = new Identifier("adventurez:textures/entity/mammoth.png");
 
-    public MammothRenderer(EntityRenderDispatcher entityRenderDispatcher) {
-        super(entityRenderDispatcher, new MammothModel<>(), 1.2F);
+    public MammothRenderer(EntityRendererFactory.Context context) {
+        super(context, new MammothModel<>(context.getPart(RenderInit.MAMMOTH_LAYER)), 1.2F);
     }
 
     @Override

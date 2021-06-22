@@ -15,20 +15,16 @@ import net.minecraft.client.util.math.MatrixStack;
 
 @Environment(EnvType.CLIENT)
 public class NightmareEyesFeatureRenderer extends FeatureRenderer<NightmareEntity, HorseEntityModel<NightmareEntity>> {
-  private static final RenderLayer EYE_LAYER = ExtraRenderLayer
-      .getGlowing("adventurez:textures/entity/feature/nightmare_eyes_feature.png");
+    private static final RenderLayer EYE_LAYER = ExtraRenderLayer.getGlowing("adventurez:textures/entity/feature/nightmare_eyes_feature.png");
 
-  public NightmareEyesFeatureRenderer(
-      FeatureRendererContext<NightmareEntity, HorseEntityModel<NightmareEntity>> featureRendererContext) {
-    super(featureRendererContext);
-  }
+    public NightmareEyesFeatureRenderer(FeatureRendererContext<NightmareEntity, HorseEntityModel<NightmareEntity>> featureRendererContext) {
+        super(featureRendererContext);
+    }
 
-  @Override
-  public void render(MatrixStack matrixStack, VertexConsumerProvider vertexConsumerProvider, int i,
-      NightmareEntity nightmareEntity, float f, float g, float h, float j, float k, float l) {
-    VertexConsumer vertexConsumer = vertexConsumerProvider.getBuffer(EYE_LAYER);
-    this.getContextModel().render(matrixStack, vertexConsumer, 15728640, OverlayTexture.DEFAULT_UV, 1.0F, 1.0F, 1.0F,
-        1.0F);
-  }
+    @Override
+    public void render(MatrixStack matrixStack, VertexConsumerProvider vertexConsumerProvider, int i, NightmareEntity nightmareEntity, float f, float g, float h, float j, float k, float l) {
+        VertexConsumer vertexConsumer = vertexConsumerProvider.getBuffer(EYE_LAYER);
+        this.getContextModel().render(matrixStack, vertexConsumer, 15728640, OverlayTexture.DEFAULT_UV, 1.0F, 1.0F, 1.0F, 1.0F);
+    }
 
 }

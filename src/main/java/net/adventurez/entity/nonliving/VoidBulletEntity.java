@@ -31,20 +31,18 @@ public class VoidBulletEntity extends ExplosiveProjectileEntity {
     }
 
     @Environment(EnvType.CLIENT)
-    public VoidBulletEntity(World world, double x, double y, double z, double velocityX, double velocityY,
-            double velocityZ) {
+    public VoidBulletEntity(World world, double x, double y, double z, double velocityX, double velocityY, double velocityZ) {
         this(EntityInit.VOID_BULLET_ENTITY, world);
-        this.refreshPositionAndAngles(x, y, z, this.yaw, this.pitch);
+        this.refreshPositionAndAngles(x, y, z, this.getYaw(), this.getPitch());
         this.setVelocity(velocityX, velocityY, velocityZ);
     }
 
     public VoidBulletEntity(World world, LivingEntity owner, double velocityX, double velocityY, double velocityZ) {
         super(EntityInit.VOID_BULLET_ENTITY, owner, velocityX, velocityY, velocityZ, world);
-        this.refreshPositionAndAngles(owner.getX() + velocityX * 1.2D,
-                owner.getY() + owner.getBoundingBox().getYLength() * 0.6D + velocityY * 1.2D,
-                owner.getZ() + velocityZ * 1.2D, -owner.yaw, owner.pitch);
-        this.prevPitch = owner.pitch;
-        this.prevYaw = -owner.yaw;
+        this.refreshPositionAndAngles(owner.getX() + velocityX * 1.2D, owner.getY() + owner.getBoundingBox().getYLength() * 0.6D + velocityY * 1.2D, owner.getZ() + velocityZ * 1.2D, -owner.getYaw(),
+                owner.getPitch());
+        this.prevPitch = owner.getPitch();
+        this.prevYaw = -owner.getYaw();
 
     }
 
@@ -68,7 +66,7 @@ public class VoidBulletEntity extends ExplosiveProjectileEntity {
         super.tick();
         removeTicker++;
         if (removeTicker >= 80) {
-            this.remove();
+            this.discard();
         }
     }
 
@@ -95,7 +93,7 @@ public class VoidBulletEntity extends ExplosiveProjectileEntity {
         if (!this.world.isClient && entity != null && !(hittedEntity instanceof VoidShadeEntity)) {
             this.playSound(SoundEvents.ENTITY_ENDER_EYE_DEATH, 1.0F, 1.0F);
             hittedEntity.damage(createDamageSource(this), 4.0F);
-            this.remove();
+            this.discard();
         }
 
     }
@@ -107,7 +105,7 @@ public class VoidBulletEntity extends ExplosiveProjectileEntity {
     @Override
     public void onBlockHit(BlockHitResult blockHitResult) {
         super.onBlockHit(blockHitResult);
-        this.remove();
+        this.discard();
     }
 
     @Override

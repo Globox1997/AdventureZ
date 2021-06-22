@@ -6,6 +6,7 @@ import org.spongepowered.asm.mixin.gen.Accessor;
 
 @Mixin(FallingBlockEntity.class)
 public interface FallingBlockAccessor {
+
     @Accessor("destroyedOnLanding")
     void setDestroyedOnLanding(boolean destroyedOnLanding);
 }

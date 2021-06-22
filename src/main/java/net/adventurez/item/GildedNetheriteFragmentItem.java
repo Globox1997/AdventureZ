@@ -13,17 +13,17 @@ import net.minecraft.world.World;
 
 public class GildedNetheriteFragmentItem extends Item {
 
-  public GildedNetheriteFragmentItem(Settings settings) {
-    super(settings);
-  }
-
-  @Override
-  public void appendTooltip(ItemStack itemStack, World world, List<Text> tooltip, TooltipContext tooltipContext) {
-    super.appendTooltip(itemStack, world, tooltip, tooltipContext);
-    tooltip.add(new TranslatableText("item.adventurez.moreinfo.tooltip"));
-    if (InputUtil.isKeyPressed(MinecraftClient.getInstance().getWindow().getHandle(), 340)) {
-      tooltip.remove(new TranslatableText("item.adventurez.moreinfo.tooltip"));
-      tooltip.add(new TranslatableText("item.adventurez.gilded_netherite_fragment.tooltip2"));
+    public GildedNetheriteFragmentItem(Settings settings) {
+        super(settings);
     }
-  }
+
+    @Override
+    public void appendTooltip(ItemStack itemStack, World world, List<Text> tooltip, TooltipContext tooltipContext) {
+        super.appendTooltip(itemStack, world, tooltip, tooltipContext);
+        tooltip.add(new TranslatableText("item.adventurez.moreinfo.tooltip"));
+        if (InputUtil.isKeyPressed(MinecraftClient.getInstance().getWindow().getHandle(), 340)) {
+            tooltip.remove(new TranslatableText("item.adventurez.moreinfo.tooltip"));
+            tooltip.add(new TranslatableText("item.adventurez.gilded_netherite_fragment.tooltip2"));
+        }
+    }
 }

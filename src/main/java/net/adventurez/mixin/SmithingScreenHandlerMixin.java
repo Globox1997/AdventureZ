@@ -13,7 +13,7 @@ import net.minecraft.entity.player.PlayerInventory;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.Items;
-import net.minecraft.nbt.CompoundTag;
+import net.minecraft.nbt.NbtCompound;
 import net.minecraft.screen.ForgingScreenHandler;
 import net.minecraft.screen.ScreenHandlerContext;
 import net.minecraft.screen.ScreenHandlerType;
@@ -25,8 +25,7 @@ import net.minecraft.util.registry.Registry;
 public abstract class SmithingScreenHandlerMixin extends ForgingScreenHandler {
     private int repairedAmount;
 
-    public SmithingScreenHandlerMixin(ScreenHandlerType<?> type, int syncId, PlayerInventory playerInventory,
-            ScreenHandlerContext context) {
+    public SmithingScreenHandlerMixin(ScreenHandlerType<?> type, int syncId, PlayerInventory playerInventory, ScreenHandlerContext context) {
         super(type, syncId, playerInventory, context);
     }
 
@@ -38,7 +37,7 @@ public abstract class SmithingScreenHandlerMixin extends ForgingScreenHandler {
             if (itemStack.getItem() == Items.BOOK && itemStack2.getItem() == ItemInit.ORC_SKIN) {
                 Item item = (Item) Registry.ITEM.get(new Identifier("patchouli:guide_book"));
                 ItemStack itemStack3 = new ItemStack(item);
-                CompoundTag tag = new CompoundTag();
+                NbtCompound tag = new NbtCompound();
                 tag.putString("patchouli:book", "adventurez:adventurez");
                 itemStack3.setTag(tag);
                 this.output.setStack(0, itemStack3);
@@ -50,8 +49,7 @@ public abstract class SmithingScreenHandlerMixin extends ForgingScreenHandler {
             ItemStack itemStack2 = this.input.getStack(1);
             if (itemStack2.getItem() == Items.ENDER_PEARL) {
                 ItemStack itemStack3 = new ItemStack(ItemInit.PRIME_EYE);
-                repairedAmount = itemStack2.getCount() > itemStack.getDamage() ? itemStack.getDamage()
-                        : itemStack2.getCount();
+                repairedAmount = itemStack2.getCount() > itemStack.getDamage() ? itemStack.getDamage() : itemStack2.getCount();
                 itemStack3.setDamage(itemStack.getDamage() - repairedAmount);
                 this.output.setStack(0, itemStack3);
                 info.cancel();
@@ -78,7 +76,7 @@ public abstract class SmithingScreenHandlerMixin extends ForgingScreenHandler {
     }
 
     @Inject(method = "onTakeOutput", at = @At("HEAD"))
-    public void onTakeOutputMixin(PlayerEntity player, ItemStack stack, CallbackInfoReturnable<ItemStack> info) {
+    public void onTakeOutputMixin(PlayerEntity player, ItemStack stack, CallbackInfo info) {
         ItemStack itemStack = this.input.getStack(0);
         if (itemStack.getItem() == ItemInit.PRIME_EYE) {
             ItemStack itemStack2 = this.input.getStack(1);

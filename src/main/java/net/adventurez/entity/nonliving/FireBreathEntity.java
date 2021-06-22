@@ -34,17 +34,15 @@ public class FireBreathEntity extends ExplosiveProjectileEntity {
     }
 
     @Environment(EnvType.CLIENT)
-    public FireBreathEntity(World world, double x, double y, double z, double velocityX, double velocityY,
-            double velocityZ) {
+    public FireBreathEntity(World world, double x, double y, double z, double velocityX, double velocityY, double velocityZ) {
         this(EntityInit.FIRE_BREATH_ENTITY, world);
-        this.refreshPositionAndAngles(x, y, z, this.yaw, this.pitch);
+        this.refreshPositionAndAngles(x, y, z, this.getYaw(), this.getPitch());
         this.setVelocity(velocityX, velocityY, velocityZ);
     }
 
     public FireBreathEntity(World world, LivingEntity owner, double velocityX, double velocityY, double velocityZ) {
         super(EntityInit.FIRE_BREATH_ENTITY, owner, velocityX, velocityY, velocityZ, world);
-        Vec3d newVec3d = this.getVelocity().normalize().add(this.random.nextGaussian() * 0.1D,
-                -this.random.nextDouble() * 0.1D, this.random.nextGaussian() * 0.1D);
+        Vec3d newVec3d = this.getVelocity().normalize().add(this.random.nextGaussian() * 0.1D, -this.random.nextDouble() * 0.1D, this.random.nextGaussian() * 0.1D);
         this.setVelocity(newVec3d);
     }
 
@@ -71,13 +69,12 @@ public class FireBreathEntity extends ExplosiveProjectileEntity {
                 double d = (double) world.random.nextGaussian() * 0.01D;
                 double e = (double) world.random.nextGaussian() * 0.01D;
                 double f = (double) world.random.nextGaussian() * 0.01D;
-                this.world.addParticle(ParticleTypes.FLAME, this.getParticleX(1.0D), this.getRandomBodyY(),
-                        this.getParticleZ(1.0D), d, e, f);
+                this.world.addParticle(ParticleTypes.FLAME, this.getParticleX(1.0D), this.getRandomBodyY(), this.getParticleZ(1.0D), d, e, f);
             }
         }
         removeTicker++;
         if (!this.world.isClient && removeTicker >= 80) {
-            this.remove();
+            this.discard();
         }
     }
 
@@ -104,7 +101,7 @@ public class FireBreathEntity extends ExplosiveProjectileEntity {
         if (!this.world.isClient && entity != null && hittedEntity instanceof LivingEntity) {
             hittedEntity.setOnFireFor(8);
             hittedEntity.damage(createDamageSource(this), 3.0F);
-            this.remove();
+            this.discard();
         }
 
     }
@@ -118,14 +115,13 @@ public class FireBreathEntity extends ExplosiveProjectileEntity {
         super.onBlockHit(blockHitResult);
         if (!this.world.isClient) {
             Entity entity = this.getOwner();
-            if (entity == null || !(entity instanceof MobEntity)
-                    || this.world.getGameRules().getBoolean(GameRules.DO_MOB_GRIEFING)) {
+            if (entity == null || !(entity instanceof MobEntity) || this.world.getGameRules().getBoolean(GameRules.DO_MOB_GRIEFING)) {
                 BlockPos blockPos = blockHitResult.getBlockPos().offset(blockHitResult.getSide());
                 if (this.world.isAir(blockPos)) {
                     this.world.setBlockState(blockPos, AbstractFireBlock.getState(this.world, blockPos));
                 }
             }
-            this.remove();
+            this.discard();
         }
 
     }

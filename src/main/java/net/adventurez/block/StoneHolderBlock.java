@@ -2,6 +2,9 @@ package net.adventurez.block;
 
 import java.util.List;
 
+import net.adventurez.init.BlockInit;
+import net.minecraft.block.entity.BlockEntityTicker;
+import net.minecraft.block.entity.BlockEntityType;
 import org.jetbrains.annotations.Nullable;
 
 import net.adventurez.block.entity.StoneHolderEntity;
@@ -32,81 +35,90 @@ import net.minecraft.world.BlockView;
 import net.minecraft.world.World;
 
 public class StoneHolderBlock extends Block implements BlockEntityProvider {
-  private static final VoxelShape SHAPE;
+    private static final VoxelShape SHAPE;
 
-  public StoneHolderBlock(Settings settings) {
-    super(settings);
-  }
-
-  @Override
-  public BlockEntity createBlockEntity(BlockView view) {
-    return new StoneHolderEntity();
-  }
-
-  @Override
-  @Environment(EnvType.CLIENT)
-  public void appendTooltip(ItemStack stack, @Nullable BlockView world, List<Text> tooltip, TooltipContext options) {
-    tooltip.add(new TranslatableText("item.adventurez.moreinfo.tooltip"));
-    if (InputUtil.isKeyPressed(MinecraftClient.getInstance().getWindow().getHandle(), 340)) {
-      tooltip.remove(new TranslatableText("item.adventurez.moreinfo.tooltip"));
-      tooltip.add(new TranslatableText("block.adventurez.stone_holder_block.tooltip"));
-      tooltip.add(new TranslatableText("block.adventurez.stone_holder_block.tooltip2"));
-      tooltip.add(new TranslatableText("block.adventurez.stone_holder_block.tooltip3"));
+    public StoneHolderBlock(Settings settings) {
+        super(settings);
     }
-  }
 
-  @Override
-  public ActionResult onUse(BlockState state, World world, BlockPos pos, PlayerEntity player, Hand hand,
-      BlockHitResult hit) {
-    Inventory blockEntity = (Inventory) world.getBlockEntity(pos);
-    ItemStack stack = blockEntity.getStack(0);
-    if (!world.getBlockState(pos.up()).isAir()) {
-      return ActionResult.PASS;
+    @Override
+    public BlockEntity createBlockEntity(BlockPos pos, BlockState state) {
+        return new StoneHolderEntity(pos, state);
     }
-    if (!stack.isEmpty()) {
-      if (!player.getMainHandStack().isEmpty()) {
-        return ActionResult.FAIL;
-      }
-      player.giveItemStack(stack);
-      blockEntity.clear();
-      return ActionResult.SUCCESS;
-    } else {
-      ItemStack heldItem = player.getMainHandStack();
-      if (heldItem.isItemEqual(new ItemStack(ItemInit.GILDED_STONE))) {
-        if (!world.isClient) {
-          blockEntity.setStack(0, heldItem.split(1));
-          return ActionResult.SUCCESS;
-        } else {
-          return ActionResult.SUCCESS;
+
+    @Nullable
+    @Override
+    public <T extends BlockEntity> BlockEntityTicker<T> getTicker(World world, BlockState state, BlockEntityType<T> type) {
+        return checkType(type, BlockInit.STONE_HOLDER_ENTITY, world.isClient ? StoneHolderEntity::clientTick : StoneHolderEntity::serverTick);
+    }
+
+    @Override
+    @Environment(EnvType.CLIENT)
+    public void appendTooltip(ItemStack stack, @Nullable BlockView world, List<Text> tooltip, TooltipContext options) {
+        tooltip.add(new TranslatableText("item.adventurez.moreinfo.tooltip"));
+        if (InputUtil.isKeyPressed(MinecraftClient.getInstance().getWindow().getHandle(), 340)) {
+            tooltip.remove(new TranslatableText("item.adventurez.moreinfo.tooltip"));
+            tooltip.add(new TranslatableText("block.adventurez.stone_holder_block.tooltip"));
+            tooltip.add(new TranslatableText("block.adventurez.stone_holder_block.tooltip2"));
+            tooltip.add(new TranslatableText("block.adventurez.stone_holder_block.tooltip3"));
         }
-
-      }
     }
-    return ActionResult.PASS;
-  }
 
-  @Override
-  public VoxelShape getOutlineShape(BlockState state, BlockView world, BlockPos pos, ShapeContext context) {
-    return SHAPE;
-  }
+    @Override
+    public ActionResult onUse(BlockState state, World world, BlockPos pos, PlayerEntity player, Hand hand, BlockHitResult hit) {
+        Inventory blockEntity = (Inventory) world.getBlockEntity(pos);
+        ItemStack stack = blockEntity.getStack(0);
+        if (!world.getBlockState(pos.up()).isAir()) {
+            return ActionResult.PASS;
+        }
+        if (!stack.isEmpty()) {
+            if (!player.getMainHandStack().isEmpty()) {
+                return ActionResult.FAIL;
+            }
+            player.giveItemStack(stack);
+            blockEntity.clear();
+            return ActionResult.SUCCESS;
+        } else {
+            ItemStack heldItem = player.getMainHandStack();
+            if (heldItem.isItemEqual(new ItemStack(ItemInit.GILDED_STONE))) {
+                if (!world.isClient) {
+                    blockEntity.setStack(0, heldItem.split(1));
+                    return ActionResult.SUCCESS;
+                } else {
+                    return ActionResult.SUCCESS;
+                }
 
-  @Override
-  public void onStateReplaced(BlockState state, World world, BlockPos pos, BlockState newState, boolean moved) {
-    if (!state.isOf(newState.getBlock())) {
-      BlockEntity blockEntity = world.getBlockEntity(pos);
-      if (blockEntity instanceof Inventory) {
-        ItemScatterer.spawn(world, pos, (Inventory) blockEntity);
-        world.updateComparators(pos, this);
-      }
-
-      super.onStateReplaced(state, world, pos, newState, moved);
+            }
+        }
+        return ActionResult.PASS;
     }
-  }
 
-  static {
-    SHAPE = VoxelShapes.union(createCuboidShape(0D, 0D, 0D, 16D, 14D, 16D),
-        createCuboidShape(0D, 14D, 0D, 16D, 16D, 3D), createCuboidShape(0D, 14D, 13D, 16D, 16D, 16D),
-        createCuboidShape(13D, 14D, 3D, 16D, 16D, 13D), createCuboidShape(0D, 14D, 3D, 3D, 16D, 13D));
-  }
+    @Override
+    public VoxelShape getOutlineShape(BlockState state, BlockView world, BlockPos pos, ShapeContext context) {
+        return SHAPE;
+    }
+
+    @Override
+    public void onStateReplaced(BlockState state, World world, BlockPos pos, BlockState newState, boolean moved) {
+        if (!state.isOf(newState.getBlock())) {
+            BlockEntity blockEntity = world.getBlockEntity(pos);
+            if (blockEntity instanceof Inventory) {
+                ItemScatterer.spawn(world, pos, (Inventory) blockEntity);
+                world.updateComparators(pos, this);
+            }
+
+            super.onStateReplaced(state, world, pos, newState, moved);
+        }
+    }
+
+    protected static <E extends BlockEntity, A extends BlockEntity> BlockEntityTicker<A> checkType(BlockEntityType<A> givenType, BlockEntityType<E> expectedType,
+            BlockEntityTicker<? super E> ticker) {
+        return expectedType == givenType ? (BlockEntityTicker<A>) ticker : null;
+    }
+
+    static {
+        SHAPE = VoxelShapes.union(createCuboidShape(0D, 0D, 0D, 16D, 14D, 16D), createCuboidShape(0D, 14D, 0D, 16D, 16D, 3D), createCuboidShape(0D, 14D, 13D, 16D, 16D, 16D),
+                createCuboidShape(13D, 14D, 3D, 16D, 16D, 13D), createCuboidShape(0D, 14D, 3D, 3D, 16D, 13D));
+    }
 
 }

@@ -36,10 +36,8 @@ public class VoidShadeEntity extends FlyingEntity implements Monster {
     }
 
     public static DefaultAttributeContainer.Builder createVoidShadeAttributes() {
-        return HostileEntity.createHostileAttributes().add(EntityAttributes.GENERIC_MAX_HEALTH, 20.0D)
-                .add(EntityAttributes.GENERIC_MOVEMENT_SPEED, 0.1D).add(EntityAttributes.GENERIC_ATTACK_DAMAGE, 7.0D)
-                .add(EntityAttributes.GENERIC_ATTACK_KNOCKBACK, 0.5D)
-                .add(EntityAttributes.GENERIC_KNOCKBACK_RESISTANCE, 10.0D)
+        return HostileEntity.createHostileAttributes().add(EntityAttributes.GENERIC_MAX_HEALTH, 20.0D).add(EntityAttributes.GENERIC_MOVEMENT_SPEED, 0.1D)
+                .add(EntityAttributes.GENERIC_ATTACK_DAMAGE, 7.0D).add(EntityAttributes.GENERIC_ATTACK_KNOCKBACK, 0.5D).add(EntityAttributes.GENERIC_KNOCKBACK_RESISTANCE, 10.0D)
                 .add(EntityAttributes.GENERIC_FOLLOW_RANGE, 80.0D);
     }
 
@@ -64,12 +62,12 @@ public class VoidShadeEntity extends FlyingEntity implements Monster {
     @Override
     public void checkDespawn() {
         if (this.world.getDifficulty() == Difficulty.PEACEFUL) {
-            this.remove();
+            this.discard();
         }
     }
 
     @Override
-    public boolean handleFallDamage(float fallDistance, float damageMultiplier) {
+    public boolean handleFallDamage(float fallDistance, float damageMultiplier, DamageSource damageSource) {
         return false;
     }
 
@@ -129,11 +127,9 @@ public class VoidShadeEntity extends FlyingEntity implements Monster {
                 World world = this.voidShadeEntity.world;
                 ++this.cooldown;
                 if (this.cooldown == 20) {
-                    ((ServerWorld) this.voidShadeEntity.world).playSoundFromEntity(null, this.voidShadeEntity,
-                            SoundInit.SHADOW_CAST_EVENT, SoundCategory.HOSTILE, 1.0F, 1.0F);
+                    ((ServerWorld) this.voidShadeEntity.world).playSoundFromEntity(null, this.voidShadeEntity, SoundInit.SHADOW_CAST_EVENT, SoundCategory.HOSTILE, 1.0F, 1.0F);
                     Vec3d vec3d = this.voidShadeEntity.getRotationVec(1.0F);
-                    VoidBulletEntity voidBulletEntity = new VoidBulletEntity(world, this.voidShadeEntity, vec3d.x,
-                            vec3d.y, vec3d.z);
+                    VoidBulletEntity voidBulletEntity = new VoidBulletEntity(world, this.voidShadeEntity, vec3d.x, vec3d.y, vec3d.z);
                     world.spawnEntity(voidBulletEntity);
 
                     this.cooldown = -40;
@@ -161,15 +157,15 @@ public class VoidShadeEntity extends FlyingEntity implements Monster {
         public void tick() {
             if (this.voidShadeEntity.getTarget() == null) {
                 Vec3d vec3d = this.voidShadeEntity.getVelocity();
-                this.voidShadeEntity.yaw = -((float) MathHelper.atan2(vec3d.x, vec3d.z)) * 57.295776F;
-                this.voidShadeEntity.bodyYaw = this.voidShadeEntity.yaw;
+                this.voidShadeEntity.setYaw(-((float) MathHelper.atan2(vec3d.x, vec3d.z)) * 57.295776F);
+                this.voidShadeEntity.bodyYaw = this.voidShadeEntity.getYaw();
             } else {
                 LivingEntity livingEntity = this.voidShadeEntity.getTarget();
                 if (livingEntity.squaredDistanceTo(this.voidShadeEntity) < 4096.0D) {
                     double e = livingEntity.getX() - this.voidShadeEntity.getX();
                     double f = livingEntity.getZ() - this.voidShadeEntity.getZ();
-                    this.voidShadeEntity.yaw = -((float) MathHelper.atan2(e, f)) * 57.295776F;
-                    this.voidShadeEntity.bodyYaw = this.voidShadeEntity.yaw;
+                    this.voidShadeEntity.setYaw(-((float) MathHelper.atan2(e, f)) * 57.295776F);
+                    this.voidShadeEntity.bodyYaw = this.voidShadeEntity.getYaw();
                 }
             }
 
@@ -201,8 +197,7 @@ public class VoidShadeEntity extends FlyingEntity implements Monster {
         public void start() {
             if (this.voidShadeEntity.getTarget() != null) {
                 LivingEntity livingEntity = this.voidShadeEntity.getTarget();
-                this.voidShadeEntity.getMoveControl().moveTo(livingEntity.getX(), livingEntity.getY(),
-                        livingEntity.getZ(), 1.0D);
+                this.voidShadeEntity.getMoveControl().moveTo(livingEntity.getX(), livingEntity.getY(), livingEntity.getZ(), 1.0D);
 
             }
         }
@@ -219,8 +214,7 @@ public class VoidShadeEntity extends FlyingEntity implements Monster {
         @Override
         public void tick() {
             if (this.state == MoveControl.State.MOVE_TO) {
-                Vec3d vec3d = new Vec3d(this.targetX - this.voidShadeEntity.getX(),
-                        this.targetY - this.voidShadeEntity.getY(), this.targetZ - this.voidShadeEntity.getZ());
+                Vec3d vec3d = new Vec3d(this.targetX - this.voidShadeEntity.getX(), this.targetY - this.voidShadeEntity.getY(), this.targetZ - this.voidShadeEntity.getZ());
                 vec3d = vec3d.normalize();
                 this.voidShadeEntity.setVelocity(this.voidShadeEntity.getVelocity().add(vec3d.multiply(0.012D)));
                 if (this.voidShadeEntity.getTarget() == null) {

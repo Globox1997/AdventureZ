@@ -17,8 +17,7 @@ import net.minecraft.world.World;
 @Mixin(EndPortalBlock.class)
 public abstract class EndPortalBlockMixin {
 
-    public ActionResult onUse(BlockState state, World world, BlockPos pos, PlayerEntity player, Hand hand,
-            BlockHitResult hit) {
+    public ActionResult onUse(BlockState state, World world, BlockPos pos, PlayerEntity player, Hand hand, BlockHitResult hit) {
         if (player.hasVehicle() && player.getVehicle() instanceof DragonEntity && player.canUsePortals()) {
             DragonEntity dragonEntity = (DragonEntity) player.getVehicle();
             player.stopRiding();

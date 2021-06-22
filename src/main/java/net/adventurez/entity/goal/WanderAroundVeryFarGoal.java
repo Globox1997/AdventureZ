@@ -1,7 +1,7 @@
 package net.adventurez.entity.goal;
 
 import net.adventurez.entity.OrcEntity;
-import net.minecraft.entity.ai.TargetFinder;
+import net.minecraft.entity.ai.NoPenaltyTargeting;
 import net.minecraft.entity.ai.goal.WanderAroundGoal;
 import net.minecraft.entity.mob.PathAwareEntity;
 import net.minecraft.util.math.Vec3d;
@@ -19,12 +19,10 @@ public class WanderAroundVeryFarGoal extends WanderAroundGoal {
     @Override
     protected Vec3d getWanderTarget() {
         if (this.mob.isInsideWaterOrBubbleColumn()) {
-            Vec3d vec3d = TargetFinder.findGroundTarget(this.mob, 15, 7);
+            Vec3d vec3d = NoPenaltyTargeting.find(this.mob, 15, 7);
             return vec3d == null ? super.getWanderTarget() : vec3d;
         } else {
-            return this.mob.getRandom().nextFloat() >= this.probability && this.isBigOrc(mob)
-                    ? TargetFinder.findGroundTarget(this.mob, 16, 5)
-                    : super.getWanderTarget();
+            return this.mob.getRandom().nextFloat() >= this.probability && this.isBigOrc(mob) ? NoPenaltyTargeting.find(this.mob, 16, 5) : super.getWanderTarget();
         }
     }
 

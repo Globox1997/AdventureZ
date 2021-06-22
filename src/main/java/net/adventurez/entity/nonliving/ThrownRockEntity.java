@@ -28,103 +28,100 @@ import net.minecraft.world.World;
 
 public class ThrownRockEntity extends ThrownItemEntity {
 
-   public ThrownRockEntity(EntityType<? extends ThrownRockEntity> entityType, World world) {
-      super(entityType, world);
-   }
+    public ThrownRockEntity(EntityType<? extends ThrownRockEntity> entityType, World world) {
+        super(entityType, world);
+    }
 
-   public ThrownRockEntity(World world, LivingEntity owner) {
-      super(EntityInit.THROWNROCK_ENTITY, owner, world);
-   }
+    public ThrownRockEntity(World world, LivingEntity owner) {
+        super(EntityInit.THROWNROCK_ENTITY, owner, world);
+    }
 
-   public ThrownRockEntity(World world, double x, double y, double z) {
-      super(EntityInit.THROWNROCK_ENTITY, x, y, z, world);
-   }
+    public ThrownRockEntity(World world, double x, double y, double z) {
+        super(EntityInit.THROWNROCK_ENTITY, x, y, z, world);
+    }
 
-   @Override
-   public Item getDefaultItem() {
-      return Items.BLACKSTONE;
-   }
+    @Override
+    public Item getDefaultItem() {
+        return Items.BLACKSTONE;
+    }
 
-   @Environment(EnvType.CLIENT)
-   private ParticleEffect getParticleParameters() {
-      BlockState state = this.getLandingBlockState();
-      return new BlockStateParticleEffect(ParticleTypes.BLOCK, state);
-   }
+    @Environment(EnvType.CLIENT)
+    private ParticleEffect getParticleParameters() {
+        BlockState state = this.getLandingBlockState();
+        return new BlockStateParticleEffect(ParticleTypes.BLOCK, state);
+    }
 
-   @Override
-   @Environment(EnvType.CLIENT)
-   public void handleStatus(byte status) {
-      if (status == 3) {
-         ParticleEffect particleEffect = this.getParticleParameters();
+    @Override
+    @Environment(EnvType.CLIENT)
+    public void handleStatus(byte status) {
+        if (status == 3) {
+            ParticleEffect particleEffect = this.getParticleParameters();
 
-         for (int i = 0; i < 32; ++i) {
-            this.world.addParticle(particleEffect, this.getX(), this.getY(), this.getZ(), 0.0D, 0.0D, 0.0D);
-         }
-      }
-
-   }
-
-   @Override
-   protected void onCollision(HitResult hitResult) {
-      super.onCollision(hitResult);
-      BlockState state = this.getLandingBlockState();
-      if (this.world.isClient) {
-         for (int i = 0; i < 32; ++i) {
-            this.world.addParticle(new BlockStateParticleEffect(ParticleTypes.BLOCK, state), this.getX(), this.getY(),
-                  this.getZ(), 0.0D, 0.0D, 0.0D);
-         }
-      } else {
-         this.world.playSound(null, this.getBlockPos(), SoundInit.ROCK_IMPACT_EVENT, SoundCategory.BLOCKS, 0.7F, 1F);
-         this.world.sendEntityStatus(this, (byte) 3);
-         this.remove();
-      }
-   }
-
-   // Causes crash if not overridden, maybe due to getStack client?
-   @Override
-   public ItemStack getStack() {
-      ItemStack itemStack = this.getItem();
-      return itemStack.isEmpty() ? new ItemStack(this.getDefaultItem()) : itemStack;
-   }
-
-   @Override
-   protected void onEntityHit(EntityHitResult entityHitResult) {
-      super.onEntityHit(entityHitResult);
-      if (!this.world.isClient) {
-         Entity entity = entityHitResult.getEntity();
-         Entity owner = this.getOwner();
-         DamageSource damageSource = createDamageSource(this, owner == null ? this : owner);
-         if (owner instanceof LivingEntity) {
-            LivingEntity livingEntity = (LivingEntity) owner;
-            if (entity.damage(damageSource, 16F)) {
-               if (entity.isAlive()) {
-                  this.dealDamage(livingEntity, entity);
-               }
+            for (int i = 0; i < 32; ++i) {
+                this.world.addParticle(particleEffect, this.getX(), this.getY(), this.getZ(), 0.0D, 0.0D, 0.0D);
             }
-         }
-         if (entity instanceof LivingEntity) {
-            LivingEntity livingEntity = (LivingEntity) entity;
-            int slownessAddition = 400;
+        }
 
-            if (this.getStack().getItem() == this.getDefaultItem()) {
-               livingEntity.addStatusEffect(new StatusEffectInstance(StatusEffects.MINING_FATIGUE, 2000, 2));
-               slownessAddition = 200;
+    }
+
+    @Override
+    protected void onCollision(HitResult hitResult) {
+        super.onCollision(hitResult);
+        BlockState state = this.getLandingBlockState();
+        if (this.world.isClient) {
+            for (int i = 0; i < 32; ++i) {
+                this.world.addParticle(new BlockStateParticleEffect(ParticleTypes.BLOCK, state), this.getX(), this.getY(), this.getZ(), 0.0D, 0.0D, 0.0D);
             }
-            livingEntity.addStatusEffect(new StatusEffectInstance(StatusEffects.BLINDNESS, 50, 0));
-            livingEntity.addStatusEffect(
-                  new StatusEffectInstance(StatusEffects.SLOWNESS, slownessAddition, slownessAddition / 200 - 1));
-            livingEntity.addStatusEffect(new StatusEffectInstance(StatusEffects.HUNGER, 600, 1));
-         }
+        } else {
+            this.world.playSound(null, this.getBlockPos(), SoundInit.ROCK_IMPACT_EVENT, SoundCategory.BLOCKS, 0.7F, 1F);
+            this.world.sendEntityStatus(this, (byte) 3);
+            this.discard();
+        }
+    }
 
-      }
-   }
+    // Causes crash if not overridden, maybe due to getStack client?
+    @Override
+    public ItemStack getStack() {
+        ItemStack itemStack = this.getItem();
+        return itemStack.isEmpty() ? new ItemStack(this.getDefaultItem()) : itemStack;
+    }
 
-   private DamageSource createDamageSource(Entity entity, Entity owner) {
-      return new ProjectileDamageSource("rock", entity, owner).setProjectile();
-   }
+    @Override
+    protected void onEntityHit(EntityHitResult entityHitResult) {
+        super.onEntityHit(entityHitResult);
+        if (!this.world.isClient) {
+            Entity entity = entityHitResult.getEntity();
+            Entity owner = this.getOwner();
+            DamageSource damageSource = createDamageSource(this, owner == null ? this : owner);
+            if (owner instanceof LivingEntity) {
+                if (entity.damage(damageSource, 16F)) {
+                    if (entity instanceof LivingEntity) {
+                        this.applyDamageEffects((LivingEntity) entity, entity);
+                    }
+                }
+            }
+            if (entity instanceof LivingEntity) {
+                LivingEntity livingEntity = (LivingEntity) entity;
+                int slownessAddition = 400;
 
-   @Override
-   public Packet<?> createSpawnPacket() {
-      return EntitySpawnPacket.createPacket(this);
-   }
+                if (this.getStack().getItem() == this.getDefaultItem()) {
+                    livingEntity.addStatusEffect(new StatusEffectInstance(StatusEffects.MINING_FATIGUE, 2000, 2));
+                    slownessAddition = 200;
+                }
+                livingEntity.addStatusEffect(new StatusEffectInstance(StatusEffects.BLINDNESS, 50, 0));
+                livingEntity.addStatusEffect(new StatusEffectInstance(StatusEffects.SLOWNESS, slownessAddition, slownessAddition / 200 - 1));
+                livingEntity.addStatusEffect(new StatusEffectInstance(StatusEffects.HUNGER, 600, 1));
+            }
+
+        }
+    }
+
+    private DamageSource createDamageSource(Entity entity, Entity owner) {
+        return new ProjectileDamageSource("rock", entity, owner).setProjectile();
+    }
+
+    @Override
+    public Packet<?> createSpawnPacket() {
+        return EntitySpawnPacket.createPacket(this);
+    }
 }

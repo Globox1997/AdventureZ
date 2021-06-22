@@ -5,7 +5,12 @@ import com.google.common.collect.ImmutableList;
 import net.adventurez.entity.VoidShadowEntity;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
+import net.minecraft.client.model.ModelData;
 import net.minecraft.client.model.ModelPart;
+import net.minecraft.client.model.ModelPartBuilder;
+import net.minecraft.client.model.ModelPartData;
+import net.minecraft.client.model.ModelTransform;
+import net.minecraft.client.model.TexturedModelData;
 import net.minecraft.client.render.entity.model.CompositeEntityModel;
 import net.minecraft.util.math.MathHelper;
 
@@ -33,126 +38,67 @@ public class VoidShadowModel<T extends VoidShadowEntity> extends CompositeEntity
 
     private float throwingBlocksTicker;
 
-    public VoidShadowModel() {
-        rightArm = (new ModelPart(this)).setTextureSize(128, 128);
-        rightArm.setPivot(11.0F, 1.0F, 0.0F);
-        rightArm.setTextureOffset(44, 58).addCuboid(1.0F, 6.0F, -2.0F, 2.0F, 2.0F, 4.0F, 0.0F, false);
-        rightArm.setTextureOffset(0, 50).addCuboid(-3.0F, 8.0F, -2.0F, 6.0F, 2.0F, 4.0F, 0.0F, false);
-        rightArm.setTextureOffset(20, 62).addCuboid(-1.0F, 8.0F, -4.0F, 4.0F, 2.0F, 2.0F, 0.0F, false);
-        rightArm.setTextureOffset(0, 20).addCuboid(-1.0F, 14.0F, -4.0F, 2.0F, 2.0F, 2.0F, 0.0F, false);
-        rightArm.setTextureOffset(0, 16).addCuboid(-1.0F, 14.0F, 2.0F, 2.0F, 2.0F, 2.0F, 0.0F, false);
-        rightArm.setTextureOffset(8, 62).addCuboid(-1.0F, 8.0F, 2.0F, 4.0F, 2.0F, 2.0F, 0.0F, false);
-        rightArm.setTextureOffset(0, 28).addCuboid(-1.0F, 10.0F, -4.0F, 6.0F, 4.0F, 8.0F, 0.0F, false);
-        rightArm.setTextureOffset(48, 28).addCuboid(-3.0F, 14.0F, -2.0F, 6.0F, 2.0F, 4.0F, 0.0F, false);
-        rightArm.setTextureOffset(32, 58).addCuboid(1.0F, 16.0F, -2.0F, 2.0F, 2.0F, 4.0F, 0.0F, false);
-        rightArm.setTextureOffset(24, 56).addCuboid(-3.0F, 16.0F, -2.0F, 2.0F, 2.0F, 4.0F, 0.0F, false);
-        rightArm.setTextureOffset(0, 56).addCuboid(-1.0F, 18.0F, -2.0F, 2.0F, 2.0F, 4.0F, 0.0F, false);
-        rightArm.setTextureOffset(12, 56).addCuboid(-5.0F, 18.0F, -2.0F, 2.0F, 2.0F, 4.0F, 0.0F, false);
-        rightArm.setTextureOffset(26, 16).addCuboid(-5.0F, 10.0F, -2.0F, 2.0F, 2.0F, 2.0F, 0.0F, false);
+    public VoidShadowModel(ModelPart root) {
+        this.rightArm = root.getChild("rightArm");
+        this.leftArm = root.getChild("leftArm");
+        this.body = root.getChild("body");
+        this.leftParticle = this.body.getChild("leftParticle");
+        this.bone13 = this.leftParticle.getChild("bone13");
+        this.bone12 = this.leftParticle.getChild("bone12");
+        this.bone11 = this.leftParticle.getChild("bone11");
+        this.bone10 = this.leftParticle.getChild("bone10");
+        this.bone9 = this.leftParticle.getChild("bone9");
+        this.bone8 = this.leftParticle.getChild("bone8");
+        this.rightParticle = this.body.getChild("rightParticle");
+        this.bone7 = this.rightParticle.getChild("bone7");
+        this.bone6 = this.rightParticle.getChild("bone6");
+        this.bone5 = this.rightParticle.getChild("bone5");
+        this.bone4 = this.rightParticle.getChild("bone4");
+        this.bone3 = this.rightParticle.getChild("bone3");
+        this.bone2 = this.rightParticle.getChild("bone2");
+        this.bone = this.rightParticle.getChild("bone");
+    }
 
-        leftArm = (new ModelPart(this)).setTextureSize(128, 128);
-        leftArm.setPivot(-11.0F, 1.0F, 0.0F);
-        leftArm.setTextureOffset(26, 20).addCuboid(3.0F, 10.0F, -2.0F, 2.0F, 2.0F, 2.0F, 0.0F, false);
-        leftArm.setTextureOffset(36, 52).addCuboid(-3.0F, 8.0F, -2.0F, 6.0F, 2.0F, 4.0F, 0.0F, false);
-        leftArm.setTextureOffset(60, 60).addCuboid(-3.0F, 8.0F, 2.0F, 4.0F, 2.0F, 2.0F, 0.0F, false);
-        leftArm.setTextureOffset(16, 40).addCuboid(-3.0F, 8.0F, -4.0F, 4.0F, 2.0F, 2.0F, 0.0F, false);
-        leftArm.setTextureOffset(0, 4).addCuboid(-1.0F, 14.0F, -4.0F, 2.0F, 2.0F, 2.0F, 0.0F, false);
-        leftArm.setTextureOffset(0, 0).addCuboid(-1.0F, 14.0F, 2.0F, 2.0F, 2.0F, 2.0F, 0.0F, false);
-        leftArm.setTextureOffset(0, 62).addCuboid(-5.0F, 6.0F, -2.0F, 2.0F, 2.0F, 4.0F, 0.0F, false);
-        leftArm.setTextureOffset(28, 28).addCuboid(-5.0F, 10.0F, -4.0F, 6.0F, 4.0F, 8.0F, 0.0F, false);
-        leftArm.setTextureOffset(60, 34).addCuboid(1.0F, 16.0F, -2.0F, 2.0F, 2.0F, 4.0F, 0.0F, false);
-        leftArm.setTextureOffset(52, 60).addCuboid(-1.0F, 18.0F, -2.0F, 2.0F, 2.0F, 4.0F, 0.0F, false);
-        leftArm.setTextureOffset(58, 44).addCuboid(-3.0F, 16.0F, -2.0F, 2.0F, 2.0F, 4.0F, 0.0F, false);
-        leftArm.setTextureOffset(20, 50).addCuboid(-3.0F, 14.0F, -2.0F, 6.0F, 2.0F, 4.0F, 0.0F, false);
-        leftArm.setTextureOffset(58, 0).addCuboid(3.0F, 18.0F, -2.0F, 2.0F, 2.0F, 4.0F, 0.0F, false);
-
-        body = (new ModelPart(this)).setTextureSize(128, 128);
-        body.setPivot(0.0F, 8.0F, 0.0F);
-        body.setTextureOffset(26, 16).addCuboid(-6.0F, -11.0F, -4.0F, 6.0F, 2.0F, 8.0F, 0.0F, false);
-        body.setTextureOffset(0, 40).addCuboid(2.0F, -11.0F, -4.0F, 4.0F, 2.0F, 8.0F, 0.0F, false);
-        body.setTextureOffset(50, 34).addCuboid(-8.0F, -9.0F, -3.0F, 2.0F, 4.0F, 6.0F, 0.0F, false);
-        body.setTextureOffset(20, 28).addCuboid(8.0F, -9.0F, -3.0F, 2.0F, 2.0F, 6.0F, 0.0F, false);
-        body.setTextureOffset(0, 0).addCuboid(-6.0F, -9.0F, -5.0F, 14.0F, 6.0F, 10.0F, 0.0F, false);
-        body.setTextureOffset(0, 16).addCuboid(-4.0F, -3.0F, -5.0F, 8.0F, 2.0F, 10.0F, 0.0F, false);
-        body.setTextureOffset(38, 0).addCuboid(-2.0F, -1.0F, -4.0F, 6.0F, 2.0F, 8.0F, 0.0F, false);
-        body.setTextureOffset(42, 44).addCuboid(-2.0F, 1.0F, -3.0F, 5.0F, 2.0F, 6.0F, 0.0F, false);
-        body.setTextureOffset(46, 10).addCuboid(-1.0F, 3.0F, -3.0F, 5.0F, 2.0F, 6.0F, 0.0F, false);
-        body.setTextureOffset(48, 20).addCuboid(-2.0F, 5.0F, -3.0F, 4.0F, 2.0F, 6.0F, 0.0F, false);
-        body.setTextureOffset(24, 40).addCuboid(-4.0F, 7.0F, -2.0F, 8.0F, 6.0F, 4.0F, 0.0F, false);
-        body.setTextureOffset(52, 54).addCuboid(-2.0F, 13.0F, -2.0F, 4.0F, 2.0F, 4.0F, 0.0F, false);
-
-        rightParticle = (new ModelPart(this)).setTextureSize(128, 128);
-        rightParticle.setPivot(8.0F, -9.0F, 0.0F);
-        body.addChild(rightParticle);
-
-        bone = (new ModelPart(this)).setTextureSize(128, 128);
-        bone.setPivot(-8.0F, 24.0F, 0.0F);
-        rightParticle.addChild(bone);
-        bone.setTextureOffset(40, 58).addCuboid(12.0F, -22.0F, -2.0F, 2.0F, 2.0F, 2.0F, 0.0F, false);
-
-        bone2 = (new ModelPart(this)).setTextureSize(128, 128);
-        bone2.setPivot(-8.0F, 24.0F, 0.0F);
-        rightParticle.addChild(bone2);
-        bone2.setTextureOffset(8, 56).addCuboid(10.0F, -26.0F, 0.0F, 2.0F, 2.0F, 2.0F, 0.0F, false);
-
-        bone3 = (new ModelPart(this)).setTextureSize(128, 128);
-        bone3.setPivot(-8.0F, 24.0F, 0.0F);
-        rightParticle.addChild(bone3);
-        bone3.setTextureOffset(20, 56).addCuboid(8.0F, -28.0F, -2.0F, 2.0F, 2.0F, 2.0F, 0.0F, false);
-
-        bone4 = (new ModelPart(this)).setTextureSize(128, 128);
-        bone4.setPivot(-8.0F, 24.0F, 0.0F);
-        rightParticle.addChild(bone4);
-        bone4.setTextureOffset(46, 18).addCuboid(14.0F, -28.0F, -2.0F, 2.0F, 2.0F, 2.0F, 0.0F, false);
-
-        bone5 = (new ModelPart(this)).setTextureSize(128, 128);
-        bone5.setPivot(-8.0F, 24.0F, 0.0F);
-        rightParticle.addChild(bone5);
-        bone5.setTextureOffset(62, 10).addCuboid(8.0F, -18.0F, 0.0F, 2.0F, 2.0F, 2.0F, 0.0F, false);
-
-        bone6 = (new ModelPart(this)).setTextureSize(128, 128);
-        bone6.setPivot(-8.0F, 24.0F, 0.0F);
-        rightParticle.addChild(bone6);
-        bone6.setTextureOffset(16, 50).addCuboid(10.0F, -30.0F, 0.0F, 2.0F, 2.0F, 2.0F, 0.0F, false);
-
-        bone7 = (new ModelPart(this)).setTextureSize(128, 128);
-        bone7.setPivot(-8.0F, 24.0F, 0.0F);
-        rightParticle.addChild(bone7);
-        bone7.setTextureOffset(16, 44).addCuboid(4.0F, -28.0F, -2.0F, 2.0F, 2.0F, 2.0F, 0.0F, false);
-
-        leftParticle = (new ModelPart(this)).setTextureSize(128, 128);
-        leftParticle.setPivot(-6.0F, -9.0F, 0.0F);
-        body.addChild(leftParticle);
-
-        bone8 = (new ModelPart(this)).setTextureSize(128, 128);
-        bone8.setPivot(6.0F, 24.0F, 0.0F);
-        leftParticle.addChild(bone8);
-        bone8.setTextureOffset(0, 44).addCuboid(-4.0F, -28.0F, -2.0F, 2.0F, 2.0F, 2.0F, 0.0F, false);
-
-        bone9 = (new ModelPart(this)).setTextureSize(128, 128);
-        bone9.setPivot(6.0F, 24.0F, 0.0F);
-        leftParticle.addChild(bone9);
-        bone9.setTextureOffset(0, 40).addCuboid(-2.0F, -30.0F, 0.0F, 2.0F, 2.0F, 2.0F, 0.0F, false);
-
-        bone10 = (new ModelPart(this)).setTextureSize(128, 128);
-        bone10.setPivot(6.0F, 24.0F, 0.0F);
-        leftParticle.addChild(bone10);
-        bone10.setTextureOffset(38, 4).addCuboid(-8.0F, -28.0F, -2.0F, 2.0F, 2.0F, 2.0F, 0.0F, false);
-
-        bone11 = (new ModelPart(this)).setTextureSize(128, 128);
-        bone11.setPivot(6.0F, 24.0F, 0.0F);
-        leftParticle.addChild(bone11);
-        bone11.setTextureOffset(0, 32).addCuboid(-12.0F, -24.0F, 0.0F, 2.0F, 2.0F, 2.0F, 0.0F, false);
-
-        bone12 = (new ModelPart(this)).setTextureSize(128, 128);
-        bone12.setPivot(6.0F, 24.0F, 0.0F);
-        leftParticle.addChild(bone12);
-        bone12.setTextureOffset(0, 28).addCuboid(-12.0F, -18.0F, 0.0F, 2.0F, 2.0F, 2.0F, 0.0F, false);
-
-        bone13 = (new ModelPart(this)).setTextureSize(128, 128);
-        bone13.setPivot(6.0F, 24.0F, 0.0F);
-        leftParticle.addChild(bone13);
-        bone13.setTextureOffset(38, 0).addCuboid(-15.0F, -30.0F, 0.0F, 2.0F, 2.0F, 2.0F, 0.0F, false);
+    public static TexturedModelData getTexturedModelData() {
+        ModelData modelData = new ModelData();
+        ModelPartData modelPartData = modelData.getRoot();
+        modelPartData.addChild("rightArm",
+                ModelPartBuilder.create().uv(44, 58).cuboid(1.0F, 6.0F, -2.0F, 2.0F, 2.0F, 4.0F).uv(0, 50).cuboid(-3.0F, 8.0F, -2.0F, 6.0F, 2.0F, 4.0F).uv(20, 62)
+                        .cuboid(-1.0F, 8.0F, -4.0F, 4.0F, 2.0F, 2.0F).uv(0, 20).cuboid(-1.0F, 14.0F, -4.0F, 2.0F, 2.0F, 2.0F).uv(0, 16).cuboid(-1.0F, 14.0F, 2.0F, 2.0F, 2.0F, 2.0F).uv(8, 62)
+                        .cuboid(-1.0F, 8.0F, 2.0F, 4.0F, 2.0F, 2.0F).uv(0, 28).cuboid(-1.0F, 10.0F, -4.0F, 6.0F, 4.0F, 8.0F).uv(48, 28).cuboid(-3.0F, 14.0F, -2.0F, 6.0F, 2.0F, 4.0F).uv(32, 58)
+                        .cuboid(1.0F, 16.0F, -2.0F, 2.0F, 2.0F, 4.0F).uv(24, 56).cuboid(-3.0F, 16.0F, -2.0F, 2.0F, 2.0F, 4.0F).uv(0, 56).cuboid(-1.0F, 18.0F, -2.0F, 2.0F, 2.0F, 4.0F).uv(12, 56)
+                        .cuboid(-5.0F, 18.0F, -2.0F, 2.0F, 2.0F, 4.0F).uv(26, 16).cuboid(-5.0F, 10.0F, -2.0F, 2.0F, 2.0F, 2.0F),
+                ModelTransform.pivot(11.0F, 1.0F, 0.0F));
+        modelPartData.addChild("leftArm",
+                ModelPartBuilder.create().uv(26, 20).cuboid(3.0F, 10.0F, -2.0F, 2.0F, 2.0F, 2.0F).uv(36, 52).cuboid(-3.0F, 8.0F, -2.0F, 6.0F, 2.0F, 4.0F).uv(60, 60)
+                        .cuboid(-3.0F, 8.0F, 2.0F, 4.0F, 2.0F, 2.0F).uv(16, 40).cuboid(-3.0F, 8.0F, -4.0F, 4.0F, 2.0F, 2.0F).uv(0, 4).cuboid(-1.0F, 14.0F, -4.0F, 2.0F, 2.0F, 2.0F).uv(0, 0)
+                        .cuboid(-1.0F, 14.0F, 2.0F, 2.0F, 2.0F, 2.0F).uv(0, 62).cuboid(-5.0F, 6.0F, -2.0F, 2.0F, 2.0F, 4.0F).uv(28, 28).cuboid(-5.0F, 10.0F, -4.0F, 6.0F, 4.0F, 8.0F).uv(60, 34)
+                        .cuboid(1.0F, 16.0F, -2.0F, 2.0F, 2.0F, 4.0F).uv(52, 60).cuboid(-1.0F, 18.0F, -2.0F, 2.0F, 2.0F, 4.0F).uv(58, 44).cuboid(-3.0F, 16.0F, -2.0F, 2.0F, 2.0F, 4.0F).uv(20, 50)
+                        .cuboid(-3.0F, 14.0F, -2.0F, 6.0F, 2.0F, 4.0F).uv(58, 0).cuboid(3.0F, 18.0F, -2.0F, 2.0F, 2.0F, 4.0F),
+                ModelTransform.pivot(-11.0F, 1.0F, 0.0F));
+        ModelPartData modelPartData1 = modelPartData.addChild("body",
+                ModelPartBuilder.create().uv(26, 16).cuboid(-6.0F, -11.0F, -4.0F, 6.0F, 2.0F, 8.0F).uv(0, 40).cuboid(2.0F, -11.0F, -4.0F, 4.0F, 2.0F, 8.0F).uv(50, 34)
+                        .cuboid(-8.0F, -9.0F, -3.0F, 2.0F, 4.0F, 6.0F).uv(20, 28).cuboid(8.0F, -9.0F, -3.0F, 2.0F, 2.0F, 6.0F).uv(0, 0).cuboid(-6.0F, -9.0F, -5.0F, 14.0F, 6.0F, 10.0F).uv(0, 16)
+                        .cuboid(-4.0F, -3.0F, -5.0F, 8.0F, 2.0F, 10.0F).uv(38, 0).cuboid(-2.0F, -1.0F, -4.0F, 6.0F, 2.0F, 8.0F).uv(42, 44).cuboid(-2.0F, 1.0F, -3.0F, 5.0F, 2.0F, 6.0F).uv(46, 10)
+                        .cuboid(-1.0F, 3.0F, -3.0F, 5.0F, 2.0F, 6.0F).uv(48, 20).cuboid(-2.0F, 5.0F, -3.0F, 4.0F, 2.0F, 6.0F).uv(24, 40).cuboid(-4.0F, 7.0F, -2.0F, 8.0F, 6.0F, 4.0F).uv(52, 54)
+                        .cuboid(-2.0F, 13.0F, -2.0F, 4.0F, 2.0F, 4.0F),
+                ModelTransform.pivot(0.0F, 8.0F, 0.0F));
+        ModelPartData modelPartData2 = modelPartData1.addChild("rightParticle", ModelPartBuilder.create(), ModelTransform.pivot(8.0F, -9.0F, 0.0F));
+        modelPartData2.addChild("bone", ModelPartBuilder.create().uv(40, 58).cuboid(12.0F, -22.0F, -2.0F, 2.0F, 2.0F, 2.0F), ModelTransform.pivot(-8.0F, 24.0F, 0.0F));
+        modelPartData2.addChild("bone2", ModelPartBuilder.create().uv(8, 56).cuboid(10.0F, -26.0F, 0.0F, 2.0F, 2.0F, 2.0F), ModelTransform.pivot(-8.0F, 24.0F, 0.0F));
+        modelPartData2.addChild("bone3", ModelPartBuilder.create().uv(20, 56).cuboid(8.0F, -28.0F, -2.0F, 2.0F, 2.0F, 2.0F), ModelTransform.pivot(-8.0F, 24.0F, 0.0F));
+        modelPartData2.addChild("bone4", ModelPartBuilder.create().uv(46, 18).cuboid(14.0F, -28.0F, -2.0F, 2.0F, 2.0F, 2.0F), ModelTransform.pivot(-8.0F, 24.0F, 0.0F));
+        modelPartData2.addChild("bone5", ModelPartBuilder.create().uv(62, 10).cuboid(8.0F, -18.0F, 0.0F, 2.0F, 2.0F, 2.0F), ModelTransform.pivot(-8.0F, 24.0F, 0.0F));
+        modelPartData2.addChild("bone6", ModelPartBuilder.create().uv(16, 50).cuboid(10.0F, -30.0F, 0.0F, 2.0F, 2.0F, 2.0F), ModelTransform.pivot(-8.0F, 24.0F, 0.0F));
+        modelPartData2.addChild("bone7", ModelPartBuilder.create().uv(16, 44).cuboid(4.0F, -28.0F, -2.0F, 2.0F, 2.0F, 2.0F), ModelTransform.pivot(-8.0F, 24.0F, 0.0F));
+        ModelPartData modelPartData3 = modelPartData1.addChild("leftParticle", ModelPartBuilder.create(), ModelTransform.pivot(-6.0F, -9.0F, 0.0F));
+        modelPartData3.addChild("bone8", ModelPartBuilder.create().uv(0, 44).cuboid(-4.0F, -28.0F, -2.0F, 2.0F, 2.0F, 2.0F), ModelTransform.pivot(6.0F, 24.0F, 0.0F));
+        modelPartData3.addChild("bone9", ModelPartBuilder.create().uv(0, 40).cuboid(-2.0F, -30.0F, 0.0F, 2.0F, 2.0F, 2.0F), ModelTransform.pivot(6.0F, 24.0F, 0.0F));
+        modelPartData3.addChild("bone10", ModelPartBuilder.create().uv(38, 4).cuboid(-8.0F, -28.0F, -2.0F, 2.0F, 2.0F, 2.0F), ModelTransform.pivot(6.0F, 24.0F, 0.0F));
+        modelPartData3.addChild("bone11", ModelPartBuilder.create().uv(0, 32).cuboid(-12.0F, -24.0F, 0.0F, 2.0F, 2.0F, 2.0F), ModelTransform.pivot(6.0F, 24.0F, 0.0F));
+        modelPartData3.addChild("bone12", ModelPartBuilder.create().uv(0, 28).cuboid(-12.0F, -18.0F, 0.0F, 2.0F, 2.0F, 2.0F), ModelTransform.pivot(6.0F, 24.0F, 0.0F));
+        modelPartData3.addChild("bone13", ModelPartBuilder.create().uv(38, 0).cuboid(-15.0F, -30.0F, 0.0F, 2.0F, 2.0F, 2.0F), ModelTransform.pivot(6.0F, 24.0F, 0.0F));
+        return TexturedModelData.of(modelData, 128, 128);
     }
 
     @Override
@@ -161,8 +107,7 @@ public class VoidShadowModel<T extends VoidShadowEntity> extends CompositeEntity
     }
 
     @Override
-    public void setAngles(T shadow, float limbAngle, float limbDistance, float animationProgress, float headYaw,
-            float headPitch) {
+    public void setAngles(T shadow, float limbAngle, float limbDistance, float animationProgress, float headYaw, float headPitch) {
 
         this.body.pivotY = 8.0F + MathHelper.sin(animationProgress / 12.5663706F) / 2.0F;
         this.rightArm.pivotY = 1.0F + MathHelper.sin(animationProgress / 12.5663706F) / 1.5F;

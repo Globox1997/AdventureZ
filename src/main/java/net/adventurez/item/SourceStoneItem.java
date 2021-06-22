@@ -25,6 +25,8 @@ import net.minecraft.util.math.Direction;
 import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.World;
 
+//import com.flemmli97.flan.config;
+
 public class SourceStoneItem extends Item {
 
     public SourceStoneItem(Settings settings) {
@@ -54,17 +56,14 @@ public class SourceStoneItem extends Item {
                             tryTeleport(world, blockHitResult.getBlockPos(), blockHitResult.getSide(), playerEntity);
                         } else if (hitResult.getType() == HitResult.Type.ENTITY) {
                             EntityHitResult entityHitResult = (EntityHitResult) hitResult;
-                            tryTeleport(world, new BlockPos(entityHitResult.getPos()),
-                                    entityHitResult.getEntity().getHorizontalFacing(), playerEntity);
+                            tryTeleport(world, new BlockPos(entityHitResult.getPos()), entityHitResult.getEntity().getHorizontalFacing(), playerEntity);
                         }
                     }
                 } else {
                     Vec3d vec3d = playerEntity.getRotationVec(1.0F);
-                    VoidBulletEntity voidBulletEntity = new VoidBulletEntity(world, playerEntity, vec3d.x, vec3d.y,
-                            vec3d.z);
+                    VoidBulletEntity voidBulletEntity = new VoidBulletEntity(world, playerEntity, vec3d.x, vec3d.y, vec3d.z);
                     world.spawnEntity(voidBulletEntity);
-                    world.playSoundFromEntity((PlayerEntity) null, voidBulletEntity, SoundInit.SHADOW_CAST_EVENT,
-                            SoundCategory.PLAYERS, 1.0F, 1.0F);
+                    world.playSoundFromEntity((PlayerEntity) null, voidBulletEntity, SoundInit.SHADOW_CAST_EVENT, SoundCategory.PLAYERS, 1.0F, 1.0F);
                 }
             }
             playerEntity.getItemCooldownManager().set(stack.getItem(), 40);
@@ -75,10 +74,10 @@ public class SourceStoneItem extends Item {
         if (!world.getBlockState(blockPos).isAir()) {
             for (int i = 2; i < 6; i++) {
                 BlockPos newBlockPos = new BlockPos(blockPos).offset(direction.getOpposite(), i);
-                if (world.getBlockState(newBlockPos).isAir() && world.getBlockState(newBlockPos.up()).isAir()) {
+                BlockPos upperBlockPos = newBlockPos.up();
+                if (!world.getBlockState(newBlockPos).isSolidBlock(world, newBlockPos) && !world.getBlockState(upperBlockPos).isSolidBlock(world, upperBlockPos)) {
                     playerEntity.teleport(newBlockPos.getX(), newBlockPos.getY(), newBlockPos.getZ());
-                    world.playSoundFromEntity((PlayerEntity) null, playerEntity, SoundEvents.ENTITY_ENDERMAN_TELEPORT,
-                            SoundCategory.PLAYERS, 1.0F, 1.0F);
+                    world.playSoundFromEntity((PlayerEntity) null, playerEntity, SoundEvents.ENTITY_ENDERMAN_TELEPORT, SoundCategory.PLAYERS, 1.0F, 1.0F);
                     break;
                 }
             }

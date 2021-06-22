@@ -2,6 +2,7 @@ package net.adventurez.entity.render;
 
 import net.adventurez.entity.TheEyeEntity;
 import net.adventurez.entity.model.TheEyeModel;
+import net.adventurez.init.RenderInit;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
 import net.minecraft.client.render.Frustum;
@@ -9,10 +10,10 @@ import net.minecraft.client.render.OverlayTexture;
 import net.minecraft.client.render.RenderLayer;
 import net.minecraft.client.render.VertexConsumer;
 import net.minecraft.client.render.VertexConsumerProvider;
-import net.minecraft.client.render.entity.EntityRenderDispatcher;
+import net.minecraft.client.render.entity.EntityRendererFactory;
 import net.minecraft.client.render.entity.MobEntityRenderer;
 import net.minecraft.client.util.math.MatrixStack;
-import net.minecraft.client.util.math.Vector3f;
+import net.minecraft.util.math.Vec3f;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.math.Box;
@@ -27,8 +28,8 @@ public class TheEyeRenderer extends MobEntityRenderer<TheEyeEntity, TheEyeModel<
     private static final Identifier EXPLOSION_BEAM_TEXTURE = new Identifier("adventurez:textures/entity/eye_beam.png");
     private static final RenderLayer LAYER;
 
-    public TheEyeRenderer(EntityRenderDispatcher entityRenderDispatcher) {
-        super(entityRenderDispatcher, new TheEyeModel<>(), 1.0F);
+    public TheEyeRenderer(EntityRendererFactory.Context context) {
+        super(context, new TheEyeModel<>(context.getPart(RenderInit.THE_EYE_LAYER)), 1.0F);
 
     }
 
@@ -51,8 +52,7 @@ public class TheEyeRenderer extends MobEntityRenderer<TheEyeEntity, TheEyeModel<
                 LivingEntity livingEntity = theEyeEntity.getBeamTarget();
                 if (livingEntity != null) {
                     Vec3d vec3d = this.fromLerpedPosition(livingEntity, (double) livingEntity.getHeight() * 0.5D, 1.0F);
-                    Vec3d vec3d2 = this.fromLerpedPosition(theEyeEntity, (double) theEyeEntity.getStandingEyeHeight(),
-                            1.0F);
+                    Vec3d vec3d2 = this.fromLerpedPosition(theEyeEntity, (double) theEyeEntity.getStandingEyeHeight(), 1.0F);
                     return frustum.isVisible(new Box(vec3d2.x, vec3d2.y, vec3d2.z, vec3d.x, vec3d.y, vec3d.z));
                 }
             }
@@ -69,8 +69,7 @@ public class TheEyeRenderer extends MobEntityRenderer<TheEyeEntity, TheEyeModel<
     }
 
     @Override
-    public void render(TheEyeEntity theEyeEntity, float f, float g, MatrixStack matrixStack,
-            VertexConsumerProvider vertexConsumerProvider, int i) {
+    public void render(TheEyeEntity theEyeEntity, float f, float g, MatrixStack matrixStack, VertexConsumerProvider vertexConsumerProvider, int i) {
         super.render((TheEyeEntity) theEyeEntity, f, g, matrixStack, vertexConsumerProvider, i);
         LivingEntity livingEntity = theEyeEntity.getBeamTarget();
         if (livingEntity != null && theEyeEntity.isAlive()) {
@@ -87,8 +86,8 @@ public class TheEyeRenderer extends MobEntityRenderer<TheEyeEntity, TheEyeModel<
             vec3d3 = vec3d3.normalize();
             float n = (float) Math.acos(vec3d3.y);
             float o = (float) Math.atan2(vec3d3.z, vec3d3.x);
-            matrixStack.multiply(Vector3f.POSITIVE_Y.getDegreesQuaternion((1.5707964F - o) * 57.295776F));
-            matrixStack.multiply(Vector3f.POSITIVE_X.getDegreesQuaternion(n * 57.295776F));
+            matrixStack.multiply(Vec3f.POSITIVE_Y.getDegreesQuaternion((1.5707964F - o) * 57.295776F));
+            matrixStack.multiply(Vec3f.POSITIVE_X.getDegreesQuaternion(n * 57.295776F));
             float q = j * 0.05F * -1.5F;
             float r = h * h;
             int s = 64 + (int) (r * 191.0F);
@@ -138,10 +137,8 @@ public class TheEyeRenderer extends MobEntityRenderer<TheEyeEntity, TheEyeModel<
 
     }
 
-    private static void method_23173(VertexConsumer vertexConsumer, Matrix4f matrix4f, Matrix3f matrix3f, float f,
-            float g, float h, int i, int j, int k, float l, float m) {
-        vertexConsumer.vertex(matrix4f, f, g, h).color(i, j, k, 255).texture(l, m).overlay(OverlayTexture.DEFAULT_UV)
-                .light(15728880).normal(matrix3f, 0.0F, 1.0F, 0.0F).next();
+    private static void method_23173(VertexConsumer vertexConsumer, Matrix4f matrix4f, Matrix3f matrix3f, float f, float g, float h, int i, int j, int k, float l, float m) {
+        vertexConsumer.vertex(matrix4f, f, g, h).color(i, j, k, 255).texture(l, m).overlay(OverlayTexture.DEFAULT_UV).light(15728880).normal(matrix3f, 0.0F, 1.0F, 0.0F).next();
     }
 
     static {

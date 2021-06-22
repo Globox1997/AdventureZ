@@ -24,29 +24,28 @@ import net.minecraft.world.explosion.Explosion;
 
 @Mixin(Explosion.class)
 public class ExplosionMixin {
-  @Shadow
-  @Mutable
-  @Final
-  private Entity entity;
+    @Shadow
+    @Mutable
+    @Final
+    private Entity entity;
 
-  public ExplosionMixin(@Nullable Entity entity) {
-    this.entity = entity;
-  }
-
-  @Inject(method = "collectBlocksAndDamageEntities", at = @At(value = "INVOKE", target = "Lnet/minecraft/util/math/Vec3d;<init>(DDD)V", shift = Shift.AFTER, ordinal = 0), locals = LocalCapture.CAPTURE_FAILSOFT)
-  public void collectBlocksAndDamageEntitiesMixin(CallbackInfo info, Set<BlockPos> set, float q, int r, int s, int t,
-      int u, int v, int w, List<Entity> list) {
-    if (this.entity != null) {
-      if (this.entity instanceof BlazeGuardianEntity || this.entity instanceof VoidFragmentEntity) {
-        List<Entity> removeList = new ArrayList<Entity>();
-        for (int i = 0; i < list.size(); ++i) {
-          Entity entityFromList = (Entity) list.get(i);
-          if (!(entityFromList instanceof PlayerEntity)) {
-            removeList.add(entityFromList);
-          }
-        }
-        list.removeAll(removeList);
-      }
+    public ExplosionMixin(@Nullable Entity entity) {
+        this.entity = entity;
     }
-  }
+
+    @Inject(method = "collectBlocksAndDamageEntities", at = @At(value = "INVOKE", target = "Lnet/minecraft/util/math/Vec3d;<init>(DDD)V", shift = Shift.AFTER, ordinal = 0), locals = LocalCapture.CAPTURE_FAILSOFT)
+    public void collectBlocksAndDamageEntitiesMixin(CallbackInfo info, Set<BlockPos> set, int i, float q, int r, int s, int t, int u, int v, int w, List<Entity> list) {
+        if (this.entity != null) {
+            if (this.entity instanceof BlazeGuardianEntity || this.entity instanceof VoidFragmentEntity) {
+                List<Entity> removeList = new ArrayList<Entity>();
+                for (int k = 0; k < list.size(); ++k) {
+                    Entity entityFromList = (Entity) list.get(k);
+                    if (!(entityFromList instanceof PlayerEntity)) {
+                        removeList.add(entityFromList);
+                    }
+                }
+                list.removeAll(removeList);
+            }
+        }
+    }
 }

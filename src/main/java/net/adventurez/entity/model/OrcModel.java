@@ -5,7 +5,12 @@ import com.google.common.collect.ImmutableList;
 import net.adventurez.entity.OrcEntity;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
+import net.minecraft.client.model.ModelData;
 import net.minecraft.client.model.ModelPart;
+import net.minecraft.client.model.ModelPartBuilder;
+import net.minecraft.client.model.ModelPartData;
+import net.minecraft.client.model.ModelTransform;
+import net.minecraft.client.model.TexturedModelData;
 import net.minecraft.client.render.entity.model.CompositeEntityModel;
 import net.minecraft.util.math.MathHelper;
 
@@ -23,63 +28,41 @@ public class OrcModel<T extends OrcEntity> extends CompositeEntityModel<T> {
     private final ModelPart earRight;
     private final ModelPart ear;
 
-    public OrcModel() {
+    public OrcModel(ModelPart root) {
+        this.leftLeg = root.getChild("leftLeg");
+        this.rightLeg = root.getChild("rightLeg");
+        this.torso = root.getChild("torso");
+        this.leftArm = root.getChild("leftArm");
+        this.rightArm = root.getChild("rightArm");
+        this.head = root.getChild("head");
+        this.header = this.head.getChild("header");
+        this.earRight = this.header.getChild("earRight");
+        this.ear = this.earRight.getChild("ear");
+        this.earLeft = this.header.getChild("earLeft");
+        this.ear2 = this.earLeft.getChild("ear2");
+    }
 
-        leftLeg = (new ModelPart(this)).setTextureSize(128, 128);
-        leftLeg.setPivot(-3.0F, 12.0F, 0.0F);
-        leftLeg.setTextureOffset(54, 0).addCuboid(-3.5F, 6.0F, -3.0F, 6.0F, 6.0F, 6.0F, 0.0F, false);
-        leftLeg.setTextureOffset(60, 35).addCuboid(-3.0F, -1.0F, -2.5F, 5.0F, 7.0F, 5.0F, 0.0F, false);
-
-        rightLeg = (new ModelPart(this)).setTextureSize(128, 128);
-        rightLeg.setPivot(3.0F, 12.0F, 0.0F);
-        rightLeg.setTextureOffset(42, 50).addCuboid(-2.5F, 6.0F, -3.0F, 6.0F, 6.0F, 6.0F, 0.0F, false);
-        rightLeg.setTextureOffset(0, 57).addCuboid(-2.0F, -1.0F, -2.5F, 5.0F, 7.0F, 5.0F, 0.0F, false);
-
-        torso = (new ModelPart(this)).setTextureSize(128, 128);
-        torso.setPivot(0.0F, 0.0F, 0.0F);
-        torso.setTextureOffset(0, 17).addCuboid(-7.0F, 5.0F, -4.0F, 14.0F, 7.0F, 8.0F, 0.0F, false);
-        torso.setTextureOffset(0, 0).addCuboid(-7.0F, -5.0F, -3.0F, 14.0F, 10.0F, 7.0F, 0.0F, false);
-
-        leftArm = (new ModelPart(this)).setTextureSize(128, 128);
-        leftArm.setPivot(-10.0F, -2.0F, 1.0F);
-        leftArm.setTextureOffset(18, 50).addCuboid(-3.0F, -2.0F, -3.0F, 6.0F, 6.0F, 6.0F, 0.0F, false);
-        leftArm.setTextureOffset(61, 61).addCuboid(-2.5F, 4.0F, -2.5F, 5.0F, 6.0F, 5.0F, 0.0F, false);
-        leftArm.setTextureOffset(44, 23).addCuboid(-3.0F, 10.0F, -3.0F, 6.0F, 6.0F, 6.0F, 0.0F, false);
-
-        rightArm = (new ModelPart(this)).setTextureSize(128, 128);
-        rightArm.setPivot(10.0F, -2.0F, 1.0F);
-        rightArm.setTextureOffset(0, 44).addCuboid(-3.0F, -2.0F, -3.0F, 6.0F, 6.0F, 6.0F, 0.0F, false);
-        rightArm.setTextureOffset(60, 12).addCuboid(-2.5F, 4.0F, -2.5F, 5.0F, 6.0F, 5.0F, 0.0F, false);
-        rightArm.setTextureOffset(36, 11).addCuboid(-3.0F, 10.0F, -3.0F, 6.0F, 6.0F, 6.0F, 0.0F, false);
-
-        head = (new ModelPart(this)).setTextureSize(128, 128);
-        head.setPivot(0.0F, -4.0F, 0.0F);
-        head.setTextureOffset(0, 32).addCuboid(-4.5F, 0.0F, -8.0F, 9.0F, 3.0F, 9.0F, 0.0F, false);
-        head.setTextureOffset(0, 2).addCuboid(2.5F, -1.0F, -7.5F, 1.0F, 1.0F, 1.0F, 0.0F, false);
-        head.setTextureOffset(0, 0).addCuboid(-3.5F, -1.0F, -7.5F, 1.0F, 1.0F, 1.0F, 0.0F, false);
-
-        header = (new ModelPart(this)).setTextureSize(128, 128);
-        header.setPivot(0.0F, -6.0F, -7.0F);
-        head.addChild(header);
-        header.setTextureOffset(28, 36).addCuboid(-4.0F, 0.0F, 0.2F, 8.0F, 6.0F, 8.0F, 0.0F, false);
-
-        earLeft = (new ModelPart(this)).setTextureSize(128, 128);
-        earLeft.setPivot(0.0F, 2.0F, 7.0F);
-        header.addChild(earLeft);
-
-        ear2 = (new ModelPart(this)).setTextureSize(128, 128);
-        ear2.setPivot(-2.0F, -2.0F, -1.0F);
-        earLeft.addChild(ear2);
-        ear2.setTextureOffset(42, 0).addCuboid(-1.0F, 0.0F, 0.0F, 1.0F, 4.0F, 4.0F, 0.0F, false);
-
-        earRight = (new ModelPart(this)).setTextureSize(128, 128);
-        earRight.setPivot(0.0F, -4.0F, 7.0F);
-        header.addChild(earRight);
-
-        ear = (new ModelPart(this)).setTextureSize(128, 128);
-        ear.setPivot(2.0F, 4.0F, -1.0F);
-        earRight.addChild(ear);
-        ear.setTextureOffset(60, 47).addCuboid(0.0F, 0.0F, 0.0F, 1.0F, 4.0F, 4.0F, 0.0F, false);
+    public static TexturedModelData getTexturedModelData() {
+        ModelData modelData = new ModelData();
+        ModelPartData modelPartData = modelData.getRoot();
+        modelPartData.addChild("leftLeg", ModelPartBuilder.create().uv(54, 0).cuboid(-3.5F, 6.0F, -3.0F, 6.0F, 6.0F, 6.0F).uv(60, 35).cuboid(-3.0F, -1.0F, -2.5F, 5.0F, 7.0F, 5.0F),
+                ModelTransform.pivot(-3.0F, 12.0F, 0.0F));
+        modelPartData.addChild("rightLeg", ModelPartBuilder.create().uv(42, 50).cuboid(-2.5F, 6.0F, -3.0F, 6.0F, 6.0F, 6.0F).uv(0, 57).cuboid(-2.0F, -1.0F, -2.5F, 5.0F, 7.0F, 5.0F),
+                ModelTransform.pivot(3.0F, 12.0F, 0.0F));
+        modelPartData.addChild("torso", ModelPartBuilder.create().uv(0, 17).cuboid(-7.0F, 5.0F, -4.0F, 14.0F, 7.0F, 8.0F).uv(0, 0).cuboid(-7.0F, -5.0F, -3.0F, 14.0F, 10.0F, 7.0F),
+                ModelTransform.pivot(0.0F, 0.0F, 0.0F));
+        modelPartData.addChild("leftArm", ModelPartBuilder.create().uv(18, 50).cuboid(-3.0F, -2.0F, -3.0F, 6.0F, 6.0F, 6.0F).uv(61, 61).cuboid(-2.5F, 4.0F, -2.5F, 5.0F, 6.0F, 5.0F).uv(44, 23)
+                .cuboid(-3.0F, 10.0F, -3.0F, 6.0F, 6.0F, 6.0F), ModelTransform.pivot(-10.0F, -2.0F, 1.0F));
+        modelPartData.addChild("rightArm", ModelPartBuilder.create().uv(0, 44).cuboid(-3.0F, -2.0F, -3.0F, 6.0F, 6.0F, 6.0F).uv(60, 12).cuboid(-2.5F, 4.0F, -2.5F, 5.0F, 6.0F, 5.0F).uv(36, 11)
+                .cuboid(-3.0F, 10.0F, -3.0F, 6.0F, 6.0F, 6.0F), ModelTransform.pivot(10.0F, -2.0F, 1.0F));
+        ModelPartData modelPartData1 = modelPartData.addChild("head", ModelPartBuilder.create().uv(0, 32).cuboid(-4.5F, 0.0F, -8.0F, 9.0F, 3.0F, 9.0F).uv(0, 2)
+                .cuboid(2.5F, -1.0F, -7.5F, 1.0F, 1.0F, 1.0F).uv(0, 0).cuboid(-3.5F, -1.0F, -7.5F, 1.0F, 1.0F, 1.0F), ModelTransform.pivot(0.0F, -4.0F, 0.0F));
+        ModelPartData modelPartData2 = modelPartData1.addChild("header", ModelPartBuilder.create().uv(28, 36).cuboid(-4.0F, 0.0F, 0.2F, 8.0F, 6.0F, 8.0F), ModelTransform.pivot(0.0F, -6.0F, -7.0F));
+        ModelPartData modelPartData3 = modelPartData2.addChild("earLeft", ModelPartBuilder.create(), ModelTransform.pivot(0.0F, 2.0F, 7.0F));
+        modelPartData3.addChild("ear2", ModelPartBuilder.create().uv(42, 0).cuboid(-1.0F, 0.0F, 0.0F, 1.0F, 4.0F, 4.0F), ModelTransform.pivot(-2.0F, -2.0F, -1.0F));
+        ModelPartData modelPartData4 = modelPartData2.addChild("earRight", ModelPartBuilder.create(), ModelTransform.pivot(0.0F, -4.0F, 7.0F));
+        modelPartData4.addChild("ear", ModelPartBuilder.create().uv(60, 47).cuboid(0.0F, 0.0F, 0.0F, 1.0F, 4.0F, 4.0F), ModelTransform.pivot(2.0F, 4.0F, -1.0F));
+        return TexturedModelData.of(modelData, 128, 128);
     }
 
     @Override
@@ -88,8 +71,7 @@ public class OrcModel<T extends OrcEntity> extends CompositeEntityModel<T> {
     }
 
     @Override
-    public void setAngles(T entity, float limbAngle, float limbDistance, float animationProgress, float headYaw,
-            float headPitch) {
+    public void setAngles(T entity, float limbAngle, float limbDistance, float animationProgress, float headYaw, float headPitch) {
         this.leftArm.pitch = -0.2618F;
         this.leftArm.roll = 0.0436F;
         this.rightArm.pitch = -0.2618F;

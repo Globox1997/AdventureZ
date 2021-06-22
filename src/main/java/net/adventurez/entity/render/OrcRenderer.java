@@ -2,10 +2,11 @@ package net.adventurez.entity.render;
 
 import net.adventurez.entity.OrcEntity;
 import net.adventurez.entity.model.OrcModel;
+import net.adventurez.init.RenderInit;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
 import net.minecraft.client.render.VertexConsumerProvider;
-import net.minecraft.client.render.entity.EntityRenderDispatcher;
+import net.minecraft.client.render.entity.EntityRendererFactory;
 import net.minecraft.client.render.entity.MobEntityRenderer;
 import net.minecraft.client.util.math.MatrixStack;
 import net.minecraft.util.Identifier;
@@ -14,13 +15,12 @@ import net.minecraft.util.Identifier;
 public class OrcRenderer extends MobEntityRenderer<OrcEntity, OrcModel<OrcEntity>> {
     private static final Identifier TEXTURE = new Identifier("adventurez:textures/entity/ork.png");
 
-    public OrcRenderer(EntityRenderDispatcher entityRenderDispatcher) {
-        super(entityRenderDispatcher, new OrcModel<>(), 0.7F);
+    public OrcRenderer(EntityRendererFactory.Context context) {
+        super(context, new OrcModel<>(context.getPart(RenderInit.ORC_LAYER)), 0.7F);
     }
 
     @Override
-    public void render(OrcEntity orcEntity, float f, float g, MatrixStack matrixStack,
-            VertexConsumerProvider vertexConsumerProvider, int i) {
+    public void render(OrcEntity orcEntity, float f, float g, MatrixStack matrixStack, VertexConsumerProvider vertexConsumerProvider, int i) {
         this.shadowRadius = 0.5F * (float) orcEntity.getSize();
         super.render(orcEntity, f, g, matrixStack, vertexConsumerProvider, i);
     }

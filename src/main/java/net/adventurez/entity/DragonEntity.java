@@ -50,8 +50,8 @@ import net.minecraft.inventory.SimpleInventory;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.Items;
-import net.minecraft.nbt.CompoundTag;
-import net.minecraft.nbt.ListTag;
+import net.minecraft.nbt.NbtCompound;
+import net.minecraft.nbt.NbtList;
 import net.minecraft.particle.ParticleEffect;
 import net.minecraft.particle.ParticleTypes;
 import net.minecraft.screen.GenericContainerScreenHandler;
@@ -78,897 +78,891 @@ import net.minecraft.world.World;
 
 public class DragonEntity extends PathAwareEntity implements InventoryChangedListener {
 
-   public static final TrackedData<Boolean> IS_FLYING;
-   public static final TrackedData<Boolean> IS_START_FLYING;
-   public static final TrackedData<Boolean> CLIENT_START_FLYING;
-   public static final TrackedData<Boolean> CLIENT_END_FLYING;
-   public static final TrackedData<Byte> TAMEABLE_FLAGS;
-   public static final TrackedData<Optional<UUID>> OWNER_UUID;
-   public static final TrackedData<Boolean> HAS_SADDLE;
-   public static final TrackedData<Boolean> HAS_CHEST;
-   public static final TrackedData<Boolean> OTHER_EARS;
-   public static final TrackedData<Boolean> OTHER_TAIL;
-   public static final TrackedData<Boolean> OTHER_EYES;
-   public static final TrackedData<Integer> DRAGON_SIZE;
-   public static final TrackedData<Boolean> FIRE_BREATH;
+    public static final TrackedData<Boolean> IS_FLYING;
+    public static final TrackedData<Boolean> IS_START_FLYING;
+    public static final TrackedData<Boolean> CLIENT_START_FLYING;
+    public static final TrackedData<Boolean> CLIENT_END_FLYING;
+    public static final TrackedData<Byte> TAMEABLE_FLAGS;
+    public static final TrackedData<Optional<UUID>> OWNER_UUID;
+    public static final TrackedData<Boolean> HAS_SADDLE;
+    public static final TrackedData<Boolean> HAS_CHEST;
+    public static final TrackedData<Boolean> OTHER_EARS;
+    public static final TrackedData<Boolean> OTHER_TAIL;
+    public static final TrackedData<Boolean> OTHER_EYES;
+    public static final TrackedData<Integer> DRAGON_SIZE;
+    public static final TrackedData<Boolean> FIRE_BREATH;
 
-   private boolean sitting;
-   public boolean isFlying;
-   private int startFlyingTimer = 0;
-   private float dragonSideSpeed = 0.0F;
-   private float dragonForwardSpeed = 0.0F;
-   public int keyBind = 342;
-   private float turningFloat;
-   private boolean hasSaddle;
-   private int healingFood;
-   private SimpleInventory inventory;
-   private int onGroundTicker;
-   private int dragonAge;
-   private int dragonAgeFoodBonus;
-   private int fireBreathCooldown;
-   public boolean fireBreathActive;
+    private boolean sitting;
+    public boolean isFlying;
+    private int startFlyingTimer = 0;
+    private float dragonSideSpeed = 0.0F;
+    private float dragonForwardSpeed = 0.0F;
+    public int keyBind = 342;
+    private float turningFloat;
+    private boolean hasSaddle;
+    private int healingFood;
+    private SimpleInventory inventory;
+    private int onGroundTicker;
+    private int dragonAge;
+    private int dragonAgeFoodBonus;
+    private int fireBreathCooldown;
+    public boolean fireBreathActive;
 
-   public DragonEntity(EntityType<? extends PathAwareEntity> entityType, World world) {
-      super(entityType, world);
-      this.stepHeight = 1.0F;
-      this.onChestedStatusChanged();
-   }
+    public DragonEntity(EntityType<? extends PathAwareEntity> entityType, World world) {
+        super(entityType, world);
+        this.stepHeight = 1.0F;
+        this.onChestedStatusChanged();
+    }
 
-   public static DefaultAttributeContainer.Builder createDragonAttributes() {
-      return MobEntity.createMobAttributes().add(EntityAttributes.GENERIC_MAX_HEALTH, 60.0D)
-            .add(EntityAttributes.GENERIC_ATTACK_DAMAGE, 9.0D).add(EntityAttributes.GENERIC_MOVEMENT_SPEED, 0.28D)
-            .add(EntityAttributes.GENERIC_ARMOR, 6.0D).add(EntityAttributes.GENERIC_KNOCKBACK_RESISTANCE, 0.5D);
-   }
+    public static DefaultAttributeContainer.Builder createDragonAttributes() {
+        return MobEntity.createMobAttributes().add(EntityAttributes.GENERIC_MAX_HEALTH, 60.0D).add(EntityAttributes.GENERIC_ATTACK_DAMAGE, 9.0D).add(EntityAttributes.GENERIC_MOVEMENT_SPEED, 0.28D)
+                .add(EntityAttributes.GENERIC_ARMOR, 6.0D).add(EntityAttributes.GENERIC_KNOCKBACK_RESISTANCE, 0.5D);
+    }
 
-   @Override
-   public void initGoals() {
-      super.initGoals();
-      this.goalSelector.add(0, new SwimGoal(this));
-      this.goalSelector.add(1, new DragonSitGoal(this));
-      this.goalSelector.add(2, new DragonFindOwnerGoal(this, 0.1D, 10.0F, 2.0F));
-      this.goalSelector.add(3, new DragonFlyRandomlyGoal(this));
-      this.goalSelector.add(4, new WanderAroundGoal(this, 0.9D));
-      this.goalSelector.add(5, new LookAtEntityGoal(this, PlayerEntity.class, 10.0F, 0.8F));
-      this.goalSelector.add(6, new LookAroundGoal(this));
-   }
+    @Override
+    public void initGoals() {
+        super.initGoals();
+        this.goalSelector.add(0, new SwimGoal(this));
+        this.goalSelector.add(1, new DragonSitGoal(this));
+        this.goalSelector.add(2, new DragonFindOwnerGoal(this, 0.1D, 10.0F, 2.0F));
+        this.goalSelector.add(3, new DragonFlyRandomlyGoal(this));
+        this.goalSelector.add(4, new WanderAroundGoal(this, 0.9D));
+        this.goalSelector.add(5, new LookAtEntityGoal(this, PlayerEntity.class, 10.0F, 0.8F));
+        this.goalSelector.add(6, new LookAroundGoal(this));
+    }
 
-   @Override
-   protected void initDataTracker() {
-      super.initDataTracker();
-      this.dataTracker.startTracking(TAMEABLE_FLAGS, (byte) 0);
-      this.dataTracker.startTracking(OWNER_UUID, Optional.empty());
-      this.dataTracker.startTracking(IS_FLYING, false);
-      this.dataTracker.startTracking(CLIENT_END_FLYING, false);
-      this.dataTracker.startTracking(IS_START_FLYING, false);
-      this.dataTracker.startTracking(CLIENT_START_FLYING, false);
-      this.dataTracker.startTracking(HAS_SADDLE, false);
-      this.dataTracker.startTracking(HAS_CHEST, false);
-      this.dataTracker.startTracking(OTHER_EARS, false);
-      this.dataTracker.startTracking(OTHER_TAIL, false);
-      this.dataTracker.startTracking(OTHER_EYES, false);
-      this.dataTracker.startTracking(DRAGON_SIZE, 1);
-      this.dataTracker.startTracking(FIRE_BREATH, false);
-   }
+    @Override
+    protected void initDataTracker() {
+        super.initDataTracker();
+        this.dataTracker.startTracking(TAMEABLE_FLAGS, (byte) 0);
+        this.dataTracker.startTracking(OWNER_UUID, Optional.empty());
+        this.dataTracker.startTracking(IS_FLYING, false);
+        this.dataTracker.startTracking(CLIENT_END_FLYING, false);
+        this.dataTracker.startTracking(IS_START_FLYING, false);
+        this.dataTracker.startTracking(CLIENT_START_FLYING, false);
+        this.dataTracker.startTracking(HAS_SADDLE, false);
+        this.dataTracker.startTracking(HAS_CHEST, false);
+        this.dataTracker.startTracking(OTHER_EARS, false);
+        this.dataTracker.startTracking(OTHER_TAIL, false);
+        this.dataTracker.startTracking(OTHER_EYES, false);
+        this.dataTracker.startTracking(DRAGON_SIZE, 1);
+        this.dataTracker.startTracking(FIRE_BREATH, false);
+    }
 
-   @Override
-   public void writeCustomDataToTag(CompoundTag tag) {
-      super.writeCustomDataToTag(tag);
-      if (this.getOwnerUuid() != null) {
-         tag.putUuid("DragonOwner", this.getOwnerUuid());
-      }
-      tag.putBoolean("IsFlying", this.isFlying);
-      tag.putBoolean("SittingDragon", this.sitting);
-      tag.putBoolean("HasSaddle", this.hasSaddle);
-      tag.putBoolean("HasChest", this.hasChest());
-      if (this.hasChest()) {
-         ListTag listTag = new ListTag();
-         for (int i = 0; i < this.inventory.size(); ++i) {
-            ItemStack itemStack = this.inventory.getStack(i);
-            if (!itemStack.isEmpty()) {
-               CompoundTag compoundTag = new CompoundTag();
-               compoundTag.putByte("Slot", (byte) i);
-               itemStack.toTag(compoundTag);
-               listTag.add(compoundTag);
+    @Override
+    public void writeCustomDataToNbt(NbtCompound tag) {
+        super.writeCustomDataToNbt(tag);
+        if (this.getOwnerUuid() != null) {
+            tag.putUuid("DragonOwner", this.getOwnerUuid());
+        }
+        tag.putBoolean("IsFlying", this.isFlying);
+        tag.putBoolean("SittingDragon", this.sitting);
+        tag.putBoolean("HasSaddle", this.hasSaddle);
+        tag.putBoolean("HasChest", this.hasChest());
+        if (this.hasChest()) {
+            NbtList listTag = new NbtList();
+            for (int i = 0; i < this.inventory.size(); ++i) {
+                ItemStack itemStack = this.inventory.getStack(i);
+                if (!itemStack.isEmpty()) {
+                    NbtCompound compoundTag = new NbtCompound();
+                    compoundTag.putByte("Slot", (byte) i);
+                    itemStack.writeNbt(compoundTag);
+                    listTag.add(compoundTag);
+                }
             }
-         }
-         tag.put("Items", listTag);
-      }
-      tag.putInt("DragonSize", this.getSize());
-      tag.putBoolean("OtherDragonEars", this.getDataTracker().get(DragonEntity.OTHER_EARS));
-      tag.putBoolean("OtherDragonTail", this.getDataTracker().get(DragonEntity.OTHER_TAIL));
-      tag.putBoolean("OtherDragonEyes", this.getDataTracker().get(DragonEntity.OTHER_EYES));
-      tag.putInt("DragonAge", this.dragonAge);
-   }
+            tag.put("Items", listTag);
+        }
+        tag.putInt("DragonSize", this.getSize());
+        tag.putBoolean("OtherDragonEars", this.getDataTracker().get(DragonEntity.OTHER_EARS));
+        tag.putBoolean("OtherDragonTail", this.getDataTracker().get(DragonEntity.OTHER_TAIL));
+        tag.putBoolean("OtherDragonEyes", this.getDataTracker().get(DragonEntity.OTHER_EYES));
+        tag.putInt("DragonAge", this.dragonAge);
+    }
 
-   @Override
-   public void readCustomDataFromTag(CompoundTag tag) {
-      super.readCustomDataFromTag(tag);
-      UUID uUID2;
-      if (tag.containsUuid("DragonOwner")) {
-         uUID2 = tag.getUuid("DragonOwner");
-      } else {
-         String string = tag.getString("DragonOwner");
-         uUID2 = ServerConfigHandler.getPlayerUuidByName(this.getServer(), string);
-      }
-      if (uUID2 != null) {
-         try {
-            this.setOwnerUuid(uUID2);
-            this.setTamed(true);
-         } catch (Throwable var4) {
-            this.setTamed(false);
-         }
-      }
-      this.isFlying = tag.getBoolean("IsFlying");
-      this.dataTracker.set(IS_FLYING, this.isFlying);
-      this.sitting = tag.getBoolean("SittingDragon");
-      this.setInSittingPose(this.sitting);
-      this.hasSaddle = tag.getBoolean("HasSaddle");
-      this.dataTracker.set(HAS_SADDLE, this.hasSaddle);
-      this.setHasChest(tag.getBoolean("HasChest"));
-      if (this.hasChest()) {
-         ListTag listTag = tag.getList("Items", 10);
-         this.onChestedStatusChanged();
+    @Override
+    public void readCustomDataFromNbt(NbtCompound tag) {
+        super.readCustomDataFromNbt(tag);
+        UUID uUID2;
+        if (tag.containsUuid("DragonOwner")) {
+            uUID2 = tag.getUuid("DragonOwner");
+        } else {
+            String string = tag.getString("DragonOwner");
+            uUID2 = ServerConfigHandler.getPlayerUuidByName(this.getServer(), string);
+        }
+        if (uUID2 != null) {
+            try {
+                this.setOwnerUuid(uUID2);
+                this.setTamed(true);
+            } catch (Throwable var4) {
+                this.setTamed(false);
+            }
+        }
+        this.isFlying = tag.getBoolean("IsFlying");
+        this.dataTracker.set(IS_FLYING, this.isFlying);
+        this.sitting = tag.getBoolean("SittingDragon");
+        this.setInSittingPose(this.sitting);
+        this.hasSaddle = tag.getBoolean("HasSaddle");
+        this.dataTracker.set(HAS_SADDLE, this.hasSaddle);
+        this.setHasChest(tag.getBoolean("HasChest"));
+        if (this.hasChest()) {
+            NbtList listTag = tag.getList("Items", 10);
+            this.onChestedStatusChanged();
 
-         for (int i = 0; i < listTag.size(); ++i) {
-            CompoundTag compoundTag = listTag.getCompound(i);
-            int j = compoundTag.getByte("Slot") & 255;
-            if (j >= 0 && j < this.inventory.size()) {
-               this.inventory.setStack(j, ItemStack.fromTag(compoundTag));
+            for (int i = 0; i < listTag.size(); ++i) {
+                NbtCompound compoundTag = listTag.getCompound(i);
+                int j = compoundTag.getByte("Slot") & 255;
+                if (j >= 0 && j < this.inventory.size()) {
+                    this.inventory.setStack(j, ItemStack.fromNbt(compoundTag));
+                }
             }
-         }
-      }
-      this.setSize(tag.getInt("DragonSize"));
-      this.dataTracker.set(OTHER_EARS, tag.getBoolean("OtherDragonEars"));
-      this.dataTracker.set(OTHER_TAIL, tag.getBoolean("OtherDragonTail"));
-      this.dataTracker.set(OTHER_EYES, tag.getBoolean("OtherDragonEyes"));
-      this.dragonAge = tag.getInt("DragonAge");
-   }
+        }
+        this.setSize(tag.getInt("DragonSize"));
+        this.dataTracker.set(OTHER_EARS, tag.getBoolean("OtherDragonEars"));
+        this.dataTracker.set(OTHER_TAIL, tag.getBoolean("OtherDragonTail"));
+        this.dataTracker.set(OTHER_EYES, tag.getBoolean("OtherDragonEyes"));
+        this.dragonAge = tag.getInt("DragonAge");
+    }
 
-   @Override
-   public void travel(Vec3d movementInput) {
-      if (this.isAlive()) {
-         if (this.hasPassengers() && this.canBeControlledByRider()) {
-            LivingEntity livingEntity = (LivingEntity) this.getPrimaryPassenger();
-            double wrapper = MathHelper.wrapDegrees(this.bodyYaw - (double) this.yaw);
-            this.yaw = (float) ((double) this.yaw + wrapper);
-            this.prevYaw = this.yaw;
-            this.pitch = livingEntity.pitch * 0.5F;
-            this.setRotation(this.yaw, this.pitch);
-            this.headYaw = livingEntity.headYaw;
-            boolean shouldFlyUp = false;
-            boolean shouldFlyDown = false;
-            shouldFlyUp = ((LivingEntityAccessor) livingEntity).jumping();
-            if (this.world.isClient && livingEntity instanceof ClientPlayerEntity) {
-               ClientPlayerEntity clientPlayerEntity = (ClientPlayerEntity) livingEntity;
-               shouldFlyDown = InputUtil.isKeyPressed(MinecraftClient.getInstance().getWindow().getHandle(),
-                     this.keyBind);
-               if (clientPlayerEntity.input.pressingLeft) {
-                  turningFloat -= 0.05F;
-               }
-               if (!clientPlayerEntity.input.pressingLeft && turningFloat < 0.0F) {
-                  turningFloat = 0.0F;
-               }
-               if (clientPlayerEntity.input.pressingRight) {
-                  turningFloat += 0.05F;
-               }
-               if (!clientPlayerEntity.input.pressingRight && turningFloat > 0.0F) {
-                  turningFloat = 0.0F;
-               }
-            }
+    @Override
+    public void travel(Vec3d movementInput) {
+        if (this.isAlive()) {
+            if (this.hasPassengers() && this.canBeControlledByRider()) {
+                LivingEntity livingEntity = (LivingEntity) this.getPrimaryPassenger();
+                double wrapper = MathHelper.wrapDegrees(this.bodyYaw - (double) this.getYaw());
+                this.setYaw((float) ((double) this.getYaw() + wrapper));
+                this.prevYaw = this.getYaw();
+                this.setPitch(livingEntity.getPitch() * 0.5F);
+                this.setRotation(this.getYaw(), this.getPitch());
+                this.headYaw = livingEntity.headYaw;
+                boolean shouldFlyUp = false;
+                boolean shouldFlyDown = false;
+                shouldFlyUp = ((LivingEntityAccessor) livingEntity).jumping();
+                if (this.world.isClient && livingEntity instanceof ClientPlayerEntity) {
+                    ClientPlayerEntity clientPlayerEntity = (ClientPlayerEntity) livingEntity;
+                    shouldFlyDown = InputUtil.isKeyPressed(MinecraftClient.getInstance().getWindow().getHandle(), this.keyBind);
+                    if (clientPlayerEntity.input.pressingLeft) {
+                        turningFloat -= 0.05F;
+                    }
+                    if (!clientPlayerEntity.input.pressingLeft && turningFloat < 0.0F) {
+                        turningFloat = 0.0F;
+                    }
+                    if (clientPlayerEntity.input.pressingRight) {
+                        turningFloat += 0.05F;
+                    }
+                    if (!clientPlayerEntity.input.pressingRight && turningFloat > 0.0F) {
+                        turningFloat = 0.0F;
+                    }
+                }
 
-            this.yaw += MathHelper.wrapDegrees(turningFloat);
+                this.setYaw(this.getYaw() + MathHelper.wrapDegrees(turningFloat));
 
-            float f = livingEntity.sidewaysSpeed * 0.1F;
-            float g = livingEntity.forwardSpeed * 0.5F;
-            float flySpeed = 0.0F;
-            float maxForwardSpeed = 0.6F;
-            float maxSidewaysSpeed = 0.15F;
+                float f = livingEntity.sidewaysSpeed * 0.1F;
+                float g = livingEntity.forwardSpeed * 0.5F;
+                float flySpeed = 0.0F;
+                float maxForwardSpeed = 0.6F;
+                float maxSidewaysSpeed = 0.15F;
 
-            if ((this.dragonForwardSpeed < maxForwardSpeed && livingEntity.forwardSpeed > 0.0F)
-                  || (this.dragonForwardSpeed > maxForwardSpeed * -0.3F && livingEntity.forwardSpeed < 0.0F)) {
-               this.dragonForwardSpeed += g * 0.04F;
-            }
-            if ((this.dragonSideSpeed < maxSidewaysSpeed && livingEntity.sidewaysSpeed > 0.0F)
-                  || (this.dragonSideSpeed > maxSidewaysSpeed * -1 && livingEntity.sidewaysSpeed < 0.0F)) {
-               this.dragonSideSpeed += f * 0.03F;
-            }
-            if (livingEntity.sidewaysSpeed == 0.0F) {
-               this.dragonSideSpeed *= 0.7F;
-            }
-            if (livingEntity.forwardSpeed == 0.0F) {
-               this.dragonForwardSpeed *= 0.7F;
-            }
+                if ((this.dragonForwardSpeed < maxForwardSpeed && livingEntity.forwardSpeed > 0.0F) || (this.dragonForwardSpeed > maxForwardSpeed * -0.3F && livingEntity.forwardSpeed < 0.0F)) {
+                    this.dragonForwardSpeed += g * 0.04F;
+                }
+                if ((this.dragonSideSpeed < maxSidewaysSpeed && livingEntity.sidewaysSpeed > 0.0F) || (this.dragonSideSpeed > maxSidewaysSpeed * -1 && livingEntity.sidewaysSpeed < 0.0F)) {
+                    this.dragonSideSpeed += f * 0.03F;
+                }
+                if (livingEntity.sidewaysSpeed == 0.0F) {
+                    this.dragonSideSpeed *= 0.7F;
+                }
+                if (livingEntity.forwardSpeed == 0.0F) {
+                    this.dragonForwardSpeed *= 0.7F;
+                }
 
-            if (shouldFlyUp && this.onGround && !this.isFlying && this.startFlyingTimer < 20) {
-               // && !this.getDataTracker().get(CLIENT_END_FLYING)
-               this.startFlyingTimer++;
-               this.getDataTracker().set(CLIENT_START_FLYING, true);
-               this.getDataTracker().set(IS_START_FLYING, true);
-            }
-            if (!shouldFlyUp && this.onGround && !this.isFlying && this.startFlyingTimer > 0) {
-               this.startFlyingTimer--;
-               this.getDataTracker().set(IS_START_FLYING, false);
-            }
-            if ((this.startFlyingTimer <= 0 && !this.isFlying) || this.isFlying
-                  || this.getDataTracker().get(IS_FLYING)) {
-               this.getDataTracker().set(CLIENT_START_FLYING, false);
-            }
+                if (shouldFlyUp && this.onGround && !this.isFlying && this.startFlyingTimer < 20) {
+                    // && !this.getDataTracker().get(CLIENT_END_FLYING)
+                    this.startFlyingTimer++;
+                    this.getDataTracker().set(CLIENT_START_FLYING, true);
+                    this.getDataTracker().set(IS_START_FLYING, true);
+                }
+                if (!shouldFlyUp && this.onGround && !this.isFlying && this.startFlyingTimer > 0) {
+                    this.startFlyingTimer--;
+                    this.getDataTracker().set(IS_START_FLYING, false);
+                }
+                if ((this.startFlyingTimer <= 0 && !this.isFlying) || this.isFlying || this.getDataTracker().get(IS_FLYING)) {
+                    this.getDataTracker().set(CLIENT_START_FLYING, false);
+                }
 
-            if (this.startFlyingTimer >= 20 && (!this.isFlying || !this.getDataTracker().get(IS_FLYING))) {
-               this.isFlying = true;
-               this.getDataTracker().set(IS_FLYING, true);
-            }
-            if (this.isFlying && this.onGround) {// && shouldFlyDown only client: bad
-               this.onGroundTicker++;
-               if (this.onGroundTicker > 3) {
-                  this.onGroundTicker = 0;
-                  this.isFlying = false;
-                  this.getDataTracker().set(IS_FLYING, false);
-                  this.startFlyingTimer = 0;
-                  this.getDataTracker().set(CLIENT_END_FLYING, true);
-               }
+                if (this.startFlyingTimer >= 20 && (!this.isFlying || !this.getDataTracker().get(IS_FLYING))) {
+                    this.isFlying = true;
+                    this.getDataTracker().set(IS_FLYING, true);
+                }
+                if (this.isFlying && this.onGround) {// && shouldFlyDown only client: bad
+                    this.onGroundTicker++;
+                    if (this.onGroundTicker > 3) {
+                        this.onGroundTicker = 0;
+                        this.isFlying = false;
+                        this.getDataTracker().set(IS_FLYING, false);
+                        this.startFlyingTimer = 0;
+                        this.getDataTracker().set(CLIENT_END_FLYING, true);
+                    }
 
-            }
-            if ((this.isFlying || this.getDataTracker().get(IS_FLYING)) && shouldFlyUp) {
-               flySpeed = 0.1F;
-            }
-            if ((this.isFlying || this.getDataTracker().get(IS_FLYING)) && shouldFlyDown) {
-               flySpeed = -0.1F;
-            }
-            if ((this.isFlying || this.getDataTracker().get(IS_FLYING)) && !shouldFlyDown && !shouldFlyUp) {
-               flySpeed *= 0.5F;
-            }
+                }
+                if ((this.isFlying || this.getDataTracker().get(IS_FLYING)) && shouldFlyUp) {
+                    flySpeed = 0.1F;
+                }
+                if ((this.isFlying || this.getDataTracker().get(IS_FLYING)) && shouldFlyDown) {
+                    flySpeed = -0.1F;
+                }
+                if ((this.isFlying || this.getDataTracker().get(IS_FLYING)) && !shouldFlyDown && !shouldFlyUp) {
+                    flySpeed *= 0.5F;
+                }
 
-            if (this.isLogicalSideForUpdatingMovement()) {
-               this.setMovementSpeed((float) this.getAttributeValue(EntityAttributes.GENERIC_MOVEMENT_SPEED));
-               if (!this.getDataTracker().get(IS_FLYING) && !this.isFlying) {
-                  super.travel(new Vec3d((double) f, movementInput.y, (double) g));
-               } else {
-                  Vec3d vec3d = new Vec3d((double) this.dragonSideSpeed, movementInput.y + flySpeed,
-                        (double) this.dragonForwardSpeed);
-                  this.updateVelocity(0.05F, vec3d);
-                  this.move(MovementType.SELF, this.getVelocity());
-                  this.setVelocity(this.getVelocity());
-               }
-            } else if (livingEntity instanceof PlayerEntity) {
-               this.setVelocity(Vec3d.ZERO);
-            }
-            this.method_29242(this, false);
-         } else {
-            if (this.isFlying || this.getDataTracker().get(IS_FLYING)) {
-               this.updateVelocity(0.02F, movementInput);
-               this.move(MovementType.SELF, this.getVelocity());
-               this.setVelocity(this.getVelocity().multiply((0.91F)));
-               double wrapper = MathHelper.wrapDegrees(this.headYaw - (double) this.yaw);
-               this.yaw = (float) ((double) this.yaw + wrapper);
-               BlockPos blockPos = this.getBlockPos().down(2);
-               if (this.world.getBlockState(blockPos).isSolidBlock(world, blockPos)) {
-                  this.setVelocity(this.getVelocity().add(0.0D, -0.005D, 0.0D));
-               }
-               if (this.onGround) {
-                  this.getDataTracker().set(CLIENT_END_FLYING, true);
-                  this.isFlying = false;
-                  this.getDataTracker().set(IS_FLYING, false);
-               }
+                if (this.isLogicalSideForUpdatingMovement()) {
+                    this.setMovementSpeed((float) this.getAttributeValue(EntityAttributes.GENERIC_MOVEMENT_SPEED));
+                    if (!this.getDataTracker().get(IS_FLYING) && !this.isFlying) {
+                        super.travel(new Vec3d((double) f, movementInput.y, (double) g));
+                    } else {
+                        Vec3d vec3d = new Vec3d((double) this.dragonSideSpeed, movementInput.y + flySpeed, (double) this.dragonForwardSpeed);
+                        this.updateVelocity(0.05F, vec3d);
+                        this.move(MovementType.SELF, this.getVelocity());
+                        this.setVelocity(this.getVelocity());
+                    }
+                } else if (livingEntity instanceof PlayerEntity) {
+                    this.setVelocity(Vec3d.ZERO);
+                }
+                this.updateLimbs(this, false);
             } else {
-               this.flyingSpeed = 0.02F;
-               super.travel(movementInput);
+                if (this.isFlying || this.getDataTracker().get(IS_FLYING)) {
+                    this.updateVelocity(0.02F, movementInput);
+                    this.move(MovementType.SELF, this.getVelocity());
+                    this.setVelocity(this.getVelocity().multiply((0.91F)));
+                    double wrapper = MathHelper.wrapDegrees(this.headYaw - (double) this.getYaw());
+                    this.setYaw((float) ((double) this.getYaw() + wrapper));
+                    BlockPos blockPos = this.getBlockPos().down(2);
+                    if (this.world.getBlockState(blockPos).isSolidBlock(world, blockPos)) {
+                        this.setVelocity(this.getVelocity().add(0.0D, -0.005D, 0.0D));
+                    }
+                    if (this.onGround) {
+                        this.getDataTracker().set(CLIENT_END_FLYING, true);
+                        this.isFlying = false;
+                        this.getDataTracker().set(IS_FLYING, false);
+                    }
+                } else {
+                    this.flyingSpeed = 0.02F;
+                    super.travel(movementInput);
+                }
             }
-         }
-      }
+        }
 
-   }
+    }
 
-   @Override
-   public boolean canBeControlledByRider() {
-      return this.getPrimaryPassenger() instanceof LivingEntity;
-   }
+    @Override
+    public boolean canBeControlledByRider() {
+        return this.getPrimaryPassenger() instanceof LivingEntity;
+    }
 
-   @Override
-   public void updatePassengerPosition(Entity passenger) {
-      super.updatePassengerPosition(passenger);
-      if (passenger instanceof MobEntity) {
-         MobEntity mobEntity = (MobEntity) passenger;
-         this.bodyYaw = mobEntity.bodyYaw;
-      }
-   }
+    @Override
+    public boolean isClimbing() {
+        return false;
+    }
 
-   @Override
-   public boolean isClimbing() {
-      return false;
-   }
+    @Override
+    @Nullable
+    public Entity getPrimaryPassenger() {
+        return this.getPassengerList().isEmpty() ? null : (Entity) this.getPassengerList().get(0);
+    }
 
-   @Override
-   @Nullable
-   public Entity getPrimaryPassenger() {
-      return this.getPassengerList().isEmpty() ? null : (Entity) this.getPassengerList().get(0);
-   }
+    @Nullable
+    private Vec3d method_27930(Vec3d vec3d, LivingEntity livingEntity) {
+        double d = this.getX() + vec3d.x;
+        double e = this.getBoundingBox().minY;
+        double f = this.getZ() + vec3d.z;
+        BlockPos.Mutable mutable = new BlockPos.Mutable();
+        UnmodifiableIterator<EntityPose> var10 = livingEntity.getPoses().iterator();
 
-   @Nullable
-   private Vec3d method_27930(Vec3d vec3d, LivingEntity livingEntity) {
-      double d = this.getX() + vec3d.x;
-      double e = this.getBoundingBox().minY;
-      double f = this.getZ() + vec3d.z;
-      BlockPos.Mutable mutable = new BlockPos.Mutable();
-      UnmodifiableIterator<EntityPose> var10 = livingEntity.getPoses().iterator();
+        while (var10.hasNext()) {
+            EntityPose entityPose = (EntityPose) var10.next();
+            mutable.set(d, e, f);
+            double g = this.getBoundingBox().maxY + 0.75D;
 
-      while (var10.hasNext()) {
-         EntityPose entityPose = (EntityPose) var10.next();
-         mutable.set(d, e, f);
-         double g = this.getBoundingBox().maxY + 0.75D;
+            while (true) {
+                double h = this.world.getDismountHeight(mutable);
+                if ((double) mutable.getY() + h > g) {
+                    break;
+                }
 
-         while (true) {
-            double h = this.world.getDismountHeight(mutable);
-            if ((double) mutable.getY() + h > g) {
-               break;
+                if (Dismounting.canDismountInBlock(h)) {
+                    Box box = livingEntity.getBoundingBox(entityPose);
+                    Vec3d vec3d2 = new Vec3d(d, (double) mutable.getY() + h, f);
+                    if (Dismounting.canPlaceEntityAt(this.world, livingEntity, box.offset(vec3d2))) {
+                        livingEntity.setPose(entityPose);
+                        return vec3d2;
+                    }
+                }
+
+                mutable.move(Direction.UP);
+                if ((double) mutable.getY() >= g) {
+                    break;
+                }
             }
+        }
 
-            if (Dismounting.canDismountInBlock(h)) {
-               Box box = livingEntity.getBoundingBox(entityPose);
-               Vec3d vec3d2 = new Vec3d(d, (double) mutable.getY() + h, f);
-               if (Dismounting.canPlaceEntityAt(this.world, livingEntity, box.offset(vec3d2))) {
-                  livingEntity.setPose(entityPose);
-                  return vec3d2;
-               }
+        return null;
+    }
+
+    @Override
+    public Vec3d updatePassengerForDismount(LivingEntity passenger) {
+        Vec3d vec3d = getPassengerDismountOffset((double) this.getWidth(), (double) passenger.getWidth(), this.getYaw() + (passenger.getMainArm() == Arm.RIGHT ? 90.0F : -90.0F));
+        Vec3d vec3d2 = this.method_27930(vec3d, passenger);
+        if (vec3d2 != null) {
+            return vec3d2;
+        } else {
+            Vec3d vec3d3 = getPassengerDismountOffset((double) this.getWidth(), (double) passenger.getWidth(), this.getYaw() + (passenger.getMainArm() == Arm.LEFT ? 90.0F : -90.0F));
+            Vec3d vec3d4 = this.method_27930(vec3d3, passenger);
+            return vec3d4 != null ? vec3d4 : this.getPos();
+        }
+    }
+
+    private void putPlayerOnBack(PlayerEntity player) {
+        if (!this.world.isClient) {
+            player.setYaw(this.getYaw());
+            player.setPitch(this.getPitch());
+            player.startRiding(this);
+        }
+    }
+
+    public void dragonFireBreath() {
+        if (this.fireBreathCooldown <= 60) {
+            this.fireBreathCooldown++;
+            if (!this.world.isClient) {
+                if (this.fireBreathCooldown == 1) {
+                    this.world.playSoundFromEntity((PlayerEntity) null, this, SoundInit.DRAGON_BREATH_EVENT, SoundCategory.HOSTILE, 1.0F, 1.0F);
+                }
+                if (this.fireBreathCooldown % 3 == 0) {
+                    Vec3d vec3d = this.getRotationVector(prevPitch, headYaw);
+                    Vec3d otherVec3d = this.getRotationVector(prevPitch, bodyYaw);
+                    vec3d = vec3d.add(otherVec3d);
+                    FireBreathEntity fireBreathEntity = new FireBreathEntity(world, this, vec3d.x, vec3d.y, vec3d.z);
+                    fireBreathEntity.refreshPositionAndAngles(this.getX() + vec3d.x * 3D,
+                            this.getY() + this.getBoundingBox().getYLength() * 0.65D + (this.getPitch() > 0F ? -this.getPitch() / 40F : -this.getPitch() / 80F), this.getZ() + vec3d.z * 3D,
+                            this.getYaw(), this.getPitch());
+
+                    world.spawnEntity(fireBreathEntity);
+                }
+            } else {
+                if (!this.getDataTracker().get(FIRE_BREATH)) {
+                    this.getDataTracker().set(FIRE_BREATH, true);
+                }
             }
+        } else {
+            this.fireBreathActive = false;
+        }
+    }
 
-            mutable.move(Direction.UP);
-            if ((double) mutable.getY() >= g) {
-               break;
+    @Override
+    public ActionResult interactMob(PlayerEntity player, Hand hand) {
+        ItemStack itemStack = player.getStackInHand(hand);
+        Item item = itemStack.getItem();
+        if (!this.isBaby()) {
+            if (this.hasPassengers()) {
+                return super.interactMob(player, hand);
             }
-         }
-      }
-
-      return null;
-   }
-
-   @Override
-   public Vec3d updatePassengerForDismount(LivingEntity passenger) {
-      Vec3d vec3d = getPassengerDismountOffset((double) this.getWidth(), (double) passenger.getWidth(),
-            this.yaw + (passenger.getMainArm() == Arm.RIGHT ? 90.0F : -90.0F));
-      Vec3d vec3d2 = this.method_27930(vec3d, passenger);
-      if (vec3d2 != null) {
-         return vec3d2;
-      } else {
-         Vec3d vec3d3 = getPassengerDismountOffset((double) this.getWidth(), (double) passenger.getWidth(),
-               this.yaw + (passenger.getMainArm() == Arm.LEFT ? 90.0F : -90.0F));
-         Vec3d vec3d4 = this.method_27930(vec3d3, passenger);
-         return vec3d4 != null ? vec3d4 : this.getPos();
-      }
-   }
-
-   private void putPlayerOnBack(PlayerEntity player) {
-      if (!this.world.isClient) {
-         player.yaw = this.yaw;
-         player.pitch = this.pitch;
-         player.startRiding(this);
-      }
-   }
-
-   public void dragonFireBreath() {
-      if (this.fireBreathCooldown <= 60) {
-         this.fireBreathCooldown++;
-         if (!this.world.isClient) {
-            if (this.fireBreathCooldown == 1) {
-               this.world.playSoundFromEntity((PlayerEntity) null, this, SoundInit.DRAGON_BREATH_EVENT,
-                     SoundCategory.HOSTILE, 1.0F, 1.0F);
-            }
-            if (this.fireBreathCooldown % 3 == 0) {
-               Vec3d vec3d = this.getRotationVector(prevPitch, headYaw);
-               Vec3d otherVec3d = this.getRotationVector(prevPitch, bodyYaw);
-               vec3d = vec3d.add(otherVec3d);
-               FireBreathEntity fireBreathEntity = new FireBreathEntity(world, this, vec3d.x, vec3d.y, vec3d.z);
-               fireBreathEntity.refreshPositionAndAngles(this.getX() + vec3d.x * 3D,
-                     this.getY() + this.getBoundingBox().getYLength() * 0.65D
-                           + (this.pitch > 0F ? -this.pitch / 40F : -this.pitch / 80F),
-                     this.getZ() + vec3d.z * 3D, this.yaw, this.pitch);
-
-               world.spawnEntity(fireBreathEntity);
-            }
-         } else {
-            if (!this.getDataTracker().get(FIRE_BREATH)) {
-               this.getDataTracker().set(FIRE_BREATH, true);
-            }
-         }
-      } else {
-         this.fireBreathActive = false;
-      }
-   }
-
-   @Override
-   public ActionResult interactMob(PlayerEntity player, Hand hand) {
-      ItemStack itemStack = player.getStackInHand(hand);
-      Item item = itemStack.getItem();
-      if (!this.isBaby()) {
-         if (this.hasPassengers()) {
-            return super.interactMob(player, hand);
-         }
-      }
-      if (this.world.isClient) {
-         boolean bl = this.isOwner(player) || this.isTamed() || this.dragonFood(item) && !this.isTamed();
-         return bl ? ActionResult.CONSUME : ActionResult.PASS;
-      } else {
-         // Check for owner
-         if (this.isTamed() && this.getSize() > 1 && this.isOwner(player)) {
-            if (item == Items.CHEST && !this.hasChest() && this.getSize() > 2) {
-               this.world.playSoundFromEntity((PlayerEntity) null, this, SoundInit.EQUIP_CHEST_EVENT,
-                     SoundCategory.NEUTRAL, 0.5F, 1.0F);
-               this.setHasChest(true);
-               if (!player.abilities.creativeMode) {
-                  itemStack.decrement(1);
-               }
-               return ActionResult.SUCCESS;
-            }
-            if (this.dragonFood(item) && this.getHealth() < this.getMaxHealth() && player.isSneaking()) {
-               if (!player.abilities.creativeMode) {
-                  itemStack.decrement(1);
-               }
-               this.heal((float) this.healingFood);
-               return ActionResult.SUCCESS;
-            } else if (!player.isSneaking()) {
-               if (!this.hasSaddle) {
-                  if (item == ItemInit.DRAGON_SADDLE) {
-                     this.world.playSoundFromEntity((PlayerEntity) null, this, SoundEvents.ENTITY_HORSE_SADDLE,
-                           SoundCategory.NEUTRAL, 0.8F, 1.0F);
-                     if (!player.abilities.creativeMode) {
+        }
+        if (this.world.isClient) {
+            boolean bl = this.isOwner(player) || this.isTamed() || this.dragonFood(item) && !this.isTamed();
+            return bl ? ActionResult.CONSUME : ActionResult.PASS;
+        } else {
+            // Check for owner
+            if (this.isTamed() && this.getSize() > 1 && this.isOwner(player)) {
+                if (item == Items.CHEST && !this.hasChest() && this.getSize() > 2) {
+                    this.world.playSoundFromEntity((PlayerEntity) null, this, SoundInit.EQUIP_CHEST_EVENT, SoundCategory.NEUTRAL, 0.5F, 1.0F);
+                    this.setHasChest(true);
+                    if (!player.isCreative()) {
                         itemStack.decrement(1);
-                     }
-                     this.hasSaddle = true;
-                     this.getDataTracker().set(HAS_SADDLE, true);
-                     return ActionResult.SUCCESS;
-                  }
-                  return ActionResult.FAIL;
-               }
-               this.setInSittingPose(false);
-               this.putPlayerOnBack(player);
-               return ActionResult.SUCCESS;
-            } else if (this.isInSittingPose()) {
-               this.setInSittingPose(false);
-               return ActionResult.SUCCESS;
-            } else if (this.onGround) {
-               this.setInSittingPose(true);
-               return ActionResult.SUCCESS;
-            } else
-               return ActionResult.PASS;
-         } else if (this.dragonFood(item)) {
-            if (!this.isTamed()) {
-               if (!player.abilities.creativeMode) {
-                  itemStack.decrement(1);
-               }
-               int tamer;
-               if (item == ItemInit.ORC_SKIN) {
-                  tamer = 1;
-               } else {
-                  tamer = healingFood;
-               }
-               if (this.random.nextInt(tamer) == 0) {
-                  this.setOwner(player);
-                  this.navigation.stop();
-                  this.setTarget((LivingEntity) null);
-                  this.world.sendEntityStatus(this, (byte) 7);
-               } else {
-                  this.world.sendEntityStatus(this, (byte) 6);
-               }
+                    }
+                    return ActionResult.SUCCESS;
+                }
+                if (this.dragonFood(item) && this.getHealth() < this.getMaxHealth() && player.isSneaking()) {
+                    if (!player.isCreative()) {
+                        itemStack.decrement(1);
+                    }
+                    this.heal((float) this.healingFood);
+                    return ActionResult.SUCCESS;
+                } else if (!player.isSneaking()) {
+                    if (!this.hasSaddle) {
+                        if (item == ItemInit.DRAGON_SADDLE) {
+                            this.world.playSoundFromEntity((PlayerEntity) null, this, SoundEvents.ENTITY_HORSE_SADDLE, SoundCategory.NEUTRAL, 0.8F, 1.0F);
+                            if (!player.isCreative()) {
+                                itemStack.decrement(1);
+                            }
+                            this.hasSaddle = true;
+                            this.getDataTracker().set(HAS_SADDLE, true);
+                            return ActionResult.SUCCESS;
+                        }
+                        return ActionResult.FAIL;
+                    }
+                    this.setInSittingPose(false);
+                    this.putPlayerOnBack(player);
+                    return ActionResult.SUCCESS;
+                } else if (this.isInSittingPose()) {
+                    this.setInSittingPose(false);
+                    return ActionResult.SUCCESS;
+                } else if (this.onGround) {
+                    this.setInSittingPose(true);
+                    return ActionResult.SUCCESS;
+                } else
+                    return ActionResult.PASS;
+            } else if (this.dragonFood(item)) {
+                if (!this.isTamed()) {
+                    if (!player.isCreative()) {
+                        itemStack.decrement(1);
+                    }
+                    int tamer;
+                    if (item == ItemInit.ORC_SKIN) {
+                        tamer = 1;
+                    } else {
+                        tamer = healingFood;
+                    }
+                    if (this.random.nextInt(tamer) == 0) {
+                        this.setOwner(player);
+                        this.navigation.stop();
+                        this.setTarget((LivingEntity) null);
+                        this.world.sendEntityStatus(this, (byte) 7);
+                    } else {
+                        this.world.sendEntityStatus(this, (byte) 6);
+                    }
 
-               return ActionResult.SUCCESS;
-            } else {
-               if (this.canEatFood(this.dragonAge, 3, 13)) {
-                  if (!player.abilities.creativeMode) {
-                     itemStack.decrement(1);
-                  }
-                  dragonAgeFoodBonus++;
-                  return ActionResult.SUCCESS;
-               } else {
-                  return ActionResult.PASS;
-               }
+                    return ActionResult.SUCCESS;
+                } else {
+                    if (this.canEatFood(this.dragonAge, 3, 13)) {
+                        if (!player.isCreative()) {
+                            itemStack.decrement(1);
+                        }
+                        dragonAgeFoodBonus++;
+                        return ActionResult.SUCCESS;
+                    } else {
+                        return ActionResult.PASS;
+                    }
 
+                }
             }
-         }
 
-         return super.interactMob(player, hand);
-      }
-   }
+            return super.interactMob(player, hand);
+        }
+    }
 
-   private boolean dragonFood(Item item) {
-      if (item == ItemInit.ORC_SKIN) {
-         healingFood = 6;
-         return true;
-      } else if (item == Items.PORKCHOP || item == Items.BEEF) {
-         healingFood = 5;
-         return true;
-      } else if (item == Items.MUTTON || item == Items.CHICKEN) {
-         healingFood = 4;
-         return true;
-      } else if (item == Items.RABBIT) {
-         healingFood = 3;
-         return true;
-      }
-      return false;
-   }
-
-   private boolean canEatFood(int age, int minAge, int maxAge) {
-      if (age < minAge || (age < maxAge && age > maxAge - (minAge * 2))) {
-         return true;
-      } else
-         return false;
-   }
-
-   @Override
-   public void tick() {
-      super.tick();
-      if (!this.world.isClient) {
-         if (this.getSize() < 3) {
-            if (this.age % 1200 == 0) {
-               this.dragonAge++;
-            }
-            if (this.dragonAge == 5 && this.getSize() == 1) {
-               this.setSize(2);
-               this.healDragonIfGrowing();
-            }
-            if (this.dragonAge == 15 && this.getSize() == 2) {
-               this.setSize(3);
-               this.healDragonIfGrowing();
-            }
-            if (this.dragonAgeFoodBonus > 5) {
-               this.dragonAgeFoodBonus = 0;
-               this.dragonAge++;
-               this.world.sendEntityStatus(this, (byte) 9);
-            }
-         }
-      }
-
-      if (this.fireBreathCooldown > 60) {
-         this.fireBreathCooldown++;
-         if (this.getDataTracker().get(FIRE_BREATH)) {
-            this.getDataTracker().set(FIRE_BREATH, false);
-         }
-         if (this.fireBreathCooldown >= 120) {
-            this.fireBreathCooldown = 0;
-         }
-      }
-      if (this.fireBreathActive) {
-         this.dragonFireBreath();
-      }
-   }
-
-   private void healDragonIfGrowing() {
-      if (this.getHealth() < this.getMaxHealth()) {
-         this.setHealth(this.getHealth() + 20F);
-      }
-   }
-
-   @Override
-   public boolean isPushable() {
-      return !this.hasPassengers();
-   }
-
-   @Override
-   public boolean canBeLeashedBy(PlayerEntity player) {
-      return !this.isLeashed();
-   }
-
-   @Environment(EnvType.CLIENT)
-   protected void showEmoteParticle(boolean positive) {
-      ParticleEffect particleEffect = ParticleTypes.HEART;
-      if (!positive) {
-         particleEffect = ParticleTypes.SMOKE;
-      }
-
-      for (int i = 0; i < 7; ++i) {
-         double d = this.random.nextGaussian() * 0.02D;
-         double e = this.random.nextGaussian() * 0.02D;
-         double f = this.random.nextGaussian() * 0.02D;
-         this.world.addParticle(particleEffect, this.getParticleX(1.0D), this.getRandomBodyY() + 0.5D,
-               this.getParticleZ(1.0D), d, e, f);
-      }
-
-   }
-
-   @Override
-   @Environment(EnvType.CLIENT)
-   public void handleStatus(byte status) {
-      if (status == 7 || status == 9) {
-         this.showEmoteParticle(true);
-      } else if (status == 6) {
-         this.showEmoteParticle(false);
-      } else {
-         super.handleStatus(status);
-      }
-
-   }
-
-   public boolean isTamed() {
-      return ((Byte) this.dataTracker.get(TAMEABLE_FLAGS) & 4) != 0;
-   }
-
-   public void setTamed(boolean tamed) {
-      byte b = (Byte) this.dataTracker.get(TAMEABLE_FLAGS);
-      if (tamed) {
-         this.dataTracker.set(TAMEABLE_FLAGS, (byte) (b | 4));
-      } else {
-         this.dataTracker.set(TAMEABLE_FLAGS, (byte) (b & -5));
-      }
-   }
-
-   @Nullable
-   public UUID getOwnerUuid() {
-      return (UUID) ((Optional<UUID>) this.dataTracker.get(OWNER_UUID)).orElse((UUID) (Object) null);
-   }
-
-   public void setOwnerUuid(@Nullable UUID uuid) {
-      this.dataTracker.set(OWNER_UUID, Optional.ofNullable(uuid));
-   }
-
-   public void setOwner(PlayerEntity player) {
-      this.setTamed(true);
-      this.setOwnerUuid(player.getUuid());
-   }
-
-   @Nullable
-   public LivingEntity getOwner() {
-      try {
-         UUID uUID = this.getOwnerUuid();
-         return uUID == null ? null : this.world.getPlayerByUuid(uUID);
-      } catch (IllegalArgumentException var2) {
-         return null;
-      }
-   }
-
-   @Override
-   public boolean canTarget(LivingEntity target) {
-      return this.isOwner(target) ? false : super.canTarget(target);
-   }
-
-   public boolean isOwner(LivingEntity entity) {
-      return entity == this.getOwner();
-   }
-
-   @Override
-   public boolean isTeammate(Entity other) {
-      if (this.isTamed()) {
-         LivingEntity livingEntity = this.getOwner();
-         if (other == livingEntity) {
+    private boolean dragonFood(Item item) {
+        if (item == ItemInit.ORC_SKIN) {
+            healingFood = 6;
             return true;
-         }
+        } else if (item == Items.PORKCHOP || item == Items.BEEF) {
+            healingFood = 5;
+            return true;
+        } else if (item == Items.MUTTON || item == Items.CHICKEN) {
+            healingFood = 4;
+            return true;
+        } else if (item == Items.RABBIT) {
+            healingFood = 3;
+            return true;
+        }
+        return false;
+    }
 
-         if (livingEntity != null) {
-            return livingEntity.isTeammate(other);
-         }
-      }
+    private boolean canEatFood(int age, int minAge, int maxAge) {
+        if (age < minAge || (age < maxAge && age > maxAge - (minAge * 2))) {
+            return true;
+        } else
+            return false;
+    }
 
-      return super.isTeammate(other);
-   }
-
-   @Override
-   public void onDeath(DamageSource source) {
-      if (!this.world.isClient && this.world.getGameRules().getBoolean(GameRules.SHOW_DEATH_MESSAGES)
-            && this.getOwner() instanceof ServerPlayerEntity) {
-         this.getOwner().sendSystemMessage(this.getDamageTracker().getDeathMessage(), Util.NIL_UUID);
-      }
-
-      super.onDeath(source);
-   }
-
-   public boolean isInSittingPose() {
-      return ((Byte) this.dataTracker.get(TAMEABLE_FLAGS) & 1) != 0;
-   }
-
-   public void setInSittingPose(boolean inSittingPose) {
-      this.sitting = inSittingPose;
-      byte b = (Byte) this.dataTracker.get(TAMEABLE_FLAGS);
-      if (inSittingPose) {
-         this.dataTracker.set(TAMEABLE_FLAGS, (byte) (b | 1));
-      } else {
-         this.dataTracker.set(TAMEABLE_FLAGS, (byte) (b & -2));
-      }
-
-   }
-
-   @Override
-   public boolean handleFallDamage(float fallDistance, float damageMultiplier) {
-      return false;
-   }
-
-   @Override
-   protected void fall(double heightDifference, boolean onGround, BlockState landedState, BlockPos landedPosition) {
-      if (!this.isFlying) {
-         super.fall(heightDifference, onGround, landedState, landedPosition);
-      }
-
-   }
-
-   public void setKeyBind(String key) {
-      this.keyBind = InputUtil.fromTranslationKey(key).getCode();
-   }
-
-   @Override
-   protected SoundEvent getAmbientSound() {
-      return SoundInit.DRAGON_IDLE_EVENT;
-   }
-
-   @Override
-   protected SoundEvent getHurtSound(DamageSource source) {
-      return SoundInit.DRAGON_HIT_EVENT;
-   }
-
-   @Override
-   protected SoundEvent getDeathSound() {
-      return SoundInit.DRAGON_DEATH_EVENT;
-   }
-
-   @Override
-   protected void playStepSound(BlockPos pos, BlockState state) {
-      this.playSound(SoundInit.ORC_STEP_EVENT, 0.7F, 1.0F);
-   }
-
-   @Override
-   protected float calculateNextStepSoundDistance() {
-      return (float) ((int) this.distanceTraveled + 2) - 0.01F;
-   }
-
-   @Override
-   public boolean canImmediatelyDespawn(double num) {
-      return false;
-   }
-
-   @Override
-   public void onInventoryChanged(Inventory sender) {
-   }
-
-   private void onChestedStatusChanged() {
-      SimpleInventory simpleInventory = this.inventory;
-      this.inventory = new SimpleInventory(27);
-      if (simpleInventory != null) {
-         simpleInventory.removeListener(this);
-         int i = Math.min(simpleInventory.size(), this.inventory.size());
-
-         for (int j = 0; j < i; ++j) {
-            ItemStack itemStack = simpleInventory.getStack(j);
-            if (!itemStack.isEmpty()) {
-               this.inventory.setStack(j, itemStack.copy());
+    @Override
+    public void tick() {
+        super.tick();
+        if (!this.world.isClient) {
+            if (this.getSize() < 3) {
+                if (this.age % 1200 == 0) {
+                    this.dragonAge++;
+                }
+                if (this.dragonAge == 5 && this.getSize() == 1) {
+                    this.setSize(2);
+                    this.healDragonIfGrowing();
+                }
+                if (this.dragonAge == 15 && this.getSize() == 2) {
+                    this.setSize(3);
+                    this.healDragonIfGrowing();
+                }
+                if (this.dragonAgeFoodBonus > 5) {
+                    this.dragonAgeFoodBonus = 0;
+                    this.dragonAge++;
+                    this.world.sendEntityStatus(this, (byte) 9);
+                }
             }
-         }
-      }
+        }
 
-      this.inventory.addListener(this);
-   }
-
-   @Override
-   protected void dropInventory() {
-      super.dropInventory();
-      if (this.inventory != null) {
-         for (int i = 0; i < this.inventory.size(); ++i) {
-            ItemStack itemStack = this.inventory.getStack(i);
-            if (!itemStack.isEmpty() && !EnchantmentHelper.hasVanishingCurse(itemStack)) {
-               this.dropStack(itemStack);
+        if (this.fireBreathCooldown > 60) {
+            this.fireBreathCooldown++;
+            if (this.getDataTracker().get(FIRE_BREATH)) {
+                this.getDataTracker().set(FIRE_BREATH, false);
             }
-         }
+            if (this.fireBreathCooldown >= 120) {
+                this.fireBreathCooldown = 0;
+            }
+        }
+        if (this.fireBreathActive) {
+            this.dragonFireBreath();
+        }
+    }
 
-      }
-      if (this.hasChest()) {
-         if (!this.world.isClient) {
-            this.dropItem(Blocks.CHEST);
-         }
+    private void healDragonIfGrowing() {
+        if (this.getHealth() < this.getMaxHealth()) {
+            this.setHealth(this.getHealth() + 20F);
+        }
+    }
 
-         this.setHasChest(false);
-      }
-   }
+    @Override
+    public boolean isPushable() {
+        return !this.hasPassengers();
+    }
 
-   public boolean hasChest() {
-      return (Boolean) this.dataTracker.get(HAS_CHEST);
-   }
+    @Override
+    public boolean canBeLeashedBy(PlayerEntity player) {
+        return !this.isLeashed();
+    }
 
-   public void setHasChest(boolean hasChest) {
-      this.dataTracker.set(HAS_CHEST, hasChest);
-   }
+    @Environment(EnvType.CLIENT)
+    protected void showEmoteParticle(boolean positive) {
+        ParticleEffect particleEffect = ParticleTypes.HEART;
+        if (!positive) {
+            particleEffect = ParticleTypes.SMOKE;
+        }
 
-   public void openInventory(PlayerEntity player) {
-      if (!this.world.isClient && (!this.hasPassengers() || this.hasPassenger(player)) && this.isTamed()) {
-         player.openHandledScreen(new SimpleNamedScreenHandlerFactory(
-               (syncId, inv, p) -> new GenericContainerScreenHandler(ScreenHandlerType.GENERIC_9X3, syncId, p.inventory,
-                     this.inventory, 27 / 9),
-               this.getName()));
-      }
+        for (int i = 0; i < 7; ++i) {
+            double d = this.random.nextGaussian() * 0.02D;
+            double e = this.random.nextGaussian() * 0.02D;
+            double f = this.random.nextGaussian() * 0.02D;
+            this.world.addParticle(particleEffect, this.getParticleX(1.0D), this.getRandomBodyY() + 0.5D, this.getParticleZ(1.0D), d, e, f);
+        }
 
-   }
+    }
 
-   @Nullable
-   @Override
-   public EntityData initialize(ServerWorldAccess world, LocalDifficulty difficulty, SpawnReason spawnReason,
-         @Nullable EntityData entityData, @Nullable CompoundTag entityTag) {
-      this.getDataTracker().set(OTHER_EARS, world.getRandom().nextBoolean());
-      this.getDataTracker().set(OTHER_TAIL, world.getRandom().nextBoolean());
-      this.getDataTracker().set(OTHER_EYES, world.getRandom().nextBoolean());
-      if (spawnReason.equals(SpawnReason.COMMAND)) {
-         this.setSize(3);
-      } else {
-         this.setSize(1);
-      }
-      return super.initialize(world, difficulty, spawnReason, entityData, entityTag);
-   }
+    @Override
+    @Environment(EnvType.CLIENT)
+    public void handleStatus(byte status) {
+        if (status == 7 || status == 9) {
+            this.showEmoteParticle(true);
+        } else if (status == 6) {
+            this.showEmoteParticle(false);
+        } else {
+            super.handleStatus(status);
+        }
 
-   @Override
-   public EntityDimensions getDimensions(EntityPose pose) {
-      return super.getDimensions(pose).scaled((float) this.getSize() / 3.0F);
-   }
+    }
 
-   public int getSize() {
-      return (Integer) this.dataTracker.get(DRAGON_SIZE);
-   }
+    public boolean isTamed() {
+        return ((Byte) this.dataTracker.get(TAMEABLE_FLAGS) & 4) != 0;
+    }
 
-   public void setSize(int size) {
-      this.dataTracker.set(DRAGON_SIZE, size);
-      this.refreshPosition();
-      this.calculateDimensions();
-      this.getAttributeInstance(EntityAttributes.GENERIC_MAX_HEALTH).setBaseValue((double) (size * 20));
-      this.getAttributeInstance(EntityAttributes.GENERIC_ATTACK_DAMAGE).setBaseValue((double) size * 3);
-      this.getAttributeInstance(EntityAttributes.GENERIC_ARMOR).setBaseValue((double) size * 2);
-   }
+    public void setTamed(boolean tamed) {
+        byte b = (Byte) this.dataTracker.get(TAMEABLE_FLAGS);
+        if (tamed) {
+            this.dataTracker.set(TAMEABLE_FLAGS, (byte) (b | 4));
+        } else {
+            this.dataTracker.set(TAMEABLE_FLAGS, (byte) (b & -5));
+        }
+    }
 
-   @Override
-   public void onTrackedDataSet(TrackedData<?> data) {
-      if (DRAGON_SIZE.equals(data)) {
-         this.calculateDimensions();
-         this.yaw = this.headYaw;
-         this.bodyYaw = this.headYaw;
-      }
-      super.onTrackedDataSet(data);
-   }
+    @Nullable
+    public UUID getOwnerUuid() {
+        return (UUID) ((Optional<UUID>) this.dataTracker.get(OWNER_UUID)).orElse((UUID) (Object) null);
+    }
 
-   @Override
-   public void calculateDimensions() {
-      double d = this.getX();
-      double e = this.getY();
-      double f = this.getZ();
-      super.calculateDimensions();
-      this.updatePosition(d, e, f);
-   }
+    public void setOwnerUuid(@Nullable UUID uuid) {
+        this.dataTracker.set(OWNER_UUID, Optional.ofNullable(uuid));
+    }
 
-   @Override
-   protected float getSoundVolume() {
-      return 0.3F * (float) this.getSize();
-   }
+    public void setOwner(PlayerEntity player) {
+        this.setTamed(true);
+        this.setOwnerUuid(player.getUuid());
+    }
 
-   @Override
-   protected float getSoundPitch() {
-      return 1.6F - ((float) 0.2F * this.getSize());
-   }
+    @Nullable
+    public LivingEntity getOwner() {
+        try {
+            UUID uUID = this.getOwnerUuid();
+            return uUID == null ? null : this.world.getPlayerByUuid(uUID);
+        } catch (IllegalArgumentException var2) {
+            return null;
+        }
+    }
 
-   @Override
-   protected float getActiveEyeHeight(EntityPose pose, EntityDimensions dimensions) {
-      if (this.getSize() == 1) {
-         return 0.80F * dimensions.height;
-      }
-      return 0.85F * dimensions.height;
-   }
+    @Override
+    public boolean canTarget(LivingEntity target) {
+        return this.isOwner(target) ? false : super.canTarget(target);
+    }
 
-   @Override
-   public double getMountedHeightOffset() {
-      return (double) this.getSize() * 1.1D * 0.71D;
-   }
+    public boolean isOwner(LivingEntity entity) {
+        return entity == this.getOwner();
+    }
 
-   @Override
-   public boolean damage(DamageSource source, float amount) {
-      if (source == DamageSource.IN_WALL) {
-         return false;
-      }
-      return this.isInvulnerableTo(source) ? false : super.damage(source, amount);
-   }
+    @Override
+    public boolean isTeammate(Entity other) {
+        if (this.isTamed()) {
+            LivingEntity livingEntity = this.getOwner();
+            if (other == livingEntity) {
+                return true;
+            }
 
-   static {
-      IS_FLYING = DataTracker.registerData(DragonEntity.class, TrackedDataHandlerRegistry.BOOLEAN);
-      IS_START_FLYING = DataTracker.registerData(DragonEntity.class, TrackedDataHandlerRegistry.BOOLEAN);
-      CLIENT_START_FLYING = DataTracker.registerData(DragonEntity.class, TrackedDataHandlerRegistry.BOOLEAN);
-      CLIENT_END_FLYING = DataTracker.registerData(DragonEntity.class, TrackedDataHandlerRegistry.BOOLEAN);
-      TAMEABLE_FLAGS = DataTracker.registerData(DragonEntity.class, TrackedDataHandlerRegistry.BYTE);
-      OWNER_UUID = DataTracker.registerData(DragonEntity.class, TrackedDataHandlerRegistry.OPTIONAL_UUID);
-      HAS_SADDLE = DataTracker.registerData(DragonEntity.class, TrackedDataHandlerRegistry.BOOLEAN);
-      HAS_CHEST = DataTracker.registerData(DragonEntity.class, TrackedDataHandlerRegistry.BOOLEAN);
-      OTHER_EARS = DataTracker.registerData(DragonEntity.class, TrackedDataHandlerRegistry.BOOLEAN);
-      OTHER_TAIL = DataTracker.registerData(DragonEntity.class, TrackedDataHandlerRegistry.BOOLEAN);
-      OTHER_EYES = DataTracker.registerData(DragonEntity.class, TrackedDataHandlerRegistry.BOOLEAN);
-      DRAGON_SIZE = DataTracker.registerData(DragonEntity.class, TrackedDataHandlerRegistry.INTEGER);
-      FIRE_BREATH = DataTracker.registerData(DragonEntity.class, TrackedDataHandlerRegistry.BOOLEAN);
-   }
+            if (livingEntity != null) {
+                return livingEntity.isTeammate(other);
+            }
+        }
+
+        return super.isTeammate(other);
+    }
+
+    @Override
+    public void onDeath(DamageSource source) {
+        if (!this.world.isClient && this.world.getGameRules().getBoolean(GameRules.SHOW_DEATH_MESSAGES) && this.getOwner() instanceof ServerPlayerEntity) {
+            this.getOwner().sendSystemMessage(this.getDamageTracker().getDeathMessage(), Util.NIL_UUID);
+        }
+
+        super.onDeath(source);
+    }
+
+    public boolean isInSittingPose() {
+        return ((Byte) this.dataTracker.get(TAMEABLE_FLAGS) & 1) != 0;
+    }
+
+    public void setInSittingPose(boolean inSittingPose) {
+        this.sitting = inSittingPose;
+        byte b = (Byte) this.dataTracker.get(TAMEABLE_FLAGS);
+        if (inSittingPose) {
+            this.dataTracker.set(TAMEABLE_FLAGS, (byte) (b | 1));
+        } else {
+            this.dataTracker.set(TAMEABLE_FLAGS, (byte) (b & -2));
+        }
+
+    }
+
+    @Override
+    public boolean handleFallDamage(float fallDistance, float damageMultiplier, DamageSource damageSource) {
+        return false;
+    }
+
+    @Override
+    protected void fall(double heightDifference, boolean onGround, BlockState landedState, BlockPos landedPosition) {
+        if (!this.isFlying) {
+            super.fall(heightDifference, onGround, landedState, landedPosition);
+        }
+
+    }
+
+    public void setKeyBind(String key) {
+        this.keyBind = InputUtil.fromTranslationKey(key).getCode();
+    }
+
+    @Override
+    protected SoundEvent getAmbientSound() {
+        return SoundInit.DRAGON_IDLE_EVENT;
+    }
+
+    @Override
+    protected SoundEvent getHurtSound(DamageSource source) {
+        return SoundInit.DRAGON_HIT_EVENT;
+    }
+
+    @Override
+    protected SoundEvent getDeathSound() {
+        return SoundInit.DRAGON_DEATH_EVENT;
+    }
+
+    @Override
+    protected void playStepSound(BlockPos pos, BlockState state) {
+        this.playSound(SoundInit.ORC_STEP_EVENT, 0.7F, 1.0F);
+    }
+
+    @Override
+    protected float calculateNextStepSoundDistance() {
+        return (float) ((int) this.distanceTraveled + 2) - 0.01F;
+    }
+
+    @Override
+    public boolean canImmediatelyDespawn(double num) {
+        return false;
+    }
+
+    @Override
+    public void onInventoryChanged(Inventory sender) {
+    }
+
+    private void onChestedStatusChanged() {
+        SimpleInventory simpleInventory = this.inventory;
+        this.inventory = new SimpleInventory(27);
+        if (simpleInventory != null) {
+            simpleInventory.removeListener(this);
+            int i = Math.min(simpleInventory.size(), this.inventory.size());
+
+            for (int j = 0; j < i; ++j) {
+                ItemStack itemStack = simpleInventory.getStack(j);
+                if (!itemStack.isEmpty()) {
+                    this.inventory.setStack(j, itemStack.copy());
+                }
+            }
+        }
+
+        this.inventory.addListener(this);
+    }
+
+    @Override
+    protected void dropInventory() {
+        super.dropInventory();
+        if (this.inventory != null) {
+            for (int i = 0; i < this.inventory.size(); ++i) {
+                ItemStack itemStack = this.inventory.getStack(i);
+                if (!itemStack.isEmpty() && !EnchantmentHelper.hasVanishingCurse(itemStack)) {
+                    this.dropStack(itemStack);
+                }
+            }
+
+        }
+        if (this.hasChest()) {
+            if (!this.world.isClient) {
+                this.dropItem(Blocks.CHEST);
+            }
+
+            this.setHasChest(false);
+        }
+    }
+
+    public boolean hasChest() {
+        return (Boolean) this.dataTracker.get(HAS_CHEST);
+    }
+
+    public void setHasChest(boolean hasChest) {
+        this.dataTracker.set(HAS_CHEST, hasChest);
+    }
+
+    public void openInventory(PlayerEntity player) {
+        if (!this.world.isClient && (!this.hasPassengers() || this.hasPassenger(player)) && this.isTamed()) {
+            player.openHandledScreen(new SimpleNamedScreenHandlerFactory(
+                    (syncId, inv, p) -> new GenericContainerScreenHandler(ScreenHandlerType.GENERIC_9X3, syncId, p.getInventory(), this.inventory, 27 / 9), this.getName()));
+        }
+
+    }
+
+    @Nullable
+    @Override
+    public EntityData initialize(ServerWorldAccess world, LocalDifficulty difficulty, SpawnReason spawnReason, @Nullable EntityData entityData, @Nullable NbtCompound entityTag) {
+        this.getDataTracker().set(OTHER_EARS, world.getRandom().nextBoolean());
+        this.getDataTracker().set(OTHER_TAIL, world.getRandom().nextBoolean());
+        this.getDataTracker().set(OTHER_EYES, world.getRandom().nextBoolean());
+        if (spawnReason.equals(SpawnReason.COMMAND)) {
+            this.setSize(3);
+        } else {
+            this.setSize(1);
+        }
+        return super.initialize(world, difficulty, spawnReason, entityData, entityTag);
+    }
+
+    @Override
+    public EntityDimensions getDimensions(EntityPose pose) {
+        return super.getDimensions(pose).scaled((float) this.getSize() / 3.0F);
+    }
+
+    public int getSize() {
+        return (Integer) this.dataTracker.get(DRAGON_SIZE);
+    }
+
+    public void setSize(int size) {
+        this.dataTracker.set(DRAGON_SIZE, size);
+        this.refreshPosition();
+        this.calculateDimensions();
+        this.getAttributeInstance(EntityAttributes.GENERIC_MAX_HEALTH).setBaseValue((double) (size * 20));
+        this.getAttributeInstance(EntityAttributes.GENERIC_ATTACK_DAMAGE).setBaseValue((double) size * 3);
+        this.getAttributeInstance(EntityAttributes.GENERIC_ARMOR).setBaseValue((double) size * 2);
+    }
+
+    @Override
+    public void onTrackedDataSet(TrackedData<?> data) {
+        if (DRAGON_SIZE.equals(data)) {
+            this.calculateDimensions();
+            this.setYaw(this.headYaw);
+            this.setBodyYaw(this.headYaw);
+        }
+        super.onTrackedDataSet(data);
+    }
+
+    @Override
+    public void calculateDimensions() {
+        double d = this.getX();
+        double e = this.getY();
+        double f = this.getZ();
+        super.calculateDimensions();
+        this.updatePosition(d, e, f);
+    }
+
+    @Override
+    protected float getSoundVolume() {
+        return 0.3F * (float) this.getSize();
+    }
+
+    @Override
+    public float getSoundPitch() {
+        return 1.6F - ((float) 0.2F * this.getSize());
+    }
+
+    @Override
+    protected float getActiveEyeHeight(EntityPose pose, EntityDimensions dimensions) {
+        if (this.getSize() == 1) {
+            return 0.80F * dimensions.height;
+        }
+        return 0.85F * dimensions.height;
+    }
+
+    @Override
+    public double getMountedHeightOffset() {
+        double flySubtraction = 0.92D;
+        if (this.isFlying) {
+
+            flySubtraction = 0.9D;
+        }
+        return (double) this.getSize() * 0.794 * flySubtraction;
+
+    }
+
+    @Override
+    public void updatePassengerPosition(Entity passenger) {
+        super.updatePassengerPosition(passenger);
+        if (passenger instanceof MobEntity) {
+            MobEntity mobEntity = (MobEntity) passenger;
+            this.bodyYaw = mobEntity.bodyYaw;
+        }
+    }
+
+    @Override
+    public double getHeightOffset() {
+        return 0.0D;
+    }
+
+    @Override
+    public boolean damage(DamageSource source, float amount) {
+        if (source == DamageSource.IN_WALL) {
+            return false;
+        }
+        return this.isInvulnerableTo(source) ? false : super.damage(source, amount);
+    }
+
+    static {
+        IS_FLYING = DataTracker.registerData(DragonEntity.class, TrackedDataHandlerRegistry.BOOLEAN);
+        IS_START_FLYING = DataTracker.registerData(DragonEntity.class, TrackedDataHandlerRegistry.BOOLEAN);
+        CLIENT_START_FLYING = DataTracker.registerData(DragonEntity.class, TrackedDataHandlerRegistry.BOOLEAN);
+        CLIENT_END_FLYING = DataTracker.registerData(DragonEntity.class, TrackedDataHandlerRegistry.BOOLEAN);
+        TAMEABLE_FLAGS = DataTracker.registerData(DragonEntity.class, TrackedDataHandlerRegistry.BYTE);
+        OWNER_UUID = DataTracker.registerData(DragonEntity.class, TrackedDataHandlerRegistry.OPTIONAL_UUID);
+        HAS_SADDLE = DataTracker.registerData(DragonEntity.class, TrackedDataHandlerRegistry.BOOLEAN);
+        HAS_CHEST = DataTracker.registerData(DragonEntity.class, TrackedDataHandlerRegistry.BOOLEAN);
+        OTHER_EARS = DataTracker.registerData(DragonEntity.class, TrackedDataHandlerRegistry.BOOLEAN);
+        OTHER_TAIL = DataTracker.registerData(DragonEntity.class, TrackedDataHandlerRegistry.BOOLEAN);
+        OTHER_EYES = DataTracker.registerData(DragonEntity.class, TrackedDataHandlerRegistry.BOOLEAN);
+        DRAGON_SIZE = DataTracker.registerData(DragonEntity.class, TrackedDataHandlerRegistry.INTEGER);
+        FIRE_BREATH = DataTracker.registerData(DragonEntity.class, TrackedDataHandlerRegistry.BOOLEAN);
+    }
 
 }

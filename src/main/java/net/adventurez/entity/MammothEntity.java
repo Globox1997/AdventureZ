@@ -5,7 +5,6 @@ import java.util.UUID;
 import net.adventurez.init.EntityInit;
 import net.adventurez.init.SoundInit;
 import net.minecraft.block.BlockState;
-import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityData;
 import net.minecraft.entity.EntityType;
 import net.minecraft.entity.LivingEntity;
@@ -34,19 +33,19 @@ import net.minecraft.entity.passive.PassiveEntity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.Items;
-import net.minecraft.nbt.CompoundTag;
+import net.minecraft.nbt.NbtCompound;
 import net.minecraft.server.world.ServerWorld;
 import net.minecraft.sound.SoundEvent;
 import net.minecraft.sound.SoundEvents;
 import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.math.IntRange;
+import net.minecraft.util.math.intprovider.UniformIntProvider;
 import net.minecraft.world.LocalDifficulty;
 import net.minecraft.world.ServerWorldAccess;
 import net.minecraft.world.World;
 import org.jetbrains.annotations.Nullable;
 
 public class MammothEntity extends AnimalEntity implements Angerable {
-    private static final IntRange ANGER_TIME_RANGE;
+    private static final UniformIntProvider ANGER_TIME_RANGE;
     public static final TrackedData<Integer> ATTACK_TICKS;
     private int angerTime;
     private UUID targetUuid;
@@ -57,9 +56,8 @@ public class MammothEntity extends AnimalEntity implements Angerable {
     }
 
     public static DefaultAttributeContainer.Builder createMammothAttributes() {
-        return AnimalEntity.createLivingAttributes().add(EntityAttributes.GENERIC_MAX_HEALTH, 40.0D)
-                .add(EntityAttributes.GENERIC_MOVEMENT_SPEED, 0.25D).add(EntityAttributes.GENERIC_FOLLOW_RANGE, 26.0D)
-                .add(EntityAttributes.GENERIC_ATTACK_DAMAGE, 7.0D).add(EntityAttributes.GENERIC_ATTACK_KNOCKBACK, 0.5D);
+        return AnimalEntity.createLivingAttributes().add(EntityAttributes.GENERIC_MAX_HEALTH, 40.0D).add(EntityAttributes.GENERIC_MOVEMENT_SPEED, 0.25D)
+                .add(EntityAttributes.GENERIC_FOLLOW_RANGE, 26.0D).add(EntityAttributes.GENERIC_ATTACK_DAMAGE, 7.0D).add(EntityAttributes.GENERIC_ATTACK_KNOCKBACK, 0.5D);
     }
 
     @Override
@@ -83,26 +81,25 @@ public class MammothEntity extends AnimalEntity implements Angerable {
         this.goalSelector.add(5, new LookAroundGoal(this));
         this.goalSelector.add(6, new LookAtEntityGoal(this, PlayerEntity.class, 6.0F));
         this.targetSelector.add(1, new MammothEntity.MammothRevengeGoal());
-        this.targetSelector.add(2,
-                new FollowTargetGoal<>(this, PlayerEntity.class, 10, true, false, this::shouldAngerAt));
+        this.targetSelector.add(2, new FollowTargetGoal<>(this, PlayerEntity.class, 10, true, false, this::shouldAngerAt));
         this.targetSelector.add(3, new UniversalAngerGoal<>(this, false));
     }
 
     @Override
-    public void readCustomDataFromTag(CompoundTag tag) {
-        super.readCustomDataFromTag(tag);
-        this.angerFromTag((ServerWorld) this.world, tag);
+    public void writeCustomDataToNbt(NbtCompound nbt) {
+        super.writeCustomDataToNbt(nbt);
+        this.writeAngerToNbt(nbt);
     }
 
     @Override
-    public void writeCustomDataToTag(CompoundTag tag) {
-        super.writeCustomDataToTag(tag);
-        this.angerToTag(tag);
+    public void readCustomDataFromNbt(NbtCompound nbt) {
+        super.readCustomDataFromNbt(nbt);
+        this.readAngerFromNbt((ServerWorld) this.world, nbt);
     }
 
     @Override
     public void chooseRandomAngerTime() {
-        this.setAngerTime(ANGER_TIME_RANGE.choose(this.random));
+        this.setAngerTime(ANGER_TIME_RANGE.get(this.random));
     }
 
     @Override
@@ -165,25 +162,12 @@ public class MammothEntity extends AnimalEntity implements Angerable {
     }
 
     @Override
-    public boolean tryAttack(Entity target) {
-        boolean bl = target.damage(DamageSource.mob(this),
-                (float) ((int) this.getAttributeValue(EntityAttributes.GENERIC_ATTACK_DAMAGE)));
-        if (bl) {
-            this.dealDamage(this, target);
-            this.attackTicksLeft = 10;
-        }
-
-        return bl;
-    }
-
-    @Override
     protected float getBaseMovementSpeedMultiplier() {
         return 0.98F;
     }
 
     @Override
-    public EntityData initialize(ServerWorldAccess world, LocalDifficulty difficulty, SpawnReason spawnReason,
-            @Nullable EntityData entityData, @Nullable CompoundTag entityTag) {
+    public EntityData initialize(ServerWorldAccess world, LocalDifficulty difficulty, SpawnReason spawnReason, @Nullable EntityData entityData, @Nullable NbtCompound entityTag) {
         if (entityData == null) {
             entityData = new PassiveEntity.PassiveData(1.0F);
         }
@@ -204,8 +188,8 @@ public class MammothEntity extends AnimalEntity implements Angerable {
         @Override
         public void attack(LivingEntity target, double squaredDistance) {
             double d = this.getSquaredMaxAttackDistance(target);
-            if (squaredDistance <= d && this.method_28347()) {
-                this.method_28346();
+            if (squaredDistance <= d && this.isCooledDown()) {
+                this.resetCooldown();
                 this.mob.tryAttack(target);
             }
 

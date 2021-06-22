@@ -14,22 +14,17 @@ import net.minecraft.client.render.entity.feature.FeatureRendererContext;
 import net.minecraft.client.util.math.MatrixStack;
 
 @Environment(EnvType.CLIENT)
-public class VoidShadowEyesFeatureRenderer
-        extends FeatureRenderer<VoidShadowEntity, VoidShadowModel<VoidShadowEntity>> {
-    private static final RenderLayer EYE_LAYER = ExtraRenderLayer
-            .getGlowing("adventurez:textures/entity/feature/void_shadow_eyes_feature.png");
+public class VoidShadowEyesFeatureRenderer extends FeatureRenderer<VoidShadowEntity, VoidShadowModel<VoidShadowEntity>> {
+    private static final RenderLayer EYE_LAYER = ExtraRenderLayer.getGlowing("adventurez:textures/entity/feature/void_shadow_eyes_feature.png");
 
-    public VoidShadowEyesFeatureRenderer(
-            FeatureRendererContext<VoidShadowEntity, VoidShadowModel<VoidShadowEntity>> featureRendererContext) {
+    public VoidShadowEyesFeatureRenderer(FeatureRendererContext<VoidShadowEntity, VoidShadowModel<VoidShadowEntity>> featureRendererContext) {
         super(featureRendererContext);
     }
 
     @Override
-    public void render(MatrixStack matrixStack, VertexConsumerProvider vertexConsumerProvider, int i,
-            VoidShadowEntity voidShadowEntity, float f, float g, float h, float j, float k, float l) {
+    public void render(MatrixStack matrixStack, VertexConsumerProvider vertexConsumerProvider, int i, VoidShadowEntity voidShadowEntity, float f, float g, float h, float j, float k, float l) {
         VertexConsumer vertexConsumer = vertexConsumerProvider.getBuffer(EYE_LAYER);
-        this.getContextModel().render(matrixStack, vertexConsumer, 15728640, OverlayTexture.DEFAULT_UV, 1.0F, 1.0F,
-                1.0F, 1.0F);
+        this.getContextModel().render(matrixStack, vertexConsumer, 15728640, OverlayTexture.DEFAULT_UV, 1.0F, 1.0F, 1.0F, 1.0F);
     }
 
 }

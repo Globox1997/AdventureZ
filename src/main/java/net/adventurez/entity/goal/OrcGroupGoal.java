@@ -36,8 +36,7 @@ public class OrcGroupGoal extends Goal {
             --this.checkSurroundingDelay;
             return false;
         } else {
-            List<OrcEntity> list = orcEntity.world.getNonSpectatingEntities(orcEntity.getClass(),
-                    orcEntity.getBoundingBox().expand(30.0D, 8.0D, 30.0D));
+            List<? extends OrcEntity> list = orcEntity.world.getNonSpectatingEntities(orcEntity.getClass(), orcEntity.getBoundingBox().expand(30.0D, 8.0D, 30.0D));
             if (list.size() > 0) {
                 for (int i = 0; i < list.size(); i++) {
                     if (list.get(i).getSize() == 3) {

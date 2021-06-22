@@ -23,73 +23,71 @@ import net.minecraft.util.hit.HitResult;
 import net.minecraft.world.World;
 
 public class GildedStoneEntity extends ThrownItemEntity {
-  public GildedStoneEntity(EntityType<? extends GildedStoneEntity> entityType, World world) {
-    super(entityType, world);
-  }
-
-  public GildedStoneEntity(World world, LivingEntity owner) {
-    super(EntityInit.GILDEDSTONE_ENTITY, owner, world);
-  }
-
-  public GildedStoneEntity(World world, double x, double y, double z) {
-    super(EntityInit.GILDEDSTONE_ENTITY, x, y, z, world);
-  }
-
-  @Override
-  @Environment(EnvType.CLIENT)
-  public void handleStatus(byte status) {
-    if (status == 3) {
-      for (int i = 0; i < 22; ++i) {
-        this.world.addParticle(new ItemStackParticleEffect(ParticleTypes.ITEM, this.getStack()), this.getX(),
-            this.getY(), this.getZ(), ((double) this.random.nextFloat() - 0.5D) * 0.08D,
-            ((double) this.random.nextFloat() - 0.5D) * 0.08D, ((double) this.random.nextFloat() - 0.5D) * 0.08D);
-      }
+    public GildedStoneEntity(EntityType<? extends GildedStoneEntity> entityType, World world) {
+        super(entityType, world);
     }
 
-  }
-
-  @Override
-  protected void onEntityHit(EntityHitResult entityHitResult) {
-    super.onEntityHit(entityHitResult);
-    entityHitResult.getEntity().damage(DamageSource.thrownProjectile(this, this.getOwner()), 1.0F);
-    if (entityHitResult.getEntity().getType() == EntityInit.STONEGOLEM_ENTITY) {
-      entityHitResult.getEntity().damage(DamageSource.thrownProjectile(this, this.getOwner()), 10.0F);
-      ((LivingEntity) entityHitResult.getEntity())
-          .addStatusEffect(new StatusEffectInstance(StatusEffects.WEAKNESS, 600, 0));
+    public GildedStoneEntity(World world, LivingEntity owner) {
+        super(EntityInit.GILDEDSTONE_ENTITY, owner, world);
     }
-  }
 
-  @Override
-  protected void onCollision(HitResult hitResult) {
-    super.onCollision(hitResult);
-    if (!this.world.isClient) {
-      this.world.playSound(null, this.getBlockPos(), SoundEvents.BLOCK_GLASS_BREAK, SoundCategory.BLOCKS, 0.7F, 1F);
-      if (this.random.nextInt(8) == 0) {
-        int i = 1;
-        if (this.random.nextInt(32) == 0) {
-          i = 4;
+    public GildedStoneEntity(World world, double x, double y, double z) {
+        super(EntityInit.GILDEDSTONE_ENTITY, x, y, z, world);
+    }
+
+    @Override
+    @Environment(EnvType.CLIENT)
+    public void handleStatus(byte status) {
+        if (status == 3) {
+            for (int i = 0; i < 22; ++i) {
+                this.world.addParticle(new ItemStackParticleEffect(ParticleTypes.ITEM, this.getStack()), this.getX(), this.getY(), this.getZ(), ((double) this.random.nextFloat() - 0.5D) * 0.08D,
+                        ((double) this.random.nextFloat() - 0.5D) * 0.08D, ((double) this.random.nextFloat() - 0.5D) * 0.08D);
+            }
         }
 
-        for (int j = 0; j < i; ++j) {
-          SilverfishEntity silverfishEntity = (SilverfishEntity) EntityType.SILVERFISH.create(this.world);
-          silverfishEntity.refreshPositionAndAngles(this.getX(), this.getY(), this.getZ(), this.yaw, 0.0F);
-          this.world.spawnEntity(silverfishEntity);
-        }
-      }
-
-      this.world.sendEntityStatus(this, (byte) 3);
-      this.remove();
     }
 
-  }
+    @Override
+    protected void onEntityHit(EntityHitResult entityHitResult) {
+        super.onEntityHit(entityHitResult);
+        entityHitResult.getEntity().damage(DamageSource.thrownProjectile(this, this.getOwner()), 1.0F);
+        if (entityHitResult.getEntity().getType() == EntityInit.STONEGOLEM_ENTITY) {
+            entityHitResult.getEntity().damage(DamageSource.thrownProjectile(this, this.getOwner()), 10.0F);
+            ((LivingEntity) entityHitResult.getEntity()).addStatusEffect(new StatusEffectInstance(StatusEffects.WEAKNESS, 600, 0));
+        }
+    }
 
-  @Override
-  protected Item getDefaultItem() {
-    return ItemInit.GILDED_STONE;
-  }
+    @Override
+    protected void onCollision(HitResult hitResult) {
+        super.onCollision(hitResult);
+        if (!this.world.isClient) {
+            this.world.playSound(null, this.getBlockPos(), SoundEvents.BLOCK_GLASS_BREAK, SoundCategory.BLOCKS, 0.7F, 1F);
+            if (this.random.nextInt(8) == 0) {
+                int i = 1;
+                if (this.random.nextInt(32) == 0) {
+                    i = 4;
+                }
 
-  @Override
-  public Packet<?> createSpawnPacket() {
-    return EntitySpawnPacket.createPacket(this);
-  }
+                for (int j = 0; j < i; ++j) {
+                    SilverfishEntity silverfishEntity = (SilverfishEntity) EntityType.SILVERFISH.create(this.world);
+                    silverfishEntity.refreshPositionAndAngles(this.getX(), this.getY(), this.getZ(), this.getYaw(), 0.0F);
+                    this.world.spawnEntity(silverfishEntity);
+                }
+            }
+
+            this.world.sendEntityStatus(this, (byte) 3);
+            this.discard();
+        }
+
+    }
+
+    @Override
+    protected Item getDefaultItem() {
+        return ItemInit.GILDED_STONE;
+    }
+
+    @Override
+    public Packet<?> createSpawnPacket() {
+        return EntitySpawnPacket.createPacket(this);
+    }
 }
