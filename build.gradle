@@ -1,10 +1,10 @@
 plugins {
-	id 'fabric-loom' version '0.7-SNAPSHOT'
+	id 'fabric-loom' version '0.8-SNAPSHOT'
 	id 'maven-publish'
 }
 
-sourceCompatibility = JavaVersion.VERSION_1_8
-targetCompatibility = JavaVersion.VERSION_1_8
+sourceCompatibility = JavaVersion.VERSION_16
+targetCompatibility = JavaVersion.VERSION_16
 
 archivesBaseName = project.archives_base_name
 version = project.mod_version
@@ -18,7 +18,8 @@ repositories {
 	maven { url "https://maven.shedaniel.me/" }
 	maven { url 'https://maven.blamejared.com' }
 	maven { url 'https://jitpack.io' }
-    // Canvas
+	maven { url "https://maven.terraformersmc.com/" }
+	// Canvas
     // maven { url = "https://maven.dblsaiko.net/" }
     // maven { url = "http://server.bbkr.space:8081/artifactory/libs-release/" }
     // maven { url = "https://minecraft.curseforge.com/api/maven" }
@@ -32,22 +33,26 @@ dependencies {
 	// Fabric API
 	modImplementation "net.fabricmc.fabric-api:fabric-api:${project.fabric_version}"
 	// Config
-	modApi include("me.shedaniel.cloth:cloth-config-fabric:${project.cloth_config_version}") {
+	modImplementation ("me.shedaniel.cloth:cloth-config-fabric:${project.cloth_config_version}") {
     	exclude(group: "net.fabricmc.fabric-api")
   	}
-	// Modmenu dev
-	modCompileOnly "io.github.prospector:modmenu:${project.mod_menu_version}",{
+	// Modmenu
+	modCompileOnly modRuntime("com.terraformersmc:modmenu:${project.mod_menu_version}"),{
 		exclude(group: "net.fabricmc.fabric-api")
 	}
 	// Patchouli
-	modImplementation "vazkii.patchouli:Patchouli:1.16.4-50-FABRIC",{
-		exclude(group: "net.fabricmc.fabric-api")
-	}
+	// modImplementation "vazkii.patchouli:Patchouli:1.16.4-50-FABRIC",{
+	// 	exclude(group: "net.fabricmc.fabric-api")
+	// }
 	// VoidZ
 	modCompileOnly "com.github.Globox1997:VoidZ:9523db2d69",{
 		exclude(group: "net.fabricmc.fabric-api")
 		exclude(module:"AdventureZ")
 	}
+	// Flan
+//	modCompileOnly "com.github.Flemmli97:Flan:c6b4661657",{
+//		exclude(group: "net.fabricmc.fabric-api")
+//	}
 	// Canvas
 	// modCompile "grondag:canvas-mc116:1.0.+"
 }
@@ -61,11 +66,12 @@ processResources {
 }
 
 tasks.withType(JavaCompile).configureEach {
+
 	it.options.encoding = "UTF-8"
 
 	def targetVersion = 8
 	if (JavaVersion.current().isJava9Compatible()) {
-		 it.options.release = targetVersion
+		it.options.release = targetVersion
 	}
 }
 
@@ -75,7 +81,7 @@ java {
 
 jar {
 	from("LICENSE") {
-		rename { "${it}_${project.archivesBaseName}"}
+		rename { "${it}_${project.archivesBaseName}" }
 	}
 }
 
@@ -90,6 +96,7 @@ publishing {
 			}
 		}
 	}
+
 	repositories {
 	}
 }
