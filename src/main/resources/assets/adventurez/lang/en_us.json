@@ -117,7 +117,7 @@
   "text.autoconfig.adventurez.option.allow_dragon_hatching": "Allow Dragon Hatching",
   "text.autoconfig.adventurez.option.mammoth_spawn_weight": "Mammoth Spawn Weight",
   "text.autoconfig.adventurez.option.allow_ender_dragon_nether_portal": "Allow Dragon Nether Portal Usage",
-
   "text.autoconfig.adventurez.option.disable_armor_bonus": "Disable Armor Setbonus",
-  "text.autoconfig.adventurez.option.resummoned_ender_dragon_drops_egg": "Resummoned Ender Dragon Drops Egg"
+  "text.autoconfig.adventurez.option.resummoned_ender_dragon_drops_egg": "Resummoned Ender Dragon Drops Egg",
+  "text.autoconfig.adventurez.option.allow_source_stone_tp": "Allow Source Stone Teleport"
 }

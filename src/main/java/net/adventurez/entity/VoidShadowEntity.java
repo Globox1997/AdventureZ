@@ -400,12 +400,16 @@ public class VoidShadowEntity extends FlyingEntity implements Monster {
             }
         }
         if (this.ticksSinceDeath >= 200 && !this.world.isClient) {
+
+            Box box = new Box(this.getBlockPos());
+            List<PlayerEntity> list = world.getEntitiesByClass(PlayerEntity.class, box.expand(128D), EntityPredicates.EXCEPT_SPECTATOR);
+            for (int i = 0; i < list.size(); ++i) {
+                list.get(i).addStatusEffect(new StatusEffectInstance(EffectInit.FAME, 48000, 0, false, false, true));
+            }
             if (this.isInVoidDungeon) {
-                Box box = new Box(this.getBlockPos());
-                List<PlayerEntity> list = world.getEntitiesByClass(PlayerEntity.class, box.expand(128D), EntityPredicates.EXCEPT_SPECTATOR);
-                for (int i = 0; i < list.size(); ++i) {
-                    list.get(i).addStatusEffect(new StatusEffectInstance(EffectInit.FAME, 48000, 0, false, false, true));
-                }
+                this.world.setBlockState(this.getVoidMiddle().up(), Blocks.DRAGON_EGG.getDefaultState(), 3);
+            } else {
+                this.world.setBlockState(this.getBlockPos(), Blocks.DRAGON_EGG.getDefaultState(), 3);
             }
             this.discard();
         }

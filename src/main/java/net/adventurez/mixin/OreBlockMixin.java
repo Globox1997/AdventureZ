@@ -48,8 +48,7 @@ public class OreBlockMixin {
                     float randomFloat = world.getRandom().nextFloat() * 6.2831855F;
                     int posX = pos.getX() + MathHelper.floor(MathHelper.cos(randomFloat) * 18.0F + world.getRandom().nextInt(16));
                     int posZ = pos.getZ() + MathHelper.floor(MathHelper.sin(randomFloat) * 18.0F + world.getRandom().nextInt(16));
-                    // int posY = world.getTopY(Heightmap.Type.WORLD_SURFACE_WG, posX, posZ); doesnt
-                    // work in nether
+                    // int posY = world.getTopY(Heightmap.Type.WORLD_SURFACE_WG, posX, posZ); doesnt work in nether
                     int posY = posYOfPlayer - 20 + world.getRandom().nextInt(40);
                     BlockPos spawnPos = new BlockPos(posX, posY, posZ);
                     if (world.isRegionLoaded(spawnPos.getX() - 4, spawnPos.getY() - 4, spawnPos.getZ() - 4, spawnPos.getX() + 4, spawnPos.getY() + 4, spawnPos.getZ() + 4)

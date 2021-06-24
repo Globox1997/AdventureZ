@@ -3,8 +3,6 @@ package net.adventurez.mixin;
 import java.util.ArrayList;
 import java.util.List;
 
-import com.google.common.collect.ImmutableList;
-
 import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
@@ -24,17 +22,17 @@ public class NetherFortressFeatureMixin {
     @Shadow
     @Final
     private static Pool<SpawnSettings.SpawnEntry> MONSTER_SPAWNS;
-    private static final List<SpawnSettings.SpawnEntry> ADDED_SPAWNS;
+    private static final Pool<SpawnSettings.SpawnEntry> ADDED_SPAWNS;
 
-    @Inject(method = "Lnet/minecraft/world/gen/feature/NetherFortressFeature;getMonsterSpawns()Ljava/util/List;", at = @At(value = "HEAD"), cancellable = true)
-    public void getMonsterSpawnsMixin(CallbackInfoReturnable<List<SpawnSettings.SpawnEntry>> info) {
+    @Inject(method = "Lnet/minecraft/world/gen/feature/NetherFortressFeature;getMonsterSpawns()Lnet/minecraft/util/collection/Pool;", at = @At(value = "HEAD"), cancellable = true)
+    public void getMonsterSpawnsMixin(CallbackInfoReturnable<Pool<SpawnSettings.SpawnEntry>> info) {
         List<SpawnSettings.SpawnEntry> spawnersList = new ArrayList<>(MONSTER_SPAWNS.getEntries());
-        spawnersList.addAll(ADDED_SPAWNS);
-        info.setReturnValue(spawnersList);
+        spawnersList.addAll(ADDED_SPAWNS.getEntries());
+        info.setReturnValue(Pool.of(spawnersList));
     }
 
     static {
-        ADDED_SPAWNS = ImmutableList.of(new SpawnSettings.SpawnEntry(EntityInit.NECROMANCER_ENTITY, ConfigInit.CONFIG.necromancer_spawn_weight, 1, 1),
+        ADDED_SPAWNS = Pool.of(new SpawnSettings.SpawnEntry(EntityInit.NECROMANCER_ENTITY, ConfigInit.CONFIG.necromancer_spawn_weight, 1, 1),
                 new SpawnSettings.SpawnEntry(EntityInit.BLAZEGUARDIAN_ENTITY, ConfigInit.CONFIG.blaze_guardian_spawn_weight, 1, 1));
     }
 }

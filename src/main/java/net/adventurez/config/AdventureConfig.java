@@ -50,6 +50,8 @@ public class AdventureConfig implements ConfigData {
     @ConfigEntry.Category("spawn_setting")
     public boolean allow_dragon_hatching = true;
     @ConfigEntry.Category("misc")
+    public boolean allow_source_stone_tp = true;
+    @ConfigEntry.Category("misc")
     public boolean disable_armor_bonus = false;
     @ConfigEntry.Category("misc")
     public boolean resummoned_ender_dragon_drops_egg = false;

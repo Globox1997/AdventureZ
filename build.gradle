@@ -19,10 +19,10 @@ repositories {
 	maven { url 'https://maven.blamejared.com' }
 	maven { url 'https://jitpack.io' }
 	maven { url "https://maven.terraformersmc.com/" }
+	maven { url "https://www.cursemaven.com" }
 	// Canvas
     // maven { url = "https://maven.dblsaiko.net/" }
     // maven { url = "http://server.bbkr.space:8081/artifactory/libs-release/" }
-    // maven { url = "https://minecraft.curseforge.com/api/maven" }
 }
 
 dependencies {
@@ -41,18 +41,18 @@ dependencies {
 		exclude(group: "net.fabricmc.fabric-api")
 	}
 	// Patchouli
-	// modImplementation "vazkii.patchouli:Patchouli:1.16.4-50-FABRIC",{
-	// 	exclude(group: "net.fabricmc.fabric-api")
-	// }
+	modCompileOnly "vazkii.patchouli:Patchouli:${project.patchouli_version}",{
+		exclude(group: "net.fabricmc.fabric-api")
+	}
 	// VoidZ
-	modCompileOnly "com.github.Globox1997:VoidZ:9523db2d69",{
+	modCompileOnly "com.github.Globox1997:VoidZ:601d29ff72",{
 		exclude(group: "net.fabricmc.fabric-api")
 		exclude(module:"AdventureZ")
 	}
-	// Flan
-//	modCompileOnly "com.github.Flemmli97:Flan:c6b4661657",{
-//		exclude(group: "net.fabricmc.fabric-api")
-//	}
+	//Flan
+	modCompileOnly ("curse.maven:flan-404578:404578"),{
+		exclude(group: "net.fabricmc.fabric-api")
+	}
 	// Canvas
 	// modCompile "grondag:canvas-mc116:1.0.+"
 }

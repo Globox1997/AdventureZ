@@ -3,12 +3,14 @@ package net.adventurez.item;
 import java.util.List;
 
 import net.adventurez.entity.nonliving.VoidBulletEntity;
+import net.adventurez.init.ConfigInit;
 import net.adventurez.init.SoundInit;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.item.TooltipContext;
 import net.minecraft.client.util.InputUtil;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.item.BucketItem;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.sound.SoundCategory;
@@ -24,8 +26,6 @@ import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Direction;
 import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.World;
-
-//import com.flemmli97.flan.config;
 
 public class SourceStoneItem extends Item {
 
@@ -48,7 +48,7 @@ public class SourceStoneItem extends Item {
         if (user instanceof PlayerEntity) {
             PlayerEntity playerEntity = (PlayerEntity) user;
             if (!world.isClient) {
-                if (playerEntity.isSneaking()) {
+                if (ConfigInit.CONFIG.allow_source_stone_tp && playerEntity.isSneaking()) {
                     HitResult hitResult = playerEntity.raycast(8D, 1.0F, false);
                     if (hitResult != null) {
                         if (hitResult.getType() == HitResult.Type.BLOCK) {
