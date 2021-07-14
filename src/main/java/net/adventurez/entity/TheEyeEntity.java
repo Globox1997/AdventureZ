@@ -318,7 +318,7 @@ public class TheEyeEntity extends FlyingEntity {
     }
 
     @Override
-    public boolean addStatusEffect(StatusEffectInstance effect) {
+    public boolean addStatusEffect(StatusEffectInstance effect, Entity entity) {
         return false;
     }
 
