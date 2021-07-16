@@ -165,7 +165,7 @@ public class VoidFragmentEntity extends FlyingEntity implements Monster {
     }
 
     @Override
-    public boolean addStatusEffect(StatusEffectInstance effect) {
+    public boolean addStatusEffect(StatusEffectInstance effect, Entity entity) {
         return false;
     }
 

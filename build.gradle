@@ -18,7 +18,8 @@ repositories {
 	maven { url "https://maven.shedaniel.me/" }
 	maven { url 'https://maven.blamejared.com' }
 	maven { url 'https://jitpack.io' }
-	maven { url "https://maven.terraformersmc.com/" }
+	// maven { url "https://maven.terraformersmc.com/" }
+	maven { url "https://raw.githubusercontent.com/TerraformersMC/Archive/main/releases/" }
 	maven { url "https://www.cursemaven.com" }
 	// Canvas
     // maven { url = "https://maven.dblsaiko.net/" }

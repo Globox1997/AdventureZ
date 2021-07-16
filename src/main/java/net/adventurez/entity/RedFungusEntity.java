@@ -14,7 +14,6 @@ import net.minecraft.entity.EntityPose;
 import net.minecraft.entity.EntityType;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.SpawnReason;
-import net.minecraft.entity.ai.Durations;
 import net.minecraft.entity.ai.goal.FollowTargetGoal;
 import net.minecraft.entity.ai.goal.LookAroundGoal;
 import net.minecraft.entity.ai.goal.LookAtEntityGoal;
@@ -41,6 +40,7 @@ import net.minecraft.sound.SoundEvent;
 import net.minecraft.sound.SoundEvents;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.intprovider.UniformIntProvider;
+import net.minecraft.util.TimeHelper;
 import net.minecraft.world.World;
 import net.minecraft.world.WorldAccess;
 
@@ -178,7 +178,7 @@ public class RedFungusEntity extends PathAwareEntity implements Angerable {
     }
 
     static {
-        ANGER_TIME_RANGE = Durations.betweenSeconds(20, 60);
+        ANGER_TIME_RANGE = TimeHelper.betweenSeconds(20, 60);
     }
 
 }

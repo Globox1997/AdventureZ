@@ -9,7 +9,6 @@ import net.minecraft.entity.EntityData;
 import net.minecraft.entity.EntityType;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.SpawnReason;
-import net.minecraft.entity.ai.Durations;
 import net.minecraft.entity.ai.goal.AnimalMateGoal;
 import net.minecraft.entity.ai.goal.FollowParentGoal;
 import net.minecraft.entity.ai.goal.FollowTargetGoal;
@@ -39,6 +38,7 @@ import net.minecraft.sound.SoundEvent;
 import net.minecraft.sound.SoundEvents;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.intprovider.UniformIntProvider;
+import net.minecraft.util.TimeHelper;
 import net.minecraft.world.LocalDifficulty;
 import net.minecraft.world.ServerWorldAccess;
 import net.minecraft.world.World;
@@ -177,7 +177,7 @@ public class MammothEntity extends AnimalEntity implements Angerable {
 
     static {
         ATTACK_TICKS = DataTracker.registerData(MammothEntity.class, TrackedDataHandlerRegistry.INTEGER);
-        ANGER_TIME_RANGE = Durations.betweenSeconds(20, 39);
+        ANGER_TIME_RANGE = TimeHelper.betweenSeconds(20, 39);
     }
 
     private class AttackGoal extends MeleeAttackGoal {
