@@ -21,6 +21,9 @@
     "NetherPortalBlockMixin",
     "EndPortalBlockMixin",
     "EnderPearlEntityMixin",
+    "MobSpawnerLogicMixin",
+    "NetherFortressGeneratorMixin",
+    "SmallFireballEntityMixin",
     "accessor.LivingEntityAccessor",
     "accessor.FallingBlockAccessor"
   ],
