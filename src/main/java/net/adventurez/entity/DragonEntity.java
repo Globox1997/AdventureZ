@@ -364,6 +364,11 @@ public class DragonEntity extends PathAwareEntity implements InventoryChangedLis
     }
 
     @Override
+    public boolean canFreeze() {
+        return false;
+    }
+
+    @Override
     @Nullable
     public Entity getPrimaryPassenger() {
         return this.getPassengerList().isEmpty() ? null : (Entity) this.getPassengerList().get(0);

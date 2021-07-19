@@ -83,6 +83,11 @@ public class SkeletonVanguardEntity extends HostileEntity {
     }
 
     @Override
+    public boolean canFreeze() {
+        return false;
+    }
+
+    @Override
     protected SoundEvent getAmbientSound() {
         return SoundEvents.ENTITY_SKELETON_AMBIENT;
     }

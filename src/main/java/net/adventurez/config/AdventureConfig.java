@@ -55,6 +55,8 @@ public class AdventureConfig implements ConfigData {
     public boolean allow_the_eye_summoning = true;
     @ConfigEntry.Category("spawn_setting")
     public boolean allow_dragon_hatching = true;
+    @ConfigEntry.Category("spawn_setting")
+    public boolean allow_guardian_spawner_spawn = true;
     @ConfigEntry.Category("misc")
     public boolean allow_source_stone_tp = true;
     @ConfigEntry.Category("misc")

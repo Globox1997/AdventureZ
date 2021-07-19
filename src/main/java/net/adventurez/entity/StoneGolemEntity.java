@@ -160,6 +160,11 @@ public class StoneGolemEntity extends HostileEntity {
     }
 
     @Override
+    public boolean canFreeze() {
+        return false;
+    }
+
+    @Override
     public void mobTick() {
         this.bossBar.setPercent(this.getHealth() / this.getMaxHealth());
     }

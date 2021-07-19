@@ -72,17 +72,9 @@ public class NecromancerEntity extends SpellCastingEntity {
 
     public static boolean canSpawn(EntityType<NecromancerEntity> type, ServerWorldAccess world, SpawnReason spawnReason, BlockPos pos, Random random) {
         if (world.getBiome(pos).getCategory().equals(Biome.Category.NETHER)) {
-            Box box = new Box(pos);
-            List<NecromancerEntity> list = world.getEntitiesByClass(NecromancerEntity.class, box.expand(60D), EntityPredicates.EXCEPT_SPECTATOR);
-            boolean isNecroHere = true;
-            for (int i = 0; i < list.size(); ++i) {
-                NecromancerEntity entity = (NecromancerEntity) list.get(i);
-                if (entity.getType() == EntityInit.NECROMANCER_ENTITY) {
-                    isNecroHere = false;
-                }
-            }
+            List<NecromancerEntity> list = world.getEntitiesByClass(NecromancerEntity.class, new Box(pos).expand(60D), EntityPredicates.EXCEPT_SPECTATOR);
             boolean bl = (world.getDifficulty() != Difficulty.PEACEFUL && canSpawnInDark(type, world, spawnReason, pos, random)
-                    && world.getBlockState(pos.down()).equals(Blocks.NETHER_BRICKS.getDefaultState()) && isNecroHere) || spawnReason == SpawnReason.SPAWNER;
+                    && world.getBlockState(pos.down()).equals(Blocks.NETHER_BRICKS.getDefaultState()) && list.isEmpty()) || spawnReason == SpawnReason.SPAWNER;
             return bl;
         } else
             return false;

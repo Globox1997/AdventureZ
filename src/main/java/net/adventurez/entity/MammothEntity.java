@@ -171,7 +171,6 @@ public class MammothEntity extends AnimalEntity implements Angerable {
         if (entityData == null) {
             entityData = new PassiveEntity.PassiveData(1.0F);
         }
-
         return super.initialize(world, difficulty, spawnReason, (EntityData) entityData, entityTag);
     }
 

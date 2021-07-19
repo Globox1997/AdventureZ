@@ -143,6 +143,11 @@ public class SummonerEntity extends SpellCastingEntity {
     }
 
     @Override
+    public boolean canFreeze() {
+        return false;
+    }
+
+    @Override
     protected SoundEvent getAmbientSound() {
         return SoundEvents.ENTITY_WITHER_SKELETON_AMBIENT;
     }

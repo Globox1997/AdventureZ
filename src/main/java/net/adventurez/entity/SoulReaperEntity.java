@@ -1,5 +1,6 @@
 package net.adventurez.entity;
 
+import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.Random;
@@ -41,9 +42,11 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.item.Items;
 import net.minecraft.item.RangedWeaponItem;
 import net.minecraft.nbt.NbtCompound;
+import net.minecraft.predicate.entity.EntityPredicates;
 import net.minecraft.sound.SoundEvent;
 import net.minecraft.sound.SoundEvents;
 import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.math.Box;
 import net.minecraft.util.math.MathHelper;
 import net.minecraft.util.registry.RegistryKey;
 import net.minecraft.entity.mob.AbstractPiglinEntity;
@@ -60,11 +63,13 @@ import net.minecraft.world.biome.BiomeKeys;
 public class SoulReaperEntity extends HostileEntity implements RangedAttackMob {
     private final BowAttackGoal<SoulReaperEntity> bowAttackGoal = new BowAttackGoal<>(this, 1.0D, 40, 15.0F);
     private final MeleeAttackGoal meleeAttackGoal = new MeleeAttackGoal(this, 1.2D, true) {
+        @Override
         public void stop() {
             super.stop();
             SoulReaperEntity.this.setAttacking(false);
         }
 
+        @Override
         public void start() {
             super.start();
             SoulReaperEntity.this.setAttacking(true);
@@ -75,7 +80,7 @@ public class SoulReaperEntity extends HostileEntity implements RangedAttackMob {
         super(entityType, world);
         this.setPathfindingPenalty(PathNodeType.LAVA, 8.0F);
         this.stepHeight = 1.0F;
-        this.experiencePoints = 60;
+        this.experiencePoints = 30;
     }
 
     public static DefaultAttributeContainer.Builder createSoulReaperAttributes() {
@@ -108,14 +113,19 @@ public class SoulReaperEntity extends HostileEntity implements RangedAttackMob {
             serverWorldAccess.spawnEntity(nightmareEntity);
             this.startRiding(nightmareEntity);
         }
-
         return entityData;
+    }
+
+    @Override
+    public boolean canFreeze() {
+        return false;
     }
 
     public static boolean canSpawn(EntityType<SoulReaperEntity> type, ServerWorldAccess world, SpawnReason spawnReason, BlockPos pos, Random random) {
         Optional<RegistryKey<Biome>> optional = world.getBiomeKey(pos);
-        boolean bl = (world.getDifficulty() != Difficulty.PEACEFUL && world.getLightLevel(LightType.BLOCK, pos) < 10 && canMobSpawn(type, world, spawnReason, pos, random))
-                || spawnReason == SpawnReason.SPAWNER;
+        List<SoulReaperEntity> list = world.getEntitiesByClass(SoulReaperEntity.class, new Box(pos).expand(60D), EntityPredicates.EXCEPT_SPECTATOR);
+        boolean bl = (world.getDifficulty() != Difficulty.PEACEFUL && world.getLightLevel(LightType.BLOCK, pos) < 10 && canSpawnInDark(type, world, spawnReason, pos, random)
+                && world.getBlockState(pos.up(3)).isAir() && list.isEmpty()) || spawnReason == SpawnReason.SPAWNER;
         if (Objects.equals(optional, Optional.of(BiomeKeys.SOUL_SAND_VALLEY))) {
             return bl;
         } else
