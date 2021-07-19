@@ -23,7 +23,7 @@ public class GildedNetheriteFragmentItem extends Item {
         tooltip.add(new TranslatableText("item.adventurez.moreinfo.tooltip"));
         if (InputUtil.isKeyPressed(MinecraftClient.getInstance().getWindow().getHandle(), 340)) {
             tooltip.remove(new TranslatableText("item.adventurez.moreinfo.tooltip"));
-            tooltip.add(new TranslatableText("item.adventurez.gilded_netherite_fragment.tooltip2"));
+            tooltip.add(new TranslatableText("item.adventurez.gilded_netherite_fragment.tooltip"));
         }
     }
 }
