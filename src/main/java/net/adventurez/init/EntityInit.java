@@ -31,7 +31,7 @@ public class EntityInit {
             .dimensions(EntityDimensions.fixed(0.7F, 2.1F)).build();
     public static final EntityType<SummonerEntity> SUMMONER_ENTITY = FabricEntityTypeBuilder.create(SpawnGroup.MONSTER, SummonerEntity::new).dimensions(EntityDimensions.fixed(0.9F, 2.65F)).build();
     public static final EntityType<BlazeGuardianEntity> BLAZEGUARDIAN_ENTITY = FabricEntityTypeBuilder.create(SpawnGroup.MONSTER, BlazeGuardianEntity::new).fireImmune()
-            .dimensions(EntityDimensions.fixed(1.1F, 2.2F)).build();
+            .dimensions(EntityDimensions.fixed(0.8F, 2.25F)).build();
     public static final EntityType<TheEyeEntity> THE_EYE_ENTITY = FabricEntityTypeBuilder.create(SpawnGroup.MONSTER, TheEyeEntity::new).fireImmune().dimensions(EntityDimensions.fixed(2.8F, 3.5F))
             .build();
     public static final EntityType<VoidShadowEntity> VOID_SHADOW_ENTITY = FabricEntityTypeBuilder.create(SpawnGroup.MONSTER, VoidShadowEntity::new).fireImmune()
@@ -48,8 +48,8 @@ public class EntityInit {
             .build();
     public static final EntityType<NightmareEntity> NIGHTMARE_ENTITY = FabricEntityTypeBuilder.create(SpawnGroup.CREATURE, NightmareEntity::new).fireImmune()
             .dimensions(EntityDimensions.fixed(1.4F, 1.6F)).build();
-    public static final EntityType<DragonEntity> DRAGON_ENTITY = FabricEntityTypeBuilder.<DragonEntity>create(SpawnGroup.CREATURE, DragonEntity::new).dimensions(EntityDimensions.changing(4.8F, 3.3F))
-            .fireImmune().build();
+    public static final EntityType<DragonEntity> DRAGON_ENTITY = FabricEntityTypeBuilder.create(SpawnGroup.CREATURE, DragonEntity::new).dimensions(EntityDimensions.changing(4.8F, 3.3F)).fireImmune()
+            .build();
     public static final EntityType<MammothEntity> MAMMOTH_ENTITY = FabricEntityTypeBuilder.create(SpawnGroup.CREATURE, MammothEntity::new).dimensions(EntityDimensions.changing(2.8F, 3.5F)).build();
 
     // Nonliving Entity
@@ -63,6 +63,8 @@ public class EntityInit {
             .dimensions(EntityDimensions.fixed(0.5F, 0.5F)).build();
     public static final EntityType<FireBreathEntity> FIRE_BREATH_ENTITY = FabricEntityTypeBuilder.<FireBreathEntity>create(SpawnGroup.MISC, FireBreathEntity::new)
             .dimensions(EntityDimensions.fixed(0.3F, 0.3F)).build();
+    public static final EntityType<BlazeGuardianShieldEntity> BLAZEGUARDIAN_SHIELD_ENTITY = FabricEntityTypeBuilder.<BlazeGuardianShieldEntity>create(SpawnGroup.MISC, BlazeGuardianShieldEntity::new)
+            .fireImmune().dimensions(EntityDimensions.changing(0.65F, 1.6F)).build();
 
     public static void init() {
         Registry.register(Registry.ENTITY_TYPE, new Identifier("adventurez", "stone_golem"), STONEGOLEM_ENTITY);
@@ -89,6 +91,7 @@ public class EntityInit {
         Registry.register(Registry.ENTITY_TYPE, new Identifier("adventurez", "void_shade"), VOID_SHADE_ENTITY);
         Registry.register(Registry.ENTITY_TYPE, new Identifier("adventurez", "void_bullet"), VOID_BULLET_ENTITY);
         Registry.register(Registry.ENTITY_TYPE, new Identifier("adventurez", "fire_breath"), FIRE_BREATH_ENTITY);
+        Registry.register(Registry.ENTITY_TYPE, new Identifier("adventurez", "blaze_guardian_shield"), BLAZEGUARDIAN_SHIELD_ENTITY);
 
         // Attributes
         FabricDefaultAttributeRegistry.register(STONEGOLEM_ENTITY, StoneGolemEntity.createStoneGolemAttributes());
