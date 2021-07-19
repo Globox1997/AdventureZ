@@ -44,7 +44,7 @@ public class SpawnInit {
             addMobSpawnToBiome(biome, SpawnGroup.MONSTER, new SpawnSettings.SpawnEntry(EntityInit.ORC_ENTITY, ConfigInit.CONFIG.orc_spawn_weight, 1, 3));
         }
         if (biome.getCategory().equals(Biome.Category.ICY) || biome.getCategory().equals(Biome.Category.TAIGA)) {
-            addMobSpawnToBiome(biome, SpawnGroup.MONSTER, new SpawnSettings.SpawnEntry(EntityInit.MAMMOTH_ENTITY, ConfigInit.CONFIG.mammoth_spawn_weight, 2, 3));
+            addMobSpawnToBiome(biome, SpawnGroup.MONSTER, new SpawnSettings.SpawnEntry(EntityInit.MAMMOTH_ENTITY, ConfigInit.CONFIG.mammoth_spawn_weight, 2, 2));
         }
 
     }
@@ -52,7 +52,6 @@ public class SpawnInit {
     private static void addMobSpawnToBiome(Biome biome, SpawnGroup classification, SpawnSettings.SpawnEntry... spawners) {
         convertImmutableSpawners(biome);
         List<SpawnSettings.SpawnEntry> spawnersList = new ArrayList<>(biome.getSpawnSettings().spawners.get(classification).getEntries());
-        // List<SpawnSettings.SpawnEntry> spawnersList = new ArrayList<>(biome.getSpawnSettings().spawners.get(classification));
         spawnersList.addAll(Arrays.asList(spawners));
         biome.getSpawnSettings().spawners.put(classification, Pool.of(spawnersList));
     }
