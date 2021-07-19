@@ -10,6 +10,7 @@ import net.fabricmc.fabric.api.client.rendereregistry.v1.BlockEntityRendererRegi
 import net.fabricmc.fabric.api.client.rendereregistry.v1.EntityModelLayerRegistry;
 import net.fabricmc.fabric.api.client.rendereregistry.v1.EntityRendererRegistry;
 import net.minecraft.client.render.RenderLayer;
+import net.minecraft.client.render.entity.EmptyEntityRenderer;
 import net.minecraft.client.render.entity.model.EntityModelLayer;
 import net.minecraft.util.Identifier;
 
@@ -39,7 +40,6 @@ public class RenderInit {
     public static final EntityModelLayer VOID_SHADE_LAYER = new EntityModelLayer(new Identifier("adventurez:void_shade_render_layer"), "void_shade_render_layer");
     public static final EntityModelLayer VOID_BULLET_LAYER = new EntityModelLayer(new Identifier("adventurez:void_bullet_render_layer"), "void_bullet_render_layer");
     public static final EntityModelLayer FIRE_BREATH_LAYER = new EntityModelLayer(new Identifier("adventurez:fire_breath_render_layer"), "fire_breath_render_layer");
-
     public static final EntityModelLayer PIGLIN_FLAG_LAYER = new EntityModelLayer(new Identifier("adventurez:piglin_flag_render_layer"), "piglin_flag_render_layer");
 
     public static void init() {
@@ -67,7 +67,8 @@ public class RenderInit {
         EntityRendererRegistry.INSTANCE.register(EntityInit.VOID_FRAGMENT_ENTITY, VoidFragmentRenderer::new);
         EntityRendererRegistry.INSTANCE.register(EntityInit.VOID_SHADE_ENTITY, VoidShadeRenderer::new);
         EntityRendererRegistry.INSTANCE.register(EntityInit.VOID_BULLET_ENTITY, VoidBulletRenderer::new);
-        EntityRendererRegistry.INSTANCE.register(EntityInit.FIRE_BREATH_ENTITY, FireBreathRenderer::new);
+        EntityRendererRegistry.INSTANCE.register(EntityInit.FIRE_BREATH_ENTITY, EmptyEntityRenderer::new);
+        EntityRendererRegistry.INSTANCE.register(EntityInit.BLAZEGUARDIAN_SHIELD_ENTITY, EmptyEntityRenderer::new);
 
         // Entity Layer
         EntityModelLayerRegistry.registerModelLayer(STONE_GOLEM_LAYER, StoneGolemModel::getTexturedModelData);
@@ -75,7 +76,6 @@ public class RenderInit {
         EntityModelLayerRegistry.registerModelLayer(GILDED_STONE_LAYER, GildedStoneModel::getTexturedModelData);
         EntityModelLayerRegistry.registerModelLayer(SMALL_STONE_GOLEM_LAYER, SmallStoneGolemModel::getTexturedModelData);
         EntityModelLayerRegistry.registerModelLayer(PIGLIN_BEAST_LAYER, PiglinBeastModel::getTexturedModelData);
-        // EntityModelLayerRegistry.registerModelLayer(NIGHTMARE_LAYER, NightmareModel::getTexturedModelData);
         EntityModelLayerRegistry.registerModelLayer(SOUL_REAPER_LAYER, SoulReaperModel::getTexturedModelData);
         EntityModelLayerRegistry.registerModelLayer(NECROMANCER_LAYER, NecromancerModel::getTexturedModelData);
         EntityModelLayerRegistry.registerModelLayer(WITHER_PUPPET_LAYER, WitherPuppetModel::getTexturedModelData);
@@ -93,7 +93,6 @@ public class RenderInit {
         EntityModelLayerRegistry.registerModelLayer(VOID_FRAGMENT_LAYER, VoidFragmentModel::getTexturedModelData);
         EntityModelLayerRegistry.registerModelLayer(VOID_SHADE_LAYER, VoidShadeModel::getTexturedModelData);
         EntityModelLayerRegistry.registerModelLayer(VOID_BULLET_LAYER, VoidBulletModel::getTexturedModelData);
-        // EntityModelLayerRegistry.registerModelLayer(FIRE_BREATH_LAYER, FireBreathModel::getTexturedModelData);
         EntityModelLayerRegistry.registerModelLayer(PIGLIN_FLAG_LAYER, PiglinFlagRenderer::getTexturedModelData);
 
         // Network
