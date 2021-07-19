@@ -55,7 +55,7 @@ dependencies {
 		exclude(group: "net.fabricmc.fabric-api")
 	}
 	// Canvas
-	// modCompile "grondag:canvas-mc116:1.0.+"
+	// modCompileOnly "grondag:canvas-mc117-1.17:1.0.+"
 }
 
 processResources {

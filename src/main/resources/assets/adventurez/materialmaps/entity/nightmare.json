@@ -3,7 +3,7 @@
         {
             "predicate": {
                 "materialPredicate": {
-                    "renderLayerName": "entity_glowing"
+                    "renderLayerName": "entity_decal"
                 }
             },
             "material": "canvas:emissive_transform"
