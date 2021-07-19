@@ -7,6 +7,8 @@ import java.util.Random;
 
 import org.jetbrains.annotations.Nullable;
 
+import net.adventurez.entity.nonliving.BlazeGuardianShieldEntity;
+import net.adventurez.init.EntityInit;
 import net.minecraft.entity.EntityData;
 import net.minecraft.entity.EntityType;
 import net.minecraft.entity.LivingEntity;
@@ -31,7 +33,6 @@ import net.minecraft.entity.projectile.SmallFireballEntity;
 import net.minecraft.nbt.NbtCompound;
 import net.minecraft.particle.ParticleTypes;
 import net.minecraft.server.world.ServerWorld;
-import net.minecraft.sound.SoundCategory;
 import net.minecraft.sound.SoundEvent;
 import net.minecraft.sound.SoundEvents;
 import net.minecraft.util.math.BlockPos;
@@ -54,7 +55,15 @@ public class BlazeGuardianEntity extends HostileEntity {
     private float eyeOffset = 0.5F;
     private int eyeOffsetCooldown;
     private static final TrackedData<Byte> GUARDIAN_FLAGS;
+    public static final TrackedData<Boolean> SHIELD_NORTH;
+    public static final TrackedData<Boolean> SHIELD_EAST;
+    public static final TrackedData<Boolean> SHIELD_SOUTH;
+    public static final TrackedData<Boolean> SHIELD_WEST;
     private boolean isTryingToShockwave = false;
+    private final BlazeGuardianShieldEntity shield_north;
+    private final BlazeGuardianShieldEntity shield_east;
+    private final BlazeGuardianShieldEntity shield_south;
+    private final BlazeGuardianShieldEntity shield_west;
 
     public BlazeGuardianEntity(EntityType<? extends HostileEntity> entityType, World world) {
         super(entityType, world);
@@ -63,11 +72,19 @@ public class BlazeGuardianEntity extends HostileEntity {
         this.setPathfindingPenalty(PathNodeType.DANGER_FIRE, 0.0F);
         this.setPathfindingPenalty(PathNodeType.DAMAGE_FIRE, 0.0F);
         this.experiencePoints = 20;
+        shield_north = new BlazeGuardianShieldEntity(EntityInit.BLAZEGUARDIAN_SHIELD_ENTITY, this, "shield_north");
+        shield_east = new BlazeGuardianShieldEntity(EntityInit.BLAZEGUARDIAN_SHIELD_ENTITY, this, "shield_east");
+        shield_south = new BlazeGuardianShieldEntity(EntityInit.BLAZEGUARDIAN_SHIELD_ENTITY, this, "shield_south");
+        shield_west = new BlazeGuardianShieldEntity(EntityInit.BLAZEGUARDIAN_SHIELD_ENTITY, this, "shield_west");
+        world.spawnEntity(shield_north);
+        world.spawnEntity(shield_east);
+        world.spawnEntity(shield_south);
+        world.spawnEntity(shield_west);
     }
 
     public static DefaultAttributeContainer.Builder createBlazeGuardianAttributes() {
-        return HostileEntity.createHostileAttributes().add(EntityAttributes.GENERIC_MAX_HEALTH, 30.0D).add(EntityAttributes.GENERIC_ATTACK_DAMAGE, 9.0D)
-                .add(EntityAttributes.GENERIC_MOVEMENT_SPEED, 0.24D).add(EntityAttributes.GENERIC_FOLLOW_RANGE, 52.0D).add(EntityAttributes.GENERIC_ARMOR, 2.0D);
+        return HostileEntity.createHostileAttributes().add(EntityAttributes.GENERIC_MAX_HEALTH, 40.0D).add(EntityAttributes.GENERIC_ATTACK_DAMAGE, 9.0D)
+                .add(EntityAttributes.GENERIC_MOVEMENT_SPEED, 0.24D).add(EntityAttributes.GENERIC_FOLLOW_RANGE, 48.0D).add(EntityAttributes.GENERIC_ARMOR, 3.0D);
     }
 
     @Override
@@ -87,6 +104,44 @@ public class BlazeGuardianEntity extends HostileEntity {
     public void initDataTracker() {
         super.initDataTracker();
         this.dataTracker.startTracking(GUARDIAN_FLAGS, (byte) 0);
+        this.dataTracker.startTracking(SHIELD_NORTH, true);
+        this.dataTracker.startTracking(SHIELD_EAST, true);
+        this.dataTracker.startTracking(SHIELD_SOUTH, true);
+        this.dataTracker.startTracking(SHIELD_WEST, true);
+    }
+
+    @Override
+    public void writeCustomDataToNbt(NbtCompound tag) {
+        super.writeCustomDataToNbt(tag);
+        tag.putBoolean("ShieldNorth", this.shield_north.isAlive());
+        tag.putBoolean("ShieldEast", this.shield_east.isAlive());
+        tag.putBoolean("ShieldSouth", this.shield_south.isAlive());
+        tag.putBoolean("ShieldWest", this.shield_west.isAlive());
+    }
+
+    @Override
+    public void readCustomDataFromNbt(NbtCompound tag) {
+        super.readCustomDataFromNbt(tag);
+        this.dataTracker.set(SHIELD_NORTH, tag.getBoolean("ShieldNorth"));
+        if (!tag.getBoolean("ShieldNorth")) {
+            this.shield_north.discard();
+        }
+        this.dataTracker.set(SHIELD_EAST, tag.getBoolean("ShieldEast"));
+        if (!tag.getBoolean("ShieldEast")) {
+            this.shield_east.discard();
+        }
+        this.dataTracker.set(SHIELD_SOUTH, tag.getBoolean("ShieldSouth"));
+        if (!tag.getBoolean("ShieldSouth")) {
+            this.shield_south.discard();
+        }
+        this.dataTracker.set(SHIELD_WEST, tag.getBoolean("ShieldWest"));
+        if (!tag.getBoolean("ShieldWest")) {
+            this.shield_west.discard();
+        }
+    }
+
+    private void movePart(BlazeGuardianShieldEntity blazeGuardianShieldEntity, double dx, double dy, double dz) {
+        blazeGuardianShieldEntity.setPosition(this.getX() + dx, this.getY() + 0.2D + dy, this.getZ() + dz);
     }
 
     @Override
@@ -134,6 +189,12 @@ public class BlazeGuardianEntity extends HostileEntity {
             for (int i = 0; i < 2; ++i) {
                 this.world.addParticle(ParticleTypes.LARGE_SMOKE, this.getParticleX(0.6D), this.getRandomBodyY(), this.getParticleZ(0.6D), 0.0D, 0.0D, 0.0D);
             }
+        } else {
+            double f = (double) this.age / 6.2831853D + (this.bodyYaw / 360D * Math.PI * 2D) - 1.0D;
+            this.movePart(this.shield_north, Math.cos(f) * 0.9D, 0.0D, Math.sin(f) * 0.9D);
+            this.movePart(this.shield_east, Math.cos(f + 1.570796D) * 0.9D, 0.0D, Math.sin(f + 1.570796D) * 0.9D);
+            this.movePart(this.shield_south, Math.cos(f + 3.1415926D) * 0.9D, 0.0D, Math.sin(f + 3.1415926D) * 0.9D);
+            this.movePart(this.shield_west, Math.cos(f + 4.7123889D) * 0.9D, 0.0D, Math.sin(f + 4.7123889D) * 0.9D);
         }
 
         super.tickMovement();
@@ -184,19 +245,21 @@ public class BlazeGuardianEntity extends HostileEntity {
 
     @Override
     public boolean damage(DamageSource source, float amount) {
-        int chance = 0;
-        if (source.isProjectile()) {
-            chance = world.random.nextInt(3);
-        } else if (!source.isUnblockable() && this.getHealth() < this.getMaxHealth() / 2) {
-            chance = world.random.nextInt(4);
-        } else {
-            chance = world.random.nextInt(6);
+        if (!source.isUnblockable() && this.getHealth() < this.getMaxHealth() / 2F) {
+            amount *= 0.5F;
         }
-        if (chance == 1) {
-            this.world.playSoundFromEntity(null, this, SoundEvents.ITEM_SHIELD_BLOCK, SoundCategory.HOSTILE, 1.0F, 1.0F);
-            return false;
-        } else
-            return this.isInvulnerableTo(source) ? false : super.damage(source, amount);
+        return this.isInvulnerableTo(source) ? false : super.damage(source, amount);
+    }
+
+    @Override
+    public void onDeath(DamageSource source) {
+        if (!this.world.isClient) {
+            this.shield_north.discard();
+            this.shield_east.discard();
+            this.shield_south.discard();
+            this.shield_west.discard();
+        }
+        super.onDeath(source);
     }
 
     @Nullable
@@ -231,6 +294,10 @@ public class BlazeGuardianEntity extends HostileEntity {
 
     static {
         GUARDIAN_FLAGS = DataTracker.registerData(BlazeGuardianEntity.class, TrackedDataHandlerRegistry.BYTE);
+        SHIELD_NORTH = DataTracker.registerData(BlazeGuardianEntity.class, TrackedDataHandlerRegistry.BOOLEAN);
+        SHIELD_EAST = DataTracker.registerData(BlazeGuardianEntity.class, TrackedDataHandlerRegistry.BOOLEAN);
+        SHIELD_SOUTH = DataTracker.registerData(BlazeGuardianEntity.class, TrackedDataHandlerRegistry.BOOLEAN);
+        SHIELD_WEST = DataTracker.registerData(BlazeGuardianEntity.class, TrackedDataHandlerRegistry.BOOLEAN);
     }
 
     static class ShootFireballGoal extends Goal {
@@ -244,20 +311,24 @@ public class BlazeGuardianEntity extends HostileEntity {
             this.setControls(EnumSet.of(Goal.Control.MOVE, Goal.Control.LOOK));
         }
 
+        @Override
         public boolean canStart() {
             LivingEntity livingEntity = this.guardian.getTarget();
             return livingEntity != null && livingEntity.isAlive() && this.guardian.canTarget(livingEntity);
         }
 
+        @Override
         public void start() {
             this.fireballsFired = 0;
         }
 
+        @Override
         public void stop() {
             this.guardian.setFireActive(false);
             this.targetNotVisibleTicks = 0;
         }
 
+        @Override
         public void tick() {
             --this.fireballCooldown;
             LivingEntity livingEntity = this.guardian.getTarget();
@@ -268,18 +339,15 @@ public class BlazeGuardianEntity extends HostileEntity {
                 } else {
                     ++this.targetNotVisibleTicks;
                 }
-
                 double d = this.guardian.squaredDistanceTo(livingEntity);
                 if (d < 4.0D) {
                     if (!bl) {
                         return;
                     }
-
                     if (this.fireballCooldown <= 0) {
                         this.fireballCooldown = 20;
                         this.guardian.tryAttack(livingEntity);
                     }
-
                     this.guardian.getMoveControl().moveTo(livingEntity.getX(), livingEntity.getY(), livingEntity.getZ(), 1.0D);
                 } else if (d < this.getFollowRange() * this.getFollowRange() && bl) {
                     double e = livingEntity.getX() - this.guardian.getX();
@@ -288,9 +356,9 @@ public class BlazeGuardianEntity extends HostileEntity {
                     if (this.fireballCooldown <= 0) {
                         ++this.fireballsFired;
                         if (this.fireballsFired == 1) {
-                            this.fireballCooldown = 60;
+                            this.fireballCooldown = 50;
                             this.guardian.setFireActive(true);
-                        } else if (this.fireballsFired <= 6) {
+                        } else if (this.fireballsFired <= 7) {
                             this.fireballCooldown = 6;
                         } else {
                             this.fireballCooldown = 100;
@@ -335,23 +403,27 @@ public class BlazeGuardianEntity extends HostileEntity {
             this.setControls(EnumSet.of(Goal.Control.MOVE, Goal.Control.LOOK));
         }
 
+        @Override
         public boolean canStart() {
             LivingEntity livingEntity = this.guardian.getTarget();
             return livingEntity != null && livingEntity.isAlive() && this.guardian.canTarget(livingEntity) && this.guardian.squaredDistanceTo(livingEntity) < 8D;
         }
 
+        @Override
         public void start() {
             this.explosionTicker = 20;
             this.guardian.setFireActive(true);
             this.guardian.isTryingToShockwave = true;
         }
 
+        @Override
         public void stop() {
             this.guardian.setFireActive(false);
             this.explosionTicker = 0;
             this.guardian.isTryingToShockwave = false;
         }
 
+        @Override
         public void tick() {
             --this.explosionTicker;
             LivingEntity livingEntity = this.guardian.getTarget();
