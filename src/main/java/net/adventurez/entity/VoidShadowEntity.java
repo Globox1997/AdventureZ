@@ -62,6 +62,7 @@ import net.minecraft.world.LocalDifficulty;
 import net.minecraft.world.ServerWorldAccess;
 import net.minecraft.world.World;
 import net.voidz.block.VoidBlock;
+import net.voidz.block.entity.PortalBlockEntity;
 import net.voidz.init.BlockInit;
 import net.voidz.init.DimensionInit;
 import net.minecraft.block.Block;
@@ -286,6 +287,7 @@ public class VoidShadowEntity extends FlyingEntity implements Monster {
     }
 
     // Set at VoidZ mod
+    // Platform at y = 99, voidmiddle = 100
     public void setVoidMiddle(int x, int y, int z) {
         this.circling = true;
         this.portalX = x;
@@ -400,7 +402,6 @@ public class VoidShadowEntity extends FlyingEntity implements Monster {
             }
         }
         if (this.ticksSinceDeath >= 200 && !this.world.isClient) {
-
             Box box = new Box(this.getBlockPos());
             List<PlayerEntity> list = world.getEntitiesByClass(PlayerEntity.class, box.expand(128D), EntityPredicates.EXCEPT_SPECTATOR);
             for (int i = 0; i < list.size(); ++i) {
@@ -408,6 +409,10 @@ public class VoidShadowEntity extends FlyingEntity implements Monster {
             }
             if (this.isInVoidDungeon) {
                 this.world.setBlockState(this.getVoidMiddle().up(), Blocks.DRAGON_EGG.getDefaultState(), 3);
+                PortalBlockEntity portalBlockEntity = (PortalBlockEntity) world.getBlockEntity(this.getVoidMiddle().down());
+                if (portalBlockEntity != null) {
+                    portalBlockEntity.bossTime = (int) world.getLevelProperties().getTime();
+                }
             } else {
                 this.world.setBlockState(this.getBlockPos(), Blocks.DRAGON_EGG.getDefaultState(), 3);
             }
