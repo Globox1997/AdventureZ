@@ -9,7 +9,6 @@ import me.shedaniel.cloth.clothconfig.shadowed.blue.endless.jankson.Comment;
 @Config.Gui.Background("minecraft:textures/block/stone.png")
 public class AdventureConfig implements ConfigData {
     @ConfigEntry.Category("spawn_setting")
-    @ConfigEntry.Gui.PrefixText
     @ConfigEntry.Gui.RequiresRestart
     @ConfigEntry.BoundedDiscrete(min = 0, max = 100)
     public int necromancer_spawn_weight = 1;

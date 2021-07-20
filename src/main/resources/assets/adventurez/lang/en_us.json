@@ -102,7 +102,6 @@
   "text.autoconfig.adventurez.title": "AdventureZ Config",
   "text.autoconfig.adventurez.category.spawn_setting": "Spawn Settings",
   "text.autoconfig.adventurez.category.misc": "Misc Settings",
-  "text.autoconfig.adventurez.option.necromancer_spawn_weight.@PrefixText": "Restart for applying weight changes",
   "text.autoconfig.adventurez.option.necromancer_spawn_weight": "Necromancer Spawn Weight",
   "text.autoconfig.adventurez.option.nightmare_spawn_weight": "Nightmare + Reaper Spawn Weight",
   "text.autoconfig.adventurez.option.piglin_beast_ore_spawn_chance": "Piglin Beast Ore Spawn Chance",
