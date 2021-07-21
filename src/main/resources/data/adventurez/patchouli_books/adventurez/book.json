@@ -1,8 +1,6 @@
 {
-    "name": "AdventureZ Guide",
+    "name": "AdventureZ Handbook",
     "landing_text": "This is the AdventureZ handbook",
-    "version": 1,
     "show_progress": false,
-    "book_texture": "patchouli:textures/gui/book_red.png",
     "model": "adventurez:adventurez_guide"
 }
