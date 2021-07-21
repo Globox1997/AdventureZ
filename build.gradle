@@ -46,7 +46,7 @@ dependencies {
 		exclude(group: "net.fabricmc.fabric-api")
 	}
 	// VoidZ
-	modCompileOnly "com.github.Globox1997:VoidZ:601d29ff72",{
+	modCompileOnly "com.github.Globox1997:VoidZ:43774d0fe8",{
 		exclude(group: "net.fabricmc.fabric-api")
 		exclude(module:"AdventureZ")
 	}
