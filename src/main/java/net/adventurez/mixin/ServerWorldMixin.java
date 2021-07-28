@@ -14,12 +14,14 @@ import net.adventurez.entity.SummonerEntity;
 import net.adventurez.init.ConfigInit;
 import net.adventurez.init.EntityInit;
 import net.minecraft.entity.SpawnReason;
+import net.minecraft.entity.SpawnRestriction;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.WorldGenerationProgressListener;
 import net.minecraft.server.world.ServerWorld;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.ChunkPos;
 import net.minecraft.util.registry.RegistryKey;
+import net.minecraft.world.SpawnHelper;
 import net.minecraft.world.World;
 import net.minecraft.world.chunk.WorldChunk;
 import net.minecraft.world.dimension.DimensionType;
@@ -39,18 +41,21 @@ public abstract class ServerWorldMixin extends World {
 
     @Inject(method = "Lnet/minecraft/server/world/ServerWorld;tickChunk(Lnet/minecraft/world/chunk/WorldChunk;I)V", at = @At(value = "INVOKE", target = "Lnet/minecraft/entity/LightningEntity;setCosmetic(Z)V", shift = Shift.AFTER))
     public void tickChunk(WorldChunk chunk, int randomTickSpeed, CallbackInfo info) {
-        int spawnChanceInt = this.getRandom().nextInt(ConfigInit.CONFIG.summoner_thunder_spawn_chance);
-        if (spawnChanceInt == 1) {
-            ChunkPos chunkPos = chunk.getPos();
-            int i = chunkPos.getStartX();
-            int j = chunkPos.getStartZ();
-            BlockPos blockPos = this.getSurface(this.getRandomPosInChunk(i, 0, j, 15));
-            if (this.getBlockState(blockPos).isSolidBlock(this, blockPos)) {
-                SummonerEntity summonerEntity = (SummonerEntity) EntityInit.SUMMONER_ENTITY.create(this);
-                summonerEntity.updatePosition((double) blockPos.getX(), (double) blockPos.getY(), (double) blockPos.getZ());
-                summonerEntity.initialize((ServerWorld) (Object) this, this.getLocalDifficulty(blockPos), SpawnReason.EVENT, null, null);
-                this.spawnEntity(summonerEntity);
-                summonerEntity.playSpawnEffects();
+        int summonerSpawnChance = ConfigInit.CONFIG.summoner_thunder_spawn_chance;
+        if (summonerSpawnChance != 0) {
+            int spawnChanceInt = this.getRandom().nextInt(summonerSpawnChance) + 1;
+            if (spawnChanceInt == 1) {
+                ChunkPos chunkPos = chunk.getPos();
+                int i = chunkPos.getStartX();
+                int j = chunkPos.getStartZ();
+                BlockPos blockPos = this.getSurface(this.getRandomPosInChunk(i, 0, j, 15));
+                if (SpawnHelper.canSpawn(SpawnRestriction.Location.ON_GROUND, chunk.getWorld(), blockPos, EntityInit.SUMMONER_ENTITY)) {
+                    SummonerEntity summonerEntity = (SummonerEntity) EntityInit.SUMMONER_ENTITY.create(this);
+                    summonerEntity.updatePosition((double) blockPos.getX(), (double) blockPos.getY(), (double) blockPos.getZ());
+                    summonerEntity.initialize((ServerWorld) (Object) this, this.getLocalDifficulty(blockPos), SpawnReason.EVENT, null, null);
+                    this.spawnEntity(summonerEntity);
+                    summonerEntity.playSpawnEffects();
+                }
             }
         }
     }
