@@ -12,7 +12,6 @@ import net.adventurez.entity.BlazeGuardianEntity;
 import net.adventurez.init.ConfigInit;
 import net.adventurez.init.EntityInit;
 import net.minecraft.block.BlockState;
-import net.minecraft.block.entity.BlockEntity;
 import net.minecraft.entity.SpawnReason;
 import net.minecraft.structure.NetherFortressGenerator;
 import net.minecraft.util.math.BlockBox;
@@ -25,14 +24,14 @@ import net.minecraft.world.gen.chunk.ChunkGenerator;
 @Mixin(NetherFortressGenerator.BridgePlatform.class)
 public class NetherFortressGeneratorMixin {
 
-    @Inject(method = "generate", at = @At(value = "INVOKE", target = "Lnet/minecraft/world/MobSpawnerLogic;setEntityId(Lnet/minecraft/entity/EntityType;)V"), locals = LocalCapture.CAPTURE_FAILSOFT)
+    @Inject(method = "generate", at = @At(value = "INVOKE", target = "Lnet/minecraft/world/StructureWorldAccess;setBlockState(Lnet/minecraft/util/math/BlockPos;Lnet/minecraft/block/BlockState;I)Z"), locals = LocalCapture.CAPTURE_FAILSOFT)
     private void generateMixin(StructureWorldAccess world, StructureAccessor structureAccessor, ChunkGenerator chunkGenerator, Random random, BlockBox boundingBox, ChunkPos chunkPos, BlockPos pos,
-            CallbackInfoReturnable<Boolean> info, BlockState blockState, BlockState blockState2, BlockPos blockPos, BlockEntity blockEntity) {
+            CallbackInfoReturnable<Boolean> info, BlockState blockState, BlockState blockState2, BlockPos blockPos) {
         if (ConfigInit.CONFIG.allow_guardian_spawner_spawn) {
             BlazeGuardianEntity blazeGuardianEntity = (BlazeGuardianEntity) EntityInit.BLAZEGUARDIAN_ENTITY.create(world.toServerWorld());
             blazeGuardianEntity.initialize(world.toServerWorld(), world.getLocalDifficulty(pos), SpawnReason.STRUCTURE, null, null);
             int randomCheck = random.nextInt(3);
-            blazeGuardianEntity.refreshPositionAndAngles(blockPos.north(random.nextInt(3) - 1).east(randomCheck - 1 == 0 ? 1 : randomCheck), random.nextFloat() * 360F, 0.0F);
+            blazeGuardianEntity.refreshPositionAndAngles(blockPos.north(random.nextInt(3) - 1).east(randomCheck - 1 == 0 ? -1 : randomCheck), random.nextFloat() * 360F, 0.0F);
             world.spawnEntity(blazeGuardianEntity);
         }
     }

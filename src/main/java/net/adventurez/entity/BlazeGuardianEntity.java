@@ -265,14 +265,14 @@ public class BlazeGuardianEntity extends HostileEntity {
     @Nullable
     @Override
     public EntityData initialize(ServerWorldAccess serverWorldAccess, LocalDifficulty difficulty, SpawnReason spawnReason, @Nullable EntityData entityData, @Nullable NbtCompound entityTag) {
-        if (spawnReason.equals(SpawnReason.NATURAL) || spawnReason.equals(SpawnReason.STRUCTURE) || spawnReason.equals(SpawnReason.CHUNK_GENERATION)) {
+        if (spawnReason.equals(SpawnReason.NATURAL) || spawnReason.equals(SpawnReason.CHUNK_GENERATION)) {
             for (int i = 0; i < serverWorldAccess.getRandom().nextInt(3) + 2; i++) {
                 for (int u = 0; u < 10; u++) {
                     BlockPos pos = new BlockPos(this.getBlockPos().add(world.random.nextInt(5), world.random.nextInt(5), world.random.nextInt(5)));
-                    if (SpawnHelper.canSpawn(SpawnRestriction.Location.ON_GROUND, this.world, pos, EntityType.BLAZE)) {
+                    if (SpawnHelper.canSpawn(SpawnRestriction.Location.ON_GROUND, serverWorldAccess.toServerWorld(), pos, EntityType.BLAZE)) {
                         BlazeEntity blazeEntity = (BlazeEntity) EntityType.BLAZE.create(serverWorldAccess.toServerWorld());
-                        blazeEntity.refreshPositionAndAngles(pos, world.random.nextFloat() * 360.0F, 0.0F);
                         blazeEntity.initialize(serverWorldAccess, this.world.getLocalDifficulty(pos), SpawnReason.NATURAL, null, null);
+                        blazeEntity.refreshPositionAndAngles(pos, world.random.nextFloat() * 360.0F, 0.0F);
                         serverWorldAccess.spawnEntity(blazeEntity);
                         break;
                     }
