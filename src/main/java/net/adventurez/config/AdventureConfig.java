@@ -23,7 +23,7 @@ public class AdventureConfig implements ConfigData {
     @ConfigEntry.Category("spawn_setting")
     @ConfigEntry.BoundedDiscrete(min = 0, max = 100)
     @Comment("Chance for spawning when killing too many piglins; 1/Value")
-    public int piglin_beast_attack_piglin_spawn_chance = 2;
+    public int piglin_beast_attack_piglin_spawn_chance = 7;
     @ConfigEntry.Category("spawn_setting")
     @ConfigEntry.Gui.RequiresRestart
     @ConfigEntry.BoundedDiscrete(min = 0, max = 100)
