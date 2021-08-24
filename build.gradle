@@ -1,5 +1,5 @@
 plugins {
-	id 'fabric-loom' version '0.8-SNAPSHOT'
+	id 'fabric-loom' version '0.9-SNAPSHOT'
 	id 'maven-publish'
 }
 
@@ -18,8 +18,7 @@ repositories {
 	maven { url "https://maven.shedaniel.me/" }
 	maven { url 'https://maven.blamejared.com' }
 	maven { url 'https://jitpack.io' }
-	// maven { url "https://maven.terraformersmc.com/" }
-	maven { url "https://raw.githubusercontent.com/TerraformersMC/Archive/main/releases/" }
+	maven { url "https://maven.terraformersmc.com/" }
 	maven { url "https://www.cursemaven.com" }
 	// Canvas
     // maven { url = "https://maven.dblsaiko.net/" }
