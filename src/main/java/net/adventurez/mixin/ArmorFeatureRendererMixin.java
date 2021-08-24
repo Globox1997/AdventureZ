@@ -47,7 +47,7 @@ public abstract class ArmorFeatureRendererMixin<T extends LivingEntity, M extend
         if (golemChestplate.getItem().equals(ItemInit.STONE_GOLEM_CHESTPLATE)) {
             if (StoneGolemArmor.fireTime(golemChestplate)) {
                 VertexConsumer vertexConsumer = ItemRenderer.getArmorGlintConsumer(vertexConsumerProvider,
-                        RenderLayer.getArmorCutoutNoCull(new Identifier("minecraft:textures/models/armor/stone_golem_armor_layer_1_overlay.png")), true, false);
+                        RenderLayer.getArmorCutoutNoCull(new Identifier("minecraft:textures/models/armor/stone_golem_layer_1_overlay.png")), true, false);
                 bodyModel.render(matrixStack, vertexConsumer, 220, OverlayTexture.DEFAULT_UV, 1.0F, 1.0F, 1.0F, 1.0F);
             }
         }
@@ -61,7 +61,7 @@ public abstract class ArmorFeatureRendererMixin<T extends LivingEntity, M extend
         if (golemChestplate.getItem().equals(ItemInit.STONE_GOLEM_CHESTPLATE)) {
             if (StoneGolemArmor.fireTime(golemChestplate)) {
                 VertexConsumer vertexConsumer = ItemRenderer.getArmorGlintConsumer(vertexConsumerProvider,
-                        RenderLayer.getArmorCutoutNoCull(new Identifier("textures/models/armor/stone_golem_armor_layer_1_overlay_helmet.png")), false, false);
+                        RenderLayer.getArmorCutoutNoCull(new Identifier("textures/models/armor/stone_golem_layer_1_overlay_helmet.png")), false, false);
                 bodyModel.render(matrixStack, vertexConsumer, 220, OverlayTexture.DEFAULT_UV, 1.0F, 1.0F, 1.0F, 1.0F);
 
             }

@@ -40,7 +40,7 @@ public class StoneGolemArmorMaterial implements ArmorMaterial {
 
     @Environment(EnvType.CLIENT)
     public String getName() {
-        return "stone_golem_armor";
+        return "stone_golem";
     }
 
     @Override
