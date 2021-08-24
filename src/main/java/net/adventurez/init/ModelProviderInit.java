@@ -9,8 +9,8 @@ public class ModelProviderInit {
 
     public static void init() {
         FabricModelPredicateProviderRegistry.register(ItemInit.STONE_GOLEM_ARM, new Identifier("lavalight"), (stack, world, entity, seed) -> {
-            NbtCompound tags = stack.getTag();
-            if (stack.hasTag() && tags.getBoolean("lavalight")) {
+            NbtCompound tags = stack.getNbt();
+            if (stack.hasNbt() && tags.getBoolean("lavalight")) {
                 return 1F;
             }
             return 0F;

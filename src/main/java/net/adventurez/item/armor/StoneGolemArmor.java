@@ -75,7 +75,7 @@ public class StoneGolemArmor extends ArmorItem {
     @Override
     public void inventoryTick(ItemStack stack, World world, Entity entity, int slot, boolean selected) {
         if (stack.getItem() == ItemInit.STONE_GOLEM_CHESTPLATE) {
-            NbtCompound tag = stack.getTag();
+            NbtCompound tag = stack.getNbt();
             if (tag != null && tag.contains("armor_time")) {
                 if (tag.getBoolean("activating_armor") && tag.getInt("armor_time") + 2400 < (int) world.getTime()) {
                     tag.putBoolean("activating_armor", false);
@@ -90,7 +90,7 @@ public class StoneGolemArmor extends ArmorItem {
 
     public static void fireActive(PlayerEntity player, ItemStack stack) {
         StatusEffectInstance fire = new StatusEffectInstance(StatusEffect.byRawId(12), 1200, 0, false, false);
-        NbtCompound tag = stack.getTag();
+        NbtCompound tag = stack.getNbt();
         if (tag != null && tag.contains("activating_armor")) {
             if (tag.getBoolean("activating_armor") == false) {
                 tag.putBoolean("activating_armor", true);
@@ -105,14 +105,14 @@ public class StoneGolemArmor extends ArmorItem {
             tag.putBoolean("activating_armor", true);
             tag.putBoolean("activating_armor_visuals", true);
             tag.putInt("armor_time", (int) player.world.getTime());
-            stack.setTag(tag);
+            stack.setNbt(tag);
             player.addStatusEffect(fire);
             player.playSound(SoundEvents.BLOCK_FIRE_EXTINGUISH, SoundCategory.PLAYERS, 1.0F, 1.0F);
         }
     }
 
     public static boolean fireTime(ItemStack stack) {
-        NbtCompound tag = stack.getTag();
+        NbtCompound tag = stack.getNbt();
         if (tag != null && tag.contains("armor_time") && tag.contains("activating_armor")) {
             if (tag.getBoolean("activating_armor_visuals")) {
                 return true;

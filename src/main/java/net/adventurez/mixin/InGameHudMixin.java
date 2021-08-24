@@ -43,7 +43,7 @@ public abstract class InGameHudMixin extends DrawableHelper {
     private void renderFireIconOverlay(MatrixStack matrixStack) {
         ItemStack golemChestplate = this.client.player.getEquippedStack(EquipmentSlot.CHEST);
         if (golemChestplate.getItem().equals(ItemInit.STONE_GOLEM_CHESTPLATE) && !this.client.player.isCreative()) {
-            NbtCompound tag = golemChestplate.getTag();
+            NbtCompound tag = golemChestplate.getNbt();
             if (tag != null && tag.contains("armor_time") && tag.contains("activating_armor")) {
                 if (tag.getBoolean("activating_armor")) {
                     int scaledWidth = this.client.getWindow().getScaledWidth();

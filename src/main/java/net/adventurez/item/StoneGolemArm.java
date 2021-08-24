@@ -44,7 +44,7 @@ public class StoneGolemArm extends Item {
 
     @Override
     public void onStoppedUsing(ItemStack stack, World world, LivingEntity user, int remainingUseTicks) {
-        NbtCompound tags = stack.getTag();
+        NbtCompound tags = stack.getNbt();
         if (user instanceof PlayerEntity) {
             PlayerEntity playerEntity = (PlayerEntity) user;
             int stoneCounter;
@@ -77,7 +77,7 @@ public class StoneGolemArm extends Item {
     @Override
     public void inventoryTick(ItemStack stack, World world, Entity entity, int slot, boolean selected) {
         PlayerEntity player = (PlayerEntity) entity;
-        NbtCompound tags = stack.getTag();
+        NbtCompound tags = stack.getNbt();
         StatusEffectInstance slowness = new StatusEffectInstance(StatusEffect.byRawId(2), 9, 0, false, false);
         if (selected && !world.isClient) {
             player.addStatusEffect(slowness);

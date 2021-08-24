@@ -39,7 +39,7 @@ public abstract class SmithingScreenHandlerMixin extends ForgingScreenHandler {
                 ItemStack itemStack3 = new ItemStack(item);
                 NbtCompound tag = new NbtCompound();
                 tag.putString("patchouli:book", "adventurez:adventurez");
-                itemStack3.setTag(tag);
+                itemStack3.setNbt(tag);
                 this.output.setStack(0, itemStack3);
                 info.cancel();
             }
