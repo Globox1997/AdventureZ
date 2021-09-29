@@ -20,7 +20,6 @@ public class PiglinBeastModel<T extends PiglinBeastEntity> extends CompositeEnti
     private final ModelPart body;
     private final ModelPart leftHorn;
     private final ModelPart rightHorn;
-    private final ModelPart hair;
     private final ModelPart leftEar;
     private final ModelPart rightEar;
     private final ModelPart flagHolder;
@@ -34,7 +33,6 @@ public class PiglinBeastModel<T extends PiglinBeastEntity> extends CompositeEnti
         this.head = root.getChild("head");
         this.rightEar = this.head.getChild("rightEar");
         this.leftEar = this.head.getChild("leftEar");
-        this.hair = this.head.getChild("hair");
         this.rightHorn = this.head.getChild("rightHorn");
         this.leftHorn = this.head.getChild("leftHorn");
         this.body = root.getChild("body");

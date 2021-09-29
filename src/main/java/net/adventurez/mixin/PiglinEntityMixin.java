@@ -7,7 +7,6 @@ import org.spongepowered.asm.mixin.Mixin;
 import net.adventurez.entity.PiglinBeastEntity;
 import net.adventurez.init.ConfigInit;
 import net.adventurez.init.EntityInit;
-import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityType;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.SpawnReason;
@@ -62,7 +61,6 @@ public abstract class PiglinEntityMixin extends AbstractPiglinEntity {
     private boolean isEntityNearby(EntityType entityType, double distance, int count) {
         List<LivingEntity> list = this.world.getEntitiesByType(entityType, this.getBoundingBox().expand(distance), EntityPredicates.EXCEPT_SPECTATOR);
         if (list.size() >= count) {
-            System.out.println(list);
             return true;
         } else
             return false;

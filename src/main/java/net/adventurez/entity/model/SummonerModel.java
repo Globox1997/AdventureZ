@@ -17,7 +17,6 @@ import net.minecraft.util.math.MathHelper;
 @Environment(EnvType.CLIENT)
 public class SummonerModel<T extends SummonerEntity> extends CompositeEntityModel<T> {
     private final ModelPart head;
-    private final ModelPart cape;
     private final ModelPart body;
     private final ModelPart leftArm;
     private final ModelPart rightArm;
@@ -27,7 +26,6 @@ public class SummonerModel<T extends SummonerEntity> extends CompositeEntityMode
     public SummonerModel(ModelPart root) {
         this.head = root.getChild("head");
         this.body = root.getChild("body");
-        this.cape = this.body.getChild("cape");
         this.leftArm = root.getChild("leftArm");
         this.rightArm = root.getChild("rightArm");
         this.leftLeg = root.getChild("leftLeg");

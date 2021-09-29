@@ -2,6 +2,7 @@ package net.adventurez.entity.render;
 
 import net.adventurez.entity.OrcEntity;
 import net.adventurez.entity.model.OrcModel;
+import net.adventurez.entity.render.feature.OrcInventoryFeatureRenderer;
 import net.adventurez.init.RenderInit;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
@@ -17,6 +18,7 @@ public class OrcRenderer extends MobEntityRenderer<OrcEntity, OrcModel<OrcEntity
 
     public OrcRenderer(EntityRendererFactory.Context context) {
         super(context, new OrcModel<>(context.getPart(RenderInit.ORC_LAYER)), 0.7F);
+        this.addFeature(new OrcInventoryFeatureRenderer(this));
     }
 
     @Override
