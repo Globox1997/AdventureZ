@@ -20,6 +20,7 @@ repositories {
 	maven { url 'https://jitpack.io' }
 	maven { url "https://maven.terraformersmc.com/" }
 	maven { url "https://www.cursemaven.com" }
+	maven { url "https://maven.jamieswhiteshirt.com/libs-release/" }
 	// Canvas
     // maven { url = "https://maven.dblsaiko.net/" }
     // maven { url = "http://server.bbkr.space:8081/artifactory/libs-release/" }
@@ -49,12 +50,21 @@ dependencies {
 		exclude(group: "net.fabricmc.fabric-api")
 		exclude(module:"AdventureZ")
 	}
-	//Flan
+	// Flan
 	modCompileOnly ("curse.maven:flan-404578:404578"),{
+		exclude(group: "net.fabricmc.fabric-api")
+	}
+	// Dragonloot
+	modCompileOnly 'com.github.GitPois1x:DragonLoot:7183a6ef68',{
 		exclude(group: "net.fabricmc.fabric-api")
 	}
 	// Canvas
 	// modCompileOnly "grondag:canvas-mc117-1.17:1.0.+"
+
+	// Medieval Weapons
+	modCompileOnly 'com.github.Globox1997:MedievalWeapons:0366cec1d5',{
+		exclude(group: "net.fabricmc.fabric-api")
+	}
 }
 
 processResources {

@@ -9,12 +9,12 @@ import net.minecraft.entity.attribute.EntityAttributeModifier;
 import net.minecraft.entity.attribute.EntityAttributes;
 import net.minecraft.entity.damage.DamageSource;
 import net.minecraft.entity.effect.StatusEffect;
-import net.minecraft.entity.effect.StatusEffectType;
+import net.minecraft.entity.effect.StatusEffectCategory;
 
 public class WitheringEffect extends StatusEffect {
     private static final UUID WITHERING = UUID.fromString("7a10abbd-01cb-4a42-b125-f1e67b35df03");
 
-    public WitheringEffect(StatusEffectType type, int color) {
+    public WitheringEffect(StatusEffectCategory type, int color) {
         super(type, color);
     }
 

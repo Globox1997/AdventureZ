@@ -125,6 +125,11 @@ public class SoundInit {
     // Item Related
     public static final Identifier EQUIP_CHEST = new Identifier("adventurez:equip_chest");
     public static SoundEvent EQUIP_CHEST_EVENT = new SoundEvent(EQUIP_CHEST);
+    // Block
+    public static final Identifier OPEN_SHADOW_CHEST = new Identifier("adventurez:open_shadow_chest");
+    public static final Identifier CLOSE_SHADOW_CHEST = new Identifier("adventurez:close_shadow_chest");
+    public static SoundEvent OPEN_SHADOW_CHEST_EVENT = new SoundEvent(OPEN_SHADOW_CHEST);
+    public static SoundEvent CLOSE_SHADOW_CHEST_EVENT = new SoundEvent(CLOSE_SHADOW_CHEST);
 
     public static void init() {
         Registry.register(Registry.SOUND_EVENT, SoundInit.GOLEM_IDLE, GOLEM_IDLE_EVENT);
@@ -176,5 +181,7 @@ public class SoundInit {
         Registry.register(Registry.SOUND_EVENT, SoundInit.MAMMOTH_DEATH, MAMMOTH_DEATH_EVENT);
         Registry.register(Registry.SOUND_EVENT, SoundInit.MAMMOTH_BABY_IDLE, MAMMOTH_BABY_IDLE_EVENT);
         Registry.register(Registry.SOUND_EVENT, SoundInit.DRAGON_BREATH, DRAGON_BREATH_EVENT);
+        Registry.register(Registry.SOUND_EVENT, SoundInit.CLOSE_SHADOW_CHEST, CLOSE_SHADOW_CHEST_EVENT);
+        Registry.register(Registry.SOUND_EVENT, SoundInit.OPEN_SHADOW_CHEST, OPEN_SHADOW_CHEST_EVENT);
     }
 }
