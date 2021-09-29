@@ -78,7 +78,7 @@ public class StoneGolemArm extends Item {
     public void inventoryTick(ItemStack stack, World world, Entity entity, int slot, boolean selected) {
         PlayerEntity player = (PlayerEntity) entity;
         NbtCompound tags = stack.getNbt();
-        StatusEffectInstance slowness = new StatusEffectInstance(StatusEffect.byRawId(2), 9, 0, false, false);
+        StatusEffectInstance slowness = new StatusEffectInstance(StatusEffect.byRawId(2), 9, 0, false, false, false);
         if (selected && !world.isClient) {
             player.addStatusEffect(slowness);
         }

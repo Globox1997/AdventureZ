@@ -1,7 +1,5 @@
 package net.adventurez.item.armor;
 
-import net.fabricmc.api.EnvType;
-import net.fabricmc.api.Environment;
 import net.minecraft.entity.EquipmentSlot;
 import net.minecraft.item.ArmorMaterial;
 import net.minecraft.item.Items;
@@ -38,7 +36,7 @@ public class StoneGolemArmorMaterial implements ArmorMaterial {
         return Ingredient.ofItems(Items.NETHERITE_INGOT);
     }
 
-    @Environment(EnvType.CLIENT)
+    @Override
     public String getName() {
         return "stone_golem";
     }
