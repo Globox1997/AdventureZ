@@ -97,7 +97,10 @@ public class OrcModel<T extends OrcEntity> extends CompositeEntityModel<T> {
                 this.leftArm.pitch = -k;
             }
         }
+    }
 
+    public ModelPart getTorso() {
+        return this.torso;
     }
 
 }
