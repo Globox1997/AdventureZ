@@ -39,8 +39,8 @@ public class VoidBulletEntity extends ExplosiveProjectileEntity {
 
     public VoidBulletEntity(World world, LivingEntity owner, double velocityX, double velocityY, double velocityZ) {
         super(EntityInit.VOID_BULLET_ENTITY, owner, velocityX, velocityY, velocityZ, world);
-        this.refreshPositionAndAngles(owner.getX() + velocityX * 1.2D, owner.getY() + owner.getBoundingBox().getYLength() * 0.6D + velocityY * 1.2D, owner.getZ() + velocityZ * 1.2D, -owner.getYaw(),
-                owner.getPitch());
+        this.refreshPositionAndAngles(owner.getX() + velocityX * 1.24D, owner.getY() + owner.getBoundingBox().getYLength() * 0.6D + velocityY * 1.24D, owner.getZ() + velocityZ * 1.24D,
+                -owner.getYaw(), owner.getPitch());
         this.prevPitch = owner.getPitch();
         this.prevYaw = -owner.getYaw();
 
@@ -64,8 +64,19 @@ public class VoidBulletEntity extends ExplosiveProjectileEntity {
     @Override
     public void tick() {
         super.tick();
-        removeTicker++;
-        if (removeTicker >= 80) {
+        this.removeTicker++;
+        if (this.world.isClient) {
+            if (this.removeTicker > 75)
+                for (int i = 0; i < 20; i++) {
+                    double d = (double) this.getPos().getX() + 0.3F * this.world.random.nextFloat();
+                    double e = (double) ((float) this.getPos().getY() + this.world.random.nextFloat() * 0.3F);
+                    double f = (double) this.getPos().getZ() + 0.3F * this.world.random.nextFloat();
+                    double g = (double) (world.random.nextFloat() * 0.2D);
+                    double h = (double) world.random.nextFloat() * 0.2D;
+                    double l = (double) (world.random.nextFloat() * 0.2D);
+                    world.addParticle(ParticleTypes.SMOKE, d, e, f, g, h, l);
+                }
+        } else if (this.removeTicker >= 80) {
             this.discard();
         }
     }
@@ -92,7 +103,7 @@ public class VoidBulletEntity extends ExplosiveProjectileEntity {
         Entity hittedEntity = entityHitResult.getEntity();
         if (!this.world.isClient && entity != null && !(hittedEntity instanceof VoidShadeEntity)) {
             this.playSound(SoundEvents.ENTITY_ENDER_EYE_DEATH, 1.0F, 1.0F);
-            hittedEntity.damage(createDamageSource(this), 4.0F);
+            hittedEntity.damage(createDamageSource(this), 7.0F);
             this.discard();
         }
 

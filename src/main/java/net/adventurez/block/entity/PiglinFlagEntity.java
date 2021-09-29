@@ -47,7 +47,7 @@ public class PiglinFlagEntity extends BlockEntity {
     @Override
     public void markDirty() {
         super.markDirty();
-        sendUpdate();
+        this.sendUpdate();
     }
 
     private void sendUpdate() {
@@ -58,19 +58,18 @@ public class PiglinFlagEntity extends BlockEntity {
     }
 
     public void update() {
-
         if (this.flagWave < 2400) {
             this.flagWave++;
         }
-        if (flagWave >= 2400 && this.world.getClosestPlayer((double) this.getPos().getX(), (double) this.getPos().getY(), (double) this.getPos().getZ(), 3D, null) != null) {
-            getPiglins();
-            markDirty();
-            if (world.isClient) {
+        if (this.flagWave >= 2400 && this.world.getClosestPlayer((double) this.getPos().getX(), (double) this.getPos().getY(), (double) this.getPos().getZ(), 3D, null) != null) {
+            this.getPiglins();
+            this.markDirty();
+            if (this.world.isClient) {
                 for (int i = 0; i < 20; i++) {
-                    double d = (double) pos.getX() + (double) world.random.nextFloat();
-                    double e = (double) pos.getY() + (double) world.random.nextFloat() + 1D;
-                    double f = (double) pos.getZ() + (double) world.random.nextFloat();
-                    world.addParticle(ParticleTypes.HAPPY_VILLAGER, d, e, f, 0.0D, 1.0D, 0.0D);
+                    double d = (double) this.pos.getX() + (double) this.world.random.nextFloat();
+                    double e = (double) this.pos.getY() + (double) this.world.random.nextFloat() * 2.0F;
+                    double f = (double) this.pos.getZ() + (double) this.world.random.nextFloat();
+                    this.world.addParticle(ParticleTypes.HAPPY_VILLAGER, d, e, f, 0.0D, 1.0D, 0.0D);
                 }
             }
             this.flagWave = 0;
