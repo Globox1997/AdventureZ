@@ -5,7 +5,7 @@
     "pages": [
         {
             "type": "text",
-            "text": "Orcs will roam your world. If there is a bigger Orc around, other Orcs will try to gather together. You will find them in the plains"
+            "text": "Orcs will roam your world. If there is a bigger Orc around, other Orcs will try to gather together. Smaller orcs will try to rob a tool from you and run away so keep an eye out for those nasty creatures. You will find them in the plains"
         },
         {
             "type": "entity",

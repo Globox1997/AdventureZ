@@ -5,7 +5,7 @@
     "pages": [
         {
             "type": "text",
-            "text": "The Blaze Guardian can be found in nether fortresses and will defend it from players until death. Watch out for its flame explosion attack, it might kill you. Its surrounding shields will block some enemy attacks"
+            "text": "The Blaze Guardian can be found in nether fortresses and will defend it from players until death. Watch out for its flame explosion attack, it might kill you. Its surrounding shields protect it but can get destroyed. Blaze Spawners won't work if a Guardian is nearby"
         },
         {
             "type": "entity",
