@@ -11,11 +11,13 @@ import net.adventurez.entity.goal.DragonFindOwnerGoal;
 import net.adventurez.entity.goal.DragonFlyRandomlyGoal;
 import net.adventurez.entity.goal.DragonSitGoal;
 import net.adventurez.entity.nonliving.FireBreathEntity;
+import net.adventurez.init.ConfigInit;
 import net.adventurez.init.ItemInit;
 import net.adventurez.init.SoundInit;
 import net.adventurez.mixin.accessor.LivingEntityAccessor;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
+import net.fabricmc.loader.api.FabricLoader;
 import net.minecraft.block.BlockState;
 import net.minecraft.block.Blocks;
 import net.minecraft.client.MinecraftClient;
@@ -254,7 +256,7 @@ public class DragonEntity extends PathAwareEntity implements InventoryChangedLis
                     }
                 }
 
-                this.setYaw(this.getYaw() + MathHelper.wrapDegrees(turningFloat));
+                this.setYaw(ConfigInit.CONFIG.heavy_dragon_flight ? this.getYaw() + MathHelper.wrapDegrees(turningFloat) : livingEntity.getYaw());
 
                 float f = livingEntity.sidewaysSpeed * 0.1F;
                 float g = livingEntity.forwardSpeed * 0.5F;
@@ -319,7 +321,12 @@ public class DragonEntity extends PathAwareEntity implements InventoryChangedLis
                     if (!this.getDataTracker().get(IS_FLYING) && !this.isFlying) {
                         super.travel(new Vec3d((double) f, movementInput.y, (double) g));
                     } else {
-                        Vec3d vec3d = new Vec3d((double) this.dragonSideSpeed, movementInput.y + flySpeed, (double) this.dragonForwardSpeed);
+                        Vec3d vec3d;
+                        if (ConfigInit.CONFIG.heavy_dragon_flight)
+                            vec3d = new Vec3d((double) this.dragonSideSpeed, movementInput.y + flySpeed, (double) this.dragonForwardSpeed);
+                        else {
+                            vec3d = new Vec3d(livingEntity.sidewaysSpeed * 0.7D, movementInput.y + flySpeed, livingEntity.forwardSpeed * 0.7D);
+                        }
                         this.updateVelocity(0.05F, vec3d);
                         this.move(MovementType.SELF, this.getVelocity());
                         this.setVelocity(this.getVelocity());
@@ -724,8 +731,13 @@ public class DragonEntity extends PathAwareEntity implements InventoryChangedLis
 
     @Override
     public void onDeath(DamageSource source) {
-        if (!this.world.isClient && this.world.getGameRules().getBoolean(GameRules.SHOW_DEATH_MESSAGES) && this.getOwner() instanceof ServerPlayerEntity) {
-            this.getOwner().sendSystemMessage(this.getDamageTracker().getDeathMessage(), Util.NIL_UUID);
+        if (!this.world.isClient) {
+            if (this.world.getGameRules().getBoolean(GameRules.SHOW_DEATH_MESSAGES) && this.getOwner() instanceof ServerPlayerEntity) {
+                this.getOwner().sendSystemMessage(this.getDamageTracker().getDeathMessage(), Util.NIL_UUID);
+            }
+            if (FabricLoader.getInstance().isModLoaded("dragonloot")) {
+                this.dropStack(new ItemStack(net.dragonloot.init.ItemInit.DRAGON_SCALE_ITEM, this.getSize()));
+            }
         }
 
         super.onDeath(source);

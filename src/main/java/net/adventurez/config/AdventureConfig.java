@@ -43,11 +43,20 @@ public class AdventureConfig implements ConfigData {
     @ConfigEntry.Category("spawn_setting")
     @ConfigEntry.Gui.RequiresRestart
     @ConfigEntry.BoundedDiscrete(min = 0, max = 100)
-    public int orc_spawn_weight = 10;
+    public int orc_spawn_weight = 30;
     @ConfigEntry.Category("spawn_setting")
     @ConfigEntry.Gui.RequiresRestart
     @ConfigEntry.BoundedDiscrete(min = 0, max = 100)
     public int mammoth_spawn_weight = 1;
+    @ConfigEntry.Category("spawn_setting")
+    @ConfigEntry.Gui.RequiresRestart
+    @ConfigEntry.BoundedDiscrete(min = 0, max = 100)
+    public int ender_whale_spawn_weight = 5;
+    @ConfigEntry.Category("spawn_setting")
+    @ConfigEntry.Gui.RequiresRestart
+    @ConfigEntry.BoundedDiscrete(min = 0, max = 100)
+    public int iguana_spawn_weight = 10;
+    // Allow settings
     @ConfigEntry.Category("spawn_setting")
     public boolean allow_stone_golem_summoning = true;
     @ConfigEntry.Category("spawn_setting")
@@ -56,6 +65,7 @@ public class AdventureConfig implements ConfigData {
     public boolean allow_dragon_hatching = true;
     @ConfigEntry.Category("spawn_setting")
     public boolean allow_guardian_spawner_spawn = true;
+    // Misc settings
     @ConfigEntry.Category("misc")
     public boolean allow_source_stone_tp = true;
     @ConfigEntry.Category("misc")
@@ -65,5 +75,9 @@ public class AdventureConfig implements ConfigData {
     public boolean resummoned_ender_dragon_drops_egg = false;
     @ConfigEntry.Category("misc")
     public boolean allow_ender_dragon_nether_portal = false;
+    @ConfigEntry.Category("misc")
+    public boolean heavy_dragon_flight = true;
+    @ConfigEntry.Category("misc")
+    public boolean allow_special_enchant_loot = true;
 
 }
