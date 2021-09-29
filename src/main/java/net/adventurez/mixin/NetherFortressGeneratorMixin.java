@@ -27,7 +27,7 @@ public class NetherFortressGeneratorMixin {
     @Inject(method = "generate", at = @At(value = "INVOKE", target = "Lnet/minecraft/world/StructureWorldAccess;setBlockState(Lnet/minecraft/util/math/BlockPos;Lnet/minecraft/block/BlockState;I)Z"), locals = LocalCapture.CAPTURE_FAILSOFT)
     private void generateMixin(StructureWorldAccess world, StructureAccessor structureAccessor, ChunkGenerator chunkGenerator, Random random, BlockBox boundingBox, ChunkPos chunkPos, BlockPos pos,
             CallbackInfoReturnable<Boolean> info, BlockState blockState, BlockState blockState2, BlockPos blockPos) {
-        if (ConfigInit.CONFIG.allow_guardian_spawner_spawn) {
+        if (!world.isClient() && ConfigInit.CONFIG.allow_guardian_spawner_spawn) {
             BlazeGuardianEntity blazeGuardianEntity = (BlazeGuardianEntity) EntityInit.BLAZEGUARDIAN_ENTITY.create(world.toServerWorld());
             blazeGuardianEntity.initialize(world.toServerWorld(), world.getLocalDifficulty(pos), SpawnReason.STRUCTURE, null, null);
             int randomCheck = random.nextInt(3);

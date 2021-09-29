@@ -114,7 +114,8 @@ public class BrownFungusEntity extends PathAwareEntity implements Angerable {
         if (!this.world.isClient) {
             this.tickAngerLogic((ServerWorld) this.world, true);
             int randomMushroom = this.world.random.nextInt(20000);
-            if (randomMushroom == 1997 && world.getBlockState(this.getBlockPos().down()).isOf(Blocks.MYCELIUM) && this.world.getBlockState(this.getBlockPos()).isAir()) {
+            if (randomMushroom == 1997 && (world.getBlockState(this.getBlockPos().down()).isOf(Blocks.MYCELIUM) || world.getBlockState(this.getBlockPos().down()).isOf(Blocks.GRASS_BLOCK))
+                    && this.world.getBlockState(this.getBlockPos()).isAir()) {
                 this.world.setBlockState(this.getBlockPos(), Blocks.BROWN_MUSHROOM.getDefaultState());
             }
         }

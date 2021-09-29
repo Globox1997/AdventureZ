@@ -72,14 +72,17 @@ public class BlazeGuardianEntity extends HostileEntity {
         this.setPathfindingPenalty(PathNodeType.DANGER_FIRE, 0.0F);
         this.setPathfindingPenalty(PathNodeType.DAMAGE_FIRE, 0.0F);
         this.experiencePoints = 20;
+
         shield_north = new BlazeGuardianShieldEntity(EntityInit.BLAZEGUARDIAN_SHIELD_ENTITY, this, "shield_north");
         shield_east = new BlazeGuardianShieldEntity(EntityInit.BLAZEGUARDIAN_SHIELD_ENTITY, this, "shield_east");
         shield_south = new BlazeGuardianShieldEntity(EntityInit.BLAZEGUARDIAN_SHIELD_ENTITY, this, "shield_south");
         shield_west = new BlazeGuardianShieldEntity(EntityInit.BLAZEGUARDIAN_SHIELD_ENTITY, this, "shield_west");
-        world.spawnEntity(shield_north);
-        world.spawnEntity(shield_east);
-        world.spawnEntity(shield_south);
-        world.spawnEntity(shield_west);
+        if (this.world instanceof ServerWorld) {
+            world.spawnEntity(shield_north);
+            world.spawnEntity(shield_east);
+            world.spawnEntity(shield_south);
+            world.spawnEntity(shield_west);
+        }
     }
 
     public static DefaultAttributeContainer.Builder createBlazeGuardianAttributes() {
