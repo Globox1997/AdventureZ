@@ -9,6 +9,7 @@ import com.google.common.collect.Lists;
 import org.jetbrains.annotations.Nullable;
 
 import io.netty.buffer.Unpooled;
+import net.adventurez.block.ShadowChestBlock;
 import net.adventurez.entity.nonliving.ThrownRockEntity;
 import net.adventurez.init.EffectInit;
 import net.adventurez.init.EntityInit;
@@ -55,6 +56,7 @@ import net.minecraft.sound.SoundEvents;
 import net.minecraft.text.Text;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Box;
+import net.minecraft.util.math.Direction;
 import net.minecraft.util.math.MathHelper;
 import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.Difficulty;
@@ -66,6 +68,7 @@ import net.voidz.block.entity.PortalBlockEntity;
 import net.voidz.init.BlockInit;
 import net.voidz.init.DimensionInit;
 import net.minecraft.block.Block;
+import net.minecraft.block.BlockState;
 import net.minecraft.block.Blocks;
 import net.minecraft.entity.player.PlayerEntity;
 
@@ -99,7 +102,7 @@ public class VoidShadowEntity extends FlyingEntity implements Monster {
     private boolean isHalfLife;
     private final boolean isInVoidDungeon;
     private boolean invisible;
-    private int ticksSinceDeath;
+    public int ticksSinceDeath;
 
     public VoidShadowEntity(EntityType<? extends FlyingEntity> entityType, World world) {
         super(entityType, world);
@@ -409,6 +412,13 @@ public class VoidShadowEntity extends FlyingEntity implements Monster {
             }
             if (this.isInVoidDungeon) {
                 this.world.setBlockState(this.getVoidMiddle().up(), Blocks.DRAGON_EGG.getDefaultState(), 3);
+                boolean direction = this.world.random.nextInt(2) == 0;
+
+                BlockPos pos = direction ? this.getVoidMiddle().north(3) : this.getVoidMiddle().south(3);
+                BlockState state = net.adventurez.init.BlockInit.SHADOW_CHEST_BLOCK.getDefaultState().with(ShadowChestBlock.FACING, direction ? Direction.SOUTH : Direction.NORTH);
+                this.world.setBlockState(pos, state, 3);
+                state.getBlock().onPlaced(world, pos, state, null, ItemStack.EMPTY);
+
                 PortalBlockEntity portalBlockEntity = (PortalBlockEntity) world.getBlockEntity(this.getVoidMiddle().down());
                 if (portalBlockEntity != null) {
                     portalBlockEntity.bossTime = (int) world.getLevelProperties().getTime();

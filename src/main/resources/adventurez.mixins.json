@@ -26,13 +26,16 @@
     "SmallFireballEntityMixin",
     "PiglinEntityMixin",
     "accessor.LivingEntityAccessor",
-    "accessor.FallingBlockAccessor"
+    "accessor.FallingBlockAccessor",
+    "accessor.EntityAccessor",
+    "accessor.ChestLidAnimatorAccessor"
   ],
   "client": [
     "ArmorFeatureRendererMixin",
     "InGameOverlayRendererMixin",
     "InGameHudMixin",
-    "ClientPlayerInteractionManagerMixin"
+    "ClientPlayerInteractionManagerMixin",
+    "TexturedRenderLayersMixin"
   ],
   "injectors": {
     "defaultRequire": 1

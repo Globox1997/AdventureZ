@@ -380,5 +380,15 @@
         "attenuation_distance": 50
       }
     ]
+  },
+  "open_shadow_chest": {
+    "sounds": [
+      "adventurez:open_shadow_chest"
+    ]
+  },
+  "close_shadow_chest": {
+    "sounds": [
+      "adventurez:close_shadow_chest"
+    ]
   }
 }

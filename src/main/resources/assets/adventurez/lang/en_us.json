@@ -23,6 +23,8 @@
   "entity.adventurez.void_shade": "Void Shade",
   "entity.adventurez.tiny_eye": "Tiny Eye",
   "entity.adventurez.void_bullet": "Void Bullet",
+  "entity.adventurez.ender_whale": "Ender Whale",
+  "entity.adventurez.iguana": "Iguana",
 
   "item.adventurez.spawn_stone_golem": "Blackstone Golem Spawn Egg",
   "item.adventurez.spawn_small_stone_golem": "Mini Blackstone Golem Spawn Egg",
@@ -43,6 +45,8 @@
   "item.adventurez.spawn_mammoth": "Mammoth Spawn Egg",
   "item.adventurez.spawn_void_fragment": "Void Fragment Spawn Egg",
   "item.adventurez.spawn_void_shade": "Void Shade Spawn Egg",
+  "item.adventurez.spawn_ender_whale": "Ender Whale Spawn Egg",
+  "item.adventurez.spawn_iguana": "Iguana Spawn Egg",
 
   "item.adventurez.gilded_stone": "Gilded Blackstone Shard",
   "item.adventurez.gilded_stone.tooltip": "Placeable in the Stone Holder",
@@ -65,6 +69,17 @@
   "item.adventurez.dragon_saddle": "Dragon Saddle",
   "item.adventurez.source_stone": "Source Stone",
   "item.adventurez.source_stone.tooltip": "Right click: Shoot bullet; +Shift: Phase trough blocks",
+  "item.adventurez.chorus_fruit_on_a_stick": "Chorus Fruit on a Stick",
+  "item.adventurez.ender_flute": "Ender Flute",
+  "item.adventurez.iguana_hide": "Iguana Hide",
+  "item.adventurez.mammoth_fur": "Mammoth Fur",
+  "item.adventurez.ender_whale_skin": "Ender Whale Skin",
+  "item.adventurez.mammoth_meat": "Mammoth Meat",
+  "item.adventurez.cooked_mammoth_meat": "Cooked Mammoth Meat",
+  "item.adventurez.iguana_meat": "Iguana Meat",
+  "item.adventurez.cooked_iguana_meat": "Cooked Iguana Meat",
+  "item.adventurez.ender_whale_meat": "Ender Whale Meat",
+  "item.adventurez.cooked_ender_whale_meat": "Cooked Ender Whale Meat",
 
   "item.adventurez.moreinfo.tooltip": "§8Hold §6Shift §8For More Info",
   
@@ -81,6 +96,9 @@
   "block.adventurez.piglin_flag_block.tooltip": "Charging Time (2:00)",
   "block.adventurez.piglin_flag_block.tooltip2": "Fully Charged:",
   "block.adventurez.piglin_flag_block.tooltip3": "Calms attacking Piglins when Player gets close",
+  "block.adventurez.shadow_chest_block": "Shadow Chest",
+
+  "adventurez.container.shadowchest": "Shadow Chest",
 
   "adventurez.advancements.stone_golem.title": "Blackstone Golem",
   "adventurez.advancements.stone_golem.description": "Kill the Blackrocky Golem",
@@ -119,5 +137,10 @@
   "text.autoconfig.adventurez.option.disable_armor_bonus": "Disable Armor Setbonus",
   "text.autoconfig.adventurez.option.resummoned_ender_dragon_drops_egg": "Resummoned Ender Dragon Drops Egg",
   "text.autoconfig.adventurez.option.allow_source_stone_tp": "Allow Source Stone Teleport",
-  "text.autoconfig.adventurez.option.allow_guardian_spawner_spawn": "Allow Blaze Guardian Spawner Spawn"
+  "text.autoconfig.adventurez.option.allow_guardian_spawner_spawn": "Allow Blaze Guardian Spawner Spawn",
+  "text.autoconfig.adventurez.option.ender_whale_spawn_weight": "Ender Whale Spawn Weight",
+  "text.autoconfig.adventurez.option.iguana_spawn_weight": "Iguana Spawn Weight",
+  "text.autoconfig.adventurez.option.heavy_dragon_flight": "Heavy Dragon Flight",
+  "text.autoconfig.adventurez.option.allow_special_enchant_loot": "Allow Special Enchant Loot"
+
 }
