@@ -34,7 +34,6 @@ public class VoidShadowModel<T extends VoidShadowEntity> extends CompositeEntity
     private final ModelPart bone10;
     private final ModelPart bone11;
     private final ModelPart bone12;
-    private final ModelPart bone13;
 
     private float throwingBlocksTicker;
 
@@ -43,7 +42,6 @@ public class VoidShadowModel<T extends VoidShadowEntity> extends CompositeEntity
         this.leftArm = root.getChild("leftArm");
         this.body = root.getChild("body");
         this.leftParticle = this.body.getChild("leftParticle");
-        this.bone13 = this.leftParticle.getChild("bone13");
         this.bone12 = this.leftParticle.getChild("bone12");
         this.bone11 = this.leftParticle.getChild("bone11");
         this.bone10 = this.leftParticle.getChild("bone10");
