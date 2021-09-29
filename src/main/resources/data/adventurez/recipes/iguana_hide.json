@@ -1,0 +1,14 @@
+{
+    "type": "minecraft:crafting_shaped",
+    "pattern": [
+        "dd"
+    ],
+    "key": {
+        "d": {
+            "item": "adventurez:iguana_hide"
+        }
+    },
+    "result": {
+        "item": "minecraft:leather"
+    }
+}

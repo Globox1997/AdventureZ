@@ -1,0 +1,40 @@
+{
+    "name": "Ender Whale",
+    "icon": "adventurez:stone_golem_heart",
+    "category": "adventurez:mob_category",
+    "pages": [
+        {
+            "type": "text",
+            "text": "Ender Whales are friendly creatures and fly around in the void. They are rideable, even with a friend, and can get called with the Ender Flute. Get your hands on a chorus fruit and craft yourself a Chorus Fruit on a Stick to steer them in the direction you want"
+        },
+        {
+            "type": "entity",
+            "name": "Showcase",
+            "entity": "adventurez:ender_whale",
+            "rotate": false,
+            "default_rotation": 25.0,
+            "scale": 0.6,
+            "offset": -0.3
+        },
+        {
+            "type": "spotlight",
+            "item": "adventurez:ender_flute",
+            "link_recipe": true,
+            "text": "The Ender Flute is an old instrument to call Ender Whales for a ride"
+        },
+        {
+            "type": "crafting",
+            "recipe": "adventurez:ender_flute"
+        },
+        {
+            "type": "spotlight",
+            "item": "adventurez:chorus_fruit_on_a_stick",
+            "link_recipe": true,
+            "text": "The Chorus Fruit on a Stick is a simple stick to steer Ender Whales since they love to eat those fruits"
+        },
+        {
+            "type": "crafting",
+            "recipe": "adventurez:chorus_fruit_on_a_stick"
+        }
+    ]
+}

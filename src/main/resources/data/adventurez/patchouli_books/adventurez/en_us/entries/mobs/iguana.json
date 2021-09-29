@@ -1,0 +1,18 @@
+{
+    "name": "Iguana",
+    "icon": "adventurez:stone_golem_heart",
+    "category": "adventurez:mob_category",
+    "pages": [
+        {
+            "type": "text",
+            "text": "Iguanas are friendly mobs, like to eat dead bushes, can get bred with dried bushes and are found in mesa biomes"
+        },
+        {
+            "type": "entity",
+            "name": "Showcase",
+            "entity": "adventurez:iguana",
+            "scale": 0.7,
+            "offset": -0.3
+        }
+    ]
+}

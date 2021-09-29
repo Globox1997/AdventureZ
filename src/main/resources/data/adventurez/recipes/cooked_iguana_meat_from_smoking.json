@@ -1,0 +1,9 @@
+{
+  "type": "minecraft:smoking",
+  "ingredient": {
+    "item": "adventurez:iguana_meat"
+  },
+  "result": "adventurez:cooked_iguana_meat",
+  "experience": 0.35,
+  "cookingtime": 100
+}

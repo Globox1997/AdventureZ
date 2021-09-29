@@ -1,0 +1,163 @@
+package net.adventurez.entity;
+
+import java.util.Random;
+
+import net.adventurez.init.EntityInit;
+import net.minecraft.block.BlockState;
+import net.minecraft.block.Blocks;
+import net.minecraft.entity.EntityType;
+import net.minecraft.entity.SpawnReason;
+import net.minecraft.entity.ai.goal.AnimalMateGoal;
+import net.minecraft.entity.ai.goal.EscapeDangerGoal;
+import net.minecraft.entity.ai.goal.FollowParentGoal;
+import net.minecraft.entity.ai.goal.LookAroundGoal;
+import net.minecraft.entity.ai.goal.LookAtEntityGoal;
+import net.minecraft.entity.ai.goal.MoveToTargetPosGoal;
+import net.minecraft.entity.ai.goal.SwimGoal;
+import net.minecraft.entity.ai.goal.TemptGoal;
+import net.minecraft.entity.ai.goal.WanderAroundFarGoal;
+import net.minecraft.entity.attribute.DefaultAttributeContainer;
+import net.minecraft.entity.attribute.EntityAttributes;
+import net.minecraft.entity.data.DataTracker;
+import net.minecraft.entity.data.TrackedData;
+import net.minecraft.entity.data.TrackedDataHandlerRegistry;
+import net.minecraft.entity.mob.MobEntity;
+import net.minecraft.entity.mob.PathAwareEntity;
+import net.minecraft.entity.passive.AnimalEntity;
+import net.minecraft.entity.passive.PassiveEntity;
+import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.item.ItemStack;
+import net.minecraft.item.Items;
+import net.minecraft.recipe.Ingredient;
+import net.minecraft.server.world.ServerWorld;
+import net.minecraft.util.math.BlockPos;
+import net.minecraft.world.World;
+import net.minecraft.world.WorldAccess;
+import net.minecraft.world.WorldView;
+
+public class IguanaEntity extends AnimalEntity {
+
+    public static final TrackedData<Boolean> OPEN_MOUTH;
+
+    public IguanaEntity(EntityType<? extends IguanaEntity> entityType, World world) {
+        super(entityType, world);
+    }
+
+    public static DefaultAttributeContainer.Builder createIguanaAttributes() {
+        return MobEntity.createMobAttributes().add(EntityAttributes.GENERIC_MAX_HEALTH, 10.0D).add(EntityAttributes.GENERIC_MOVEMENT_SPEED, 0.22D);
+    }
+
+    public static boolean isValidNaturalSpawn(EntityType<? extends AnimalEntity> type, WorldAccess world, SpawnReason spawnReason, BlockPos pos, Random random) {
+        return world.getBlockState(pos.down()).isOf(Blocks.RED_SAND) && world.getBaseLightLevel(pos, 0) > 8;
+    }
+
+    @Override
+    protected void initGoals() {
+        super.initGoals();
+        this.goalSelector.add(0, new SwimGoal(this));
+        this.goalSelector.add(1, new EscapeDangerGoal(this, 1.8D));
+        this.goalSelector.add(2, new AnimalMateGoal(this, 1.0D));
+        this.goalSelector.add(3, new TemptGoal(this, 1.25D, Ingredient.ofItems(Items.DEAD_BUSH), false));
+        this.goalSelector.add(4, new FollowParentGoal(this, 1.25D));
+        this.goalSelector.add(5, new WanderAroundFarGoal(this, 1.0D));
+        this.goalSelector.add(6, new LookAtEntityGoal(this, PlayerEntity.class, 5.0F));
+        this.goalSelector.add(7, new LookAroundGoal(this));
+        this.goalSelector.add(8, new EatDeadBushGoal(this, 1.0D));
+    }
+
+    @Override
+    protected void initDataTracker() {
+        super.initDataTracker();
+        this.dataTracker.startTracking(OPEN_MOUTH, false);
+    }
+    // protected SoundEvent getAmbientSound() {
+    // return SoundEvents.ENTITY_COW_AMBIENT;
+    // }
+
+    // protected SoundEvent getHurtSound(DamageSource source) {
+    // return SoundEvents.ENTITY_COW_HURT;
+    // }
+
+    // protected SoundEvent getDeathSound() {
+    // return SoundEvents.ENTITY_COW_DEATH;
+    // }
+    // @Override
+    // protected void playStepSound(BlockPos pos, BlockState state) {
+    // this.playSound(SoundEvents.ENTITY_COW_STEP, 0.15F, 1.0F);
+    // }
+
+    // @Override
+    // protected float getSoundVolume() {
+    // return 0.4F;
+    // }
+
+    @Override
+    public IguanaEntity createChild(ServerWorld serverWorld, PassiveEntity passiveEntity) {
+        return (IguanaEntity) EntityInit.IGUANA_ENTITY.create(serverWorld);
+    }
+
+    @Override
+    public boolean isBreedingItem(ItemStack stack) {
+        return stack.isOf(Items.DEAD_BUSH);
+    }
+
+    static {
+        OPEN_MOUTH = DataTracker.registerData(IguanaEntity.class, TrackedDataHandlerRegistry.BOOLEAN);
+    }
+
+    private class EatDeadBushGoal extends MoveToTargetPosGoal {
+        private final IguanaEntity iguanaEntity;
+
+        public EatDeadBushGoal(IguanaEntity iguanaEntity, double speed) {
+            super(iguanaEntity, speed, 8);
+            this.iguanaEntity = iguanaEntity;
+            this.cooldown = iguanaEntity.world.random.nextInt(300) + 100;
+        }
+
+        @Override
+        public boolean canStart() {
+            return !this.iguanaEntity.isBaby() && super.canStart();
+        }
+
+        @Override
+        public void start() {
+            super.start();
+            this.iguanaEntity.dataTracker.set(IguanaEntity.OPEN_MOUTH, true);
+        }
+
+        @Override
+        public void stop() {
+            super.stop();
+            this.iguanaEntity.dataTracker.set(IguanaEntity.OPEN_MOUTH, false);
+        }
+
+        @Override
+        public void tick() {
+            if (!this.iguanaEntity.world.isClient && this.hasReached()) {
+                this.iguanaEntity.world.breakBlock(targetPos, false);
+                this.iguanaEntity.setLoveTicks(600);
+                this.stop();
+            }
+            super.tick();
+        }
+
+        @Override
+        public double getDesiredSquaredDistanceToTarget() {
+            return 2.1D;
+        }
+
+        @Override
+        protected int getInterval(PathAwareEntity mob) {
+            return 400 + mob.getRandom().nextInt(600);
+        }
+
+        @Override
+        protected boolean isTargetPos(WorldView world, BlockPos pos) {
+            BlockState blockState = world.getBlockState(pos);
+            if (blockState.isOf(Blocks.DEAD_BUSH))
+                return true;
+            else
+                return false;
+        }
+    }
+}
