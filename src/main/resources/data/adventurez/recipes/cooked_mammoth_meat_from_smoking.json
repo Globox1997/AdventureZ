@@ -1,0 +1,9 @@
+{
+  "type": "minecraft:smoking",
+  "ingredient": {
+    "item": "adventurez:mammoth_meat"
+  },
+  "result": "adventurez:cooked_mammoth_meat",
+  "experience": 0.35,
+  "cookingtime": 100
+}
