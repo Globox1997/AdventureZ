@@ -1,0 +1,23 @@
+{
+    "type": "minecraft:crafting_shaped",
+    "pattern": [
+        "e",
+        "d",
+        "f"
+    ],
+    "key": {
+        "d": {
+            "item": "minecraft:stick"
+        },
+        "e": {
+            "item": "adventurez:mammoth_tusk"
+        },
+        "f": {
+            "item": "minecraft:feather"
+        }
+    },
+    "result": {
+        "item": "adventurez:ivory_arrow",
+        "count": 8
+    }
+}

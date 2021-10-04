@@ -6,6 +6,7 @@ import net.minecraft.entity.EquipmentSlot;
 import net.minecraft.entity.effect.StatusEffectInstance;
 import net.minecraft.entity.effect.StatusEffects;
 import net.minecraft.item.ArmorMaterial;
+import net.minecraft.item.ArrowItem;
 import net.minecraft.item.FoodComponent;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemGroup;
@@ -29,6 +30,8 @@ public class ItemInit {
     public static final Item IGUANA_HIDE = register("iguana_hide", new Item(new Item.Settings().group(ItemGroup.MATERIALS)));
     public static final Item MAMMOTH_LEATHER = register("mammoth_fur", new Item(new Item.Settings().group(ItemGroup.MATERIALS)));
     public static final Item ENDER_WHALE_LEATHER = register("ender_whale_skin", new Item(new Item.Settings().group(ItemGroup.MATERIALS)));
+    public static final Item IVORY_ARROW = register("ivory_arrow", new ArrowItem(new Item.Settings().group(ItemGroup.COMBAT)));
+    public static final Item MAMMOTH_TUSK = register("mammoth_tusk", new Item(new Item.Settings().group(ItemGroup.MATERIALS)));
 
     // Food
     public static final Item MAMMOTH_MEAT = register("mammoth_meat",

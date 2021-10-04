@@ -25,6 +25,7 @@
     "NetherFortressGeneratorMixin",
     "SmallFireballEntityMixin",
     "PiglinEntityMixin",
+    "ArrowEntityMixin",
     "accessor.LivingEntityAccessor",
     "accessor.FallingBlockAccessor",
     "accessor.EntityAccessor",
