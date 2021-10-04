@@ -32,11 +32,11 @@
     "accessor.ChestLidAnimatorAccessor"
   ],
   "client": [
-    "ArmorFeatureRendererMixin",
-    "InGameOverlayRendererMixin",
-    "InGameHudMixin",
-    "ClientPlayerInteractionManagerMixin",
-    "TexturedRenderLayersMixin"
+    "client.ArmorFeatureRendererMixin",
+    "client.InGameOverlayRendererMixin",
+    "client.InGameHudMixin",
+    "client.ClientPlayerInteractionManagerMixin",
+    "client.TexturedRenderLayersMixin"
   ],
   "injectors": {
     "defaultRequire": 1

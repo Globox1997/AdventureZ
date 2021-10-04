@@ -1,4 +1,4 @@
-package net.adventurez.mixin;
+package net.adventurez.mixin.client;
 
 import com.mojang.blaze3d.systems.RenderSystem;
 

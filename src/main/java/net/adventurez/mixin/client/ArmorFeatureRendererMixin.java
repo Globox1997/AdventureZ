@@ -1,4 +1,4 @@
-package net.adventurez.mixin;
+package net.adventurez.mixin.client;
 
 import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Mixin;
