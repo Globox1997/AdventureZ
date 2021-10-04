@@ -26,6 +26,7 @@
     "SmallFireballEntityMixin",
     "PiglinEntityMixin",
     "ArrowEntityMixin",
+    "ElytraItemMixin",
     "accessor.LivingEntityAccessor",
     "accessor.FallingBlockAccessor",
     "accessor.EntityAccessor",
