@@ -94,7 +94,7 @@ public class MammothEntity extends AnimalEntity implements Angerable {
     @Override
     public void readCustomDataFromNbt(NbtCompound nbt) {
         super.readCustomDataFromNbt(nbt);
-        this.readAngerFromNbt((ServerWorld) this.world, nbt);
+        this.readAngerFromNbt(this.world, nbt);
     }
 
     @Override
