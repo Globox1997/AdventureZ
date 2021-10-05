@@ -3,6 +3,7 @@ package net.adventurez.entity;
 import java.util.Random;
 
 import net.adventurez.init.EntityInit;
+import net.adventurez.init.SoundInit;
 import net.minecraft.block.BlockState;
 import net.minecraft.block.Blocks;
 import net.minecraft.entity.EntityType;
@@ -18,6 +19,7 @@ import net.minecraft.entity.ai.goal.TemptGoal;
 import net.minecraft.entity.ai.goal.WanderAroundFarGoal;
 import net.minecraft.entity.attribute.DefaultAttributeContainer;
 import net.minecraft.entity.attribute.EntityAttributes;
+import net.minecraft.entity.damage.DamageSource;
 import net.minecraft.entity.data.DataTracker;
 import net.minecraft.entity.data.TrackedData;
 import net.minecraft.entity.data.TrackedDataHandlerRegistry;
@@ -30,6 +32,7 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.item.Items;
 import net.minecraft.recipe.Ingredient;
 import net.minecraft.server.world.ServerWorld;
+import net.minecraft.sound.SoundEvent;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 import net.minecraft.world.WorldAccess;
@@ -70,26 +73,26 @@ public class IguanaEntity extends AnimalEntity {
         super.initDataTracker();
         this.dataTracker.startTracking(OPEN_MOUTH, false);
     }
-    // protected SoundEvent getAmbientSound() {
-    // return SoundEvents.ENTITY_COW_AMBIENT;
-    // }
 
-    // protected SoundEvent getHurtSound(DamageSource source) {
-    // return SoundEvents.ENTITY_COW_HURT;
-    // }
+    @Override
+    protected SoundEvent getAmbientSound() {
+        return SoundInit.IGUANA_IDLE_EVENT;
+    }
 
-    // protected SoundEvent getDeathSound() {
-    // return SoundEvents.ENTITY_COW_DEATH;
-    // }
-    // @Override
-    // protected void playStepSound(BlockPos pos, BlockState state) {
-    // this.playSound(SoundEvents.ENTITY_COW_STEP, 0.15F, 1.0F);
-    // }
+    @Override
+    protected SoundEvent getHurtSound(DamageSource source) {
+        return SoundInit.IGUANA_HURT_EVENT;
+    }
 
-    // @Override
-    // protected float getSoundVolume() {
-    // return 0.4F;
-    // }
+    @Override
+    protected SoundEvent getDeathSound() {
+        return SoundInit.IGUANA_DEATH_EVENT;
+    }
+
+    @Override
+    protected void playStepSound(BlockPos pos, BlockState state) {
+        this.playSound(SoundInit.IGUANA_STEP_EVENT, 0.35F, 1.0F);
+    }
 
     @Override
     public IguanaEntity createChild(ServerWorld serverWorld, PassiveEntity passiveEntity) {

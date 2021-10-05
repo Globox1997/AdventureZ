@@ -115,6 +115,16 @@ public class SoundInit {
     public static SoundEvent SHADOW_PREPARE_EVENT = new SoundEvent(SHADOW_PREPARE);
     public static SoundEvent SHADOW_IDLE_EVENT = new SoundEvent(SHADOW_IDLE);
     public static SoundEvent SHADOW_DEATH_EVENT = new SoundEvent(SHADOW_DEATH);
+    // Iguana
+    public static final Identifier IGUANA_DEATH = new Identifier("adventurez:iguana_death");
+    public static final Identifier IGUANA_HURT = new Identifier("adventurez:iguana_hurt");
+    public static final Identifier IGUANA_IDLE = new Identifier("adventurez:iguana_idle");
+    public static final Identifier IGUANA_STEP = new Identifier("adventurez:iguana_step");
+    public static SoundEvent IGUANA_DEATH_EVENT = new SoundEvent(IGUANA_DEATH);
+    public static SoundEvent IGUANA_HURT_EVENT = new SoundEvent(IGUANA_HURT);
+    public static SoundEvent IGUANA_IDLE_EVENT = new SoundEvent(IGUANA_IDLE);
+    public static SoundEvent IGUANA_STEP_EVENT = new SoundEvent(IGUANA_STEP);
+
     // Item
     public static final Identifier ROCK_IMPACT = new Identifier("adventurez:rock_impact");
     public static final Identifier ROCK_THROW = new Identifier("adventurez:rock_throw");
@@ -183,5 +193,9 @@ public class SoundInit {
         Registry.register(Registry.SOUND_EVENT, SoundInit.DRAGON_BREATH, DRAGON_BREATH_EVENT);
         Registry.register(Registry.SOUND_EVENT, SoundInit.CLOSE_SHADOW_CHEST, CLOSE_SHADOW_CHEST_EVENT);
         Registry.register(Registry.SOUND_EVENT, SoundInit.OPEN_SHADOW_CHEST, OPEN_SHADOW_CHEST_EVENT);
+        Registry.register(Registry.SOUND_EVENT, SoundInit.IGUANA_DEATH, IGUANA_DEATH_EVENT);
+        Registry.register(Registry.SOUND_EVENT, SoundInit.IGUANA_HURT, IGUANA_HURT_EVENT);
+        Registry.register(Registry.SOUND_EVENT, SoundInit.IGUANA_IDLE, IGUANA_IDLE_EVENT);
+        Registry.register(Registry.SOUND_EVENT, SoundInit.IGUANA_STEP, IGUANA_STEP_EVENT);
     }
 }

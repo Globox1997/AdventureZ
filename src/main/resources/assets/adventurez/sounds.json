@@ -390,5 +390,36 @@
     "sounds": [
       "adventurez:close_shadow_chest"
     ]
+  },
+  "iguana_hurt": {
+    "sounds": [
+      "adventurez:iguana_hit1",
+      "adventurez:iguana_hit2",
+      "adventurez:iguana_hit3",
+      "adventurez:iguana_hit4"
+    ]
+  },
+  "iguana_idle": {
+    "sounds": [
+      "adventurez:iguana_idle1",
+      "adventurez:iguana_idle2",
+      "adventurez:iguana_idle3"
+    ]
+  },
+  "iguana_death": {
+    "sounds": [
+      "adventurez:iguana_kill1",
+      "adventurez:iguana_kill2",
+      "adventurez:iguana_kill3"
+    ]
+  },
+  "iguana_step": {
+    "sounds": [
+      "adventurez:iguana_step1",
+      "adventurez:iguana_step2",
+      "adventurez:iguana_step3",
+      "adventurez:iguana_step4",
+      "adventurez:iguana_step5"
+    ]
   }
 }
