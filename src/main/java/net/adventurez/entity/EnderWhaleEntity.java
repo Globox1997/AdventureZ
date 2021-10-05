@@ -10,6 +10,7 @@ import org.jetbrains.annotations.Nullable;
 
 import net.adventurez.init.EntityInit;
 import net.adventurez.init.ItemInit;
+import net.adventurez.init.SoundInit;
 import net.adventurez.mixin.accessor.EntityAccessor;
 import net.minecraft.block.BlockState;
 import net.minecraft.entity.Dismounting;
@@ -26,6 +27,7 @@ import net.minecraft.entity.ai.goal.Goal;
 import net.minecraft.entity.attribute.DefaultAttributeContainer;
 import net.minecraft.entity.attribute.EntityAttributes;
 import net.minecraft.entity.boss.dragon.EnderDragonEntity;
+import net.minecraft.entity.damage.DamageSource;
 import net.minecraft.entity.data.DataTracker;
 import net.minecraft.entity.data.TrackedData;
 import net.minecraft.entity.data.TrackedDataHandlerRegistry;
@@ -120,20 +122,34 @@ public class EnderWhaleEntity extends FlyingEntity implements ItemSteerable {
         return (float) this.getAttributeValue(EntityAttributes.GENERIC_MOVEMENT_SPEED) * 0.225F;
     }
 
-    // @Override
-    // protected SoundEvent getAmbientSound() {
-    // return SoundEvents.ENTITY_PIG_AMBIENT;
-    // }
+    @Override
+    protected SoundEvent getAmbientSound() {
+        return SoundInit.WHALE_IDLE_EVENT;
+    }
 
-    // @Override
-    // protected SoundEvent getHurtSound(DamageSource source) {
-    // return SoundEvents.ENTITY_PIG_HURT;
-    // }
+    @Override
+    protected SoundEvent getHurtSound(DamageSource source) {
+        return SoundInit.WHALE_HURT_EVENT;
+    }
 
-    // @Override
-    // protected SoundEvent getDeathSound() {
-    // return SoundEvents.ENTITY_PIG_DEATH;
-    // }
+    @Override
+    protected SoundEvent getDeathSound() {
+        return SoundInit.WHALE_DEATH_EVENT;
+    }
+
+    @Override
+    protected void playStepSound(BlockPos pos, BlockState state) {
+    }
+
+    @Override
+    protected float getSoundVolume() {
+        return 1.1F;
+    }
+
+    @Override
+    public int getMinAmbientSoundDelay() {
+        return 500;
+    }
 
     @Override
     public ActionResult interactMob(PlayerEntity player, Hand hand) {

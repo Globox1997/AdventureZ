@@ -421,5 +421,26 @@
       "adventurez:iguana_step4",
       "adventurez:iguana_step5"
     ]
+  },
+  "whale_hurt": {
+    "sounds": [
+      "adventurez:whale_hurt1",
+      "adventurez:whale_hurt2",
+      "adventurez:whale_hurt3"
+    ]
+  },
+  "whale_idle": {
+    "sounds": [
+      "adventurez:whale_idle1",
+      "adventurez:whale_idle2",
+      "adventurez:whale_idle3"
+    ]
+  },
+  "whale_death": {
+    "sounds": [
+      "adventurez:whale_death1",
+      "adventurez:whale_death2",
+      "adventurez:whale_death3"
+    ]
   }
 }

@@ -124,7 +124,13 @@ public class SoundInit {
     public static SoundEvent IGUANA_HURT_EVENT = new SoundEvent(IGUANA_HURT);
     public static SoundEvent IGUANA_IDLE_EVENT = new SoundEvent(IGUANA_IDLE);
     public static SoundEvent IGUANA_STEP_EVENT = new SoundEvent(IGUANA_STEP);
-
+    // Ender Whale
+    public static final Identifier WHALE_DEATH = new Identifier("adventurez:whale_death");
+    public static final Identifier WHALE_HURT = new Identifier("adventurez:whale_hurt");
+    public static final Identifier WHALE_IDLE = new Identifier("adventurez:whale_idle");
+    public static SoundEvent WHALE_DEATH_EVENT = new SoundEvent(WHALE_DEATH);
+    public static SoundEvent WHALE_HURT_EVENT = new SoundEvent(WHALE_HURT);
+    public static SoundEvent WHALE_IDLE_EVENT = new SoundEvent(WHALE_IDLE);
     // Item
     public static final Identifier ROCK_IMPACT = new Identifier("adventurez:rock_impact");
     public static final Identifier ROCK_THROW = new Identifier("adventurez:rock_throw");
@@ -197,5 +203,8 @@ public class SoundInit {
         Registry.register(Registry.SOUND_EVENT, SoundInit.IGUANA_HURT, IGUANA_HURT_EVENT);
         Registry.register(Registry.SOUND_EVENT, SoundInit.IGUANA_IDLE, IGUANA_IDLE_EVENT);
         Registry.register(Registry.SOUND_EVENT, SoundInit.IGUANA_STEP, IGUANA_STEP_EVENT);
+        Registry.register(Registry.SOUND_EVENT, SoundInit.WHALE_DEATH, WHALE_DEATH_EVENT);
+        Registry.register(Registry.SOUND_EVENT, SoundInit.WHALE_HURT, WHALE_HURT_EVENT);
+        Registry.register(Registry.SOUND_EVENT, SoundInit.WHALE_IDLE, WHALE_IDLE_EVENT);
     }
 }
