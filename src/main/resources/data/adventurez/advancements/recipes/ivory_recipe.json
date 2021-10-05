@@ -1,0 +1,22 @@
+{
+    "parent": "minecraft:recipes/root",
+    "rewards": {
+        "recipes": [
+            "adventurez:ivory_arrow"
+        ]
+    },
+    "criteria": {
+        "got_the_ivory": {
+            "trigger": "minecraft:inventory_changed",
+            "conditions": {
+                "items": [
+                    {
+                        "items": [
+                            "adventurez:mammoth_tusk"
+                        ]
+                    }
+                ]
+            }
+        }
+    }
+}

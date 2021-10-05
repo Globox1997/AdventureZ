@@ -1,0 +1,25 @@
+{
+    "parent": "minecraft:recipes/root",
+    "rewards": {
+        "recipes": [
+            "adventurez:stone_golem_boots",
+            "adventurez:stone_golem_chestplate",
+            "adventurez:stone_golem_helmet",
+            "adventurez:stone_golem_leggings"
+        ]
+    },
+    "criteria": {
+        "got_the_netherite_fragment": {
+            "trigger": "minecraft:inventory_changed",
+            "conditions": {
+                "items": [
+                    {
+                        "items": [
+                            "adventurez:gilded_netherite_fragment"
+                        ]
+                    }
+                ]
+            }
+        }
+    }
+}

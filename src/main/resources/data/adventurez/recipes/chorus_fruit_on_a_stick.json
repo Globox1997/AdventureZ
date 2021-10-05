@@ -1,0 +1,18 @@
+{
+    "type": "minecraft:crafting_shaped",
+    "pattern": [
+        "d ",
+        " e"
+    ],
+    "key": {
+        "d": {
+            "item": "minecraft:fishing_rod"
+        },
+        "e": {
+            "item": "minecraft:chorus_fruit"
+        }
+    },
+    "result": {
+        "item": "adventurez:chorus_fruit_on_a_stick"
+    }
+}

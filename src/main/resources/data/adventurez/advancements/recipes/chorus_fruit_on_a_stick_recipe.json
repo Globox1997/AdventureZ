@@ -1,0 +1,22 @@
+{
+    "parent": "minecraft:recipes/root",
+    "rewards": {
+        "recipes": [
+            "adventurez:chorus_fruit_on_a_stick"
+        ]
+    },
+    "criteria": {
+        "got_the_chorus_fruit": {
+            "trigger": "minecraft:inventory_changed",
+            "conditions": {
+                "items": [
+                    {
+                        "items": [
+                            "minecraft:chorus_fruit"
+                        ]
+                    }
+                ]
+            }
+        }
+    }
+}

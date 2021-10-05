@@ -1,0 +1,15 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "pattern": [
+    "XXX",
+    "X X"
+  ],
+  "key": {
+    "X": {
+      "tag": "adventurez:leather_items"
+    }
+  },
+  "result": {
+    "item": "minecraft:leather_helmet"
+  }
+}

@@ -1,0 +1,22 @@
+{
+    "parent": "minecraft:recipes/root",
+    "rewards": {
+        "recipes": [
+            "adventurez:iguana_hide"
+        ]
+    },
+    "criteria": {
+        "got_the_iguana_hide": {
+            "trigger": "minecraft:inventory_changed",
+            "conditions": {
+                "items": [
+                    {
+                        "items": [
+                            "adventurez:iguana_hide"
+                        ]
+                    }
+                ]
+            }
+        }
+    }
+}

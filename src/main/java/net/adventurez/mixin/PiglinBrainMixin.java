@@ -17,9 +17,9 @@ import net.minecraft.item.ItemStack;
 @Mixin(PiglinBrain.class)
 public class PiglinBrainMixin {
 
-    @Inject(method = "wearsGoldArmor(Lnet/minecraft/entity/LivingEntity;)Z", at = @At(value = "INVOKE_ASSIGN", target = "Lnet/minecraft/item/ItemStack;getItem()Lnet/minecraft/item/Item;"), cancellable = true, locals = LocalCapture.CAPTURE_FAILHARD)
+    @Inject(method = "wearsGoldArmor(Lnet/minecraft/entity/LivingEntity;)Z", at = @At(value = "INVOKE_ASSIGN", target = "Lnet/minecraft/item/ItemStack;getItem()Lnet/minecraft/item/Item;"), cancellable = true, locals = LocalCapture.CAPTURE_FAILSOFT)
     private static void wearsGoldArmorMixin(LivingEntity entity, CallbackInfoReturnable<Boolean> info, Iterable<ItemStack> iterable, Iterator<ItemStack> iterator, ItemStack stack, Item item) {
-        if (stack.isIn(TagInit.PIGLIN_NOT_ATTACK))
+        if (stack.isIn(TagInit.PIGLIN_NOT_ATTACK_ITEMS))
             info.setReturnValue(true);
     }
 

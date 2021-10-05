@@ -1,0 +1,24 @@
+{
+    "parent": "minecraft:recipes/root",
+    "rewards": {
+        "recipes": [
+            "adventurez:cooked_mammoth_meat",
+            "adventurez:cooked_mammoth_meat_from_campfire_cooking",
+            "adventurez:cooked_mammoth_meat_from_smoking"
+        ]
+    },
+    "criteria": {
+        "got_the_mammoth_meat": {
+            "trigger": "minecraft:inventory_changed",
+            "conditions": {
+                "items": [
+                    {
+                        "items": [
+                            "adventurez:mammoth_meat"
+                        ]
+                    }
+                ]
+            }
+        }
+    }
+}

@@ -1,0 +1,22 @@
+{
+    "parent": "minecraft:recipes/root",
+    "rewards": {
+        "recipes": [
+            "adventurez:ender_flute"
+        ]
+    },
+    "criteria": {
+        "got_the_ender_pearl": {
+            "trigger": "minecraft:inventory_changed",
+            "conditions": {
+                "items": [
+                    {
+                        "items": [
+                            "minecraft:ender_pearl"
+                        ]
+                    }
+                ]
+            }
+        }
+    }
+}
