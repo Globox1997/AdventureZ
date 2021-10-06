@@ -442,5 +442,11 @@
       "adventurez:whale_death2",
       "adventurez:whale_death3"
     ]
+  },
+  "flute_call": {
+    "sounds": [
+      "adventurez:flute_call1",
+      "adventurez:flute_call2"
+    ]
   }
 }

@@ -3,6 +3,7 @@ package net.adventurez.item;
 import java.util.List;
 
 import net.adventurez.entity.EnderWhaleEntity;
+import net.adventurez.init.SoundInit;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.Item;
@@ -10,7 +11,6 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.particle.ParticleTypes;
 import net.minecraft.predicate.entity.EntityPredicates;
 import net.minecraft.sound.SoundCategory;
-import net.minecraft.sound.SoundEvents;
 import net.minecraft.util.Hand;
 import net.minecraft.util.TypedActionResult;
 import net.minecraft.util.math.Box;
@@ -26,8 +26,7 @@ public class EnderFluteItem extends Item {
     public TypedActionResult<ItemStack> use(World world, PlayerEntity user, Hand hand) {
         ItemStack itemStack = user.getStackInHand(hand);
         if (world.isClient) {
-            world.playSound((PlayerEntity) null, user.getX(), user.getY(), user.getZ(), SoundEvents.ENTITY_EGG_THROW, SoundCategory.PLAYERS, 1.0F, 0.4F / (world.random.nextFloat() * 0.4F + 0.8F));
-            // world.playSound((PlayerEntity)null, pos, ((Instrument)state.get(INSTRUMENT)).getSound(), SoundCategory.RECORDS, 3.0F, f);
+            world.playSound(null, user.getX(), user.getY(), user.getZ(), SoundInit.FLUTE_CALL_EVENT, SoundCategory.PLAYERS, 1.0F, world.random.nextFloat() * 0.2F + 0.9F);
         } else {
             itemStack.damage(1, user, (p) -> p.sendToolBreakStatus(p.getActiveHand()));
             List<EnderWhaleEntity> list = world.getEntitiesByClass(EnderWhaleEntity.class, new Box(user.getBlockPos()).expand(100D), EntityPredicates.EXCEPT_SPECTATOR);
