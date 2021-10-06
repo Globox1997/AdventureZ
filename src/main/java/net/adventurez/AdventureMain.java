@@ -6,19 +6,19 @@ import net.fabricmc.api.ModInitializer;
 
 public class AdventureMain implements ModInitializer {
 
-  @Override
-  public void onInitialize() {
-    BlockInit.init();
-    ConfigInit.init();
-    EffectInit.init();
-    EntityInit.init();
-    ItemInit.init();
-    KeybindPacket.init();
-    LootInit.init();
-    SoundInit.init();
-    SpawnInit.init();
-    TagInit.init();
-  }
+    @Override
+    public void onInitialize() {
+        BlockInit.init();
+        ConfigInit.init();
+        EffectInit.init();
+        EntityInit.init();
+        ItemInit.init();
+        KeybindPacket.init();
+        LootInit.init();
+        SoundInit.init();
+        SpawnInit.init();
+        TagInit.init();
+    }
 }
 
 // You are LOVED!!!

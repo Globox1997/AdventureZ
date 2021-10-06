@@ -8,12 +8,12 @@ import net.fabricmc.api.ClientModInitializer;
 
 public class AdventureClient implements ClientModInitializer {
 
-  @Override
-  public void onInitializeClient() {
-    GeneralPacket.init();
-    KeybindInit.init();
-    ModelProviderInit.init();
-    RenderInit.init();
-  }
+    @Override
+    public void onInitializeClient() {
+        GeneralPacket.init();
+        KeybindInit.init();
+        ModelProviderInit.init();
+        RenderInit.init();
+    }
 
 }

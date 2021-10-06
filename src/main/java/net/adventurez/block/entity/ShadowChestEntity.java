@@ -202,31 +202,30 @@ public class ShadowChestEntity extends LootableContainerBlockEntity implements C
                 this.inventory.set(i, new ItemStack(ItemInit.SOURCE_STONE));
             } else {
                 switch (this.world.random.nextInt(10)) {
-                    case 0:
-                        this.inventory.set(i, new ItemStack(Items.ENDER_PEARL, this.world.random.nextInt(5) + 1));
-                        break;
-                    case 4:
-                        this.inventory.set(i, new ItemStack(Items.GOLDEN_APPLE, 1));
-                        break;
-                    case 5:
-                        this.inventory.set(i, new ItemStack(Items.EXPERIENCE_BOTTLE, this.world.random.nextInt(12) + 1));
-                        break;
-                    case 6:
-                        ItemStack stack = new ItemStack(Items.ENCHANTED_BOOK);
-                        List<Enchantment> list = Registry.ENCHANTMENT.stream().filter(Enchantment::isAvailableForRandomSelection).collect(Collectors.toList());
-                        Enchantment enchantment = list.get(world.random.nextInt(list.size()));
-                        EnchantedBookItem.addEnchantment(stack,
-                                new EnchantmentLevelEntry(enchantment, ConfigInit.CONFIG.allow_special_enchant_loot ? enchantment.getMaxLevel() + 1 : enchantment.getMaxLevel()));
-                        this.inventory.set(i, stack);
-                        break;
-                    case 7:
-                        List<ItemStack> tableList = this.world.getServer().getLootManager().getTable(LootTables.END_CITY_TREASURE_CHEST)
-                                .generateLoot((new LootContext.Builder((ServerWorld) this.world)).parameter(LootContextParameters.ORIGIN, new Vec3d(0.0D, 0.0D, 0.0D)).random(this.world.random)
-                                        .build(LootContextTypes.CHEST));
-                        this.inventory.set(i, tableList.get(this.world.random.nextInt(tableList.size())));
-                        break;
-                    default:
-                        break;
+                case 0:
+                    this.inventory.set(i, new ItemStack(Items.ENDER_PEARL, this.world.random.nextInt(5) + 1));
+                    break;
+                case 4:
+                    this.inventory.set(i, new ItemStack(Items.GOLDEN_APPLE, 1));
+                    break;
+                case 5:
+                    this.inventory.set(i, new ItemStack(Items.EXPERIENCE_BOTTLE, this.world.random.nextInt(12) + 1));
+                    break;
+                case 6:
+                    ItemStack stack = new ItemStack(Items.ENCHANTED_BOOK);
+                    List<Enchantment> list = Registry.ENCHANTMENT.stream().filter(Enchantment::isAvailableForRandomSelection).collect(Collectors.toList());
+                    Enchantment enchantment = list.get(world.random.nextInt(list.size()));
+                    EnchantedBookItem.addEnchantment(stack,
+                            new EnchantmentLevelEntry(enchantment, ConfigInit.CONFIG.allow_special_enchant_loot ? enchantment.getMaxLevel() + 1 : enchantment.getMaxLevel()));
+                    this.inventory.set(i, stack);
+                    break;
+                case 7:
+                    List<ItemStack> tableList = this.world.getServer().getLootManager().getTable(LootTables.END_CITY_TREASURE_CHEST).generateLoot((new LootContext.Builder((ServerWorld) this.world))
+                            .parameter(LootContextParameters.ORIGIN, new Vec3d(0.0D, 0.0D, 0.0D)).random(this.world.random).build(LootContextTypes.CHEST));
+                    this.inventory.set(i, tableList.get(this.world.random.nextInt(tableList.size())));
+                    break;
+                default:
+                    break;
                 }
             }
         }
