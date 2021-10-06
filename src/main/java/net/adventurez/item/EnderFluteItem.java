@@ -25,9 +25,9 @@ public class EnderFluteItem extends Item {
     @Override
     public TypedActionResult<ItemStack> use(World world, PlayerEntity user, Hand hand) {
         ItemStack itemStack = user.getStackInHand(hand);
-        if (world.isClient) {
-            world.playSound(null, user.getX(), user.getY(), user.getZ(), SoundInit.FLUTE_CALL_EVENT, SoundCategory.PLAYERS, 1.0F, world.random.nextFloat() * 0.2F + 0.9F);
-        } else {
+
+        world.playSound(null, user.getX(), user.getY(), user.getZ(), SoundInit.FLUTE_CALL_EVENT, SoundCategory.PLAYERS, 1.0F, world.random.nextFloat() * 0.2F + 0.9F);
+        if (!world.isClient) {
             itemStack.damage(1, user, (p) -> p.sendToolBreakStatus(p.getActiveHand()));
             List<EnderWhaleEntity> list = world.getEntitiesByClass(EnderWhaleEntity.class, new Box(user.getBlockPos()).expand(100D), EntityPredicates.EXCEPT_SPECTATOR);
             if (!list.isEmpty()) {
@@ -45,8 +45,8 @@ public class EnderFluteItem extends Item {
             PlayerEntity playerEntity = (PlayerEntity) entity;
             float cooldownProgress = playerEntity.getItemCooldownManager().getCooldownProgress(stack.getItem(), 0.0F);
             if (cooldownProgress > 0.0F) {
-                world.addParticle(ParticleTypes.NOTE, (double) playerEntity.getX() + playerEntity.getRotationVecClient().getX() + world.random.nextDouble() * 0.3D,
-                        (double) playerEntity.getY() + playerEntity.getHeight() * 0.8D, (double) playerEntity.getZ() + playerEntity.getRotationVecClient().getZ() + world.random.nextDouble() * 0.3D,
+                world.addParticle(ParticleTypes.NOTE, (double) playerEntity.getX() + playerEntity.getRotationVecClient().getX() + world.random.nextDouble() * 0.4D,
+                        (double) playerEntity.getY() + playerEntity.getHeight() * 0.8D, (double) playerEntity.getZ() + playerEntity.getRotationVecClient().getZ() + world.random.nextDouble() * 0.4D,
                         playerEntity.getRotationVecClient().getX() * world.random.nextDouble(), 0.0D, 0.0D);
             }
         }
