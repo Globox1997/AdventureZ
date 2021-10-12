@@ -170,6 +170,11 @@ public class StoneGolemEntity extends HostileEntity {
     }
 
     @Override
+    protected float getSoundVolume() {
+        return 1.3F;
+    }
+
+    @Override
     public void tickMovement() {
         super.tickMovement();
         if (this.isAlive()) {
@@ -177,17 +182,16 @@ public class StoneGolemEntity extends HostileEntity {
                 this.setInvulTimer(this.getInvulnerableTimer() - 1);
             }
             if (this.getInvulnerableTimer() == 0) {
-                dataTracker.set(INVULNERABLE, false);
-            }
-            if (this.getInvulnerableTimer() == 0) {
                 if (this.getLavaTexture() < 400) {
                     this.setLavaTexture(this.getLavaTexture() + 1);
                 }
+                if (dataTracker.get(INVULNERABLE)) {
+                    dataTracker.set(INVULNERABLE, false);
+                    this.playSound(SoundInit.GOLEM_AWAKENS_EVENT, 2.0F, 1.0F);
+                }
             }
             if (this.getHealth() <= this.getMaxHealth() / 2) {
-                this.getAttributeInstance(EntityAttributes.GENERIC_MOVEMENT_SPEED).setBaseValue(0.3D);
-                this.getAttributeInstance(EntityAttributes.GENERIC_ATTACK_KNOCKBACK).setBaseValue(4.0D);
-                if (this.powerPhaseActivate < 80) {
+                if (this.powerPhaseActivate <= 80) {
                     this.powerPhaseActivate++;
                     if (this.powerPhaseActivate == 1 || this.powerPhaseActivate == 2) {
                         this.setAiDisabled(true);
@@ -198,6 +202,8 @@ public class StoneGolemEntity extends HostileEntity {
                     }
                 }
                 if (this.powerPhaseActivate == 80) {
+                    this.getAttributeInstance(EntityAttributes.GENERIC_MOVEMENT_SPEED).setBaseValue(0.3D);
+                    this.getAttributeInstance(EntityAttributes.GENERIC_ATTACK_KNOCKBACK).setBaseValue(4.0D);
                     dataTracker.set(HALF_LIFE_CHANGE, true);
                 }
             } else if (this.isInLava() && this.getHealth() < this.getMaxHealth()) {
