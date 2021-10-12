@@ -16,6 +16,7 @@ import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.gui.hud.InGameOverlayRenderer;
 import net.minecraft.client.render.BufferBuilder;
 import net.minecraft.client.render.BufferRenderer;
+import net.minecraft.client.render.GameRenderer;
 import net.minecraft.client.render.Tessellator;
 import net.minecraft.client.render.VertexFormats;
 import net.minecraft.client.render.VertexFormat;
@@ -51,6 +52,7 @@ public abstract class InGameOverlayRendererMixin {
     }
 
     private static void renderWitheredOverlay(MinecraftClient minecraftClient, MatrixStack matrixStack, int duration) {
+        RenderSystem.setShader(GameRenderer::getPositionTexShader);
         RenderSystem.enableTexture();
         RenderSystem.setShaderTexture(0, WITHERED_TEXTURE);
         BufferBuilder bufferBuilder = Tessellator.getInstance().getBuffer();
@@ -61,7 +63,7 @@ public abstract class InGameOverlayRendererMixin {
         float n = minecraftClient.player.getPitch() / 64.0F;
         Matrix4f matrix4f = matrixStack.peek().getModel();
         float colorBlend = (float) duration / 200.0F;
-        bufferBuilder.begin(VertexFormat.DrawMode.QUADS, VertexFormats.POSITION_COLOR_TEXTURE);
+        bufferBuilder.begin(VertexFormat.DrawMode.QUADS, VertexFormats.POSITION_TEXTURE);
         bufferBuilder.vertex(matrix4f, -1.0F, -1.0F, -0.5F).color(f, f, f, colorBlend).texture(4.0F + m, 4.0F + n).next();
         bufferBuilder.vertex(matrix4f, 1.0F, -1.0F, -0.5F).color(f, f, f, colorBlend).texture(0.0F + m, 4.0F + n).next();
         bufferBuilder.vertex(matrix4f, 1.0F, 1.0F, -0.5F).color(f, f, f, colorBlend).texture(0.0F + m, 0.0F + n).next();
