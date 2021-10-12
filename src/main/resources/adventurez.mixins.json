@@ -29,6 +29,7 @@
     "ElytraItemMixin",
     "GeodeFeatureMixin",
     "AmethystClusterBlockMixin",
+    "IronGolemEntityMixin",
     "accessor.LivingEntityAccessor",
     "accessor.FallingBlockAccessor",
     "accessor.EntityAccessor",
@@ -39,7 +40,9 @@
     "client.InGameOverlayRendererMixin",
     "client.InGameHudMixin",
     "client.ClientPlayerInteractionManagerMixin",
-    "client.TexturedRenderLayersMixin"
+    "client.TexturedRenderLayersMixin",
+    "client.IronGolemEntityRendererMixin",
+    "client.IronGolemCrackFeatureRendererMixin"
   ],
   "injectors": {
     "defaultRequire": 1
