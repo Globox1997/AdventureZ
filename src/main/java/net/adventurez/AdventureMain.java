@@ -15,6 +15,7 @@ public class AdventureMain implements ModInitializer {
         ItemInit.init();
         KeybindPacket.init();
         LootInit.init();
+        ParticleInit.init();
         SoundInit.init();
         SpawnInit.init();
         TagInit.init();

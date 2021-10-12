@@ -27,6 +27,8 @@
     "PiglinEntityMixin",
     "ArrowEntityMixin",
     "ElytraItemMixin",
+    "GeodeFeatureMixin",
+    "AmethystClusterBlockMixin",
     "accessor.LivingEntityAccessor",
     "accessor.FallingBlockAccessor",
     "accessor.EntityAccessor",

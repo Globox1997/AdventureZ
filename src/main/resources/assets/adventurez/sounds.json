@@ -40,6 +40,11 @@
       "adventurez:golem_death1"
     ]
   },
+  "golem_awakens": {
+    "sounds": [
+      "adventurez:golem_awakens"
+    ]
+  },
   "rock_impact": {
     "sounds": [
       {
@@ -447,6 +452,51 @@
     "sounds": [
       "adventurez:flute_call1",
       "adventurez:flute_call2"
+    ]
+  },
+  "shard_destroy": {
+    "sounds": [
+      "adventurez:shard_destroyed1",
+      "adventurez:shard_destroyed2",
+      "adventurez:shard_destroyed3",
+      "adventurez:shard_destroyed4"
+    ]
+  },
+  "amethyst_golem_death": {
+    "sounds": [
+      "adventurez:amethyst_golem_death1",
+      "adventurez:amethyst_golem_death2",
+      "adventurez:amethyst_golem_death3"
+    ]
+  },
+  "amethyst_golem_hit": {
+    "sounds": [
+      "adventurez:amethyst_golem_hit1",
+      "adventurez:amethyst_golem_hit2",
+      "adventurez:amethyst_golem_hit3"
+    ]
+  },
+  "amethyst_golem_walk": {
+    "sounds": [
+      "adventurez:amethyst_golem_walk1",
+      "adventurez:amethyst_golem_walk2",
+      "adventurez:amethyst_golem_walk3",
+      "adventurez:amethyst_golem_walk4"
+    ]
+  },
+  "amethyst_golem_idle": {
+    "sounds": [
+      "adventurez:amethyst_golem_idle1",
+      "adventurez:amethyst_golem_idle2",
+      "adventurez:amethyst_golem_idle3",
+      "adventurez:amethyst_golem_idle4"
+    ]
+  },
+  "amethyst_golem_rage": {
+    "sounds": [
+      "adventurez:amethyst_golem_rage1",
+      "adventurez:amethyst_golem_rage2",
+      "adventurez:amethyst_golem_rage3"
     ]
   }
 }

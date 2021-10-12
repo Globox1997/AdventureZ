@@ -12,6 +12,7 @@ public class SoundInit {
     public static SoundEvent GOLEM_ROAR_EVENT = register("adventurez:golem_roar");
     public static SoundEvent GOLEM_DEATH_EVENT = register("adventurez:golem_death");
     public static SoundEvent GOLEM_SPAWN_EVENT = register("adventurez:golem_spawn");
+    public static SoundEvent GOLEM_AWAKENS_EVENT = register("adventurez:golem_awakens");
     // Small Golem
     public static SoundEvent SMALL_GOLEM_IDLE_EVENT = register("adventurez:small_golem_idle");
     public static SoundEvent SMALL_GOLEM_WALK_EVENT = register("adventurez:small_golem_walk");
@@ -75,11 +76,18 @@ public class SoundInit {
     public static SoundEvent WHALE_DEATH_EVENT = register("adventurez:whale_death");
     public static SoundEvent WHALE_HURT_EVENT = register("adventurez:whale_hurt");
     public static SoundEvent WHALE_IDLE_EVENT = register("adventurez:whale_idle");
+    // Amethyst Golem
+    public static SoundEvent AMETHYST_GOLEM_DEATH_EVENT = register("adventurez:amethyst_golem_death");
+    public static SoundEvent AMETHYST_GOLEM_HIT_EVENT = register("adventurez:amethyst_golem_hit");
+    public static SoundEvent AMETHYST_GOLEM_WALK_EVENT = register("adventurez:amethyst_golem_walk");
+    public static SoundEvent AMETHYST_GOLEM_IDLE_EVENT = register("adventurez:amethyst_golem_idle");
+    public static SoundEvent AMETHYST_GOLEM_RAGE_EVENT = register("adventurez:amethyst_golem_rage");
     // Item
     public static SoundEvent ROCK_IMPACT_EVENT = register("adventurez:rock_impact");
     public static SoundEvent ROCK_THROW_EVENT = register("adventurez:rock_throw");
     public static SoundEvent HEART_BEAT_EVENT = register("adventurez:heart_beat");
     public static SoundEvent FLUTE_CALL_EVENT = register("adventurez:flute_call");
+    public static SoundEvent SHARD_DESTROY_EVENT = register("adventurez:shard_destroy");
     // Item Related
     public static SoundEvent EQUIP_CHEST_EVENT = register("adventurez:equip_chest");
     // Block

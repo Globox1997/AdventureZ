@@ -3,9 +3,11 @@ package net.adventurez.init;
 import net.adventurez.block.renderer.*;
 import net.adventurez.entity.model.*;
 import net.adventurez.entity.render.*;
+import net.adventurez.init.ParticleInit.ShardParticle;
 import net.adventurez.network.EntitySpawnPacket;
 import net.fabricmc.fabric.api.blockrenderlayer.v1.BlockRenderLayerMap;
 import net.fabricmc.fabric.api.client.networking.v1.ClientPlayNetworking;
+import net.fabricmc.fabric.api.client.particle.v1.ParticleFactoryRegistry;
 import net.fabricmc.fabric.api.client.rendering.v1.BlockEntityRendererRegistry;
 import net.fabricmc.fabric.api.client.rendering.v1.EntityModelLayerRegistry;
 import net.fabricmc.fabric.api.client.rendering.v1.EntityRendererRegistry;
@@ -41,10 +43,11 @@ public class RenderInit {
     public static final EntityModelLayer VOID_FRAGMENT_LAYER = new EntityModelLayer(new Identifier("adventurez:void_fragment_render_layer"), "void_fragment_render_layer");
     public static final EntityModelLayer VOID_SHADE_LAYER = new EntityModelLayer(new Identifier("adventurez:void_shade_render_layer"), "void_shade_render_layer");
     public static final EntityModelLayer VOID_BULLET_LAYER = new EntityModelLayer(new Identifier("adventurez:void_bullet_render_layer"), "void_bullet_render_layer");
-    public static final EntityModelLayer FIRE_BREATH_LAYER = new EntityModelLayer(new Identifier("adventurez:fire_breath_render_layer"), "fire_breath_render_layer");
     public static final EntityModelLayer PIGLIN_FLAG_LAYER = new EntityModelLayer(new Identifier("adventurez:piglin_flag_render_layer"), "piglin_flag_render_layer");
     public static final EntityModelLayer ENDER_WHALE_LAYER = new EntityModelLayer(new Identifier("adventurez:ender_whale_render_layer"), "ender_whale_render_layer");
     public static final EntityModelLayer IGUANA_LAYER = new EntityModelLayer(new Identifier("adventurez:iguana_render_layer"), "iguana_render_layer");
+    public static final EntityModelLayer AMETHYST_GOLEM_LAYER = new EntityModelLayer(new Identifier("adventurez:amethyst_golem_render_layer"), "amethyst_golem_render_layer");
+    public static final EntityModelLayer AMETHYST_SHARD_LAYER = new EntityModelLayer(new Identifier("adventurez:amethyst_shard_render_layer"), "amethyst_shard_render_layer");
 
     public static void init() {
         // Entity Renderer
@@ -75,6 +78,8 @@ public class RenderInit {
         EntityRendererRegistry.register(EntityInit.BLAZEGUARDIAN_SHIELD_ENTITY, EmptyEntityRenderer::new);
         EntityRendererRegistry.register(EntityInit.ENDER_WHALE_ENTITY, EnderWhaleRenderer::new);
         EntityRendererRegistry.register(EntityInit.IGUANA_ENTITY, IguanaRenderer::new);
+        EntityRendererRegistry.register(EntityInit.AMETHYST_GOLEM_ENTITY, AmethystGolemRenderer::new);
+        EntityRendererRegistry.register(EntityInit.AMETHYST_SHARD_ENTITY, AmethystShardRenderer::new);
 
         // Entity Layer
         EntityModelLayerRegistry.registerModelLayer(STONE_GOLEM_LAYER, StoneGolemModel::getTexturedModelData);
@@ -102,6 +107,8 @@ public class RenderInit {
         EntityModelLayerRegistry.registerModelLayer(PIGLIN_FLAG_LAYER, PiglinFlagRenderer::getTexturedModelData);
         EntityModelLayerRegistry.registerModelLayer(ENDER_WHALE_LAYER, EnderWhaleModel::getTexturedModelData);
         EntityModelLayerRegistry.registerModelLayer(IGUANA_LAYER, IguanaModel::getTexturedModelData);
+        EntityModelLayerRegistry.registerModelLayer(AMETHYST_GOLEM_LAYER, AmethystGolemModel::getTexturedModelData);
+        EntityModelLayerRegistry.registerModelLayer(AMETHYST_SHARD_LAYER, AmethystShardModel::getTexturedModelData);
 
         // Network
         ClientPlayNetworking.registerGlobalReceiver(EntitySpawnPacket.ID, EntitySpawnPacket::onPacket);
@@ -115,10 +122,9 @@ public class RenderInit {
         BlockRenderLayerMap.INSTANCE.putBlock(BlockInit.STONE_HOLDER_BLOCK, RenderLayer.getCutout());
         BlockEntityRendererRegistry.register(BlockInit.PIGLIN_FLAG_ENTITY, PiglinFlagRenderer::new);
         BlockRenderLayerMap.INSTANCE.putBlock(BlockInit.PIGLIN_FLAG_BLOCK, RenderLayer.getCutout());
-
         BlockEntityRendererRegistry.register(BlockInit.SHADOW_CHEST_ENTITY, ChestBlockEntityRenderer::new);
-        // EntityRendererRegistry.register(BlockInit.SHADOW_CHEST_ENTITY, ChestBlockEntityRenderer::new);
-        // register(BlockEntityType.TRAPPED_CHEST, ChestBlockEntityRenderer::new);
 
+        // Particles
+        ParticleFactoryRegistry.getInstance().register(ParticleInit.AMETHYST_SHARD_PARTICLE, ShardParticle.ShardFactory::new);
     }
 }

@@ -56,6 +56,11 @@ public class AdventureConfig implements ConfigData {
     @ConfigEntry.Gui.RequiresRestart
     @ConfigEntry.BoundedDiscrete(min = 0, max = 100)
     public int iguana_spawn_weight = 10;
+    @ConfigEntry.Category("spawn_setting")
+    @ConfigEntry.Gui.RequiresRestart
+    @ConfigEntry.BoundedDiscrete(min = 0, max = 100)
+    @Comment("Chance for spawning when geode generates; 1/Value")
+    public int amethyst_golem_spawn_chance = 5;
     // Allow settings
     @ConfigEntry.Category("spawn_setting")
     public boolean allow_stone_golem_summoning = true;

@@ -1,0 +1,17 @@
+{
+    "name": "Amethyst Golem",
+    "icon": "adventurez:stone_golem_heart",
+    "category": "adventurez:mob_category",
+    "pages": [
+        {
+            "type": "text",
+            "text": "The Amethyst Golem can be found in geodes and they don't like the human race since most of the people just have profit in mind, dig out the amethysts and keep an empty loveless hole behind them. It will rage when you destroy amethysts!"
+        },
+        {
+            "type": "entity",
+            "name": "Showcase",
+            "entity": "adventurez:amethyst_golem",
+            "offset": 0.2
+        }
+    ]
+}
