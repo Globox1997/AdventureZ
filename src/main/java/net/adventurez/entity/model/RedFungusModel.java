@@ -51,7 +51,6 @@ public class RedFungusModel<T extends RedFungusEntity> extends CompositeEntityMo
         this.leftFoot.pitch = MathHelper.cos(limbAngle * 0.6662F + 3.1415927F) * 1.4F * limbDistance * 0.5F;
 
         float k = MathHelper.sin(this.handSwingProgress * 3.1415927F);
-        // System.out.print(this.handSwingProgress);
         if (k > 0) {
             this.head.pitch = -k * 1.2F;
         }
