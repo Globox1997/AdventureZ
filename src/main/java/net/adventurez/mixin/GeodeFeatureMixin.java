@@ -20,9 +20,9 @@ public class GeodeFeatureMixin {
     @Inject(method = "generate", at = @At(value = "RETURN"))
     private void generateMixin(FeatureContext<GeodeFeatureConfig> context, CallbackInfoReturnable<Boolean> info) {
         if (info.getReturnValue()) {
-            int summonerSpawnChance = ConfigInit.CONFIG.amethyst_golem_spawn_chance;
-            if (!context.getWorld().isClient() && summonerSpawnChance != 0) {
-                int spawnChanceInt = context.getRandom().nextInt(summonerSpawnChance) + 1;
+            int amethystSpawnChance = ConfigInit.CONFIG.amethyst_golem_spawn_chance;
+            if (!context.getWorld().isClient() && amethystSpawnChance != 0) {
+                int spawnChanceInt = context.getRandom().nextInt(amethystSpawnChance) + 1;
                 BlockPos spawnPos = context.getOrigin().south(4).east(4);
                 if (spawnChanceInt == 1 && (context.getWorld().isAir(spawnPos) || context.getWorld().isAir(spawnPos.up()))) {
                     AmethystGolemEntity amethystGolemEntity = (AmethystGolemEntity) EntityInit.AMETHYST_GOLEM_ENTITY.create(context.getWorld().toServerWorld());
