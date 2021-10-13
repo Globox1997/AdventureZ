@@ -51,7 +51,6 @@ public class BrownFungusModel<T extends BrownFungusEntity> extends CompositeEnti
 
         float k = MathHelper.sin(this.handSwingProgress * 3.1415927F);
         if (k > 0) {
-            System.out.print(this.handSwingProgress);
             this.head.pitch = -k * 1.2F;
         }
 
