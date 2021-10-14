@@ -498,5 +498,43 @@
       "adventurez:amethyst_golem_rage2",
       "adventurez:amethyst_golem_rage3"
     ]
+  },
+  "desert_rhino_death": {
+    "sounds": [
+      "adventurez:rhino_death1",
+      "adventurez:rhino_death2",
+      "adventurez:rhino_death3"
+    ]
+  },
+  "desert_rhino_hit": {
+    "sounds": [
+      "adventurez:rhino_hit1",
+      "adventurez:rhino_hit2",
+      "adventurez:rhino_hit3",
+      "adventurez:rhino_hit4"
+    ]
+  },
+  "desert_rhino_walk": {
+    "sounds": [
+      "adventurez:rhino_walk1",
+      "adventurez:rhino_walk2",
+      "adventurez:rhino_walk3",
+      "adventurez:rhino_walk4"
+    ]
+  },
+  "desert_rhino_idle": {
+    "sounds": [
+      "adventurez:rhino_idle1",
+      "adventurez:rhino_idle2",
+      "adventurez:rhino_idle3"
+    ]
+  },
+  "desert_rhino_attack": {
+    "sounds": [
+      "adventurez:rhino_attack1",
+      "adventurez:rhino_attack2",
+      "adventurez:rhino_attack3",
+      "adventurez:rhino_attack4"
+    ]
   }
 }

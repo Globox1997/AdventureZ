@@ -1,0 +1,17 @@
+{
+    "name": "Desert Rhino",
+    "icon": "adventurez:stone_golem_heart",
+    "category": "adventurez:mob_category",
+    "pages": [
+        {
+            "type": "text",
+            "text": "The Desert Rhino can be found in the desert and near desert wells. It is aggressive and will run to you to hit you with his horn!"
+        },
+        {
+            "type": "entity",
+            "name": "Showcase",
+            "entity": "adventurez:desert_rhino",
+            "scale": 0.6
+        }
+    ]
+}

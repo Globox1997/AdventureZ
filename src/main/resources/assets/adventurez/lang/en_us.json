@@ -29,6 +29,7 @@
   "entity.adventurez.fire_breath": "Fire Breath",
   "entity.adventurez.blaze_guardian_shield": "Blaze Guardian",
   "entity.adventurez.amethyst_shard": "Amethyst Shard",
+  "entity.adventurez.desert_rhino": "Desert Rhino",
 
   "item.adventurez.spawn_stone_golem": "Blackstone Golem Spawn Egg",
   "item.adventurez.spawn_small_stone_golem": "Mini Blackstone Golem Spawn Egg",
@@ -52,6 +53,7 @@
   "item.adventurez.spawn_ender_whale": "Ender Whale Spawn Egg",
   "item.adventurez.spawn_iguana": "Iguana Spawn Egg",
   "item.adventurez.spawn_amethyst_golem": "Amethyst Golem Spawn Egg",
+  "item.adventurez.spawn_desert_rhino": "Desert Rhino Spawn Egg",
 
   "item.adventurez.gilded_stone": "Gilded Blackstone Shard",
   "item.adventurez.gilded_stone.tooltip": "Placeable in the Stone Holder",
@@ -87,6 +89,9 @@
   "item.adventurez.cooked_ender_whale_meat": "Cooked Ender Whale Meat",
   "item.adventurez.ivory_arrow": "Ivory Arrow",
   "item.adventurez.mammoth_tusk": "Mammoth Tusk",
+  "item.adventurez.rhino_leather": "Rhino Leather",
+  "item.adventurez.rhino_meat": "Rhino Meat",
+  "item.adventurez.cooked_rhino_meat": "Cooked Rhino Meat",
 
   "item.adventurez.moreinfo.tooltip": "§8Hold §6Shift §8For More Info",
   
@@ -151,6 +156,8 @@
   "text.autoconfig.adventurez.option.iguana_spawn_weight": "Iguana Spawn Weight",
   "text.autoconfig.adventurez.option.heavy_dragon_flight": "Heavy Dragon Flight",
   "text.autoconfig.adventurez.option.allow_special_enchant_loot": "Allow Special Enchant Loot",
-  "text.autoconfig.adventurez.option.amethyst_golem_spawn_chance": "Amethyst Golem Geode Spawn Chance"
+  "text.autoconfig.adventurez.option.amethyst_golem_spawn_chance": "Amethyst Golem Geode Spawn Chance",
+  "text.autoconfig.adventurez.option.desert_rhino_spawn_weight": "Desert Rhino Spawn Weight",
+  "text.autoconfig.adventurez.option.desert_rhino_well_spawn_chance": "Desert Rhino Well Spawn Chance"
 
 }

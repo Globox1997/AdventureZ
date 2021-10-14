@@ -82,6 +82,12 @@ public class SoundInit {
     public static SoundEvent AMETHYST_GOLEM_WALK_EVENT = register("adventurez:amethyst_golem_walk");
     public static SoundEvent AMETHYST_GOLEM_IDLE_EVENT = register("adventurez:amethyst_golem_idle");
     public static SoundEvent AMETHYST_GOLEM_RAGE_EVENT = register("adventurez:amethyst_golem_rage");
+    // Desert Rhino
+    public static SoundEvent DESERT_RHINO_DEATH_EVENT = register("adventurez:desert_rhino_death");
+    public static SoundEvent DESERT_RHINO_ATTACK_EVENT = register("adventurez:desert_rhino_attack");
+    public static SoundEvent DESERT_RHINO_WALK_EVENT = register("adventurez:desert_rhino_walk");
+    public static SoundEvent DESERT_RHINO_IDLE_EVENT = register("adventurez:desert_rhino_idle");
+    public static SoundEvent DESERT_RHINO_HIT_EVENT = register("adventurez:desert_rhino_hit");
     // Item
     public static SoundEvent ROCK_IMPACT_EVENT = register("adventurez:rock_impact");
     public static SoundEvent ROCK_THROW_EVENT = register("adventurez:rock_throw");

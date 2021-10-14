@@ -25,13 +25,14 @@ public class ItemInit {
     public static final Item DRAGON_SADDLE = register("dragon_saddle", new Item(new Item.Settings().group(ItemGroup.TRANSPORTATION).maxCount(1)));
     public static final Item SOURCE_STONE = register("source_stone", new SourceStoneItem(new Item.Settings().group(ItemGroup.MISC).maxCount(1)));
     public static final Item CHORUS_FRUIT_ON_A_STICK = register("chorus_fruit_on_a_stick",
-            new OnAStickItem((new Item.Settings()).maxDamage(100).group(ItemGroup.TRANSPORTATION), EntityInit.ENDER_WHALE_ENTITY, 1));
+            new OnAStickItem<>((new Item.Settings()).maxDamage(100).group(ItemGroup.TRANSPORTATION), EntityInit.ENDER_WHALE_ENTITY, 1));
     public static final Item ENDER_FLUTE = register("ender_flute", new EnderFluteItem(new Item.Settings().group(ItemGroup.TRANSPORTATION).maxDamage(32)));
     public static final Item IGUANA_HIDE = register("iguana_hide", new Item(new Item.Settings().group(ItemGroup.MATERIALS)));
     public static final Item MAMMOTH_LEATHER = register("mammoth_fur", new Item(new Item.Settings().group(ItemGroup.MATERIALS)));
     public static final Item ENDER_WHALE_LEATHER = register("ender_whale_skin", new Item(new Item.Settings().group(ItemGroup.MATERIALS)));
     public static final Item IVORY_ARROW = register("ivory_arrow", new ArrowItem(new Item.Settings().group(ItemGroup.COMBAT)));
     public static final Item MAMMOTH_TUSK = register("mammoth_tusk", new Item(new Item.Settings().group(ItemGroup.MATERIALS)));
+    public static final Item RHINO_LEATHER = register("rhino_leather", new Item(new Item.Settings().group(ItemGroup.MATERIALS)));
 
     // Food
     public static final Item MAMMOTH_MEAT = register("mammoth_meat",
@@ -46,6 +47,10 @@ public class ItemInit {
             .food(new FoodComponent.Builder().hunger(3).saturationModifier(0.3F).statusEffect(new StatusEffectInstance(StatusEffects.BLINDNESS, 100, 0), 0.5F).meat().build())));
     public static final Item COOKED_ENDER_WHALE = register("cooked_ender_whale_meat", new Item(new Item.Settings().group(ItemGroup.FOOD)
             .food(new FoodComponent.Builder().hunger(8).saturationModifier(0.9F).statusEffect(new StatusEffectInstance(StatusEffects.SLOW_FALLING, 600, 0), 1.0F).meat().build())));
+    public static final Item RHINO_MEAT = register("rhino_meat",
+            new Item(new Item.Settings().group(ItemGroup.FOOD).food(new FoodComponent.Builder().hunger(3).saturationModifier(0.3F).meat().build())));
+    public static final Item COOKED_RHINO_MEAT = register("cooked_rhino_meat",
+            new Item(new Item.Settings().group(ItemGroup.FOOD).food(new FoodComponent.Builder().hunger(8).saturationModifier(0.8F).meat().build())));
 
     // Armor
     public static final ArmorMaterial STONE_GOLEM_ARMOR_MATERIAL = new StoneGolemArmorMaterial();

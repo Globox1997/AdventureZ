@@ -48,6 +48,7 @@ public class RenderInit {
     public static final EntityModelLayer IGUANA_LAYER = new EntityModelLayer(new Identifier("adventurez:iguana_render_layer"), "iguana_render_layer");
     public static final EntityModelLayer AMETHYST_GOLEM_LAYER = new EntityModelLayer(new Identifier("adventurez:amethyst_golem_render_layer"), "amethyst_golem_render_layer");
     public static final EntityModelLayer AMETHYST_SHARD_LAYER = new EntityModelLayer(new Identifier("adventurez:amethyst_shard_render_layer"), "amethyst_shard_render_layer");
+    public static final EntityModelLayer DESERT_RHINO_LAYER = new EntityModelLayer(new Identifier("adventurez:desert_rhino_render_layer"), "desert_rhino_render_layer");
 
     public static void init() {
         // Entity Renderer
@@ -80,6 +81,7 @@ public class RenderInit {
         EntityRendererRegistry.register(EntityInit.IGUANA_ENTITY, IguanaRenderer::new);
         EntityRendererRegistry.register(EntityInit.AMETHYST_GOLEM_ENTITY, AmethystGolemRenderer::new);
         EntityRendererRegistry.register(EntityInit.AMETHYST_SHARD_ENTITY, AmethystShardRenderer::new);
+        EntityRendererRegistry.register(EntityInit.DESERT_RHINO_ENTITY, DesertRhinoRenderer::new);
 
         // Entity Layer
         EntityModelLayerRegistry.registerModelLayer(STONE_GOLEM_LAYER, StoneGolemModel::getTexturedModelData);
@@ -109,6 +111,7 @@ public class RenderInit {
         EntityModelLayerRegistry.registerModelLayer(IGUANA_LAYER, IguanaModel::getTexturedModelData);
         EntityModelLayerRegistry.registerModelLayer(AMETHYST_GOLEM_LAYER, AmethystGolemModel::getTexturedModelData);
         EntityModelLayerRegistry.registerModelLayer(AMETHYST_SHARD_LAYER, AmethystShardModel::getTexturedModelData);
+        EntityModelLayerRegistry.registerModelLayer(DESERT_RHINO_LAYER, DesertRhinoModel::getTexturedModelData);
 
         // Network
         ClientPlayNetworking.registerGlobalReceiver(EntitySpawnPacket.ID, EntitySpawnPacket::onPacket);

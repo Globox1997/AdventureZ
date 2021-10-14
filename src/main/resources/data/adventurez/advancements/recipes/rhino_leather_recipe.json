@@ -1,0 +1,26 @@
+{
+    "parent": "minecraft:recipes/root",
+    "rewards": {
+        "recipes": [
+            "minecraft:leather_boots",
+            "minecraft:leather_chestplate",
+            "minecraft:leather_helmet",
+            "minecraft:leather_leggings",
+            "minecraft:leather_horse_armor"
+        ]
+    },
+    "criteria": {
+        "got_the_rhino_leather": {
+            "trigger": "minecraft:inventory_changed",
+            "conditions": {
+                "items": [
+                    {
+                        "items": [
+                            "adventurez:rhino_leather"
+                        ]
+                    }
+                ]
+            }
+        }
+    }
+}
