@@ -46,6 +46,7 @@ public class AmethystGolemEntity extends HostileEntity {
 
     public AmethystGolemEntity(EntityType<? extends HostileEntity> entityType, World world) {
         super(entityType, world);
+        this.stepHeight = 1.0F;
     }
 
     public static DefaultAttributeContainer.Builder createAmethystGolemAttributes() {
