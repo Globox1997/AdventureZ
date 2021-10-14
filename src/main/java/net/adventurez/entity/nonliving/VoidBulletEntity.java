@@ -16,6 +16,7 @@ import net.minecraft.network.Packet;
 import net.minecraft.particle.BlockStateParticleEffect;
 import net.minecraft.particle.ParticleEffect;
 import net.minecraft.particle.ParticleTypes;
+import net.minecraft.server.world.ServerWorld;
 import net.minecraft.sound.SoundCategory;
 import net.minecraft.sound.SoundEvents;
 import net.minecraft.util.hit.BlockHitResult;
@@ -101,7 +102,7 @@ public class VoidBulletEntity extends ExplosiveProjectileEntity {
         super.onEntityHit(entityHitResult);
         Entity entity = this.getOwner();
         Entity hittedEntity = entityHitResult.getEntity();
-        if (!this.world.isClient && entity != null && !(hittedEntity instanceof VoidShadeEntity)) {
+        if (!this.world.isClient && entity != null && !(hittedEntity instanceof VoidShadeEntity) && !(hittedEntity instanceof VoidBulletEntity)) {
             this.playSound(SoundEvents.ENTITY_ENDER_EYE_DEATH, 1.0F, 1.0F);
             hittedEntity.damage(createDamageSource(this), 7.0F);
             this.discard();
@@ -116,6 +117,15 @@ public class VoidBulletEntity extends ExplosiveProjectileEntity {
     @Override
     public void onBlockHit(BlockHitResult blockHitResult) {
         super.onBlockHit(blockHitResult);
+        for (int i = 0; i < 20; i++) {
+            double d = (double) this.getPos().getX() + 0.3F * this.world.random.nextFloat();
+            double e = (double) ((float) this.getPos().getY() + this.world.random.nextFloat() * 0.3F);
+            double f = (double) this.getPos().getZ() + 0.3F * this.world.random.nextFloat();
+            double g = (double) (world.random.nextFloat() * 0.2D);
+            double h = (double) world.random.nextFloat() * 0.2D;
+            double l = (double) (world.random.nextFloat() * 0.2D);
+            ((ServerWorld) world).spawnParticles(ParticleTypes.SMOKE, d, e, f, 3, g, h, l, 1.0D);
+        }
         this.discard();
     }
 
