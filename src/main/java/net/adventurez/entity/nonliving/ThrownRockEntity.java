@@ -1,6 +1,7 @@
 package net.adventurez.entity.nonliving;
 
 import net.minecraft.entity.projectile.thrown.ThrownItemEntity;
+import net.adventurez.init.EffectInit;
 import net.adventurez.init.EntityInit;
 import net.adventurez.init.SoundInit;
 import net.adventurez.network.EntitySpawnPacket;
@@ -14,6 +15,7 @@ import net.minecraft.entity.damage.DamageSource;
 import net.minecraft.entity.damage.ProjectileDamageSource;
 import net.minecraft.entity.effect.StatusEffectInstance;
 import net.minecraft.entity.effect.StatusEffects;
+import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.Items;
@@ -24,7 +26,9 @@ import net.minecraft.particle.ParticleTypes;
 import net.minecraft.sound.SoundCategory;
 import net.minecraft.util.hit.EntityHitResult;
 import net.minecraft.util.hit.HitResult;
+import net.minecraft.world.GameRules;
 import net.minecraft.world.World;
+import net.minecraft.world.explosion.Explosion;
 
 public class ThrownRockEntity extends ThrownItemEntity {
 
@@ -73,6 +77,10 @@ public class ThrownRockEntity extends ThrownItemEntity {
                 this.world.addParticle(new BlockStateParticleEffect(ParticleTypes.BLOCK, state), this.getX(), this.getY(), this.getZ(), 0.0D, 0.0D, 0.0D);
             }
         } else {
+            if (this.getOwner() instanceof PlayerEntity && ((PlayerEntity) this.getOwner()).hasStatusEffect(EffectInit.BLACKSTONED_HEART)) {
+                Explosion.DestructionType destructionType = this.world.getGameRules().getBoolean(GameRules.DO_MOB_GRIEFING) ? Explosion.DestructionType.DESTROY : Explosion.DestructionType.NONE;
+                this.world.createExplosion(this, this.getX(), this.getEyeY(), this.getZ(), 1.5F, false, destructionType);
+            }
             this.world.playSound(null, this.getBlockPos(), SoundInit.ROCK_IMPACT_EVENT, SoundCategory.BLOCKS, 0.7F, 1F);
             this.world.sendEntityStatus(this, (byte) 3);
             this.discard();
