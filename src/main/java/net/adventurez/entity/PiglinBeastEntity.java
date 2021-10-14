@@ -64,7 +64,7 @@ public class PiglinBeastEntity extends HostileEntity {
     public void initGoals() {
         super.initGoals();
         this.goalSelector.add(0, new SwimGoal(this));
-        this.goalSelector.add(1, new PiglinBeastEntity.AttackGoal());
+        this.goalSelector.add(1, new AttackGoal());
         this.goalSelector.add(4, new WanderAroundFarGoal(this, 1.0D));
         this.goalSelector.add(5, new LookAtEntityGoal(this, PlayerEntity.class, 12.0F));
         this.goalSelector.add(6, new LookAroundGoal(this));
@@ -163,7 +163,7 @@ public class PiglinBeastEntity extends HostileEntity {
         this.playSound(SoundInit.PIGLINBEAST_WALK_EVENT, 0.5F, 1.0F);
     }
 
-    class AttackGoal extends MeleeAttackGoal {
+    private class AttackGoal extends MeleeAttackGoal {
         public AttackGoal() {
             super(PiglinBeastEntity.this, 1.0D, true);
         }
@@ -174,6 +174,7 @@ public class PiglinBeastEntity extends HostileEntity {
             return (double) (f * f * 1.3D + entity.getWidth());
         }
 
+        @Override
         protected void attack(LivingEntity target, double squaredDistance) {
             double number = this.getSquaredMaxAttackDistance(target);
             if (squaredDistance <= number && attackTick <= 0F) {
@@ -215,6 +216,10 @@ public class PiglinBeastEntity extends HostileEntity {
 
         if (target.getType() == EntityType.PLAYER && piglin.world.getGameRules().getBoolean(GameRules.UNIVERSAL_ANGER)) {
             piglin.getBrain().remember(MemoryModuleType.UNIVERSAL_ANGER, true, 600L);
+        }
+        if (!piglin.world.isClient) {
+            piglin.getAttributeInstance(EntityAttributes.GENERIC_ATTACK_DAMAGE).setBaseValue(piglin.getAttributeValue(EntityAttributes.GENERIC_ATTACK_DAMAGE) + 3.0D);
+            piglin.heal(piglin.getMaxHealth());
         }
 
     }
