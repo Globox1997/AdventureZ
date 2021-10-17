@@ -39,6 +39,7 @@ import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.projectile.ArrowEntity;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.Items;
+import net.minecraft.item.RangedWeaponItem;
 import net.minecraft.nbt.NbtCompound;
 import net.minecraft.particle.ParticleTypes;
 import net.minecraft.predicate.entity.EntityPredicates;
@@ -217,7 +218,7 @@ public class SummonerEntity extends SpellCastingEntity {
         @Override
         public boolean canStart() {
             LivingEntity attacker = SummonerEntity.this.getAttacker();
-            if (super.canStart() && (attacker != null && attacker.getMainHandStack().isItemEqual(new ItemStack(Items.BOW)) && SummonerEntity.this.squaredDistanceTo(attacker) > 12)
+            if (super.canStart() && attacker != null && attacker.getMainHandStack().getItem() instanceof RangedWeaponItem && SummonerEntity.this.squaredDistanceTo(attacker) > 12
                     && SummonerEntity.this.gotShotByABow) {
                 return true;
             } else
