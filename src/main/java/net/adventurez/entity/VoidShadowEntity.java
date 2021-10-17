@@ -11,6 +11,7 @@ import org.jetbrains.annotations.Nullable;
 import io.netty.buffer.Unpooled;
 import net.adventurez.block.ShadowChestBlock;
 import net.adventurez.entity.nonliving.ThrownRockEntity;
+import net.adventurez.entity.nonliving.VoidCloudEntity;
 import net.adventurez.init.EffectInit;
 import net.adventurez.init.EntityInit;
 import net.adventurez.init.SoundInit;
@@ -71,19 +72,6 @@ import net.minecraft.block.Block;
 import net.minecraft.block.BlockState;
 import net.minecraft.block.Blocks;
 import net.minecraft.entity.player.PlayerEntity;
-
-// X Invisible
-// X Set blocks to infested blocks
-// X Remove blocks
-// X Freeze player
-// X Throw bunch of blocks
-// - Send itself on small variants with low hp
-// - Gravity off/on or set volicity y -2
-// X Blinding
-// - Spawn above players falling blocks
-// X No elytra
-// - Spawn mirror ghost, throw chunks of end stone
-// X Spawn many small shadowentities which shoot void projectiles
 
 public class VoidShadowEntity extends FlyingEntity implements Monster {
 
@@ -746,7 +734,7 @@ public class VoidShadowEntity extends FlyingEntity implements Monster {
 
                     Box box = new Box(voidShadow.getBlockPos());
                     List<VoidFragmentEntity> list = voidShadow.world.getEntitiesByClass(VoidFragmentEntity.class, box.expand(120D), EntityPredicates.EXCEPT_SPECTATOR);
-                    if (list.isEmpty()) {
+                    if (list.isEmpty() || list.size() < 2) {
                         return true;
                     }
                     summonStartTicker = 0;
@@ -762,7 +750,7 @@ public class VoidShadowEntity extends FlyingEntity implements Monster {
             summonTick++;
             if (summonTick >= 40 && this.voidShadow.getTarget() != null) {
                 BlockPos pos = this.voidShadow.getVoidMiddle();
-                Boolean isOrb = this.voidShadow.random.nextFloat() < 0.5F;
+                Boolean isOrb = this.voidShadow.random.nextFloat() < 0.35F;
                 for (int i = 0; i < (isOrb ? 4 : 10); i++) {
                     if (!this.voidShadow.world.isClient) {
                         BlockPos spawnPos;
@@ -775,11 +763,20 @@ public class VoidShadowEntity extends FlyingEntity implements Monster {
                         } else {
                             spawnPos = new BlockPos(pos.getX() - 35 + voidShadow.random.nextInt(70), pos.getY(), pos.getZ() - 35 + voidShadow.random.nextInt(70));
                         }
-                        VoidFragmentEntity voidShadeEntity = (VoidFragmentEntity) EntityInit.VOID_FRAGMENT_ENTITY.create(voidShadow.world);
-                        voidShadeEntity.initialize((ServerWorld) voidShadow.world, voidShadow.world.getLocalDifficulty(pos), SpawnReason.EVENT, null, null);
-                        voidShadeEntity.setVoidOrb(isOrb);
-                        voidShadeEntity.refreshPositionAndAngles(spawnPos, 0.0F, 0.0F);
-                        voidShadow.world.spawnEntity(voidShadeEntity);
+                        if (!this.voidShadow.world.getBlockState(spawnPos.down()).isAir()) {
+                            VoidFragmentEntity voidFragmentEntity = (VoidFragmentEntity) EntityInit.VOID_FRAGMENT_ENTITY.create(voidShadow.world);
+                            voidFragmentEntity.initialize((ServerWorld) voidShadow.world, voidShadow.world.getLocalDifficulty(pos), SpawnReason.EVENT, null, null);
+                            voidFragmentEntity.setVoidOrb(isOrb);
+                            voidFragmentEntity.refreshPositionAndAngles(spawnPos, 0.0F, 0.0F);
+                            voidShadow.world.spawnEntity(voidFragmentEntity);
+                            if (!isOrb) {
+                                VoidCloudEntity voidCloudEntity = new VoidCloudEntity(voidShadow.world, voidFragmentEntity.getX(), voidFragmentEntity.getY(), voidFragmentEntity.getZ());
+                                int random = voidShadow.world.random.nextInt(7) + 6;
+                                voidCloudEntity.setRadius(random);
+                                voidCloudEntity.setDuration(random * 140);
+                                voidShadow.world.spawnEntity(voidCloudEntity);
+                            }
+                        }
                     }
                 }
                 summonTick = 0;
@@ -862,7 +859,8 @@ public class VoidShadowEntity extends FlyingEntity implements Monster {
                 if (this.voidShadow.getHealth() < this.voidShadow.getMaxHealth() / 10 && !playerList.isEmpty()) {
                     for (int i = 0; i < playerList.size(); i++) {
                         if (playerList.get(i) instanceof ServerPlayerEntity) {
-                            CustomPayloadS2CPacket packet = new CustomPayloadS2CPacket(GeneralPacket.VELOCITY_PACKET, new PacketByteBuf(Unpooled.buffer()));
+                            CustomPayloadS2CPacket packet = new CustomPayloadS2CPacket(GeneralPacket.VELOCITY_PACKET,
+                                    new PacketByteBuf(Unpooled.buffer().writeInt(this.voidShadow.random.nextInt(10) + 5)));
                             ((ServerPlayerEntity) playerList.get(i)).networkHandler.sendPacket(packet);
                         }
                     }

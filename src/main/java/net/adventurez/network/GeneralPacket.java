@@ -8,7 +8,8 @@ public class GeneralPacket {
 
     public static void init() {
         ClientPlayNetworking.registerGlobalReceiver(VELOCITY_PACKET, (client, handler, buf, sender) -> {
-            client.player.setVelocity(0, 1.2D, 0);
+            if (client.player != null)
+                client.player.setVelocity(0, buf.readInt() * 0.15D, 0);
         });
     }
 }
