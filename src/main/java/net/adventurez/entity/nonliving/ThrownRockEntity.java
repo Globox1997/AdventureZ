@@ -62,7 +62,8 @@ public class ThrownRockEntity extends ThrownItemEntity {
             ParticleEffect particleEffect = this.getParticleParameters();
 
             for (int i = 0; i < 32; ++i) {
-                this.world.addParticle(particleEffect, this.getX(), this.getY(), this.getZ(), 0.0D, 0.0D, 0.0D);
+                this.world.addParticle(particleEffect, this.getX() + this.world.random.nextDouble() * 0.35D - 0.175D, this.getY(), this.getZ() + this.world.random.nextDouble() * 0.35D - 0.175D, 0.0D,
+                        0.1D, 0.0D);
             }
         }
 
@@ -74,7 +75,8 @@ public class ThrownRockEntity extends ThrownItemEntity {
         BlockState state = this.getLandingBlockState();
         if (this.world.isClient) {
             for (int i = 0; i < 32; ++i) {
-                this.world.addParticle(new BlockStateParticleEffect(ParticleTypes.BLOCK, state), this.getX(), this.getY(), this.getZ(), 0.0D, 0.0D, 0.0D);
+                this.world.addParticle(new BlockStateParticleEffect(ParticleTypes.BLOCK, state), this.getX() + this.world.random.nextDouble() * 0.35D - 0.175D, this.getY(),
+                        this.getZ() + this.world.random.nextDouble() * 0.35D - 0.175D, 0.0D, 0.1D, 0.0D);
             }
         } else {
             if (this.getOwner() instanceof PlayerEntity && ((PlayerEntity) this.getOwner()).hasStatusEffect(EffectInit.BLACKSTONED_HEART)) {
