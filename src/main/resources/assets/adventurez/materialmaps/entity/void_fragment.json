@@ -1,0 +1,12 @@
+{
+    "map": [
+        {
+            "predicate": {
+                "materialPredicate": {
+                    "renderLayerName": "entity_decal"
+                }
+            },
+            "material": "canvas:emissive_transform"
+        }
+    ]
+}

@@ -767,7 +767,7 @@ public class VoidShadowEntity extends FlyingEntity implements Monster {
                             VoidFragmentEntity voidFragmentEntity = (VoidFragmentEntity) EntityInit.VOID_FRAGMENT_ENTITY.create(voidShadow.world);
                             voidFragmentEntity.initialize((ServerWorld) voidShadow.world, voidShadow.world.getLocalDifficulty(pos), SpawnReason.EVENT, null, null);
                             voidFragmentEntity.setVoidOrb(isOrb);
-                            voidFragmentEntity.refreshPositionAndAngles(spawnPos, 0.0F, 0.0F);
+                            voidFragmentEntity.refreshPositionAndAngles(spawnPos, voidShadow.world.random.nextFloat() * 360F, 0.0F);
                             voidShadow.world.spawnEntity(voidFragmentEntity);
                             if (!isOrb) {
                                 VoidCloudEntity voidCloudEntity = new VoidCloudEntity(voidShadow.world, voidFragmentEntity.getX(), voidFragmentEntity.getY(), voidFragmentEntity.getZ());

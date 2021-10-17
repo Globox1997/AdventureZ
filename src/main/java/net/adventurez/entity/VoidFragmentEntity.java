@@ -28,7 +28,6 @@ import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.nbt.NbtCompound;
 import net.minecraft.particle.ParticleTypes;
 import net.minecraft.predicate.entity.EntityPredicates;
-import net.minecraft.text.TranslatableText;
 import net.minecraft.util.math.Box;
 import net.minecraft.world.Difficulty;
 import net.minecraft.world.LocalDifficulty;
@@ -40,6 +39,7 @@ public class VoidFragmentEntity extends FlyingEntity implements Monster {
 
     public static final TrackedData<Boolean> IS_VOID_ORB = DataTracker.registerData(VoidFragmentEntity.class, TrackedDataHandlerRegistry.BOOLEAN);
     public boolean isVoidOrb;
+    private int deathTick;
 
     public VoidFragmentEntity(EntityType<? extends FlyingEntity> entityType, World world) {
         super(entityType, world);
@@ -84,14 +84,11 @@ public class VoidFragmentEntity extends FlyingEntity implements Monster {
         dataTracker.set(IS_VOID_ORB, orb);
         this.refreshPosition();
         this.calculateDimensions();
-        if (orb) {
-            this.setCustomName(new TranslatableText("entity.adventurez.void_orb"));
-        }
     }
 
     @Override
     public EntityDimensions getDimensions(EntityPose pose) {
-        return super.getDimensions(pose).scaled(1.0F, (this.isVoidOrb || this.dataTracker.get(IS_VOID_ORB)) ? 2.0F : 1.0F);
+        return super.getDimensions(pose).scaled(1.0F, (this.isVoidOrb || this.dataTracker.get(IS_VOID_ORB)) ? 2.1F : 1.2F);
     }
 
     @Override
@@ -116,7 +113,10 @@ public class VoidFragmentEntity extends FlyingEntity implements Monster {
                 this.world.addParticle(ParticleTypes.END_ROD, this.getParticleX(1.0D), this.getRandomBodyY(), this.getParticleZ(1.0D), d, e, f);
             }
         }
-        super.updatePostDeath();
+        ++this.deathTick;
+        if (this.deathTick >= 20 && !this.world.isClient()) {
+            this.remove(Entity.RemovalReason.KILLED);
+        }
     }
 
     @Override
@@ -191,6 +191,11 @@ public class VoidFragmentEntity extends FlyingEntity implements Monster {
 
     @Override
     public boolean isPushable() {
+        return false;
+    }
+
+    @Override
+    public boolean isPushedByFluids() {
         return false;
     }
 
