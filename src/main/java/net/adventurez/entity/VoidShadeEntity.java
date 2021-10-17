@@ -124,8 +124,8 @@ public class VoidShadeEntity extends FlyingEntity implements Monster {
                 if (this.cooldown == 20) {
                     ((ServerWorld) this.voidShadeEntity.world).playSoundFromEntity(null, this.voidShadeEntity, SoundInit.SHADOW_CAST_EVENT, SoundCategory.HOSTILE, 1.0F, 1.0F);
                     Vec3d vec3d = this.voidShadeEntity.getRotationVec(1.0F);
-                    VoidBulletEntity voidBulletEntity = new VoidBulletEntity(world, this.voidShadeEntity, vec3d.x + world.random.nextFloat() * 0.5F - 0.25F, vec3d.y,
-                            vec3d.z + world.random.nextFloat() * 0.5F - 0.25F);
+                    VoidBulletEntity voidBulletEntity = new VoidBulletEntity(world, this.voidShadeEntity, vec3d.x + world.random.nextFloat() * 0.7F - 0.35F, vec3d.y,
+                            vec3d.z + world.random.nextFloat() * 0.7F - 0.35F);
                     world.spawnEntity(voidBulletEntity);
 
                     this.cooldown = -40;

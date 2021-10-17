@@ -125,7 +125,7 @@ public class VoidFragmentEntity extends FlyingEntity implements Monster {
             Box box = new Box(this.getBlockPos());
             List<VoidShadowEntity> list = world.getEntitiesByClass(VoidShadowEntity.class, box.expand(120D), EntityPredicates.EXCEPT_SPECTATOR);
             for (int i = 0; i < list.size(); ++i) {
-                list.get(i).damage(DamageSource.MAGIC, 50F);
+                list.get(i).damage(DamageSource.MAGIC, 40F);
             }
         }
         super.onDeath(source);
