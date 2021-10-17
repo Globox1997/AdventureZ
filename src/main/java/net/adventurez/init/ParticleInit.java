@@ -20,9 +20,11 @@ import net.minecraft.client.particle.SpriteBillboardParticle;
 public class ParticleInit {
 
     public static final DefaultParticleType AMETHYST_SHARD_PARTICLE = FabricParticleTypes.simple();
+    public static final DefaultParticleType VOID_CLOUD_PARTICLE = FabricParticleTypes.simple();
 
     public static void init() {
         Registry.register(Registry.PARTICLE_TYPE, new Identifier("adventurez", "amethyst_shard_particle"), AMETHYST_SHARD_PARTICLE);
+        Registry.register(Registry.PARTICLE_TYPE, new Identifier("adventurez", "void_cloud_particle"), VOID_CLOUD_PARTICLE);
     }
 
     @Environment(EnvType.CLIENT)
@@ -98,5 +100,100 @@ public class ParticleInit {
             }
         }
 
+    }
+
+    @Environment(EnvType.CLIENT)
+    static class VoidCloudParticle extends SpriteBillboardParticle {
+        private final double startX;
+        private final double startY;
+        private final double startZ;
+
+        private VoidCloudParticle(ClientWorld clientWorld, double d, double e, double f, double g, double h, double i) {
+            super(clientWorld, d, e, f);
+            this.velocityX = g;
+            this.velocityY = h;
+            this.velocityZ = i;
+            this.x = d;
+            this.y = e;
+            this.z = f;
+            this.startX = this.x;
+            this.startY = this.y;
+            this.startZ = this.z;
+            this.scale = 0.5F * (this.random.nextFloat() * 0.05F + 0.4F);
+            this.colorRed = this.random.nextFloat() * 0.2F;
+            this.colorGreen = this.random.nextFloat() * 0.2F;
+            this.colorBlue = this.random.nextFloat() * 0.2F;
+            this.maxAge = (int) (this.random.nextFloat() * 2.0F) + 10;
+        }
+
+        @Override
+        public ParticleTextureSheet getType() {
+            return ParticleTextureSheet.PARTICLE_SHEET_OPAQUE;
+        }
+
+        @Override
+        public void move(double dx, double dy, double dz) {
+            this.setBoundingBox(this.getBoundingBox().offset(dx, dy, dz));
+            this.repositionFromBoundingBox();
+        }
+
+        @Override
+        public float getSize(float tickDelta) {
+            float f = ((float) this.age + tickDelta) / (float) this.maxAge;
+            f = 1.0F - f;
+            f *= f;
+            f = 1.0F - f;
+            return this.scale * f;
+        }
+
+        @Override
+        public int getBrightness(float tint) {
+            int i = super.getBrightness(tint);
+            float f = (float) this.age / (float) this.maxAge;
+            f *= f;
+            f *= f;
+            int j = i & 255;
+            int k = i >> 16 & 255;
+            k += (int) (f * 15.0F * 16.0F);
+            if (k > 240) {
+                k = 240;
+            }
+
+            return j | k << 16;
+        }
+
+        @Override
+        public void tick() {
+            this.prevPosX = this.x;
+            this.prevPosY = this.y;
+            this.prevPosZ = this.z;
+            if (this.age++ >= this.maxAge) {
+                this.markDead();
+            } else {
+                float f = (float) this.age / (float) this.maxAge;
+                float g = f;
+                f = -f + f * f * 2.0F;
+                f = 1.0F - f;
+                this.x = this.startX + this.velocityX * (double) f;
+                this.y = this.startY + this.velocityY * (double) f + (double) (1.0F - g);
+                this.z = this.startZ + this.velocityZ * (double) f;
+            }
+        }
+
+        @Environment(EnvType.CLIENT)
+        public static class CloudFactory implements ParticleFactory<DefaultParticleType> {
+            private final SpriteProvider spriteProvider;
+
+            public CloudFactory(SpriteProvider spriteProvider) {
+                this.spriteProvider = spriteProvider;
+            }
+
+            @Override
+            public Particle createParticle(DefaultParticleType defaultParticleType, ClientWorld clientWorld, double d, double e, double f, double g, double h, double i) {
+                VoidCloudParticle portalParticle = new VoidCloudParticle(clientWorld, d, e, f, g, h, i);
+                portalParticle.setSprite(this.spriteProvider);
+                return portalParticle;
+            }
+        }
     }
 }

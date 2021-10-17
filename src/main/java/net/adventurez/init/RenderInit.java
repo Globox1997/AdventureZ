@@ -4,6 +4,7 @@ import net.adventurez.block.renderer.*;
 import net.adventurez.entity.model.*;
 import net.adventurez.entity.render.*;
 import net.adventurez.init.ParticleInit.ShardParticle;
+import net.adventurez.init.ParticleInit.VoidCloudParticle;
 import net.adventurez.network.EntitySpawnPacket;
 import net.fabricmc.fabric.api.blockrenderlayer.v1.BlockRenderLayerMap;
 import net.fabricmc.fabric.api.client.networking.v1.ClientPlayNetworking;
@@ -82,6 +83,7 @@ public class RenderInit {
         EntityRendererRegistry.register(EntityInit.AMETHYST_GOLEM_ENTITY, AmethystGolemRenderer::new);
         EntityRendererRegistry.register(EntityInit.AMETHYST_SHARD_ENTITY, AmethystShardRenderer::new);
         EntityRendererRegistry.register(EntityInit.DESERT_RHINO_ENTITY, DesertRhinoRenderer::new);
+        EntityRendererRegistry.register(EntityInit.VOID_CLOUD_ENTITY, EmptyEntityRenderer::new);
 
         // Entity Layer
         EntityModelLayerRegistry.registerModelLayer(STONE_GOLEM_LAYER, StoneGolemModel::getTexturedModelData);
@@ -129,5 +131,6 @@ public class RenderInit {
 
         // Particles
         ParticleFactoryRegistry.getInstance().register(ParticleInit.AMETHYST_SHARD_PARTICLE, ShardParticle.ShardFactory::new);
+        ParticleFactoryRegistry.getInstance().register(ParticleInit.VOID_CLOUD_PARTICLE, VoidCloudParticle.CloudFactory::new);
     }
 }

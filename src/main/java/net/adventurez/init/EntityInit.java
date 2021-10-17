@@ -74,6 +74,8 @@ public class EntityInit {
             .fireImmune().dimensions(EntityDimensions.changing(0.65F, 1.6F)).build();
     public static final EntityType<AmethystShardEntity> AMETHYST_SHARD_ENTITY = FabricEntityTypeBuilder.<AmethystShardEntity>create(SpawnGroup.MISC, AmethystShardEntity::new)
             .dimensions(EntityDimensions.fixed(0.6F, 0.8F)).build();
+    public static final EntityType<VoidCloudEntity> VOID_CLOUD_ENTITY = FabricEntityTypeBuilder.<VoidCloudEntity>create(SpawnGroup.MISC, VoidCloudEntity::new)
+            .dimensions(EntityDimensions.changing(6.0F, 0.5F)).fireImmune().build();
 
     public static void init() {
         Registry.register(Registry.ENTITY_TYPE, new Identifier("adventurez", "stone_golem"), STONEGOLEM_ENTITY);
@@ -106,6 +108,7 @@ public class EntityInit {
         Registry.register(Registry.ENTITY_TYPE, new Identifier("adventurez", "amethyst_golem"), AMETHYST_GOLEM_ENTITY);
         Registry.register(Registry.ENTITY_TYPE, new Identifier("adventurez", "amethyst_shard"), AMETHYST_SHARD_ENTITY);
         Registry.register(Registry.ENTITY_TYPE, new Identifier("adventurez", "desert_rhino"), DESERT_RHINO_ENTITY);
+        Registry.register(Registry.ENTITY_TYPE, new Identifier("adventurez", "void_cloud"), VOID_CLOUD_ENTITY);
 
         // Attributes
         FabricDefaultAttributeRegistry.register(STONEGOLEM_ENTITY, StoneGolemEntity.createStoneGolemAttributes());
