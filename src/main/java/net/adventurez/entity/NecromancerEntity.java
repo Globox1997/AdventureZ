@@ -147,7 +147,7 @@ public class NecromancerEntity extends SpellCastingEntity {
         }
     }
 
-    class MagicWitheringGoal extends SpellCastingEntity.CastSpellGoal {
+    private class MagicWitheringGoal extends SpellCastingEntity.CastSpellGoal {
         private MagicWitheringGoal() {
             super();
         }
@@ -177,8 +177,7 @@ public class NecromancerEntity extends SpellCastingEntity {
         public void castSpell() {
             LivingEntity livingEntity = NecromancerEntity.this.getTarget();
             if (livingEntity != null) {
-
-                livingEntity.addStatusEffect(new StatusEffectInstance(EffectInit.WITHERING, 200, 0));
+                livingEntity.addStatusEffect(new StatusEffectInstance(EffectInit.WITHERING, 180 + NecromancerEntity.this.world.random.nextInt(5) * 20, 0));
                 for (int i = 0; i < 60; ++i) {
                     double x = MathHelper.nextDouble(random, livingEntity.getBoundingBox().minX - 1.5D, livingEntity.getBoundingBox().maxX) + 1.5D;
                     double y = MathHelper.nextDouble(random, livingEntity.getBoundingBox().minY, livingEntity.getBoundingBox().maxY) + 1.0D;
@@ -200,15 +199,11 @@ public class NecromancerEntity extends SpellCastingEntity {
         }
     }
 
-    class SummonPuppetGoal extends SpellCastingEntity.CastSpellGoal {
+    private class SummonPuppetGoal extends SpellCastingEntity.CastSpellGoal {
         private final TargetPredicate CLOSE_PUPPET_PREDICATE = TargetPredicate.createNonAttackable().setBaseMaxDistance(8.0D).ignoreVisibility().ignoreDistanceScalingFactor();
 
         private SummonPuppetGoal() {
             super();
-            // this.CLOSE_PUPPET_PREDICATE = (new
-            // TargetPredicate()).setBaseMaxDistance(24.0D).includeHidden().ignoreDistanceScalingFactor().includeInvulnerable().includeTeammates();
-            // public final TargetPredicate closeRaiderPredicate =
-            // TargetPredicate.createNonAttackable().setBaseMaxDistance(8.0D).ignoreVisibility().ignoreDistanceScalingFactor();
         }
 
         @Override
@@ -266,7 +261,7 @@ public class NecromancerEntity extends SpellCastingEntity {
         }
     }
 
-    class LookAtTargetGoalNecro extends SpellCastingEntity.LookAtTargetGoal {
+    private class LookAtTargetGoalNecro extends SpellCastingEntity.LookAtTargetGoal {
         private LookAtTargetGoalNecro() {
             super();
         }
