@@ -6,9 +6,11 @@ import net.minecraft.util.Identifier;
 
 public class ExtraRenderLayer {
     public static RenderLayer getGlowing(String string) {
-        if (FabricLoader.getInstance().isModLoaded("canvas")) {
+        if (FabricLoader.getInstance().isModLoaded("canvas"))
             return RenderLayer.getEntityDecal(new Identifier(string));
-        } else
+        else if (FabricLoader.getInstance().isModLoaded("iris"))
+            return RenderLayer.getEyes(new Identifier(string));
+        else
             return RenderLayer.getEntityAlpha(new Identifier(string));
     }
 
