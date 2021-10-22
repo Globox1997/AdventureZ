@@ -3,7 +3,11 @@ package net.adventurez.item;
 import java.util.List;
 
 import net.adventurez.entity.EnderWhaleEntity;
+import net.adventurez.init.ConfigInit;
 import net.adventurez.init.SoundInit;
+import net.minecraft.client.MinecraftClient;
+import net.minecraft.client.item.TooltipContext;
+import net.minecraft.client.util.InputUtil;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.Item;
@@ -11,6 +15,8 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.particle.ParticleTypes;
 import net.minecraft.predicate.entity.EntityPredicates;
 import net.minecraft.sound.SoundCategory;
+import net.minecraft.text.Text;
+import net.minecraft.text.TranslatableText;
 import net.minecraft.util.Hand;
 import net.minecraft.util.TypedActionResult;
 import net.minecraft.util.math.Box;
@@ -23,9 +29,20 @@ public class EnderFluteItem extends Item {
     }
 
     @Override
+    public void appendTooltip(ItemStack itemStack, World world, List<Text> tooltip, TooltipContext tooltipContext) {
+        super.appendTooltip(itemStack, world, tooltip, tooltipContext);
+        if (ConfigInit.CONFIG.allow_extra_tooltips) {
+            tooltip.add(new TranslatableText("item.adventurez.moreinfo.tooltip"));
+            if (InputUtil.isKeyPressed(MinecraftClient.getInstance().getWindow().getHandle(), 340)) {
+                tooltip.remove(new TranslatableText("item.adventurez.moreinfo.tooltip"));
+                tooltip.add(new TranslatableText("item.adventurez.ender_flute.tooltip"));
+            }
+        }
+    }
+
+    @Override
     public TypedActionResult<ItemStack> use(World world, PlayerEntity user, Hand hand) {
         ItemStack itemStack = user.getStackInHand(hand);
-
         world.playSound(null, user.getX(), user.getY(), user.getZ(), SoundInit.FLUTE_CALL_EVENT, SoundCategory.PLAYERS, 1.0F, world.random.nextFloat() * 0.2F + 0.9F);
         if (!world.isClient) {
             itemStack.damage(1, user, (p) -> p.sendToolBreakStatus(p.getActiveHand()));

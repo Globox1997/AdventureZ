@@ -94,5 +94,7 @@ public class AdventureConfig implements ConfigData {
     public boolean heavy_dragon_flight = true;
     @ConfigEntry.Category("misc")
     public boolean allow_special_enchant_loot = true;
+    @ConfigEntry.Category("misc")
+    public boolean allow_extra_tooltips = true;
 
 }

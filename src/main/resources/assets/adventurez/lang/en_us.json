@@ -60,6 +60,7 @@
   "item.adventurez.stone_golem_arm": "Blackstone's Arm",
   "item.adventurez.stone_golem_arm.tooltip": "Hold Right Click to Charge Arm",
   "item.adventurez.stone_golem_heart": "Blackstone Golem Heart",
+  "item.adventurez.stone_golem_heart.tooltip": "Replace your own heart with it; Right click",
   "item.adventurez.stone_golem_helmet": "Gilded Netherite Helmet",
   "item.adventurez.stone_golem_chestplate": "Gilded Netherite Chestplate",
   "item.adventurez.stone_golem_leggings": "Gilded Netherite Leggings",
@@ -78,6 +79,7 @@
   "item.adventurez.source_stone.tooltip": "Right click: Shoot bullet; +Shift: Phase trough blocks",
   "item.adventurez.chorus_fruit_on_a_stick": "Chorus Fruit on a Stick",
   "item.adventurez.ender_flute": "Ender Flute",
+  "item.adventurez.ender_flute.tooltip": "Call nearby Ender Whales by playing it",
   "item.adventurez.iguana_hide": "Iguana Hide",
   "item.adventurez.mammoth_fur": "Mammoth Fur",
   "item.adventurez.ender_whale_skin": "Ender Whale Skin",
@@ -158,6 +160,7 @@
   "text.autoconfig.adventurez.option.allow_special_enchant_loot": "Allow Special Enchant Loot",
   "text.autoconfig.adventurez.option.amethyst_golem_spawn_chance": "Amethyst Golem Geode Spawn Chance",
   "text.autoconfig.adventurez.option.desert_rhino_spawn_weight": "Desert Rhino Spawn Weight",
-  "text.autoconfig.adventurez.option.desert_rhino_well_spawn_chance": "Desert Rhino Well Spawn Chance"
+  "text.autoconfig.adventurez.option.desert_rhino_well_spawn_chance": "Desert Rhino Well Spawn Chance",
+  "text.autoconfig.adventurez.option.allow_extra_tooltips": "Allow Extra Tooltips"
 
 }

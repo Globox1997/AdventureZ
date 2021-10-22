@@ -12,6 +12,7 @@ import net.minecraft.util.Hand;
 import net.minecraft.util.TypedActionResult;
 import net.minecraft.world.World;
 import net.adventurez.entity.nonliving.GildedStoneEntity;
+import net.adventurez.init.ConfigInit;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.item.TooltipContext;
 import net.minecraft.client.util.InputUtil;
@@ -39,10 +40,12 @@ public class GildedStoneItem extends Item {
     @Override
     public void appendTooltip(ItemStack itemStack, World world, List<Text> tooltip, TooltipContext tooltipContext) {
         super.appendTooltip(itemStack, world, tooltip, tooltipContext);
-        tooltip.add(new TranslatableText("item.adventurez.moreinfo.tooltip"));
-        if (InputUtil.isKeyPressed(MinecraftClient.getInstance().getWindow().getHandle(), 340)) {
-            tooltip.remove(new TranslatableText("item.adventurez.moreinfo.tooltip"));
-            tooltip.add(new TranslatableText("item.adventurez.gilded_stone.tooltip"));
+        if (ConfigInit.CONFIG.allow_extra_tooltips) {
+            tooltip.add(new TranslatableText("item.adventurez.moreinfo.tooltip"));
+            if (InputUtil.isKeyPressed(MinecraftClient.getInstance().getWindow().getHandle(), 340)) {
+                tooltip.remove(new TranslatableText("item.adventurez.moreinfo.tooltip"));
+                tooltip.add(new TranslatableText("item.adventurez.gilded_stone.tooltip"));
+            }
         }
     }
 
