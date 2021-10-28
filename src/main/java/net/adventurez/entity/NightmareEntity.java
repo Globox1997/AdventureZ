@@ -83,7 +83,7 @@ public class NightmareEntity extends SkeletonHorseEntity {
         if (this.touchingWater && !world.isClient) {
             damageWaterTicks++;
             if (damageWaterTicks == 40) {
-                this.damage(DamageSource.HOT_FLOOR, 1F);
+                this.damage(DamageSource.FREEZE, 1F);
                 damageWaterTicks = 0;
             }
         }

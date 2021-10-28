@@ -48,7 +48,7 @@ public class TheEyeModel<T extends TheEyeEntity> extends CompositeEntityModel<T>
         this.rightSite.pitch = headPitch * 0.017453292F;
         // Split
 
-        if (eye.getHealth() < (eye.getMaxHealth() / 3) && !(eye.getDataTracker().get(TheEyeEntity.INVUL_TIMER) > 0)) {
+        if (eye.getHealth() < (eye.getMaxHealth() / 3.0F) && !(eye.getDataTracker().get(TheEyeEntity.INVUL_TIMER) > 0)) {
             this.leftSite.pivotX = -1.0F;
             this.rightSite.pivotX = 1.0F;
         } else {
