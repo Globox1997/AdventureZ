@@ -13,6 +13,7 @@ import net.fabricmc.fabric.api.client.rendering.v1.BlockEntityRendererRegistry;
 import net.fabricmc.fabric.api.client.rendering.v1.EntityModelLayerRegistry;
 import net.fabricmc.fabric.api.client.rendering.v1.EntityRendererRegistry;
 import net.fabricmc.fabric.api.event.client.ClientSpriteRegistryCallback;
+import net.fabricmc.loader.api.FabricLoader;
 import net.minecraft.client.render.RenderLayer;
 import net.minecraft.client.render.block.entity.ChestBlockEntityRenderer;
 import net.minecraft.client.render.entity.EmptyEntityRenderer;
@@ -20,6 +21,9 @@ import net.minecraft.client.render.entity.model.EntityModelLayer;
 import net.minecraft.util.Identifier;
 
 public class RenderInit {
+    public static final boolean isCanvasLoaded = FabricLoader.getInstance().isModLoaded("canvas");
+    public static final boolean isIrisLoaded = FabricLoader.getInstance().isModLoaded("iris");
+    public static final boolean isSodiumLoaded = FabricLoader.getInstance().isModLoaded("sodium");
 
     public static final EntityModelLayer STONE_GOLEM_LAYER = new EntityModelLayer(new Identifier("adventurez:stone_golem_render_layer"), "stone_golem_render_layer");
     public static final EntityModelLayer THROWN_ROCK_LAYER = new EntityModelLayer(new Identifier("adventurez:thrown_rock_render_layer"), "thrown_rock_render_layer");
@@ -50,6 +54,7 @@ public class RenderInit {
     public static final EntityModelLayer AMETHYST_GOLEM_LAYER = new EntityModelLayer(new Identifier("adventurez:amethyst_golem_render_layer"), "amethyst_golem_render_layer");
     public static final EntityModelLayer AMETHYST_SHARD_LAYER = new EntityModelLayer(new Identifier("adventurez:amethyst_shard_render_layer"), "amethyst_shard_render_layer");
     public static final EntityModelLayer DESERT_RHINO_LAYER = new EntityModelLayer(new Identifier("adventurez:desert_rhino_render_layer"), "desert_rhino_render_layer");
+    public static final EntityModelLayer SHAMAN_LAYER = new EntityModelLayer(new Identifier("adventurez:shaman_render_layer"), "shaman_render_layer");
 
     public static void init() {
         // Entity Renderer
@@ -84,6 +89,7 @@ public class RenderInit {
         EntityRendererRegistry.register(EntityInit.AMETHYST_SHARD_ENTITY, AmethystShardRenderer::new);
         EntityRendererRegistry.register(EntityInit.DESERT_RHINO_ENTITY, DesertRhinoRenderer::new);
         EntityRendererRegistry.register(EntityInit.VOID_CLOUD_ENTITY, EmptyEntityRenderer::new);
+        EntityRendererRegistry.register(EntityInit.SHAMAN_ENTITY, ShamanRenderer::new);
 
         // Entity Layer
         EntityModelLayerRegistry.registerModelLayer(STONE_GOLEM_LAYER, StoneGolemModel::getTexturedModelData);
@@ -114,6 +120,7 @@ public class RenderInit {
         EntityModelLayerRegistry.registerModelLayer(AMETHYST_GOLEM_LAYER, AmethystGolemModel::getTexturedModelData);
         EntityModelLayerRegistry.registerModelLayer(AMETHYST_SHARD_LAYER, AmethystShardModel::getTexturedModelData);
         EntityModelLayerRegistry.registerModelLayer(DESERT_RHINO_LAYER, DesertRhinoModel::getTexturedModelData);
+        EntityModelLayerRegistry.registerModelLayer(SHAMAN_LAYER, ShamanModel::getTexturedModelData);
 
         // Network
         ClientPlayNetworking.registerGlobalReceiver(EntitySpawnPacket.ID, EntitySpawnPacket::onPacket);
