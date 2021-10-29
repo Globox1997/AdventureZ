@@ -67,6 +67,8 @@ public class SummonerModel<T extends SummonerEntity> extends CompositeEntityMode
 
     @Override
     public void setAngles(T summoner, float f, float g, float h, float i, float j) {
+        this.head.yaw = i * 0.0119453292F;
+        this.head.pitch = j * 0.0061453292F;
         this.rightArm.pitch = (MathHelper.cos(f * 0.6662F + 3.1415927F) * 2.0F * g * 0.5F - 1.0472F);
         this.rightArm.yaw = 0.0F;
         this.rightArm.roll = 0.0F;

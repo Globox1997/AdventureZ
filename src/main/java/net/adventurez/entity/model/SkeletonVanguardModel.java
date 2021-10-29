@@ -74,6 +74,8 @@ public class SkeletonVanguardModel<T extends SkeletonVanguardEntity> extends Com
 
     @Override
     public void setAngles(T vanguard, float f, float g, float h, float i, float j) {
+        this.head.yaw = i * 0.0119453292F;
+        this.head.pitch = j * 0.0061453292F;
         this.spear.pitch = -0.7854F;
         this.rightArm.pitch = MathHelper.cos(f * 0.6662F + 3.1415927F) * 2.0F * g * 0.4F;
         this.rightArm.yaw = 0.0F;
@@ -88,7 +90,10 @@ public class SkeletonVanguardModel<T extends SkeletonVanguardEntity> extends Com
         this.leftLeg.yaw = 0.0F;
         this.leftLeg.roll = 0.0F;
         float k = MathHelper.sin(this.handSwingProgress * 3.1415927F);
-        this.rightArm.pitch = -k * 1.5F;
+        if (k > 0.0F) {
+            this.rightArm.pitch = -k * 1.5F;
+            this.rightArm.roll = -k * 0.4F;
+        }
         float shieldSwing = vanguard.getDataTracker().get(SkeletonVanguardEntity.SHIELD_SWING) * 2F;
         if (shieldSwing > 0.0F) {
             this.leftArm.pitch = MathHelper.sin(shieldSwing * 3.1415927F) - 1.5708F;

@@ -64,7 +64,8 @@ public class NecromancerModel<T extends NecromancerEntity> extends CompositeEnti
 
     @Override
     public void setAngles(T necromancer, float f, float g, float h, float i, float j) {
-
+        this.head.yaw = i * 0.0119453292F;
+        this.head.pitch = j * 0.0061453292F;
         this.head2.pitch = -0.2618F;
         this.rightArm.pitch = MathHelper.cos(f * 0.6662F + 3.1415927F) * 2.0F * g * 0.5F;
         this.rightArm.yaw = 0.0F;

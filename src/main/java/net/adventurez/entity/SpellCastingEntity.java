@@ -69,7 +69,7 @@ public abstract class SpellCastingEntity extends HostileEntity {
 
     public void tick() {
         super.tick();
-        if (this.world.isClient && this.isSpellcasting()) {
+        if (this.world.isClient && this.isSpellcasting() && !(this instanceof ShamanEntity)) {
             SpellCastingEntity.Spell spell = this.getSpell();
             double d = spell.particleVelocity[0];
             double e = spell.particleVelocity[1];

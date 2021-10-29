@@ -77,13 +77,13 @@ public class SummonerEntity extends SpellCastingEntity {
     public void initGoals() {
         super.initGoals();
         this.goalSelector.add(0, new SwimGoal(this));
-        this.goalSelector.add(1, new SummonerEntity.LookAtTargetGoalNecro());
+        this.goalSelector.add(1, new LookAtTargetGoalNecro());
         this.goalSelector.add(2, new NormalAttack(this, 1.0D, false));
         this.goalSelector.add(2, new FleeEntityGoal<>(this, PlayerEntity.class, 8.0F, 0.7D, 0.9D));
-        this.goalSelector.add(4, new SummonerEntity.SummonPuppetGoal());
-        this.goalSelector.add(5, new SummonerEntity.ThunderboltSpellGoal());
-        this.goalSelector.add(6, new SummonerEntity.InvulnerableSpellGoal());
-        this.goalSelector.add(7, new SummonerEntity.TeleportSpellGoal());
+        this.goalSelector.add(4, new SummonPuppetGoal());
+        this.goalSelector.add(5, new ThunderboltSpellGoal());
+        this.goalSelector.add(6, new InvulnerableSpellGoal());
+        this.goalSelector.add(7, new TeleportSpellGoal());
         this.goalSelector.add(8, new LookAtEntityGoal(this, PlayerEntity.class, 7.0F, 1.0F));
         this.goalSelector.add(9, new WanderAroundGoal(this, 0.9D));
         this.goalSelector.add(10, new LookAtEntityGoal(this, MobEntity.class, 8.0F));
@@ -195,7 +195,7 @@ public class SummonerEntity extends SpellCastingEntity {
             return this.isInvulnerableTo(source) ? false : super.damage(source, amount);
     }
 
-    class ThunderboltSpellGoal extends SpellCastingEntity.CastSpellGoal {
+    private class ThunderboltSpellGoal extends SpellCastingEntity.CastSpellGoal {
         private ThunderboltSpellGoal() {
             super();
         }
@@ -252,7 +252,7 @@ public class SummonerEntity extends SpellCastingEntity {
         }
     }
 
-    class TeleportSpellGoal extends SpellCastingEntity.CastSpellGoal {
+    private class TeleportSpellGoal extends SpellCastingEntity.CastSpellGoal {
         private TeleportSpellGoal() {
             super();
         }
@@ -309,7 +309,7 @@ public class SummonerEntity extends SpellCastingEntity {
         }
     }
 
-    class InvulnerableSpellGoal extends SpellCastingEntity.CastSpellGoal {
+    private class InvulnerableSpellGoal extends SpellCastingEntity.CastSpellGoal {
         private InvulnerableSpellGoal() {
             super();
         }
@@ -372,7 +372,7 @@ public class SummonerEntity extends SpellCastingEntity {
         }
     }
 
-    class SummonPuppetGoal extends SpellCastingEntity.CastSpellGoal {
+    private class SummonPuppetGoal extends SpellCastingEntity.CastSpellGoal {
         private final TargetPredicate PUPPET_PREDICATE = TargetPredicate.createAttackable().setBaseMaxDistance(24.0D).ignoreVisibility().ignoreDistanceScalingFactor();
 
         private SummonPuppetGoal() {
@@ -403,29 +403,36 @@ public class SummonerEntity extends SpellCastingEntity {
         @Override
         public void castSpell() {
             ServerWorld serverWorld = (ServerWorld) SummonerEntity.this.world;
-            for (int i = 0; i < 3; ++i) {
-                BlockPos blockPos = SummonerEntity.this.getBlockPos().add(-2 + SummonerEntity.this.random.nextInt(5), 1, -2 + SummonerEntity.this.random.nextInt(5));
-                if (SummonerEntity.this.getHealth() <= 40.0F || SummonerEntity.this.getEntityWorld().isDay()) {
-                    SkeletonVanguardEntity skeletonVanguardEntity = (SkeletonVanguardEntity) EntityInit.SKELETON_VANGUARD_ENTITY.create(serverWorld);
-                    skeletonVanguardEntity.refreshPositionAndAngles(blockPos, 0.0F, 0.0F);
-                    skeletonVanguardEntity.initialize(serverWorld, serverWorld.getLocalDifficulty(blockPos), SpawnReason.EVENT, null, null);
-                    serverWorld.spawnEntityAndPassengers(skeletonVanguardEntity);
-                } else {
-                    ZombieEntity zombieEntity = (ZombieEntity) EntityType.ZOMBIE.create(serverWorld);
-                    zombieEntity.refreshPositionAndAngles(blockPos, 0.0F, 0.0F);
-                    zombieEntity.initialize(serverWorld, serverWorld.getLocalDifficulty(blockPos), SpawnReason.EVENT, null, null);
-                    serverWorld.spawnEntityAndPassengers(zombieEntity);
-                    int skeletonChance = world.getRandom().nextInt(8);
-                    if (skeletonChance == 0) {
-                        SkeletonEntity skeletonEntity = (SkeletonEntity) EntityType.SKELETON.create(serverWorld);
-                        skeletonEntity.refreshPositionAndAngles(blockPos, 0.0F, 0.0F);
-                        skeletonEntity.initialize(serverWorld, serverWorld.getLocalDifficulty(blockPos), SpawnReason.EVENT, null, null);
-                        if (SummonerEntity.this.gotShotByABow) {
-                            skeletonEntity.equipStack(EquipmentSlot.MAINHAND, new ItemStack(Items.BOW));
+            int spellCount = 0;
+            for (int i = 0; i < 20; ++i) {
+                BlockPos blockPos = SummonerEntity.this.getBlockPos().add(-2 + SummonerEntity.this.random.nextInt(5), SummonerEntity.this.random.nextInt(3),
+                        -2 + SummonerEntity.this.random.nextInt(5));
+                if (SpawnHelper.canSpawn(SpawnRestriction.Location.ON_GROUND, world, blockPos, EntityInit.SKELETON_VANGUARD_ENTITY)) {
+                    spellCount++;
+                    if (SummonerEntity.this.getHealth() <= 40.0F || SummonerEntity.this.getEntityWorld().isDay()) {
+                        SkeletonVanguardEntity skeletonVanguardEntity = (SkeletonVanguardEntity) EntityInit.SKELETON_VANGUARD_ENTITY.create(serverWorld);
+                        skeletonVanguardEntity.refreshPositionAndAngles(blockPos, SummonerEntity.this.world.random.nextFloat() * 360F, 0.0F);
+                        skeletonVanguardEntity.initialize(serverWorld, serverWorld.getLocalDifficulty(blockPos), SpawnReason.EVENT, null, null);
+                        serverWorld.spawnEntityAndPassengers(skeletonVanguardEntity);
+                    } else {
+                        ZombieEntity zombieEntity = (ZombieEntity) EntityType.ZOMBIE.create(serverWorld);
+                        zombieEntity.refreshPositionAndAngles(blockPos, SummonerEntity.this.world.random.nextFloat() * 360F, 0.0F);
+                        zombieEntity.initialize(serverWorld, serverWorld.getLocalDifficulty(blockPos), SpawnReason.EVENT, null, null);
+                        serverWorld.spawnEntityAndPassengers(zombieEntity);
+                        int skeletonChance = world.getRandom().nextInt(8);
+                        if (skeletonChance == 0) {
+                            SkeletonEntity skeletonEntity = (SkeletonEntity) EntityType.SKELETON.create(serverWorld);
+                            skeletonEntity.refreshPositionAndAngles(blockPos, SummonerEntity.this.world.random.nextFloat() * 360F, 0.0F);
+                            skeletonEntity.initialize(serverWorld, serverWorld.getLocalDifficulty(blockPos), SpawnReason.EVENT, null, null);
+                            if (SummonerEntity.this.gotShotByABow) {
+                                skeletonEntity.equipStack(EquipmentSlot.MAINHAND, new ItemStack(Items.BOW));
+                            }
+                            serverWorld.spawnEntityAndPassengers(skeletonEntity);
                         }
-                        serverWorld.spawnEntityAndPassengers(skeletonEntity);
                     }
                 }
+                if (spellCount >= 3)
+                    break;
             }
 
         }
@@ -441,7 +448,7 @@ public class SummonerEntity extends SpellCastingEntity {
         }
     }
 
-    class LookAtTargetGoalNecro extends SpellCastingEntity.LookAtTargetGoal {
+    private class LookAtTargetGoalNecro extends SpellCastingEntity.LookAtTargetGoal {
         private LookAtTargetGoalNecro() {
             super();
         }
@@ -475,7 +482,7 @@ public class SummonerEntity extends SpellCastingEntity {
         return false;
     }
 
-    static class NormalAttack extends MeleeAttackGoal {
+    private class NormalAttack extends MeleeAttackGoal {
         private final SummonerEntity summonerEntity;
 
         public NormalAttack(PathAwareEntity mob, double speed, boolean pauseWhenMobIdle) {

@@ -47,12 +47,8 @@ public class VoidShadeModel<T extends VoidShadeEntity> extends CompositeEntityMo
     @Override
     public void setAngles(T entity, float limbAngle, float limbDistance, float animationProgress, float headYaw, float headPitch) {
         this.body.pivotY = 4.0F + MathHelper.sin(animationProgress * 0.1262F) * 0.8F;
-        // setRotationAngle(rightArm, -1.5708F, 0.0F, 0.0F);
-        // if (entity.getTarget() != null) {
-        // System.out.println("TEST");
         this.rightArm.pitch = -1.5708F + MathHelper.sin(animationProgress * 0.1262F) * 0.1F;
         this.leftArm.pitch = this.rightArm.pitch;
-        // }
         float k = MathHelper.sin(this.handSwingProgress * 3.1415927F);
         if (k > 0) {
             this.rightArm.pitch = -k * 1.5F;
