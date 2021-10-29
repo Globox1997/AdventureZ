@@ -70,6 +70,10 @@ public class AdventureConfig implements ConfigData {
     @ConfigEntry.BoundedDiscrete(min = 0, max = 100)
     @Comment("Chance for spawning when desert well generates; 1/Value")
     public int desert_rhino_well_spawn_chance = 1;
+    @ConfigEntry.Category("spawn_setting")
+    @ConfigEntry.Gui.RequiresRestart
+    @ConfigEntry.BoundedDiscrete(min = 0, max = 100)
+    public int shaman_spawn_weight = 1;
 
     // Allow settings
     @ConfigEntry.Category("spawn_setting")

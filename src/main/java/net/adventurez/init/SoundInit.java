@@ -88,6 +88,11 @@ public class SoundInit {
     public static SoundEvent DESERT_RHINO_WALK_EVENT = register("adventurez:desert_rhino_walk");
     public static SoundEvent DESERT_RHINO_IDLE_EVENT = register("adventurez:desert_rhino_idle");
     public static SoundEvent DESERT_RHINO_HIT_EVENT = register("adventurez:desert_rhino_hit");
+    // Shaman
+    public static SoundEvent SHAMAN_DEATH_EVENT = register("adventurez:shaman_death");
+    public static SoundEvent SHAMAN_WALK_EVENT = register("adventurez:shaman_walk");
+    public static SoundEvent SHAMAN_IDLE_EVENT = register("adventurez:shaman_idle");
+    public static SoundEvent SHAMAN_HURT_EVENT = register("adventurez:shaman_hurt");
     // Item
     public static SoundEvent ROCK_IMPACT_EVENT = register("adventurez:rock_impact");
     public static SoundEvent ROCK_THROW_EVENT = register("adventurez:rock_throw");

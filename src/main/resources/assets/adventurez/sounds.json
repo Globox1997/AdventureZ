@@ -536,5 +536,37 @@
       "adventurez:rhino_attack3",
       "adventurez:rhino_attack4"
     ]
+  },
+  "shaman_death": {
+    "sounds": [
+      "adventurez:shaman_death1",
+      "adventurez:shaman_death2",
+      "adventurez:shaman_death3"
+    ]
+  },
+  "shaman_hurt": {
+    "sounds": [
+      "adventurez:shaman_hurt1",
+      "adventurez:shaman_hurt2",
+      "adventurez:shaman_hurt3",
+      "adventurez:shaman_hurt4"
+    ]
+  },
+  "shaman_walk": {
+    "sounds": [
+      "adventurez:shaman_walk1",
+      "adventurez:shaman_walk2",
+      "adventurez:shaman_walk3",
+      "adventurez:shaman_walk4"
+    ]
+  },
+  "shaman_idle": {
+    "sounds": [
+      "adventurez:shaman_idle1",
+      "adventurez:shaman_idle2",
+      "adventurez:shaman_idle3",
+      "adventurez:shaman_idle4",
+      "adventurez:shaman_idle5"
+    ]
   }
 }

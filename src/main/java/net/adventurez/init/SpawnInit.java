@@ -56,6 +56,9 @@ public class SpawnInit {
         if (biome.getCategory().equals(Biome.Category.DESERT)) {
             addMobSpawnToBiome(biome, SpawnGroup.CREATURE, new SpawnSettings.SpawnEntry(EntityInit.DESERT_RHINO_ENTITY, ConfigInit.CONFIG.desert_rhino_spawn_weight, 1, 1));
         }
+        if (biome.getCategory().equals(Biome.Category.SWAMP)) {
+            addMobSpawnToBiome(biome, SpawnGroup.CREATURE, new SpawnSettings.SpawnEntry(EntityInit.SHAMAN_ENTITY, ConfigInit.CONFIG.shaman_spawn_weight, 1, 1));
+        }
 
     }
 
@@ -86,6 +89,7 @@ public class SpawnInit {
         SpawnRestriction.register(EntityInit.ENDER_WHALE_ENTITY, SpawnRestriction.Location.NO_RESTRICTIONS, Heightmap.Type.MOTION_BLOCKING_NO_LEAVES, EnderWhaleEntity::canSpawn);
         SpawnRestriction.register(EntityInit.IGUANA_ENTITY, SpawnRestriction.Location.ON_GROUND, Heightmap.Type.MOTION_BLOCKING_NO_LEAVES, IguanaEntity::isValidNaturalSpawn);
         SpawnRestriction.register(EntityInit.DESERT_RHINO_ENTITY, SpawnRestriction.Location.ON_GROUND, Heightmap.Type.MOTION_BLOCKING_NO_LEAVES, DesertRhinoEntity::canSpawn);
+        SpawnRestriction.register(EntityInit.SHAMAN_ENTITY, SpawnRestriction.Location.ON_GROUND, Heightmap.Type.MOTION_BLOCKING_NO_LEAVES, ShamanEntity::canSpawn);
     }
 
 }

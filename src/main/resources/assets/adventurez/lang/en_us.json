@@ -30,6 +30,7 @@
   "entity.adventurez.blaze_guardian_shield": "Blaze Guardian",
   "entity.adventurez.amethyst_shard": "Amethyst Shard",
   "entity.adventurez.desert_rhino": "Desert Rhino",
+  "entity.adventurez.shaman": "Shaman",
 
   "item.adventurez.spawn_stone_golem": "Blackstone Golem Spawn Egg",
   "item.adventurez.spawn_small_stone_golem": "Mini Blackstone Golem Spawn Egg",
@@ -54,6 +55,7 @@
   "item.adventurez.spawn_iguana": "Iguana Spawn Egg",
   "item.adventurez.spawn_amethyst_golem": "Amethyst Golem Spawn Egg",
   "item.adventurez.spawn_desert_rhino": "Desert Rhino Spawn Egg",
+  "item.adventurez.spawn_shaman": "Shaman Spawn Egg",
 
   "item.adventurez.gilded_stone": "Gilded Blackstone Shard",
   "item.adventurez.gilded_stone.tooltip": "Placeable in the Stone Holder",
@@ -161,6 +163,7 @@
   "text.autoconfig.adventurez.option.amethyst_golem_spawn_chance": "Amethyst Golem Geode Spawn Chance",
   "text.autoconfig.adventurez.option.desert_rhino_spawn_weight": "Desert Rhino Spawn Weight",
   "text.autoconfig.adventurez.option.desert_rhino_well_spawn_chance": "Desert Rhino Well Spawn Chance",
-  "text.autoconfig.adventurez.option.allow_extra_tooltips": "Allow Extra Tooltips"
+  "text.autoconfig.adventurez.option.allow_extra_tooltips": "Allow Extra Tooltips",
+  "text.autoconfig.adventurez.option.shaman_spawn_weight": "Shaman Spawn Weight"
 
 }

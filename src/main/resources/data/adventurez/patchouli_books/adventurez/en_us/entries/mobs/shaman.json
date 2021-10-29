@@ -1,0 +1,16 @@
+{
+    "name": "Shaman",
+    "icon": "adventurez:stone_golem_heart",
+    "category": "adventurez:mob_category",
+    "pages": [
+        {
+            "type": "text",
+            "text": "The Shaman is a swamp creature which fell in a alchemy cauldron when it was young. Since then it experiments with some kind of evil and toxic magic"
+        },
+        {
+            "type": "entity",
+            "name": "Showcase",
+            "entity": "adventurez:shaman"
+        }
+    ]
+}
