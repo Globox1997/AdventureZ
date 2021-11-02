@@ -93,6 +93,12 @@ public class SoundInit {
     public static SoundEvent SHAMAN_WALK_EVENT = register("adventurez:shaman_walk");
     public static SoundEvent SHAMAN_IDLE_EVENT = register("adventurez:shaman_idle");
     public static SoundEvent SHAMAN_HURT_EVENT = register("adventurez:shaman_hurt");
+    // Deer
+    public static SoundEvent DEER_DEATH_EVENT = register("adventurez:deer_death");
+    public static SoundEvent DEER_IDLE_EVENT = register("adventurez:deer_idle");
+    public static SoundEvent DEER_HURT_EVENT = register("adventurez:deer_hurt");
+    public static SoundEvent BABY_DEER_IDLE_EVENT = register("adventurez:baby_deer_idle");
+    public static SoundEvent BABY_DEER_HURT_EVENT = register("adventurez:baby_deer_hurt");
     // Item
     public static SoundEvent ROCK_IMPACT_EVENT = register("adventurez:rock_impact");
     public static SoundEvent ROCK_THROW_EVENT = register("adventurez:rock_throw");

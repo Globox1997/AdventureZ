@@ -1,0 +1,24 @@
+{
+    "parent": "minecraft:recipes/root",
+    "rewards": {
+        "recipes": [
+            "adventurez:cooked_venison",
+            "adventurez:cooked_venison_from_campfire_cooking",
+            "adventurez:cooked_venison_from_smoking"
+        ]
+    },
+    "criteria": {
+        "got_the_venison": {
+            "trigger": "minecraft:inventory_changed",
+            "conditions": {
+                "items": [
+                    {
+                        "items": [
+                            "adventurez:raw_venison"
+                        ]
+                    }
+                ]
+            }
+        }
+    }
+}

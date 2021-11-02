@@ -568,5 +568,45 @@
       "adventurez:shaman_idle4",
       "adventurez:shaman_idle5"
     ]
+  },
+  "deer_death": {
+    "sounds": [
+      "adventurez:deer_death1",
+      "adventurez:deer_death2",
+      "adventurez:deer_death3"
+    ]
+  },
+  "deer_idle": {
+    "sounds": [
+      "adventurez:deer_idle1",
+      "adventurez:deer_idle2",
+      "adventurez:deer_idle3",
+      "adventurez:deer_idle4",
+      "adventurez:deer_idle5",
+      "adventurez:deer_idle6",
+      "adventurez:deer_idle7"
+    ]
+  },
+  "deer_hurt": {
+    "sounds": [
+      "adventurez:deer_hurt1",
+      "adventurez:deer_hurt2",
+      "adventurez:deer_hurt3"
+    ]
+  },
+  "baby_deer_idle": {
+    "sounds": [
+      "adventurez:baby_deer_idle1",
+      "adventurez:baby_deer_idle2",
+      "adventurez:baby_deer_idle3",
+      "adventurez:baby_deer_idle4"
+    ]
+  },
+  "baby_deer_hurt": {
+    "sounds": [
+      "adventurez:baby_deer_hurt1",
+      "adventurez:baby_deer_hurt2",
+      "adventurez:baby_deer_hurt3"
+    ]
   }
 }

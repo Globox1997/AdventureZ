@@ -31,6 +31,7 @@
   "entity.adventurez.amethyst_shard": "Amethyst Shard",
   "entity.adventurez.desert_rhino": "Desert Rhino",
   "entity.adventurez.shaman": "Shaman",
+  "entity.adventurez.deer": "Deer",
 
   "item.adventurez.spawn_stone_golem": "Blackstone Golem Spawn Egg",
   "item.adventurez.spawn_small_stone_golem": "Mini Blackstone Golem Spawn Egg",
@@ -56,6 +57,7 @@
   "item.adventurez.spawn_amethyst_golem": "Amethyst Golem Spawn Egg",
   "item.adventurez.spawn_desert_rhino": "Desert Rhino Spawn Egg",
   "item.adventurez.spawn_shaman": "Shaman Spawn Egg",
+  "item.adventurez.spawn_deer": "Deer Spawn Egg",
 
   "item.adventurez.gilded_stone": "Gilded Blackstone Shard",
   "item.adventurez.gilded_stone.tooltip": "Placeable in the Stone Holder",
@@ -96,6 +98,8 @@
   "item.adventurez.rhino_leather": "Rhino Leather",
   "item.adventurez.rhino_meat": "Rhino Meat",
   "item.adventurez.cooked_rhino_meat": "Cooked Rhino Meat",
+  "item.adventurez.raw_venison": "Raw Venison",
+  "item.adventurez.cooked_venison": "Cooked Venison",
 
   "item.adventurez.moreinfo.tooltip": "§8Hold §6Shift §8For More Info",
   
@@ -164,6 +168,7 @@
   "text.autoconfig.adventurez.option.desert_rhino_spawn_weight": "Desert Rhino Spawn Weight",
   "text.autoconfig.adventurez.option.desert_rhino_well_spawn_chance": "Desert Rhino Well Spawn Chance",
   "text.autoconfig.adventurez.option.allow_extra_tooltips": "Allow Extra Tooltips",
-  "text.autoconfig.adventurez.option.shaman_spawn_weight": "Shaman Spawn Weight"
+  "text.autoconfig.adventurez.option.shaman_spawn_weight": "Shaman Spawn Weight",
+  "text.autoconfig.adventurez.option.deer_spawn_weight": "Deer Spawn Weight"
 
 }

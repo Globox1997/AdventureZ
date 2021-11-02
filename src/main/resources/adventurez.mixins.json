@@ -31,6 +31,7 @@
     "AmethystClusterBlockMixin",
     "IronGolemEntityMixin",
     "DesertWellFeatureMixin",
+    "DefaultBiomeFeaturesMixin",
     "accessor.LivingEntityAccessor",
     "accessor.FallingBlockAccessor",
     "accessor.EntityAccessor",

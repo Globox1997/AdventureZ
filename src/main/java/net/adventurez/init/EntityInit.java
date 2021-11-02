@@ -60,6 +60,7 @@ public class EntityInit {
     public static final EntityType<EnderWhaleEntity> ENDER_WHALE_ENTITY = FabricEntityTypeBuilder.create(SpawnGroup.CREATURE, EnderWhaleEntity::new).dimensions(EntityDimensions.fixed(4.0F, 2.5F))
             .build();
     public static final EntityType<IguanaEntity> IGUANA_ENTITY = FabricEntityTypeBuilder.create(SpawnGroup.CREATURE, IguanaEntity::new).dimensions(EntityDimensions.changing(1.5F, 0.5F)).build();
+    public static final EntityType<DeerEntity> DEER_ENTITY = FabricEntityTypeBuilder.create(SpawnGroup.CREATURE, DeerEntity::new).dimensions(EntityDimensions.changing(1.4F, 1.8F)).build();
 
     // Nonliving Entity
     public static final EntityType<ThrownRockEntity> THROWNROCK_ENTITY = FabricEntityTypeBuilder.<ThrownRockEntity>create(SpawnGroup.MISC, ThrownRockEntity::new)
@@ -112,6 +113,7 @@ public class EntityInit {
         Registry.register(Registry.ENTITY_TYPE, new Identifier("adventurez", "desert_rhino"), DESERT_RHINO_ENTITY);
         Registry.register(Registry.ENTITY_TYPE, new Identifier("adventurez", "void_cloud"), VOID_CLOUD_ENTITY);
         Registry.register(Registry.ENTITY_TYPE, new Identifier("adventurez", "shaman"), SHAMAN_ENTITY);
+        Registry.register(Registry.ENTITY_TYPE, new Identifier("adventurez", "deer"), DEER_ENTITY);
 
         // Attributes
         FabricDefaultAttributeRegistry.register(STONEGOLEM_ENTITY, StoneGolemEntity.createStoneGolemAttributes());
@@ -138,6 +140,7 @@ public class EntityInit {
         FabricDefaultAttributeRegistry.register(AMETHYST_GOLEM_ENTITY, AmethystGolemEntity.createAmethystGolemAttributes());
         FabricDefaultAttributeRegistry.register(DESERT_RHINO_ENTITY, DesertRhinoEntity.createDesertRhinoAttributes());
         FabricDefaultAttributeRegistry.register(SHAMAN_ENTITY, ShamanEntity.createShamanAttributes());
+        FabricDefaultAttributeRegistry.register(DEER_ENTITY, DeerEntity.createDeerAttributes());
 
         // Spawn Eggs
         Registry.register(Registry.ITEM, new Identifier("adventurez", "spawn_stone_golem"), new SpawnEggItem(STONEGOLEM_ENTITY, 2956072, 1445648, new Item.Settings().group(ItemGroup.MISC)));
@@ -166,5 +169,6 @@ public class EntityInit {
         Registry.register(Registry.ITEM, new Identifier("adventurez", "spawn_amethyst_golem"), new SpawnEggItem(AMETHYST_GOLEM_ENTITY, 5395026, 9267916, new Item.Settings().group(ItemGroup.MISC)));
         Registry.register(Registry.ITEM, new Identifier("adventurez", "spawn_desert_rhino"), new SpawnEggItem(DESERT_RHINO_ENTITY, 7884087, 12031588, new Item.Settings().group(ItemGroup.MISC)));
         Registry.register(Registry.ITEM, new Identifier("adventurez", "spawn_shaman"), new SpawnEggItem(SHAMAN_ENTITY, 210734, 8739394, new Item.Settings().group(ItemGroup.MISC)));
+        Registry.register(Registry.ITEM, new Identifier("adventurez", "spawn_deer"), new SpawnEggItem(DEER_ENTITY, 5780491, 9725748, new Item.Settings().group(ItemGroup.MISC)));
     }
 }

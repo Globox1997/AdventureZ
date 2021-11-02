@@ -51,6 +51,10 @@ public class ItemInit {
             new Item(new Item.Settings().group(ItemGroup.FOOD).food(new FoodComponent.Builder().hunger(3).saturationModifier(0.3F).meat().build())));
     public static final Item COOKED_RHINO_MEAT = register("cooked_rhino_meat",
             new Item(new Item.Settings().group(ItemGroup.FOOD).food(new FoodComponent.Builder().hunger(8).saturationModifier(0.8F).meat().build())));
+    public static final Item RAW_VENISON = register("raw_venison",
+            new Item(new Item.Settings().group(ItemGroup.FOOD).food(new FoodComponent.Builder().hunger(3).saturationModifier(0.3F).meat().build())));
+    public static final Item COOKED_VENISON = register("cooked_venison",
+            new Item(new Item.Settings().group(ItemGroup.FOOD).food(new FoodComponent.Builder().hunger(6).saturationModifier(0.8F).meat().build())));
 
     // Armor
     public static final ArmorMaterial STONE_GOLEM_ARMOR_MATERIAL = new StoneGolemArmorMaterial();
