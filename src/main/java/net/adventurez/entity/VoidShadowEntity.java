@@ -343,11 +343,6 @@ public class VoidShadowEntity extends FlyingEntity implements Monster {
         return SoundInit.SHADOW_DEATH_EVENT;
     }
 
-    // @Override
-    // protected SoundEvent getHurtSound(DamageSource source) {
-    // return SoundEvents.ENTITY_ENDER_DRAGON_HURT;
-    // }
-
     @Override
     protected float getSoundVolume() {
         return 5.0F;
