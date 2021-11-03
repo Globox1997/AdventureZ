@@ -1,6 +1,7 @@
 package net.adventurez.block;
 
 import net.adventurez.init.BlockInit;
+import net.adventurez.init.ConfigInit;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockEntityProvider;
 import net.minecraft.block.BlockRenderType;
@@ -66,12 +67,14 @@ public class PiglinFlagBlock extends Block implements BlockEntityProvider {
     @Override
     @Environment(EnvType.CLIENT)
     public void appendTooltip(ItemStack stack, @Nullable BlockView world, List<Text> tooltip, TooltipContext options) {
-        tooltip.add(new TranslatableText("item.adventurez.moreinfo.tooltip"));
-        if (InputUtil.isKeyPressed(MinecraftClient.getInstance().getWindow().getHandle(), 340)) {
-            tooltip.remove(new TranslatableText("item.adventurez.moreinfo.tooltip"));
-            tooltip.add(new TranslatableText("block.adventurez.piglin_flag_block.tooltip"));
-            tooltip.add(new TranslatableText("block.adventurez.piglin_flag_block.tooltip2"));
-            tooltip.add(new TranslatableText("block.adventurez.piglin_flag_block.tooltip3"));
+        if (ConfigInit.CONFIG.allow_extra_tooltips) {
+            tooltip.add(new TranslatableText("item.adventurez.moreinfo.tooltip"));
+            if (InputUtil.isKeyPressed(MinecraftClient.getInstance().getWindow().getHandle(), 340)) {
+                tooltip.remove(new TranslatableText("item.adventurez.moreinfo.tooltip"));
+                tooltip.add(new TranslatableText("block.adventurez.piglin_flag_block.tooltip"));
+                tooltip.add(new TranslatableText("block.adventurez.piglin_flag_block.tooltip2"));
+                tooltip.add(new TranslatableText("block.adventurez.piglin_flag_block.tooltip3"));
+            }
         }
     }
 

@@ -104,5 +104,7 @@ public class AdventureConfig implements ConfigData {
     public boolean allow_special_enchant_loot = true;
     @ConfigEntry.Category("misc")
     public boolean allow_extra_tooltips = true;
+    @ConfigEntry.Category("misc")
+    public boolean allow_all_items_on_holder = false;
 
 }

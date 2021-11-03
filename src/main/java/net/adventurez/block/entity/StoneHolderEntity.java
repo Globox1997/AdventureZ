@@ -4,6 +4,7 @@ import net.adventurez.entity.StoneGolemEntity;
 import net.adventurez.init.BlockInit;
 import net.adventurez.init.ConfigInit;
 import net.adventurez.init.EntityInit;
+import net.adventurez.init.ItemInit;
 import net.adventurez.init.SoundInit;
 import net.adventurez.init.TagInit;
 import net.fabricmc.fabric.api.block.entity.BlockEntityClientSerializable;
@@ -91,15 +92,17 @@ public class StoneHolderEntity extends BlockEntity implements Inventory, BlockEn
     public void tick() {
         if (!this.isEmpty()) {
             if (!world.getBlockState(pos.up()).isAir()) {
-                ItemScatterer.spawn(world, pos, inventory);
+                if (!this.world.isClient) {
+                    ItemScatterer.spawn(world, pos, inventory);
+                    inventory.clear();
+                }
                 tickCounter = -1;
-            }
-            if (ConfigInit.CONFIG.allow_stone_golem_summoning) {
+            } else if (ConfigInit.CONFIG.allow_stone_golem_summoning) {
                 this.tickCounter++;
-            }
-            if (tickCounter > 40 && this.world.getRegistryKey() == World.NETHER) {
-                this.update();
-                tickCounter = 0;
+                if (tickCounter > 40 && this.getStack(0).isOf(ItemInit.GILDED_STONE) && this.world.getRegistryKey() == World.NETHER) {
+                    this.update();
+                    tickCounter = 0;
+                }
             }
         }
         if (startBuildingGolem == true) {
@@ -107,7 +110,7 @@ public class StoneHolderEntity extends BlockEntity implements Inventory, BlockEn
         }
     }
 
-    public void update() {
+    private void update() {
         BlockState state = this.getCachedState();
         BlockPos secondHolderPos = pos.north(10);
         BlockPos thirdHolderPos = pos.east(5).north(5);

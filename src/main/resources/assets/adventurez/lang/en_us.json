@@ -169,6 +169,7 @@
   "text.autoconfig.adventurez.option.desert_rhino_well_spawn_chance": "Desert Rhino Well Spawn Chance",
   "text.autoconfig.adventurez.option.allow_extra_tooltips": "Allow Extra Tooltips",
   "text.autoconfig.adventurez.option.shaman_spawn_weight": "Shaman Spawn Weight",
-  "text.autoconfig.adventurez.option.deer_spawn_weight": "Deer Spawn Weight"
+  "text.autoconfig.adventurez.option.deer_spawn_weight": "Deer Spawn Weight",
+  "text.autoconfig.adventurez.option.allow_all_items_on_holder": "Allow all items on holder"
 
 }

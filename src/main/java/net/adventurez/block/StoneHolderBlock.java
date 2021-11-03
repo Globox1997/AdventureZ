@@ -3,12 +3,13 @@ package net.adventurez.block;
 import java.util.List;
 
 import net.adventurez.init.BlockInit;
+import net.adventurez.init.ConfigInit;
 import net.minecraft.block.entity.BlockEntityTicker;
 import net.minecraft.block.entity.BlockEntityType;
 import org.jetbrains.annotations.Nullable;
 
 import net.adventurez.block.entity.StoneHolderEntity;
-import net.adventurez.init.ItemInit;
+import net.adventurez.init.TagInit;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
 import net.minecraft.block.Block;
@@ -55,42 +56,41 @@ public class StoneHolderBlock extends Block implements BlockEntityProvider {
     @Override
     @Environment(EnvType.CLIENT)
     public void appendTooltip(ItemStack stack, @Nullable BlockView world, List<Text> tooltip, TooltipContext options) {
-        tooltip.add(new TranslatableText("item.adventurez.moreinfo.tooltip"));
-        if (InputUtil.isKeyPressed(MinecraftClient.getInstance().getWindow().getHandle(), 340)) {
-            tooltip.remove(new TranslatableText("item.adventurez.moreinfo.tooltip"));
-            tooltip.add(new TranslatableText("block.adventurez.stone_holder_block.tooltip"));
-            tooltip.add(new TranslatableText("block.adventurez.stone_holder_block.tooltip2"));
-            tooltip.add(new TranslatableText("block.adventurez.stone_holder_block.tooltip3"));
+        if (ConfigInit.CONFIG.allow_extra_tooltips) {
+            tooltip.add(new TranslatableText("item.adventurez.moreinfo.tooltip"));
+            if (InputUtil.isKeyPressed(MinecraftClient.getInstance().getWindow().getHandle(), 340)) {
+                tooltip.remove(new TranslatableText("item.adventurez.moreinfo.tooltip"));
+                tooltip.add(new TranslatableText("block.adventurez.stone_holder_block.tooltip"));
+                tooltip.add(new TranslatableText("block.adventurez.stone_holder_block.tooltip2"));
+                tooltip.add(new TranslatableText("block.adventurez.stone_holder_block.tooltip3"));
+            }
         }
     }
 
     @Override
     public ActionResult onUse(BlockState state, World world, BlockPos pos, PlayerEntity player, Hand hand, BlockHitResult hit) {
+        ItemStack itemStack = player.getStackInHand(hand);
         Inventory blockEntity = (Inventory) world.getBlockEntity(pos);
-        ItemStack stack = blockEntity.getStack(0);
-        if (!world.getBlockState(pos.up()).isAir()) {
-            return ActionResult.PASS;
-        }
-        if (!stack.isEmpty()) {
-            if (!player.getMainHandStack().isEmpty()) {
-                return ActionResult.FAIL;
-            }
-            player.giveItemStack(stack);
-            blockEntity.clear();
-            return ActionResult.SUCCESS;
-        } else {
-            ItemStack heldItem = player.getMainHandStack();
-            if (heldItem.isItemEqual(new ItemStack(ItemInit.GILDED_STONE))) {
+        ItemStack blockStack = blockEntity.getStack(0);
+        if (blockStack.isEmpty()) {
+            if ((itemStack.isIn(TagInit.HOLDER_ITEMS) || ConfigInit.CONFIG.allow_all_items_on_holder) && world.getBlockState(pos.up()).isAir()) {
                 if (!world.isClient) {
-                    blockEntity.setStack(0, heldItem.split(1));
-                    return ActionResult.SUCCESS;
-                } else {
-                    return ActionResult.SUCCESS;
+                    blockEntity.setStack(0, new ItemStack(itemStack.getItem(), 1));
+                    if (!player.isCreative())
+                        itemStack.decrement(1);
                 }
+                return ActionResult.success(world.isClient);
+            } else
+                return ActionResult.CONSUME;
+        } else {
+            if (!world.isClient)
+                if (!player.getInventory().insertStack(blockStack))
+                    player.dropItem(blockStack, false);
 
-            }
+            blockEntity.clear();
+            return ActionResult.success(world.isClient);
         }
-        return ActionResult.PASS;
+
     }
 
     @Override
