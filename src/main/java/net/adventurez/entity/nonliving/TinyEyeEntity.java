@@ -78,13 +78,10 @@ public class TinyEyeEntity extends ExplosiveProjectileEntity {
     @Override
     public void writeCustomDataToNbt(NbtCompound tag) {
         super.writeCustomDataToNbt(tag);
-        if (this.target != null) {
+        if (this.target != null)
             tag.putUuid("Target", this.target.getUuid());
-        }
-
-        if (this.direction != null) {
+        if (this.direction != null)
             tag.putInt("Dir", this.direction.getId());
-        }
 
         tag.putInt("Steps", this.stepCount);
         tag.putDouble("TXD", this.targetX);
@@ -99,13 +96,11 @@ public class TinyEyeEntity extends ExplosiveProjectileEntity {
         this.targetX = tag.getDouble("TXD");
         this.targetY = tag.getDouble("TYD");
         this.targetZ = tag.getDouble("TZD");
-        if (tag.contains("Dir", 99)) {
+        if (tag.contains("Dir", 99))
             this.direction = Direction.byId(tag.getInt("Dir"));
-        }
 
-        if (tag.containsUuid("Target")) {
+        if (tag.containsUuid("Target"))
             this.targetUuid = tag.getUuid("Target");
-        }
 
     }
 
@@ -116,9 +111,9 @@ public class TinyEyeEntity extends ExplosiveProjectileEntity {
     private void movingAround() {
         double d = 0.5D;
         BlockPos blockPos2;
-        if (this.target == null) {
+        if (this.target == null)
             blockPos2 = this.getBlockPos().down();
-        } else {
+        else {
             d = (double) this.target.getHeight() * 0.5D;
             blockPos2 = new BlockPos(this.target.getX(), this.target.getY() + d, this.target.getZ());
         }
@@ -146,10 +141,8 @@ public class TinyEyeEntity extends ExplosiveProjectileEntity {
 
     @Override
     public void checkDespawn() {
-        if (this.world.getDifficulty() == Difficulty.PEACEFUL) {
+        if (this.world.getDifficulty() == Difficulty.PEACEFUL)
             this.discard();
-        }
-
     }
 
     @Override
@@ -273,7 +266,8 @@ public class TinyEyeEntity extends ExplosiveProjectileEntity {
     public void onBlockHit(BlockHitResult blockHitResult) {
         super.onBlockHit(blockHitResult);
         this.playSound(SoundEvents.ENTITY_ENDER_EYE_DEATH, 1.0F, 1.0F);
-        this.discard();
+        if (!this.world.isClient)
+            this.discard();
     }
 
     @Override

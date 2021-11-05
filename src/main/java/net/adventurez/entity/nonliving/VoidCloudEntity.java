@@ -191,9 +191,8 @@ public class VoidCloudEntity extends Entity {
         this.radiusOnUse = nbt.getFloat("RadiusOnUse");
         this.radiusGrowth = nbt.getFloat("RadiusPerTick");
         this.setRadius(nbt.getFloat("Radius"));
-        if (nbt.containsUuid("Owner")) {
+        if (nbt.containsUuid("Owner"))
             this.ownerUuid = nbt.getUuid("Owner");
-        }
     }
 
     @Override
@@ -205,16 +204,14 @@ public class VoidCloudEntity extends Entity {
         nbt.putFloat("RadiusOnUse", this.radiusOnUse);
         nbt.putFloat("RadiusPerTick", this.radiusGrowth);
         nbt.putFloat("Radius", this.getRadius());
-        if (this.ownerUuid != null) {
+        if (this.ownerUuid != null)
             nbt.putUuid("Owner", this.ownerUuid);
-        }
     }
 
     @Override
     public void onTrackedDataSet(TrackedData<?> data) {
-        if (RADIUS.equals(data)) {
+        if (RADIUS.equals(data))
             this.calculateDimensions();
-        }
         super.onTrackedDataSet(data);
     }
 

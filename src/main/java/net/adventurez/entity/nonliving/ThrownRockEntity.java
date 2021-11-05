@@ -60,11 +60,9 @@ public class ThrownRockEntity extends ThrownItemEntity {
     public void handleStatus(byte status) {
         if (status == 3) {
             ParticleEffect particleEffect = this.getParticleParameters();
-
-            for (int i = 0; i < 32; ++i) {
+            for (int i = 0; i < 32; ++i)
                 this.world.addParticle(particleEffect, this.getX() + this.world.random.nextDouble() * 0.35D - 0.175D, this.getY(), this.getZ() + this.world.random.nextDouble() * 0.35D - 0.175D, 0.0D,
                         0.1D, 0.0D);
-            }
         }
 
     }
@@ -74,10 +72,9 @@ public class ThrownRockEntity extends ThrownItemEntity {
         super.onCollision(hitResult);
         BlockState state = this.getLandingBlockState();
         if (this.world.isClient) {
-            for (int i = 0; i < 32; ++i) {
+            for (int i = 0; i < 32; ++i)
                 this.world.addParticle(new BlockStateParticleEffect(ParticleTypes.BLOCK, state), this.getX() + this.world.random.nextDouble() * 0.35D - 0.175D, this.getY(),
                         this.getZ() + this.world.random.nextDouble() * 0.35D - 0.175D, 0.0D, 0.1D, 0.0D);
-            }
         } else {
             if (this.getOwner() instanceof PlayerEntity && ((PlayerEntity) this.getOwner()).hasStatusEffect(EffectInit.BLACKSTONED_HEART)) {
                 Explosion.DestructionType destructionType = this.world.getGameRules().getBoolean(GameRules.DO_MOB_GRIEFING) ? Explosion.DestructionType.DESTROY : Explosion.DestructionType.NONE;

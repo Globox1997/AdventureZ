@@ -72,9 +72,11 @@ public class FireBreathEntity extends ExplosiveProjectileEntity {
                 this.world.addParticle(ParticleTypes.FLAME, this.getParticleX(1.0D), this.getRandomBodyY(), this.getParticleZ(1.0D), d, e, f);
             }
         }
-        removeTicker++;
-        if (!this.world.isClient && removeTicker >= 80) {
-            this.discard();
+
+        if (!this.world.isClient) {
+            removeTicker++;
+            if (removeTicker >= 80)
+                this.discard();
         }
     }
 

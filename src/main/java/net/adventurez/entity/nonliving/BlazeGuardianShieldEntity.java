@@ -47,9 +47,8 @@ public class BlazeGuardianShieldEntity extends Entity {
 
     @Override
     public boolean damage(DamageSource source, float amount) {
-        if (source.isProjectile()) {
+        if (source.isProjectile())
             return false;
-        }
         hit++;
         if (hit > 1 + this.world.random.nextInt(2)) {
             this.world.playSound(null, this.getBlockPos(), SoundEvents.ITEM_SHIELD_BREAK, SoundCategory.HOSTILE, 1.0F, 1.0F);
@@ -58,29 +57,10 @@ public class BlazeGuardianShieldEntity extends Entity {
             }
             if (!this.world.isClient)
                 this.discard();
-        } else {
+        } else
             this.world.playSound(null, this.getBlockPos(), SoundEvents.ITEM_SHIELD_BLOCK, SoundCategory.HOSTILE, 1.0F, 1.0F);
-        }
         return this.isInvulnerableTo(source);
     }
-
-    // @Override
-    // public boolean damage(DamageSource source, float amount) {
-    // int chance = 0;
-    // if (source.isProjectile()) {
-    // chance = world.random.nextInt(3);
-    // } else
-    // if (!source.isUnblockable() && this.getHealth() < this.getMaxHealth() / 2) {
-    // chance = world.random.nextInt(4);
-    // } else {
-    // chance = world.random.nextInt(6);
-    // }
-    // if (chance == 1) {
-    // this.world.playSoundFromEntity(null, this, SoundEvents.ITEM_SHIELD_BLOCK, SoundCategory.HOSTILE, 1.0F, 1.0F);
-    // return false;
-    // } else
-    // return this.isInvulnerableTo(source) ? false : super.damage(source, amount);
-    // }
 
     @Override
     public boolean isPartOf(Entity entity) {
