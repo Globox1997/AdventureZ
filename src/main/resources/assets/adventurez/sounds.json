@@ -608,5 +608,50 @@
       "adventurez:baby_deer_hurt2",
       "adventurez:baby_deer_hurt3"
     ]
+  },
+  "hog_death": {
+    "sounds": [
+      "adventurez:hog_death1",
+      "adventurez:hog_death2",
+      "adventurez:hog_death3",
+      "adventurez:hog_death4"
+    ]
+  },
+  "hog_step": {
+    "sounds": [
+      "adventurez:hog_step1",
+      "adventurez:hog_step2",
+      "adventurez:hog_step3",
+      "adventurez:hog_step4",
+      "adventurez:hog_step5"
+    ]
+  },
+  "hog_idle": {
+    "sounds": [
+      "adventurez:hog_idle1",
+      "adventurez:hog_idle2",
+      "adventurez:hog_idle3",
+      "adventurez:hog_idle4",
+      "adventurez:hog_idle5",
+      "adventurez:hog_idle6",
+      "adventurez:hog_idle7",
+      "adventurez:hog_idle8",
+      "adventurez:hog_idle9"
+    ]
+  },
+  "hog_hurt": {
+    "sounds": [
+      "adventurez:hog_hurt1",
+      "adventurez:hog_hurt2",
+      "adventurez:hog_hurt3",
+      "adventurez:hog_hurt4",
+      "adventurez:hog_hurt5"
+    ]
+  },
+  "hog_attack": {
+    "sounds": [
+      "adventurez:hog_attack1",
+      "adventurez:hog_attack2"
+    ]
   }
 }

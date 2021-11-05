@@ -32,6 +32,7 @@
   "entity.adventurez.desert_rhino": "Desert Rhino",
   "entity.adventurez.shaman": "Shaman",
   "entity.adventurez.deer": "Deer",
+  "entity.adventurez.enderwarthog": "Enderwarthog",
 
   "item.adventurez.spawn_stone_golem": "Blackstone Golem Spawn Egg",
   "item.adventurez.spawn_small_stone_golem": "Mini Blackstone Golem Spawn Egg",
@@ -58,13 +59,14 @@
   "item.adventurez.spawn_desert_rhino": "Desert Rhino Spawn Egg",
   "item.adventurez.spawn_shaman": "Shaman Spawn Egg",
   "item.adventurez.spawn_deer": "Deer Spawn Egg",
+  "item.adventurez.spawn_enderwarthog": "Enderwarthog Spawn Egg",
 
   "item.adventurez.gilded_stone": "Gilded Blackstone Shard",
   "item.adventurez.gilded_stone.tooltip": "Placeable in the Stone Holder",
   "item.adventurez.stone_golem_arm": "Blackstone's Arm",
   "item.adventurez.stone_golem_arm.tooltip": "Hold Right Click to Charge Arm",
   "item.adventurez.stone_golem_heart": "Blackstone Golem Heart",
-  "item.adventurez.stone_golem_heart.tooltip": "Replace your own heart with it; Right click",
+  "item.adventurez.stone_golem_heart.tooltip": "Replace your own heart with it; Shift + Right click",
   "item.adventurez.stone_golem_helmet": "Gilded Netherite Helmet",
   "item.adventurez.stone_golem_chestplate": "Gilded Netherite Chestplate",
   "item.adventurez.stone_golem_leggings": "Gilded Netherite Leggings",
@@ -100,6 +102,9 @@
   "item.adventurez.cooked_rhino_meat": "Cooked Rhino Meat",
   "item.adventurez.raw_venison": "Raw Venison",
   "item.adventurez.cooked_venison": "Cooked Venison",
+  "item.adventurez.warthog_shell_piece": "Warthog Shell Piece",
+  "item.adventurez.warthog_meat": "Warthog Meat",
+  "item.adventurez.cooked_warthog_meat": "Cooked Warthog Meat",
 
   "item.adventurez.moreinfo.tooltip": "§8Hold §6Shift §8For More Info",
   
@@ -170,6 +175,7 @@
   "text.autoconfig.adventurez.option.allow_extra_tooltips": "Allow Extra Tooltips",
   "text.autoconfig.adventurez.option.shaman_spawn_weight": "Shaman Spawn Weight",
   "text.autoconfig.adventurez.option.deer_spawn_weight": "Deer Spawn Weight",
-  "text.autoconfig.adventurez.option.allow_all_items_on_holder": "Allow all items on holder"
-
+  "text.autoconfig.adventurez.option.allow_all_items_on_holder": "Allow all items on holder",
+  "text.autoconfig.adventurez.option.enderwarthog_spawn_weight": "Enderwarthog Spawn Weight",
+  "text.autoconfig.adventurez.option.warthog_rare_chance": "Enderwarthog Rare Chance"
 }

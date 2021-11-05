@@ -78,6 +78,10 @@ public class AdventureConfig implements ConfigData {
     @ConfigEntry.Gui.RequiresRestart
     @ConfigEntry.BoundedDiscrete(min = 0, max = 100)
     public int deer_spawn_weight = 6;
+    @ConfigEntry.Category("spawn_setting")
+    @ConfigEntry.Gui.RequiresRestart
+    @ConfigEntry.BoundedDiscrete(min = 0, max = 100)
+    public int enderwarthog_spawn_weight = 1;
 
     // Allow settings
     @ConfigEntry.Category("spawn_setting")
@@ -106,5 +110,6 @@ public class AdventureConfig implements ConfigData {
     public boolean allow_extra_tooltips = true;
     @ConfigEntry.Category("misc")
     public boolean allow_all_items_on_holder = false;
-
+    @ConfigEntry.Category("misc")
+    public float warthog_rare_chance = 0.01F;
 }

@@ -1,0 +1,14 @@
+{
+    "type": "minecraft:crafting_shaped",
+    "pattern": [
+        "dd"
+    ],
+    "key": {
+        "d": {
+            "item": "adventurez:warthog_shell_piece"
+        }
+    },
+    "result": {
+        "item": "minecraft:netherite_scrap"
+    }
+}

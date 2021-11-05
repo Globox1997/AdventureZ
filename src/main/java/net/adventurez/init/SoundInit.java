@@ -99,6 +99,12 @@ public class SoundInit {
     public static SoundEvent DEER_HURT_EVENT = register("adventurez:deer_hurt");
     public static SoundEvent BABY_DEER_IDLE_EVENT = register("adventurez:baby_deer_idle");
     public static SoundEvent BABY_DEER_HURT_EVENT = register("adventurez:baby_deer_hurt");
+    // Warthog
+    public static SoundEvent ENDERWARTHOG_DEATH_EVENT = register("adventurez:hog_death");
+    public static SoundEvent ENDERWARTHOG_WALK_EVENT = register("adventurez:hog_step");
+    public static SoundEvent ENDERWARTHOG_IDLE_EVENT = register("adventurez:hog_idle");
+    public static SoundEvent ENDERWARTHOG_HURT_EVENT = register("adventurez:hog_hurt");
+    public static SoundEvent ENDERWARTHOG_ATTACK_EVENT = register("adventurez:hog_attack");
     // Item
     public static SoundEvent ROCK_IMPACT_EVENT = register("adventurez:rock_impact");
     public static SoundEvent ROCK_THROW_EVENT = register("adventurez:rock_throw");

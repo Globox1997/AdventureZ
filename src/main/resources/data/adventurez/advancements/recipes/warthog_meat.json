@@ -1,0 +1,24 @@
+{
+    "parent": "minecraft:recipes/root",
+    "rewards": {
+        "recipes": [
+            "adventurez:cooked_warthog_meat",
+            "adventurez:cooked_warthog_meat_from_campfire_cooking",
+            "adventurez:cooked_warthog_meat_from_smoking"
+        ]
+    },
+    "criteria": {
+        "got_the_warthog_meat": {
+            "trigger": "minecraft:inventory_changed",
+            "conditions": {
+                "items": [
+                    {
+                        "items": [
+                            "adventurez:warthog_meat"
+                        ]
+                    }
+                ]
+            }
+        }
+    }
+}

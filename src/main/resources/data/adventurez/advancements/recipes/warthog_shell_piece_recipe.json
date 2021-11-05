@@ -1,0 +1,22 @@
+{
+    "parent": "minecraft:recipes/root",
+    "rewards": {
+        "recipes": [
+            "adventurez:netherite_scrap_from_warthog_piece"
+        ]
+    },
+    "criteria": {
+        "got_the_warthog_piece": {
+            "trigger": "minecraft:inventory_changed",
+            "conditions": {
+                "items": [
+                    {
+                        "items": [
+                            "adventurez:warthog_shell_piece"
+                        ]
+                    }
+                ]
+            }
+        }
+    }
+}

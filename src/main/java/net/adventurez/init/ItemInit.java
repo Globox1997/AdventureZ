@@ -33,6 +33,7 @@ public class ItemInit {
     public static final Item IVORY_ARROW = register("ivory_arrow", new ArrowItem(new Item.Settings().group(ItemGroup.COMBAT)));
     public static final Item MAMMOTH_TUSK = register("mammoth_tusk", new Item(new Item.Settings().group(ItemGroup.MATERIALS)));
     public static final Item RHINO_LEATHER = register("rhino_leather", new Item(new Item.Settings().group(ItemGroup.MATERIALS)));
+    public static final Item WARTHOG_SHELL_PIECE = register("warthog_shell_piece", new Item(new Item.Settings().group(ItemGroup.MATERIALS)));
 
     // Food
     public static final Item MAMMOTH_MEAT = register("mammoth_meat",
@@ -55,7 +56,10 @@ public class ItemInit {
             new Item(new Item.Settings().group(ItemGroup.FOOD).food(new FoodComponent.Builder().hunger(3).saturationModifier(0.3F).meat().build())));
     public static final Item COOKED_VENISON = register("cooked_venison",
             new Item(new Item.Settings().group(ItemGroup.FOOD).food(new FoodComponent.Builder().hunger(6).saturationModifier(0.8F).meat().build())));
-
+    public static final Item WARTHOG_MEAT = register("warthog_meat",
+            new Item(new Item.Settings().group(ItemGroup.FOOD).food(new FoodComponent.Builder().hunger(3).saturationModifier(0.3F).meat().build())));
+    public static final Item COOKED_WARTHOG_MEAT = register("cooked_warthog_meat", new Item(new Item.Settings().group(ItemGroup.FOOD)
+            .food(new FoodComponent.Builder().hunger(6).saturationModifier(0.8F).statusEffect(new StatusEffectInstance(StatusEffects.SPEED, 600, 0), 1.0F).meat().build())));
     // Armor
     public static final ArmorMaterial STONE_GOLEM_ARMOR_MATERIAL = new StoneGolemArmorMaterial();
     public static final Item STONE_GOLEM_HELMET = register("stone_golem_helmet", new StoneGolemArmor(STONE_GOLEM_ARMOR_MATERIAL, EquipmentSlot.HEAD));

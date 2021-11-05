@@ -21,10 +21,12 @@ public class ParticleInit {
 
     public static final DefaultParticleType AMETHYST_SHARD_PARTICLE = FabricParticleTypes.simple();
     public static final DefaultParticleType VOID_CLOUD_PARTICLE = FabricParticleTypes.simple();
+    public static final DefaultParticleType SPRINT_PARTICLE = FabricParticleTypes.simple();
 
     public static void init() {
         Registry.register(Registry.PARTICLE_TYPE, new Identifier("adventurez", "amethyst_shard_particle"), AMETHYST_SHARD_PARTICLE);
         Registry.register(Registry.PARTICLE_TYPE, new Identifier("adventurez", "void_cloud_particle"), VOID_CLOUD_PARTICLE);
+        Registry.register(Registry.PARTICLE_TYPE, new Identifier("adventurez", "sprint_particle"), SPRINT_PARTICLE);
     }
 
     @Environment(EnvType.CLIENT)
@@ -195,5 +197,51 @@ public class ParticleInit {
                 return portalParticle;
             }
         }
+    }
+
+    @Environment(EnvType.CLIENT)
+    static class SprintParticle extends SpriteBillboardParticle {
+        static final Random RANDOM = new Random();
+        private final SpriteProvider spriteProvider;
+
+        public SprintParticle(ClientWorld clientWorld, double d, double e, double f, double g, double h, double i, SpriteProvider spriteProvider) {
+            super(clientWorld, d, e, f);
+            this.field_28786 = 1.0F;
+            this.field_28787 = false;
+            this.gravityStrength = 0.0F;
+            this.spriteProvider = spriteProvider;
+            this.collidesWithWorld = false;
+            this.setSpriteForAge(spriteProvider);
+        }
+
+        @Override
+        public ParticleTextureSheet getType() {
+            return ParticleTextureSheet.PARTICLE_SHEET_TRANSLUCENT;
+        }
+
+        @Override
+        public void tick() {
+            super.tick();
+            this.setSpriteForAge(this.spriteProvider);
+        }
+
+        @Environment(EnvType.CLIENT)
+        public static class SprintFactory implements ParticleFactory<DefaultParticleType> {
+            private final SpriteProvider spriteProvider;
+
+            public SprintFactory(FabricSpriteProvider sprites) {
+                this.spriteProvider = sprites;
+            }
+
+            @Override
+            public Particle createParticle(DefaultParticleType defaultParticleType, ClientWorld clientWorld, double d, double e, double f, double g, double h, double i) {
+                SprintParticle sprintParticle = new SprintParticle(clientWorld, d, e, f, g, h, i, this.spriteProvider);
+                sprintParticle.velocityX = -g * 1.5D;
+                sprintParticle.velocityZ = -i * 1.5D;
+                sprintParticle.setMaxAge(8);
+                return sprintParticle;
+            }
+        }
+
     }
 }

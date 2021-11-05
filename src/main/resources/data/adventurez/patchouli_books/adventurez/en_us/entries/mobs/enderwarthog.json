@@ -1,0 +1,17 @@
+{
+    "name": "Enderwarthog",
+    "icon": "adventurez:stone_golem_heart",
+    "category": "adventurez:mob_category",
+    "pages": [
+        {
+            "type": "text",
+            "text": "Enderwarthogs appear in the End dimension and will try to knock you into the void"
+        },
+        {
+            "type": "entity",
+            "name": "Showcase",
+            "entity": "adventurez:enderwarthog",
+            "scale": 0.6
+        }
+    ]
+}

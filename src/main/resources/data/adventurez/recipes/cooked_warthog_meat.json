@@ -1,0 +1,9 @@
+{
+    "type": "minecraft:smelting",
+    "ingredient": {
+        "item": "adventurez:warthog_meat"
+    },
+    "result": "adventurez:cooked_warthog_meat",
+    "experience": 0.35,
+    "cookingtime": 200
+}

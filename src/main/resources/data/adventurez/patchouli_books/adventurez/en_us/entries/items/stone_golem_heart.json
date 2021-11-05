@@ -1,0 +1,17 @@
+{
+    "name": "Stone Golem Heart",
+    "icon": "adventurez:stone_golem_heart",
+    "category": "adventurez:item_category",
+    "pages": [
+        {
+            "type": "spotlight",
+            "item": "adventurez:stone_golem_heart",
+            "link_recipe": false,
+            "text": "The stone golem heart is a boss drop from the Blackstone Golem and can be used for three different things. It is a crafting material for the stone golem arm, you can infuse yourself with it to get a buff or upgrade an iron golem with it to make it stronger!"
+        },
+        {
+            "type": "empty",
+            "draw_filler": false
+        }
+    ]
+}

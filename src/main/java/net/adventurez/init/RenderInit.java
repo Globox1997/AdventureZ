@@ -4,6 +4,7 @@ import net.adventurez.block.renderer.*;
 import net.adventurez.entity.model.*;
 import net.adventurez.entity.render.*;
 import net.adventurez.init.ParticleInit.ShardParticle;
+import net.adventurez.init.ParticleInit.SprintParticle;
 import net.adventurez.init.ParticleInit.VoidCloudParticle;
 import net.adventurez.network.EntitySpawnPacket;
 import net.fabricmc.fabric.api.blockrenderlayer.v1.BlockRenderLayerMap;
@@ -56,6 +57,7 @@ public class RenderInit {
     public static final EntityModelLayer DESERT_RHINO_LAYER = new EntityModelLayer(new Identifier("adventurez:desert_rhino_render_layer"), "desert_rhino_render_layer");
     public static final EntityModelLayer SHAMAN_LAYER = new EntityModelLayer(new Identifier("adventurez:shaman_render_layer"), "shaman_render_layer");
     public static final EntityModelLayer DEER_LAYER = new EntityModelLayer(new Identifier("adventurez:deer_render_layer"), "deer_render_layer");
+    public static final EntityModelLayer ENDERWARTHOG_LAYER = new EntityModelLayer(new Identifier("adventurez:enderwarthog_render_layer"), "enderwarthog_render_layer");
 
     public static void init() {
         // Entity Renderer
@@ -92,6 +94,7 @@ public class RenderInit {
         EntityRendererRegistry.register(EntityInit.VOID_CLOUD_ENTITY, EmptyEntityRenderer::new);
         EntityRendererRegistry.register(EntityInit.SHAMAN_ENTITY, ShamanRenderer::new);
         EntityRendererRegistry.register(EntityInit.DEER_ENTITY, DeerRenderer::new);
+        EntityRendererRegistry.register(EntityInit.ENDERWARTHOG_ENTITY, EnderwarthogRenderer::new);
 
         // Entity Layer
         EntityModelLayerRegistry.registerModelLayer(STONE_GOLEM_LAYER, StoneGolemModel::getTexturedModelData);
@@ -124,6 +127,7 @@ public class RenderInit {
         EntityModelLayerRegistry.registerModelLayer(DESERT_RHINO_LAYER, DesertRhinoModel::getTexturedModelData);
         EntityModelLayerRegistry.registerModelLayer(SHAMAN_LAYER, ShamanModel::getTexturedModelData);
         EntityModelLayerRegistry.registerModelLayer(DEER_LAYER, DeerModel::getTexturedModelData);
+        EntityModelLayerRegistry.registerModelLayer(ENDERWARTHOG_LAYER, EnderwarthogModel::getTexturedModelData);
 
         // Network
         ClientPlayNetworking.registerGlobalReceiver(EntitySpawnPacket.ID, EntitySpawnPacket::onPacket);
@@ -142,5 +146,6 @@ public class RenderInit {
         // Particles
         ParticleFactoryRegistry.getInstance().register(ParticleInit.AMETHYST_SHARD_PARTICLE, ShardParticle.ShardFactory::new);
         ParticleFactoryRegistry.getInstance().register(ParticleInit.VOID_CLOUD_PARTICLE, VoidCloudParticle.CloudFactory::new);
+        ParticleFactoryRegistry.getInstance().register(ParticleInit.SPRINT_PARTICLE, SprintParticle.SprintFactory::new);
     }
 }
