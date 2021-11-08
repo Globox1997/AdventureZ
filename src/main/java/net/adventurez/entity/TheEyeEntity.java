@@ -2,15 +2,17 @@ package net.adventurez.entity;
 
 import java.util.EnumSet;
 import java.util.List;
+import java.util.Optional;
 import java.util.Random;
-import java.util.function.Predicate;
 
 import net.adventurez.entity.nonliving.TinyEyeEntity;
 import net.adventurez.init.EffectInit;
 import net.adventurez.init.EntityInit;
+import net.adventurez.init.ItemInit;
 import net.adventurez.init.SoundInit;
 import net.adventurez.init.TagInit;
 import net.fabricmc.loader.api.FabricLoader;
+import net.minecraft.block.Block;
 import net.minecraft.block.BlockState;
 import net.minecraft.block.Blocks;
 import net.minecraft.entity.Entity;
@@ -20,6 +22,7 @@ import net.minecraft.entity.EntityPose;
 import net.minecraft.entity.EntityType;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.MovementType;
+import net.minecraft.entity.SpawnReason;
 import net.minecraft.entity.SpawnRestriction;
 import net.minecraft.entity.ai.control.MoveControl;
 import net.minecraft.entity.ai.goal.FollowTargetGoal;
@@ -45,7 +48,13 @@ import net.minecraft.server.world.ServerWorld;
 import net.minecraft.sound.SoundCategory;
 import net.minecraft.sound.SoundEvent;
 import net.minecraft.sound.SoundEvents;
+import net.minecraft.structure.Structure;
+import net.minecraft.structure.StructureManager;
+import net.minecraft.structure.StructurePlacementData;
 import net.minecraft.text.Text;
+import net.minecraft.util.BlockMirror;
+import net.minecraft.util.BlockRotation;
+import net.minecraft.util.Identifier;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Box;
 import net.minecraft.util.math.Direction;
@@ -58,22 +67,30 @@ import net.minecraft.world.World;
 import net.minecraft.world.explosion.Explosion;
 import net.voidz.init.BlockInit;
 import net.minecraft.world.Heightmap;
+
 import org.jetbrains.annotations.Nullable;
 
 public class TheEyeEntity extends FlyingEntity {
     private static final TrackedData<Integer> BEAM_TARGET_ID;
     public static final TrackedData<Integer> INVUL_TIMER;
     private int field_7082;
+    @Nullable
     private final ServerBossBar bossBar;
     private LivingEntity cachedBeamTarget;
-    private int deathTimer = 0;
     private boolean gotDamage;
     private int attackTpCounter;
+    private int deathTimer;
+    private int duplicationTimer = 0;
 
     public TheEyeEntity(EntityType<? extends TheEyeEntity> entityType, World world) {
         super(entityType, world);
-        this.bossBar = (ServerBossBar) (new ServerBossBar(this.getDisplayName(), BossBar.Color.PURPLE, BossBar.Style.PROGRESS));
-        this.experiencePoints = 80;
+        if (this.duplicationTimer <= 0) {
+            this.bossBar = (ServerBossBar) (new ServerBossBar(this.getDisplayName(), BossBar.Color.PURPLE, BossBar.Style.PROGRESS));
+            this.experiencePoints = 80;
+        } else {
+            this.bossBar = null;
+            this.experiencePoints = 0;
+        }
         this.moveControl = new TheEyeEntity.EyeMoveControl(this);
     }
 
@@ -84,10 +101,11 @@ public class TheEyeEntity extends FlyingEntity {
 
     @Override
     protected void initGoals() {
-        this.goalSelector.add(0, new TheEyeEntity.ShootBulletGoal());
-        this.goalSelector.add(1, new TheEyeEntity.FireBeamGoal(this));
-        this.goalSelector.add(3, new TheEyeEntity.FlyRandomlyGoal(this));
-        this.goalSelector.add(2, new TheEyeEntity.LookAtTargetGoal(this));
+        this.goalSelector.add(0, new ShootBulletGoal(this));
+        this.goalSelector.add(1, new FireBeamGoal(this));
+        this.goalSelector.add(2, new DuplicateAttack(this));
+        this.goalSelector.add(3, new FlyRandomlyGoal(this));
+        this.goalSelector.add(2, new LookAtTargetGoal(this));
         this.goalSelector.add(8, new LookAroundGoal(this));
         this.targetSelector.add(1, new FollowTargetGoal<>(this, PlayerEntity.class, true));
     }
@@ -103,22 +121,26 @@ public class TheEyeEntity extends FlyingEntity {
     public void writeCustomDataToNbt(NbtCompound tag) {
         super.writeCustomDataToNbt(tag);
         tag.putInt("Invul", this.getInvulnerableTimer());
+        tag.putInt("DeathTimer", this.deathTimer);
+        tag.putInt("DuplicationTimer", this.duplicationTimer);
     }
 
     @Override
     public void readCustomDataFromNbt(NbtCompound tag) {
         super.readCustomDataFromNbt(tag);
         this.setInvulTimer(tag.getInt("Invul"));
-        if (this.hasCustomName()) {
+        if (this.hasCustomName() && this.bossBar != null) {
             this.bossBar.setName(this.getDisplayName());
         }
-
+        this.deathTimer = tag.getInt("DeathTimer");
+        this.duplicationTimer = tag.getInt("DuplicationTimer");
     }
 
     @Override
     public void setCustomName(@Nullable Text name) {
         super.setCustomName(name);
-        this.bossBar.setName(this.getDisplayName());
+        if (this.bossBar != null)
+            this.bossBar.setName(this.getDisplayName());
     }
 
     @Override
@@ -247,8 +269,31 @@ public class TheEyeEntity extends FlyingEntity {
             if (this.age % 20 == 0) {
                 this.heal(1.0F);
             }
+            if (this.bossBar != null)
+                this.bossBar.setPercent(this.getHealth() / this.getMaxHealth());
+        }
+    }
 
-            this.bossBar.setPercent(this.getHealth() / this.getMaxHealth());
+    @Override
+    public void tick() {
+        super.tick();
+        if (!this.world.isClient && this.duplicationTimer > 0) {
+            this.duplicationTimer--;
+            if (this.duplicationTimer == 20) {
+                for (int i = 0; i < 50; i++) {
+                    double d = (double) this.getX() - 1.5F + this.world.random.nextFloat() * 3.0F;
+                    double e = (double) ((float) this.getRandomBodyY() + this.world.random.nextFloat() * 0.1F);
+                    double f = (double) this.getZ() - 1.5F + this.world.random.nextFloat() * 3.0F;
+                    double g = (double) (world.random.nextFloat() * 0.2D);
+                    double h = (double) world.random.nextFloat() * 0.1D;
+                    double l = (double) (world.random.nextFloat() * 0.2D);
+                    ((ServerWorld) world).spawnParticles(ParticleTypes.PORTAL, d, e, f, 4, g, h, l, 1.0D);
+                }
+                this.setAiDisabled(true);
+            }
+            if (this.duplicationTimer == 1) {
+                this.discard();
+            }
         }
     }
 
@@ -263,13 +308,15 @@ public class TheEyeEntity extends FlyingEntity {
     @Override
     public void onStartedTrackingBy(ServerPlayerEntity player) {
         super.onStartedTrackingBy(player);
-        this.bossBar.addPlayer(player);
+        if (this.duplicationTimer <= 0)
+            this.bossBar.addPlayer(player);
     }
 
     @Override
     public void onStoppedTrackingBy(ServerPlayerEntity player) {
         super.onStoppedTrackingBy(player);
-        this.bossBar.removePlayer(player);
+        if (this.bossBar != null)
+            this.bossBar.removePlayer(player);
     }
 
     @Override
@@ -288,7 +335,8 @@ public class TheEyeEntity extends FlyingEntity {
                     if (this.field_7082 <= 0) {
                         this.field_7082 = 20;
                     }
-                    this.gotDamage = true;
+                    if (this.world.random.nextFloat() < 0.6F)
+                        this.gotDamage = true;
                     return super.damage(source, amount);
                 }
             }
@@ -301,8 +349,8 @@ public class TheEyeEntity extends FlyingEntity {
         if (this.gotDamage) {
             this.gotDamage = false;
             return true;
-        }
-        return false;
+        } else
+            return false;
     }
 
     @Override
@@ -399,60 +447,52 @@ public class TheEyeEntity extends FlyingEntity {
 
     @Override
     public void updatePostDeath() {
-        deathTimer++;
-        this.move(MovementType.SELF, new Vec3d(0.0D, 0.005D, 0.0D));
-        this.setAiDisabled(true);
-        this.setTarget(null);
-        if (this.world.isClient) {
-            despawnParticlesServer(this);
+        if (this.duplicationTimer <= 0) {
+            this.deathTimer++;
+            this.move(MovementType.SELF, new Vec3d(0.0D, 0.005D, 0.0D));
+            this.setAiDisabled(true);
+            this.setTarget(null);
+            if (this.world.isClient) {
+                despawnParticlesServer(this);
 
-        }
-        if (!this.world.isClient) {
-            this.bossBar.setPercent(0.0F);
-            BlockPos deathPos = new BlockPos(this.getX(), this.getY() - 1, this.getZ());
-            if (deathTimer == 20 && !FabricLoader.getInstance().isModLoaded("voidz")) {
-                Box box = new Box(this.getBlockPos());
-                List<PlayerEntity> list = world.getEntitiesByClass(PlayerEntity.class, box.expand(128D), EntityPredicates.EXCEPT_SPECTATOR);
-                for (int i = 0; i < list.size(); ++i) {
-                    PlayerEntity playerEntity = (PlayerEntity) list.get(i);
-                    if (playerEntity instanceof PlayerEntity) {
-                        playerEntity.addStatusEffect(new StatusEffectInstance(EffectInit.FAME, 48000, 0, false, false, true));
-                    }
-                }
             }
-            if (deathTimer == 140) {
-                world.playSound(null, deathPos, SoundInit.EYE_DEATH_PLATFORM_EVENT, SoundCategory.HOSTILE, 1F, 1F);
-            }
-            if (deathTimer >= 200) {
-                for (int o = 0; o < 5; o++) {
-                    ((ServerWorld) this.world).spawnParticles(ParticleTypes.EXPLOSION, deathPos.getX() - 1 + this.world.random.nextInt(4), deathPos.getY() - 1 + this.world.random.nextInt(4),
-                            deathPos.getZ() - 1 + this.world.random.nextInt(4), 0, 0.0D, 0.0D, 0.0D, 0.01D);
-                    world.playSound(null, deathPos, SoundEvents.ENTITY_GENERIC_EXPLODE, SoundCategory.BLOCKS, 1F, 1F);
-                }
-                for (int i = -1; i < 2; i++) {
-                    for (int u = -1; u < 2; u++) {
-                        for (int g = 0; g < 6; g++) {
-                            if (!world.getBlockState(deathPos.east(i).north(u).up(g)).isAir() && !world.getBlockState(deathPos.east(i).north(u).up(g)).isIn(TagInit.UNBREAKABLE_BLOCKS)) {
-                                world.breakBlock(deathPos.east(i).north(u).up(g), false);
-                            }
-                        }
-                        if (!world.getBlockState(deathPos.east(i).north(u)).isIn(TagInit.UNBREAKABLE_BLOCKS)) {
-                            world.setBlockState(deathPos.east(i).north(u), Blocks.CRYING_OBSIDIAN.getDefaultState(), 3);
-                            world.playSound(null, deathPos, SoundEvents.BLOCK_STONE_PLACE, SoundCategory.BLOCKS, 1F, 1F);
+            if (!this.world.isClient) {
+                this.bossBar.setPercent(0.0F);
+                BlockPos deathPos = new BlockPos(this.getX(), this.getY() - 1, this.getZ());
+                if (deathTimer == 20 && !FabricLoader.getInstance().isModLoaded("voidz")) {
+                    Box box = new Box(this.getBlockPos());
+                    List<PlayerEntity> list = world.getEntitiesByClass(PlayerEntity.class, box.expand(128D), EntityPredicates.EXCEPT_SPECTATOR);
+                    for (int i = 0; i < list.size(); ++i) {
+                        PlayerEntity playerEntity = (PlayerEntity) list.get(i);
+                        if (playerEntity instanceof PlayerEntity) {
+                            playerEntity.addStatusEffect(new StatusEffectInstance(EffectInit.FAME, 48000, 0, false, false, true));
                         }
                     }
                 }
-                this.placeExtraBlocks(deathPos);
-                if (FabricLoader.getInstance().isModLoaded("voidz")) {
-                    world.setBlockState(deathPos.up(), BlockInit.PORTAL_BLOCK.getDefaultState(), 3);
-                } else {
-                    world.setBlockState(deathPos.up(), Blocks.DRAGON_EGG.getDefaultState(), 3);
+                if (deathTimer == 140) {
+                    world.playSound(null, deathPos, SoundInit.EYE_DEATH_PLATFORM_EVENT, SoundCategory.HOSTILE, 1F, 1F);
                 }
-                // this.dropItem(ItemInit.PRIME_EYE_ITEM); // mcfunction
-                this.discard();
-            }
+                if (deathTimer >= 200) {
+                    for (int o = 0; o < 15; o++) {
+                        ((ServerWorld) this.world).spawnParticles(ParticleTypes.EXPLOSION, deathPos.getX() - 6 + this.world.random.nextInt(13), deathPos.getY() - 1 + this.world.random.nextInt(11),
+                                deathPos.getZ() - 6 + this.world.random.nextInt(13), 0, 0.0D, 0.0D, 0.0D, 0.01D);
+                        world.playSound(null, deathPos, SoundEvents.ENTITY_GENERIC_EXPLODE, SoundCategory.BLOCKS, 1F, 1F);
+                    }
+                    // Platform
+                    this.placeDeathStructure(deathPos);
+                    if (FabricLoader.getInstance().isModLoaded("voidz")) {
+                        world.setBlockState(deathPos.up(8).north().west(), BlockInit.PORTAL_BLOCK.getDefaultState(), 3);
+                    } else {
+                        world.setBlockState(deathPos.up(8).north().west(), Blocks.DRAGON_EGG.getDefaultState(), 3);
+                    }
+                    if (this.world.random.nextFloat() <= 0.01F)
+                        this.dropItem(ItemInit.PRIME_EYE);
+                    this.discard();
+                }
 
-        }
+            }
+        } else
+            this.discard();
 
     }
 
@@ -468,35 +508,11 @@ public class TheEyeEntity extends FlyingEntity {
         }
     }
 
-    private void placeExtraBlocks(BlockPos pos) {
-        // Could change it to a list
-        // List<BlockPos> list = new ArrayList<>();
-        // list.add(0, pos.east(2));
-
-        if (!world.getBlockState(pos.east(2)).isIn(TagInit.UNBREAKABLE_BLOCKS)) {
-            world.setBlockState(pos.east(2), Blocks.CRYING_OBSIDIAN.getDefaultState(), 3);
-        }
-        if (!world.getBlockState(pos.west(2)).isIn(TagInit.UNBREAKABLE_BLOCKS)) {
-            world.setBlockState(pos.west(2), Blocks.CRYING_OBSIDIAN.getDefaultState(), 3);
-        }
-        if (!world.getBlockState(pos.north(2)).isIn(TagInit.UNBREAKABLE_BLOCKS)) {
-            world.setBlockState(pos.north(2), Blocks.CRYING_OBSIDIAN.getDefaultState(), 3);
-        }
-        if (!world.getBlockState(pos.south(2)).isIn(TagInit.UNBREAKABLE_BLOCKS)) {
-            world.setBlockState(pos.south(2), Blocks.CRYING_OBSIDIAN.getDefaultState(), 3);
-        }
-        if (!world.getBlockState(pos.down().north()).isIn(TagInit.UNBREAKABLE_BLOCKS)) {
-            world.setBlockState(pos.down().north(), Blocks.CRYING_OBSIDIAN.getDefaultState(), 3);
-        }
-        if (!world.getBlockState(pos.down().south()).isIn(TagInit.UNBREAKABLE_BLOCKS)) {
-            world.setBlockState(pos.down().south(), Blocks.CRYING_OBSIDIAN.getDefaultState(), 3);
-        }
-        for (int i = -1; i < 2; i++) {
-            if (!world.getBlockState(pos.down().east(i)).isIn(TagInit.UNBREAKABLE_BLOCKS)) {
-                world.setBlockState(pos.down().east(i), Blocks.CRYING_OBSIDIAN.getDefaultState(), 3);
-            }
-        }
-
+    private void placeDeathStructure(BlockPos blockPos) {
+        StructureManager structureManager = ((ServerWorld) world).getStructureManager();
+        Optional<Structure> structure = structureManager.getStructure(new Identifier("adventurez:eyeland"));
+        structure.get().place((ServerWorld) world, blockPos.west(5).north(5), blockPos,
+                (new StructurePlacementData()).setMirror(BlockMirror.NONE).setRotation(BlockRotation.NONE).setIgnoreEntities(true), world.random, Block.NOTIFY_LISTENERS);
     }
 
     static {
@@ -504,7 +520,7 @@ public class TheEyeEntity extends FlyingEntity {
         BEAM_TARGET_ID = DataTracker.registerData(TheEyeEntity.class, TrackedDataHandlerRegistry.INTEGER);
     }
 
-    static class FireBeamGoal extends Goal {
+    private class FireBeamGoal extends Goal {
         private final TheEyeEntity theEye;
         private int beamTicks;
 
@@ -566,30 +582,21 @@ public class TheEyeEntity extends FlyingEntity {
         }
     }
 
-    static class EyeTargetPredicate implements Predicate<LivingEntity> {
-
-        public EyeTargetPredicate(TheEyeEntity owner) {
-        }
-
-        @Override
-        public boolean test(@Nullable LivingEntity livingEntity) {
-            return livingEntity instanceof PlayerEntity;
-        }
-    }
-
-    class ShootBulletGoal extends Goal {
+    private class ShootBulletGoal extends Goal {
         private int counter;
+        private final TheEyeEntity theEyeEntity;
 
-        public ShootBulletGoal() {
+        public ShootBulletGoal(TheEyeEntity theEyeEntity) {
             this.setControls(EnumSet.of(Goal.Control.MOVE, Goal.Control.LOOK));
+            this.theEyeEntity = theEyeEntity;
         }
 
         @Override
         public boolean canStart() {
             this.counter++;
-            LivingEntity livingEntity = TheEyeEntity.this.getTarget();
-            if (livingEntity != null && livingEntity.isAlive() && TheEyeEntity.this.getHealth() < TheEyeEntity.this.getMaxHealth() / 2 && this.counter >= 400) {
-                return TheEyeEntity.this.world.getDifficulty() != Difficulty.PEACEFUL;
+            LivingEntity livingEntity = theEyeEntity.getTarget();
+            if (livingEntity != null && livingEntity.isAlive() && theEyeEntity.getHealth() < theEyeEntity.getMaxHealth() / 2 && this.counter >= 400) {
+                return theEyeEntity.world.getDifficulty() != Difficulty.PEACEFUL;
             } else {
                 return false;
             }
@@ -597,23 +604,23 @@ public class TheEyeEntity extends FlyingEntity {
 
         @Override
         public void tick() {
-            LivingEntity livingEntity = TheEyeEntity.this.getTarget();
+            LivingEntity livingEntity = theEyeEntity.getTarget();
             if (livingEntity != null) {
                 int additions = 0;
-                if (TheEyeEntity.this.getHealth() < TheEyeEntity.this.getMaxHealth() / 4) {
+                if (theEyeEntity.getHealth() < theEyeEntity.getMaxHealth() / 4) {
                     additions = 1;
                 }
                 for (int i = 0; i < 3 + additions; i++) {
-                    TheEyeEntity.this.world.spawnEntity(new TinyEyeEntity(TheEyeEntity.this.world, TheEyeEntity.this, livingEntity, Direction.Axis.Y));
-                    TheEyeEntity.this.playSound(SoundEvents.ENTITY_SHULKER_SHOOT, 2.0F, (TheEyeEntity.this.random.nextFloat() - TheEyeEntity.this.random.nextFloat()) * 0.2F + 1.0F);
+                    theEyeEntity.world.spawnEntity(new TinyEyeEntity(theEyeEntity.world, theEyeEntity, livingEntity, Direction.Axis.Y));
+                    theEyeEntity.playSound(SoundEvents.ENTITY_SHULKER_SHOOT, 2.0F, (theEyeEntity.random.nextFloat() - theEyeEntity.random.nextFloat()) * 0.2F + 1.0F);
                 }
                 super.tick();
-                this.counter = TheEyeEntity.this.random.nextInt(12) * 20;
+                this.counter = theEyeEntity.random.nextInt(12) * 20;
             }
         }
     }
 
-    static class FlyRandomlyGoal extends Goal {
+    private class FlyRandomlyGoal extends Goal {
         private final TheEyeEntity theEyeEntity;
 
         public FlyRandomlyGoal(TheEyeEntity theEyeEntity) {
@@ -650,7 +657,7 @@ public class TheEyeEntity extends FlyingEntity {
         }
     }
 
-    static class LookAtTargetGoal extends Goal {
+    private class LookAtTargetGoal extends Goal {
         private final TheEyeEntity theEyeEntity;
 
         public LookAtTargetGoal(TheEyeEntity theEyeEntity) {
@@ -674,15 +681,17 @@ public class TheEyeEntity extends FlyingEntity {
                 if (livingEntity.squaredDistanceTo(this.theEyeEntity) < 4096.0D) {
                     double e = livingEntity.getX() - this.theEyeEntity.getX();
                     double f = livingEntity.getZ() - this.theEyeEntity.getZ();
-                    this.theEyeEntity.setYaw(-((float) MathHelper.atan2(e, f)) * 57.295776F);
-                    this.theEyeEntity.bodyYaw = this.theEyeEntity.getYaw();
+                    if (Math.abs(theEyeEntity.getTarget().getX() - theEyeEntity.getX()) > 0.3D && Math.abs(theEyeEntity.getTarget().getZ() - theEyeEntity.getZ()) > 0.3D) {
+                        this.theEyeEntity.setYaw(-((float) MathHelper.atan2(e, f)) * 57.295776F);
+                        this.theEyeEntity.bodyYaw = this.theEyeEntity.getYaw();
+                    }
                 }
             }
 
         }
     }
 
-    static class EyeMoveControl extends MoveControl {
+    private class EyeMoveControl extends MoveControl {
         private final TheEyeEntity theEyeEntity;
         private int collisionCheckCooldown;
 
@@ -699,7 +708,10 @@ public class TheEyeEntity extends FlyingEntity {
                     Vec3d vec3d = new Vec3d(this.targetX - this.theEyeEntity.getX(), this.targetY - this.theEyeEntity.getY(), this.targetZ - this.theEyeEntity.getZ());
                     double d = vec3d.length();
                     vec3d = vec3d.normalize();
-                    if (this.willCollide(vec3d, MathHelper.ceil(d))) {
+                    if (theEyeEntity.getTarget() != null && Math.abs(theEyeEntity.getTarget().getX() - theEyeEntity.getX()) < 3.0D
+                            && Math.abs(theEyeEntity.getTarget().getZ() - theEyeEntity.getZ()) < 3.0D) {
+                        this.state = MoveControl.State.WAIT;
+                    } else if (this.willCollide(vec3d, MathHelper.ceil(d))) {
                         this.theEyeEntity.setVelocity(this.theEyeEntity.getVelocity().add(vec3d.multiply(0.1D)));
                     } else {
                         this.state = MoveControl.State.WAIT;
@@ -718,6 +730,73 @@ public class TheEyeEntity extends FlyingEntity {
                 }
             }
             return true;
+        }
+    }
+
+    private class DuplicateAttack extends Goal {
+        private int cooldown;
+        private final TheEyeEntity theEyeEntity;
+
+        public DuplicateAttack(TheEyeEntity theEyeEntity) {
+            this.theEyeEntity = theEyeEntity;
+        }
+
+        @Override
+        public boolean canStart() {
+            this.cooldown++;
+            LivingEntity livingEntity = theEyeEntity.getTarget();
+
+            if (livingEntity != null && livingEntity.isAlive() && theEyeEntity.duplicationTimer <= 0 && this.cooldown >= 600) {
+                List<TheEyeEntity> list = theEyeEntity.world.getEntitiesByClass(TheEyeEntity.class, theEyeEntity.getBoundingBox().expand(120D), EntityPredicates.EXCEPT_CREATIVE_OR_SPECTATOR);
+                if (!list.isEmpty())
+                    for (int i = 0; i < list.size(); i++)
+                        if (list.get(i).duplicationTimer > 0) {
+                            this.cooldown = 0;
+                            return false;
+                        }
+                return true;
+            } else
+                return false;
+        }
+
+        @Override
+        public void start() {
+            LivingEntity livingEntity = theEyeEntity.getTarget();
+            if (livingEntity != null) {
+                for (int i = 0; i < 2; i++) {
+                    for (int k = 0; k < 10; k++) {
+                        BlockPos pos = theEyeEntity.getBlockPos();
+                        pos = pos.add(pos.getX() - livingEntity.getBlockPos().getX() + theEyeEntity.world.random.nextInt(6) * 5, 0,
+                                pos.getZ() - livingEntity.getBlockPos().getZ() + theEyeEntity.world.random.nextInt(6) * 5);
+                        if (theEyeEntity.world.getBlockState(pos).isAir() && SpawnHelper.canSpawn(SpawnRestriction.Location.NO_RESTRICTIONS, world, pos, EntityInit.THE_EYE_ENTITY)) {
+                            TheEyeEntity theEyeEntityDuplicate = (TheEyeEntity) EntityInit.THE_EYE_ENTITY.create(theEyeEntity.world);
+                            theEyeEntityDuplicate.refreshPositionAndAngles(pos, theEyeEntity.world.random.nextFloat() * 360F, 0.0F);
+                            theEyeEntityDuplicate.initialize((ServerWorld) theEyeEntity.world, theEyeEntity.world.getLocalDifficulty(pos), SpawnReason.EVENT, null, null);
+                            theEyeEntityDuplicate.duplicationTimer = 800;
+                            theEyeEntityDuplicate.setAttacker(livingEntity);
+                            theEyeEntityDuplicate.getAttributeInstance(EntityAttributes.GENERIC_MAX_HEALTH).setBaseValue(100.0D);
+                            theEyeEntity.world.spawnEntity(theEyeEntityDuplicate);
+                            for (int u = 0; u < 50; u++) {
+                                double d = (double) theEyeEntityDuplicate.getX() - 1.5F + theEyeEntity.world.random.nextFloat() * 3.0F;
+                                double e = (double) ((float) theEyeEntityDuplicate.getRandomBodyY() + theEyeEntity.world.random.nextFloat() * 0.1F);
+                                double f = (double) theEyeEntityDuplicate.getZ() - 1.5F + theEyeEntity.world.random.nextFloat() * 3.0F;
+                                double g = (double) (world.random.nextFloat() * 0.2D);
+                                double h = (double) world.random.nextFloat() * 0.1D;
+                                double l = (double) (world.random.nextFloat() * 0.2D);
+                                ((ServerWorld) world).spawnParticles(ParticleTypes.PORTAL, d, e, f, 4, g, h, l, 1.0D);
+                            }
+                            break;
+                        }
+                    }
+                }
+            }
+            this.stop();
+
+        }
+
+        @Override
+        public void stop() {
+            this.cooldown = 0;
         }
     }
 
