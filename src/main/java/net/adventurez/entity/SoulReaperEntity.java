@@ -170,15 +170,9 @@ public class SoulReaperEntity extends HostileEntity implements RangedAttackMob {
 
     @Override
     public boolean tryAttack(Entity target) {
-        if (!super.tryAttack(target)) {
-            return false;
-        } else {
-            if (target instanceof LivingEntity) {
-                ((LivingEntity) target).addStatusEffect(new StatusEffectInstance(StatusEffects.WITHER, 300));
-            }
-
-            return true;
-        }
+        if (target instanceof LivingEntity)
+            ((LivingEntity) target).addStatusEffect(new StatusEffectInstance(StatusEffects.WITHER, 300));
+        return super.tryAttack(target);
     }
 
     @Override

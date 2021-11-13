@@ -117,16 +117,18 @@ public class VoidBulletEntity extends ExplosiveProjectileEntity {
     @Override
     public void onBlockHit(BlockHitResult blockHitResult) {
         super.onBlockHit(blockHitResult);
-        for (int i = 0; i < 20; i++) {
-            double d = (double) this.getPos().getX() + 0.3F * this.world.random.nextFloat();
-            double e = (double) ((float) this.getPos().getY() + this.world.random.nextFloat() * 0.3F);
-            double f = (double) this.getPos().getZ() + 0.3F * this.world.random.nextFloat();
-            double g = (double) (world.random.nextFloat() * 0.2D);
-            double h = (double) world.random.nextFloat() * 0.2D;
-            double l = (double) (world.random.nextFloat() * 0.2D);
-            ((ServerWorld) world).spawnParticles(ParticleTypes.SMOKE, d, e, f, 3, g, h, l, 1.0D);
+        if (!this.world.isClient) {
+            for (int i = 0; i < 20; i++) {
+                double d = (double) this.getPos().getX() + 0.3F * this.world.random.nextFloat();
+                double e = (double) ((float) this.getPos().getY() + this.world.random.nextFloat() * 0.3F);
+                double f = (double) this.getPos().getZ() + 0.3F * this.world.random.nextFloat();
+                double g = (double) (world.random.nextFloat() * 0.2D);
+                double h = (double) world.random.nextFloat() * 0.2D;
+                double l = (double) (world.random.nextFloat() * 0.2D);
+                ((ServerWorld) world).spawnParticles(ParticleTypes.SMOKE, d, e, f, 3, g, h, l, 1.0D);
+            }
+            this.discard();
         }
-        this.discard();
     }
 
     @Override

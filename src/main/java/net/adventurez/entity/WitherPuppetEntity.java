@@ -141,14 +141,9 @@ public class WitherPuppetEntity extends HostileEntity {
 
     @Override
     public boolean tryAttack(Entity target) {
-        if (!super.tryAttack(target)) {
-            return false;
-        } else {
-            if (!this.world.isClient && target instanceof LivingEntity && world.getRandom().nextInt(5) == 0) {
-                ((LivingEntity) target).addStatusEffect(new StatusEffectInstance(StatusEffect.byRawId(18), 80, 0, false, false), this);
-            }
-            return true;
-        }
+        if (!this.world.isClient && target instanceof LivingEntity && world.getRandom().nextInt(5) == 0)
+            ((LivingEntity) target).addStatusEffect(new StatusEffectInstance(StatusEffect.byRawId(18), 80, 0, false, false), this);
+        return super.tryAttack(target);
     }
 
     class TrackOwnerTargetGoal extends TrackTargetGoal {

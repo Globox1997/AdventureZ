@@ -70,7 +70,7 @@ public class EnderWhaleEntity extends FlyingEntity implements ItemSteerable {
     public static boolean canSpawn(EntityType<EnderWhaleEntity> type, WorldAccess world, SpawnReason spawnReason, BlockPos pos, Random random) {
         BlockState blockState = world.getBlockState(pos);
         List<EnderDragonEntity> list = world.getEntitiesByClass(EnderDragonEntity.class, new Box(pos).expand(80D), EntityPredicates.EXCEPT_SPECTATOR);
-        return random.nextInt(10) == 0 && pos.getY() > 40 && pos.getY() - world.getTopPosition(Heightmap.Type.WORLD_SURFACE, pos).getY() > 20 && blockState.isAir() && list.isEmpty()
+        return random.nextInt(6) == 0 && pos.getY() > 40 && pos.getY() - world.getTopPosition(Heightmap.Type.WORLD_SURFACE, pos).getY() > 20 && blockState.isAir() && list.isEmpty()
                 && SpawnHelper.isClearForSpawn(world, pos, blockState, blockState.getFluidState(), EntityInit.ENDER_WHALE_ENTITY);
     }
 

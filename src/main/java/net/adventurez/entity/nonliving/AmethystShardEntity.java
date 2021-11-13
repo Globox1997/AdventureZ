@@ -86,7 +86,7 @@ public class AmethystShardEntity extends ThrownEntity {
     public void onBlockHit(BlockHitResult blockHitResult) {
         super.onBlockHit(blockHitResult);
         this.playSound(SoundInit.SHARD_DESTROY_EVENT, 1.0F, 1.0F);
-        if (!this.world.isClient)
+        if (!this.world.isClient) {
             for (int i = 0; i < 20; i++) {
                 double d = (double) this.getPos().getX() + 0.3F * this.world.random.nextFloat();
                 double e = (double) ((float) this.getPos().getY() + this.world.random.nextFloat() * 0.3F);
@@ -96,8 +96,8 @@ public class AmethystShardEntity extends ThrownEntity {
                 double l = (double) (world.random.nextFloat() * 0.2D);
                 ((ServerWorld) world).spawnParticles(ParticleInit.AMETHYST_SHARD_PARTICLE, d, e, f, 1, g, h, l, 1.0D);
             }
-
-        this.discard();
+            this.discard();
+        }
     }
 
     @Override
