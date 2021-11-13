@@ -46,7 +46,7 @@ public class ItemInit {
             new Item(new Item.Settings().group(ItemGroup.FOOD).food(new FoodComponent.Builder().hunger(6).saturationModifier(0.6F).meat().build())));
     public static final Item ENDER_WHALE_MEAT = register("ender_whale_meat", new Item(new Item.Settings().group(ItemGroup.FOOD)
             .food(new FoodComponent.Builder().hunger(3).saturationModifier(0.3F).statusEffect(new StatusEffectInstance(StatusEffects.BLINDNESS, 100, 0), 0.5F).meat().build())));
-    public static final Item COOKED_ENDER_WHALE = register("cooked_ender_whale_meat", new Item(new Item.Settings().group(ItemGroup.FOOD)
+    public static final Item COOKED_ENDER_WHALE_MEAT = register("cooked_ender_whale_meat", new Item(new Item.Settings().group(ItemGroup.FOOD)
             .food(new FoodComponent.Builder().hunger(8).saturationModifier(0.9F).statusEffect(new StatusEffectInstance(StatusEffects.SLOW_FALLING, 600, 0), 1.0F).meat().build())));
     public static final Item RHINO_MEAT = register("rhino_meat",
             new Item(new Item.Settings().group(ItemGroup.FOOD).food(new FoodComponent.Builder().hunger(3).saturationModifier(0.3F).meat().build())));
