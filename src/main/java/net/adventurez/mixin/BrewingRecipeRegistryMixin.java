@@ -18,7 +18,7 @@ public class BrewingRecipeRegistryMixin {
     @Inject(method = "registerDefaults", at = @At("TAIL"))
     private static void registerDefaultsMixin(CallbackInfo info) {
         registerPotionRecipe(Potions.AWKWARD, ItemInit.ORC_SKIN, Potions.TURTLE_MASTER);
-        registerPotionRecipe(Potions.AWKWARD, ItemInit.ENDER_WHALE_LEATHER, Potions.SLOW_FALLING);
+        registerPotionRecipe(Potions.AWKWARD, ItemInit.ENDER_WHALE_SKIN, Potions.SLOW_FALLING);
     }
 
     @Shadow

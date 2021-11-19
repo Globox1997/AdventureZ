@@ -57,7 +57,7 @@ public class PiglinFlagEntity extends BlockEntity {
         }
     }
 
-    public void update() {
+    private void update() {
         if (this.flagWave < 2400) {
             this.flagWave++;
         }

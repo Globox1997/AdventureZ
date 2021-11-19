@@ -29,7 +29,7 @@ public class ItemInit {
     public static final Item ENDER_FLUTE = register("ender_flute", new EnderFluteItem(new Item.Settings().group(ItemGroup.TRANSPORTATION).maxDamage(32)));
     public static final Item IGUANA_HIDE = register("iguana_hide", new Item(new Item.Settings().group(ItemGroup.MATERIALS)));
     public static final Item MAMMOTH_LEATHER = register("mammoth_fur", new Item(new Item.Settings().group(ItemGroup.MATERIALS)));
-    public static final Item ENDER_WHALE_LEATHER = register("ender_whale_skin", new Item(new Item.Settings().group(ItemGroup.MATERIALS)));
+    public static final Item ENDER_WHALE_SKIN = register("ender_whale_skin", new Item(new Item.Settings().group(ItemGroup.MATERIALS)));
     public static final Item IVORY_ARROW = register("ivory_arrow", new ArrowItem(new Item.Settings().group(ItemGroup.COMBAT)));
     public static final Item MAMMOTH_TUSK = register("mammoth_tusk", new Item(new Item.Settings().group(ItemGroup.MATERIALS)));
     public static final Item RHINO_LEATHER = register("rhino_leather", new Item(new Item.Settings().group(ItemGroup.MATERIALS)));

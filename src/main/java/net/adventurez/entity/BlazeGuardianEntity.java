@@ -9,6 +9,7 @@ import org.jetbrains.annotations.Nullable;
 
 import net.adventurez.entity.nonliving.BlazeGuardianShieldEntity;
 import net.adventurez.init.EntityInit;
+import net.minecraft.block.Blocks;
 import net.minecraft.entity.EntityData;
 import net.minecraft.entity.EntityType;
 import net.minecraft.entity.LivingEntity;
@@ -40,7 +41,6 @@ import net.minecraft.util.math.MathHelper;
 import net.minecraft.util.math.Vec3d;
 import net.minecraft.util.registry.RegistryKey;
 import net.minecraft.world.Difficulty;
-import net.minecraft.world.LightType;
 import net.minecraft.world.LocalDifficulty;
 import net.minecraft.world.ServerWorldAccess;
 import net.minecraft.world.SpawnHelper;
@@ -257,10 +257,14 @@ public class BlazeGuardianEntity extends HostileEntity {
     @Override
     public void onDeath(DamageSource source) {
         if (!this.world.isClient) {
-            this.shield_north.discard();
-            this.shield_east.discard();
-            this.shield_south.discard();
-            this.shield_west.discard();
+            if (!this.shield_north.isRemoved())
+                this.shield_north.discard();
+            if (!this.shield_east.isRemoved())
+                this.shield_east.discard();
+            if (!this.shield_south.isRemoved())
+                this.shield_south.discard();
+            if (!this.shield_west.isRemoved())
+                this.shield_west.discard();
         }
         super.onDeath(source);
     }
@@ -287,12 +291,9 @@ public class BlazeGuardianEntity extends HostileEntity {
 
     public static boolean canSpawn(EntityType<BlazeGuardianEntity> type, ServerWorldAccess world, SpawnReason spawnReason, BlockPos pos, Random random) {
         Optional<RegistryKey<Biome>> optional = world.getBiomeKey(pos);
-        boolean bl = (world.getDifficulty() != Difficulty.PEACEFUL && world.getLightLevel(LightType.BLOCK, pos) < 10 && canMobSpawn(type, world, spawnReason, pos, random))
-                || spawnReason == SpawnReason.SPAWNER;
-        if (Objects.equals(optional, Optional.of(BiomeKeys.NETHER_WASTES))) {
-            return bl;
-        } else
-            return false;
+        boolean bl = (world.getDifficulty() != Difficulty.PEACEFUL && world.getBlockState(pos.down()).isOf(Blocks.NETHERRACK) && world.getBaseLightLevel(pos, 0) < 10 && random.nextInt(4) == 0
+                && Objects.equals(optional, Optional.of(BiomeKeys.NETHER_WASTES)) && canMobSpawn(type, world, spawnReason, pos, random)) || spawnReason == SpawnReason.SPAWNER;
+        return bl;
     }
 
     static {

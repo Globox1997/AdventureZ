@@ -14,7 +14,7 @@ public class ElytraItemMixin {
 
     @Inject(method = "canRepair", at = @At("HEAD"), cancellable = true)
     private void canRepairMixin(ItemStack stack, ItemStack ingredient, CallbackInfoReturnable<Boolean> info) {
-        if (ingredient.isOf(ItemInit.ENDER_WHALE_LEATHER))
+        if (ingredient.isOf(ItemInit.ENDER_WHALE_SKIN))
             info.setReturnValue(true);
     }
 }
