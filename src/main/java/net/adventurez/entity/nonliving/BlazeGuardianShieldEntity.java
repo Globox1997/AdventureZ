@@ -41,6 +41,14 @@ public class BlazeGuardianShieldEntity extends Entity {
     }
 
     @Override
+    public void tick() {
+        super.tick();
+        if (!this.world.isClient && (this.owner == null || this.owner.isDead() || this.owner.isRemoved())) {
+            this.discard();
+        }
+    }
+
+    @Override
     public boolean collides() {
         return true;
     }
