@@ -352,7 +352,7 @@ public class DragonEntity extends PathAwareEntity implements InventoryChangedLis
                         this.getDataTracker().set(IS_FLYING, false);
                     }
                 } else {
-                    this.flyingSpeed = 0.02F;
+                    this.airStrafingSpeed = 0.02F;
                     super.travel(movementInput);
                 }
             }

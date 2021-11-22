@@ -1,7 +1,5 @@
 package net.adventurez.mixin;
 
-import java.util.List;
-
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.injection.Inject;
@@ -27,10 +25,8 @@ public class MobSpawnerLogicMixin {
 
     @Inject(method = "serverTick", at = @At(value = "FIELD", target = "Lnet/minecraft/world/MobSpawnerLogic;spawnCount:I", ordinal = 0, shift = Shift.BEFORE), cancellable = true)
     private void serverTickMixin(ServerWorld world, BlockPos pos, CallbackInfo info) {
-        if (this.spawnEntry.getEntityNbt() != null && EntityType.BLAZE.equals(EntityType.fromNbt(this.spawnEntry.getEntityNbt()).get())) {
-            Box box = new Box(pos);
-            List<BlazeGuardianEntity> list = world.getEntitiesByClass(BlazeGuardianEntity.class, box.expand(16D), EntityPredicates.EXCEPT_SPECTATOR);
-            if (!list.isEmpty()) {
+        if (this.spawnEntry.getNbt() != null && EntityType.BLAZE.equals(EntityType.fromNbt(this.spawnEntry.getNbt()).get())) {
+            if (!world.getEntitiesByClass(BlazeGuardianEntity.class, new Box(pos).expand(16D), EntityPredicates.EXCEPT_SPECTATOR).isEmpty()) {
                 spawnDelay = 600;
                 info.cancel();
             }

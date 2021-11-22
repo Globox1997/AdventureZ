@@ -202,8 +202,8 @@ public abstract class SpellCastingEntity extends HostileEntity {
 
         public void tick() {
             if (SpellCastingEntity.this.getTarget() != null) {
-                SpellCastingEntity.this.getLookControl().lookAt(SpellCastingEntity.this.getTarget(), (float) SpellCastingEntity.this.getBodyYawSpeed(),
-                        (float) SpellCastingEntity.this.getLookPitchSpeed());
+                SpellCastingEntity.this.getLookControl().lookAt(SpellCastingEntity.this.getTarget(), (float) SpellCastingEntity.this.getMaxHeadRotation(),
+                        (float) SpellCastingEntity.this.getMaxLookPitchChange());
             }
 
         }

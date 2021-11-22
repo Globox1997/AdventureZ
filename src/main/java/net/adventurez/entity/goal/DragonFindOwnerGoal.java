@@ -78,7 +78,7 @@ public class DragonFindOwnerGoal extends Goal {
 
     @Override
     public void tick() {
-        this.dragonEntity.getLookControl().lookAt(this.owner, 10.0F, (float) this.dragonEntity.getLookPitchSpeed());
+        this.dragonEntity.getLookControl().lookAt(this.owner, 10.0F, (float) this.dragonEntity.getMaxLookPitchChange());
         if (--this.updateCountdownTicks <= 0) {
             this.updateCountdownTicks = 10;
             if (!this.dragonEntity.isLeashed() && !this.dragonEntity.hasVehicle()) {

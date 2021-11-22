@@ -25,7 +25,7 @@ import net.minecraft.entity.MovementType;
 import net.minecraft.entity.SpawnReason;
 import net.minecraft.entity.SpawnRestriction;
 import net.minecraft.entity.ai.control.MoveControl;
-import net.minecraft.entity.ai.goal.FollowTargetGoal;
+import net.minecraft.entity.ai.goal.ActiveTargetGoal;
 import net.minecraft.entity.ai.goal.Goal;
 import net.minecraft.entity.ai.goal.LookAroundGoal;
 import net.minecraft.entity.attribute.DefaultAttributeContainer;
@@ -107,7 +107,7 @@ public class TheEyeEntity extends FlyingEntity {
         this.goalSelector.add(3, new FlyRandomlyGoal(this));
         this.goalSelector.add(2, new LookAtTargetGoal(this));
         this.goalSelector.add(8, new LookAroundGoal(this));
-        this.targetSelector.add(1, new FollowTargetGoal<>(this, PlayerEntity.class, true));
+        this.targetSelector.add(1, new ActiveTargetGoal<>(this, PlayerEntity.class, true));
     }
 
     @Override

@@ -10,7 +10,7 @@ import net.minecraft.entity.EntityGroup;
 import net.minecraft.entity.EntityType;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.ai.control.MoveControl;
-import net.minecraft.entity.ai.goal.FollowTargetGoal;
+import net.minecraft.entity.ai.goal.ActiveTargetGoal;
 import net.minecraft.entity.ai.goal.Goal;
 import net.minecraft.entity.ai.goal.LookAroundGoal;
 import net.minecraft.entity.attribute.DefaultAttributeContainer;
@@ -48,7 +48,7 @@ public class VoidShadeEntity extends FlyingEntity implements Monster {
         this.goalSelector.add(7, new LookAroundGoal(this));
         this.goalSelector.add(3, new VoidShadeEntity.MoveGoal(this));
         this.goalSelector.add(5, new VoidShadeEntity.ShootBulletGoal(this));
-        this.targetSelector.add(1, new FollowTargetGoal<>(this, PlayerEntity.class, true));
+        this.targetSelector.add(1, new ActiveTargetGoal<>(this, PlayerEntity.class, true));
     }
 
     @Override

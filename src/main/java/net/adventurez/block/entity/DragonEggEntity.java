@@ -42,12 +42,11 @@ public class DragonEggEntity extends BlockEntity {
     }
 
     @Override
-    public NbtCompound writeNbt(NbtCompound nbt) {
+    public void writeNbt(NbtCompound nbt) {
         super.writeNbt(nbt);
         nbt.putBoolean("Hatch_Able", isHatchAble);
         nbt.putInt("Hatch_Tick", hatchTick);
         nbt.putInt("Summoning_Tick", summoningTick);
-        return nbt;
     }
 
     public static void clientTick(World world, BlockPos pos, BlockState state, DragonEggEntity blockEntity) {

@@ -11,7 +11,7 @@ import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.SpawnReason;
 import net.minecraft.entity.SpawnRestriction;
 import net.minecraft.entity.ai.goal.FleeEntityGoal;
-import net.minecraft.entity.ai.goal.FollowTargetGoal;
+import net.minecraft.entity.ai.goal.ActiveTargetGoal;
 import net.minecraft.entity.ai.goal.LookAtEntityGoal;
 import net.minecraft.entity.ai.goal.MeleeAttackGoal;
 import net.minecraft.entity.ai.goal.RevengeGoal;
@@ -73,7 +73,7 @@ public class ShamanEntity extends SpellCastingEntity {
         this.targetSelector.add(3, (new RevengeGoal(this, new Class[] { SkeletonEntity.class })));
         this.targetSelector.add(3, (new RevengeGoal(this, new Class[] { SpiderEntity.class })));
         this.targetSelector.add(3, (new RevengeGoal(this, new Class[] { CaveSpiderEntity.class })));
-        this.targetSelector.add(4, (new FollowTargetGoal<>(this, PlayerEntity.class, true)).setMaxTimeWithoutVisibility(300));
+        this.targetSelector.add(4, (new ActiveTargetGoal<>(this, PlayerEntity.class, true)).setMaxTimeWithoutVisibility(300));
     }
 
     public static boolean canSpawn(EntityType<ShamanEntity> type, ServerWorldAccess world, SpawnReason spawnReason, BlockPos pos, Random random) {
@@ -315,7 +315,7 @@ public class ShamanEntity extends SpellCastingEntity {
         @Override
         public void tick() {
             if (ShamanEntity.this.getTarget() != null) {
-                ShamanEntity.this.getLookControl().lookAt(ShamanEntity.this.getTarget(), (float) ShamanEntity.this.getBodyYawSpeed(), (float) ShamanEntity.this.getLookPitchSpeed());
+                ShamanEntity.this.getLookControl().lookAt(ShamanEntity.this.getTarget(), (float) ShamanEntity.this.getMaxHeadRotation(), (float) ShamanEntity.this.getMaxLookPitchChange());
             }
 
         }

@@ -30,10 +30,9 @@ public class PiglinFlagEntity extends BlockEntity {
     }
 
     @Override
-    public NbtCompound writeNbt(NbtCompound nbt) {
+    public void writeNbt(NbtCompound nbt) {
         super.writeNbt(nbt);
         nbt.putInt("Flagging", flagWave);
-        return nbt;
     }
 
     public static void clientTick(World world, BlockPos pos, BlockState state, PiglinFlagEntity blockEntity) {

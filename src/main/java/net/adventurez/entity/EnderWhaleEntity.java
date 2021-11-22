@@ -215,7 +215,7 @@ public class EnderWhaleEntity extends FlyingEntity implements ItemSteerable {
             this.bodyYaw = this.getYaw();
             this.headYaw = this.getYaw();
             this.stepHeight = 1.0F;
-            this.flyingSpeed = this.getMovementSpeed() * 0.1F;
+            this.airStrafingSpeed = this.getMovementSpeed() * 0.1F;
             if (saddledComponent.boosted && saddledComponent.boostedTime++ > saddledComponent.currentBoostTime) {
                 saddledComponent.boosted = false;
             }
@@ -238,7 +238,7 @@ public class EnderWhaleEntity extends FlyingEntity implements ItemSteerable {
 
         } else {
             this.stepHeight = 0.5F;
-            this.flyingSpeed = 0.02F;
+            this.airStrafingSpeed = 0.02F;
             this.setMovementInput(movementInput);
         }
     }
@@ -450,7 +450,7 @@ public class EnderWhaleEntity extends FlyingEntity implements ItemSteerable {
 
         @Override
         public void tick() {
-            this.enderWhaleEntity.getLookControl().lookAt(this.closestPlayer, (float) (this.enderWhaleEntity.getBodyYawSpeed() + 20), (float) this.enderWhaleEntity.getLookPitchSpeed());
+            this.enderWhaleEntity.getLookControl().lookAt(this.closestPlayer, (float) (this.enderWhaleEntity.getMaxHeadRotation() + 20), (float) this.enderWhaleEntity.getMaxLookPitchChange());
             if (this.enderWhaleEntity.squaredDistanceTo(this.closestPlayer) < 9.25D) {
                 this.enderWhaleEntity.getNavigation().stop();
             } else {

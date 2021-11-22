@@ -4,7 +4,7 @@ import java.util.Random;
 
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.Inject;
-import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
+import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import org.spongepowered.asm.mixin.injection.callback.LocalCapture;
 import org.spongepowered.asm.mixin.injection.At;
 
@@ -25,11 +25,11 @@ import net.minecraft.world.gen.chunk.ChunkGenerator;
 public class NetherFortressGeneratorMixin {
 
     @Inject(method = "generate", at = @At(value = "INVOKE", target = "Lnet/minecraft/world/StructureWorldAccess;setBlockState(Lnet/minecraft/util/math/BlockPos;Lnet/minecraft/block/BlockState;I)Z"), locals = LocalCapture.CAPTURE_FAILSOFT)
-    private void generateMixin(StructureWorldAccess world, StructureAccessor structureAccessor, ChunkGenerator chunkGenerator, Random random, BlockBox boundingBox, ChunkPos chunkPos, BlockPos pos,
-            CallbackInfoReturnable<Boolean> info, BlockState blockState, BlockState blockState2, BlockPos blockPos) {
+    private void generateMixin(StructureWorldAccess world, StructureAccessor structureAccessor, ChunkGenerator chunkGenerator, Random random, BlockBox chunkBox, ChunkPos chunkPos, BlockPos pos,
+            CallbackInfo info, BlockState blockState, BlockState blockState2, BlockPos blockPos) {
         if (!world.isClient() && ConfigInit.CONFIG.allow_guardian_spawner_spawn) {
             BlazeGuardianEntity blazeGuardianEntity = (BlazeGuardianEntity) EntityInit.BLAZEGUARDIAN_ENTITY.create(world.toServerWorld());
-            blazeGuardianEntity.initialize(world.toServerWorld(), world.getLocalDifficulty(pos), SpawnReason.STRUCTURE, null, null);
+            blazeGuardianEntity.initialize(world.toServerWorld(), world.getLocalDifficulty(blockPos), SpawnReason.STRUCTURE, null, null);
             int randomCheck = random.nextInt(3);
             blazeGuardianEntity.refreshPositionAndAngles(blockPos.north(random.nextInt(3) - 1).east(randomCheck - 1 == 0 ? -1 : randomCheck), random.nextFloat() * 360F, 0.0F);
             world.spawnEntity(blazeGuardianEntity);

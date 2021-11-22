@@ -16,7 +16,7 @@ import net.minecraft.entity.SpawnReason;
 import net.minecraft.entity.SpawnRestriction;
 import net.minecraft.entity.ai.TargetPredicate;
 import net.minecraft.entity.ai.goal.FleeEntityGoal;
-import net.minecraft.entity.ai.goal.FollowTargetGoal;
+import net.minecraft.entity.ai.goal.ActiveTargetGoal;
 import net.minecraft.entity.ai.goal.LookAtEntityGoal;
 import net.minecraft.entity.ai.goal.MeleeAttackGoal;
 import net.minecraft.entity.ai.goal.RevengeGoal;
@@ -90,15 +90,14 @@ public class SummonerEntity extends SpellCastingEntity {
         this.targetSelector.add(1, (new RevengeGoal(this, new Class[] { SkeletonVanguardEntity.class })));
         this.targetSelector.add(2, (new RevengeGoal(this, new Class[] { ZombieEntity.class })));
         this.targetSelector.add(3, (new RevengeGoal(this, new Class[] { SkeletonEntity.class })));
-        this.targetSelector.add(4, (new FollowTargetGoal<>(this, PlayerEntity.class, true)).setMaxTimeWithoutVisibility(300));
+        this.targetSelector.add(4, (new ActiveTargetGoal<>(this, PlayerEntity.class, true)).setMaxTimeWithoutVisibility(300));
     }
 
     public static boolean canSpawn(EntityType<SummonerEntity> type, ServerWorldAccess world, SpawnReason spawnReason, BlockPos pos, Random random) {
         Optional<RegistryKey<Biome>> optional = world.getBiomeKey(pos);
         boolean bl = (world.getDifficulty() != Difficulty.PEACEFUL && canSpawnInDark(type, world, spawnReason, pos, random) && world.isSkyVisible(pos) && world.getLevelProperties().isRaining())
                 || spawnReason == SpawnReason.SPAWNER;
-        if (Objects.equals(optional, Optional.of(BiomeKeys.TAIGA)) || Objects.equals(optional, Optional.of(BiomeKeys.SNOWY_TAIGA)) || Objects.equals(optional, Optional.of(BiomeKeys.SNOWY_TUNDRA))
-                || Objects.equals(optional, Optional.of(BiomeKeys.GIANT_SPRUCE_TAIGA))) {
+        if (Objects.equals(optional, Optional.of(BiomeKeys.TAIGA)) || Objects.equals(optional, Optional.of(BiomeKeys.SNOWY_TAIGA)) || Objects.equals(optional, Optional.of(BiomeKeys.SNOWY_TAIGA))) {
             return bl;
         } else
             return false;
@@ -456,7 +455,7 @@ public class SummonerEntity extends SpellCastingEntity {
         @Override
         public void tick() {
             if (SummonerEntity.this.getTarget() != null) {
-                SummonerEntity.this.getLookControl().lookAt(SummonerEntity.this.getTarget(), (float) SummonerEntity.this.getBodyYawSpeed(), (float) SummonerEntity.this.getLookPitchSpeed());
+                SummonerEntity.this.getLookControl().lookAt(SummonerEntity.this.getTarget(), (float) SummonerEntity.this.getMaxHeadRotation(), (float) SummonerEntity.this.getMaxLookPitchChange());
             }
 
         }

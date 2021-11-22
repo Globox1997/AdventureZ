@@ -15,7 +15,7 @@ import net.minecraft.entity.EntityType;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.SpawnReason;
 import net.minecraft.entity.ai.NoPenaltyTargeting;
-import net.minecraft.entity.ai.goal.FollowTargetGoal;
+import net.minecraft.entity.ai.goal.ActiveTargetGoal;
 import net.minecraft.entity.ai.goal.Goal;
 import net.minecraft.entity.ai.goal.LookAroundGoal;
 import net.minecraft.entity.ai.goal.LookAtEntityGoal;
@@ -75,10 +75,10 @@ public class OrcEntity extends HostileEntity {
         this.goalSelector.add(5, new LookAtEntityGoal(this, PlayerEntity.class, 8.0F));
         this.goalSelector.add(6, new LookAroundGoal(this));
         this.goalSelector.add(7, new WanderAroundGoal(this, 0.9D));
-        this.targetSelector.add(1, new FollowTargetGoal<>(this, PlayerEntity.class, true));
-        this.targetSelector.add(2, (new RevengeGoal(this, new Class[] { OrcEntity.class })));
-        this.targetSelector.add(3, new FollowTargetGoal<>(this, WanderingTraderEntity.class, true));
-        this.targetSelector.add(4, new FollowTargetGoal<>(this, VillagerEntity.class, true));
+        this.targetSelector.add(1, new ActiveTargetGoal<>(this, PlayerEntity.class, true));
+        this.targetSelector.add(2, new ActiveTargetGoal<>(this, WanderingTraderEntity.class, true));
+        this.targetSelector.add(3, new ActiveTargetGoal<>(this, VillagerEntity.class, true));
+        this.targetSelector.add(4, (new RevengeGoal(this, new Class[] { OrcEntity.class })));
     }
 
     public static boolean canSpawn(EntityType<OrcEntity> type, ServerWorldAccess world, SpawnReason spawnReason, BlockPos pos, Random random) {

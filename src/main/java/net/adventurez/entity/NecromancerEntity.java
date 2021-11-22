@@ -13,8 +13,8 @@ import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.SpawnReason;
 import net.minecraft.entity.SpawnRestriction;
 import net.minecraft.entity.ai.TargetPredicate;
+import net.minecraft.entity.ai.goal.ActiveTargetGoal;
 import net.minecraft.entity.ai.goal.FleeEntityGoal;
-import net.minecraft.entity.ai.goal.FollowTargetGoal;
 import net.minecraft.entity.ai.goal.LookAtEntityGoal;
 import net.minecraft.entity.ai.goal.RevengeGoal;
 import net.minecraft.entity.ai.goal.SwimGoal;
@@ -69,7 +69,7 @@ public class NecromancerEntity extends SpellCastingEntity {
         this.goalSelector.add(9, new LookAtEntityGoal(this, MobEntity.class, 8.0F));
         this.targetSelector.add(1, (new RevengeGoal(this, new Class[] { WitherPuppetEntity.class })));
         this.targetSelector.add(2, (new RevengeGoal(this, new Class[] { WitherSkeletonEntity.class })));
-        this.targetSelector.add(3, (new FollowTargetGoal<>(this, PlayerEntity.class, true)).setMaxTimeWithoutVisibility(300));
+        this.targetSelector.add(3, (new ActiveTargetGoal<>(this, PlayerEntity.class, true)).setMaxTimeWithoutVisibility(300));
     }
 
     public static boolean canSpawn(EntityType<NecromancerEntity> type, ServerWorldAccess world, SpawnReason spawnReason, BlockPos pos, Random random) {
@@ -276,10 +276,9 @@ public class NecromancerEntity extends SpellCastingEntity {
         @Override
         public void tick() {
             if (NecromancerEntity.this.getTarget() != null) {
-                NecromancerEntity.this.getLookControl().lookAt(NecromancerEntity.this.getTarget(), (float) NecromancerEntity.this.getBodyYawSpeed(),
-                        (float) NecromancerEntity.this.getLookPitchSpeed());
+                NecromancerEntity.this.getLookControl().lookAt(NecromancerEntity.this.getTarget(), (float) NecromancerEntity.this.getMaxHeadRotation(),
+                        (float) NecromancerEntity.this.getMaxLookPitchChange());
             }
-
         }
     }
 

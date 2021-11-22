@@ -113,8 +113,8 @@ public class TheEyeRenderer extends MobEntityRenderer<TheEyeEntity, TheEyeModel<
             float ar = m * 2.5F + aq;
             VertexConsumer vertexConsumer = vertexConsumerProvider.getBuffer(LAYER);
             MatrixStack.Entry entry = matrixStack.peek();
-            Matrix4f matrix4f = entry.getModel();
-            Matrix3f matrix3f = entry.getNormal();
+            Matrix4f matrix4f = entry.getPositionMatrix();
+            Matrix3f matrix3f = entry.getNormalMatrix();
             method_23173(vertexConsumer, matrix4f, matrix3f, af, m, ag, s, t, u, 0.4999F, ar);
             method_23173(vertexConsumer, matrix4f, matrix3f, af, 0.0F, ag, s, t, u, 0.4999F, aq);
             method_23173(vertexConsumer, matrix4f, matrix3f, ah, 0.0F, ai, s, t, u, 0.0F, aq);

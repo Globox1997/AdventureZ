@@ -57,7 +57,7 @@ public class GildedStoneItem extends Item {
             if (!world.isClient) {
                 GildedStoneEntity gildedStoneEntity = new GildedStoneEntity(world, user.getX(), user.getY() + 1.6D, user.getZ());
                 gildedStoneEntity.setItem(itemStack);
-                gildedStoneEntity.setProperties(user, user.getPitch(), user.getYaw(), 0.0F, 1.4F, 1.0F);
+                gildedStoneEntity.setVelocity(user, user.getPitch(), user.getYaw(), 0.0F, 1.4F, 1.0F);
                 world.spawnEntity(gildedStoneEntity);
             }
             if (!user.isCreative()) {

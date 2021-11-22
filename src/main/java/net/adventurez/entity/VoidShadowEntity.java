@@ -394,7 +394,6 @@ public class VoidShadowEntity extends FlyingEntity implements Monster {
                 list.get(i).addStatusEffect(new StatusEffectInstance(EffectInit.FAME, 48000, 0, false, false, true));
             }
             if (this.isInVoidDungeon) {
-                this.world.setBlockState(this.getVoidMiddle().up(), Blocks.DRAGON_EGG.getDefaultState(), 3);
                 boolean direction = this.world.random.nextInt(2) == 0;
 
                 BlockPos pos = direction ? this.getVoidMiddle().north(3) : this.getVoidMiddle().south(3);

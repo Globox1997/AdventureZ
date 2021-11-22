@@ -46,7 +46,7 @@ public class PrimeEyeItem extends Item {
             if (!world.isClient) {
                 EnderPearlEntity enderPearlEntity = new EnderPearlEntity(world, user);
                 enderPearlEntity.setItem(itemStack);
-                enderPearlEntity.setProperties(user, user.getPitch(), user.getYaw(), 0.0F, 1.5F, 1.0F);
+                enderPearlEntity.setVelocity(user, user.getPitch(), user.getYaw(), 0.0F, 1.5F, 1.0F);
                 world.spawnEntity(enderPearlEntity);
                 itemStack.setDamage(itemStack.getDamage() + 1);
             }

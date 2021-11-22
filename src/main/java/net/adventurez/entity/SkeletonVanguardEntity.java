@@ -3,7 +3,7 @@ package net.adventurez.entity;
 import net.minecraft.block.BlockState;
 import net.minecraft.entity.EntityGroup;
 import net.minecraft.entity.EntityType;
-import net.minecraft.entity.ai.goal.FollowTargetGoal;
+import net.minecraft.entity.ai.goal.ActiveTargetGoal;
 import net.minecraft.entity.ai.goal.LookAtEntityGoal;
 import net.minecraft.entity.ai.goal.MeleeAttackGoal;
 import net.minecraft.entity.ai.goal.RevengeGoal;
@@ -50,7 +50,7 @@ public class SkeletonVanguardEntity extends HostileEntity {
         this.goalSelector.add(7, new WanderAroundFarGoal(this, 0.9D));
         this.targetSelector.add(1, (new RevengeGoal(this, new Class[] { SkeletonVanguardEntity.class })));
         this.targetSelector.add(2, (new RevengeGoal(this, new Class[] { SummonerEntity.class })));
-        this.targetSelector.add(3, new FollowTargetGoal<>(this, PlayerEntity.class, true));
+        this.targetSelector.add(3, new ActiveTargetGoal<>(this, PlayerEntity.class, true));
     }
 
     @Override

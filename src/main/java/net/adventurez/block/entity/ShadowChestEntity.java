@@ -98,13 +98,11 @@ public class ShadowChestEntity extends LootableContainerBlockEntity implements C
     }
 
     @Override
-    public NbtCompound writeNbt(NbtCompound nbt) {
+    public void writeNbt(NbtCompound nbt) {
         super.writeNbt(nbt);
         if (!this.serializeLootTable(nbt)) {
             Inventories.writeNbt(nbt, this.inventory);
         }
-
-        return nbt;
     }
 
     @Override
@@ -198,9 +196,11 @@ public class ShadowChestEntity extends LootableContainerBlockEntity implements C
                 this.inventory.set(i, new ItemStack(net.medievalweapons.init.ItemInit.THALLEOUS_SWORD));
                 continue;
             }
-            if (i == 13) {
+            if (i == 13)
                 this.inventory.set(i, new ItemStack(ItemInit.SOURCE_STONE));
-            } else {
+            else if (i == 1)
+                this.inventory.set(i, new ItemStack(Items.DRAGON_EGG));
+            else {
                 switch (this.world.random.nextInt(10)) {
                 case 0:
                     this.inventory.set(i, new ItemStack(Items.ENDER_PEARL, this.world.random.nextInt(5) + 1));

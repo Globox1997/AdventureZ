@@ -21,7 +21,7 @@ import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.SpawnReason;
 import net.minecraft.entity.ai.RangedAttackMob;
 import net.minecraft.entity.ai.goal.BowAttackGoal;
-import net.minecraft.entity.ai.goal.FollowTargetGoal;
+import net.minecraft.entity.ai.goal.ActiveTargetGoal;
 import net.minecraft.entity.ai.goal.LookAroundGoal;
 import net.minecraft.entity.ai.goal.LookAtEntityGoal;
 import net.minecraft.entity.ai.goal.MeleeAttackGoal;
@@ -94,8 +94,8 @@ public class SoulReaperEntity extends HostileEntity implements RangedAttackMob {
         this.goalSelector.add(6, new LookAtEntityGoal(this, PlayerEntity.class, 8.0F));
         this.goalSelector.add(7, new LookAroundGoal(this));
         this.targetSelector.add(1, (new RevengeGoal(this, new Class[] { SoulReaperEntity.class })));
-        this.targetSelector.add(2, new FollowTargetGoal<>(this, PlayerEntity.class, true));
-        this.targetSelector.add(3, new FollowTargetGoal<>(this, AbstractPiglinEntity.class, true));
+        this.targetSelector.add(2, new ActiveTargetGoal<>(this, PlayerEntity.class, true));
+        this.targetSelector.add(3, new ActiveTargetGoal<>(this, AbstractPiglinEntity.class, true));
     }
 
     @Override

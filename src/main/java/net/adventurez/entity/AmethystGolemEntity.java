@@ -12,7 +12,7 @@ import net.minecraft.entity.EntityData;
 import net.minecraft.entity.EntityType;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.SpawnReason;
-import net.minecraft.entity.ai.goal.FollowTargetGoal;
+import net.minecraft.entity.ai.goal.ActiveTargetGoal;
 import net.minecraft.entity.ai.goal.Goal;
 import net.minecraft.entity.ai.goal.LookAroundGoal;
 import net.minecraft.entity.ai.goal.LookAtEntityGoal;
@@ -62,7 +62,7 @@ public class AmethystGolemEntity extends HostileEntity {
         this.goalSelector.add(5, new LookAtEntityGoal(this, PlayerEntity.class, 8.0F));
         this.goalSelector.add(6, new LookAroundGoal(this));
         this.goalSelector.add(7, new WanderAroundGoal(this, 0.9D));
-        this.targetSelector.add(1, new FollowTargetGoal<>(this, PlayerEntity.class, true));
+        this.targetSelector.add(1, new ActiveTargetGoal<>(this, PlayerEntity.class, true));
     }
 
     public static boolean canSpawn(EntityType<AmethystGolemEntity> type, ServerWorldAccess world, SpawnReason spawnReason, BlockPos pos, Random random) {
@@ -225,7 +225,7 @@ public class AmethystGolemEntity extends HostileEntity {
             if (!this.amethystGolemEntity.world.isClient) {
                 ((ServerWorld) this.amethystGolemEntity.world).playSoundFromEntity(null, this.amethystGolemEntity, SoundInit.ROCK_THROW_EVENT, SoundCategory.HOSTILE, 0.74F, 1.0F);
                 AmethystShardEntity amethystShardEntity = new AmethystShardEntity(this.amethystGolemEntity, world);
-                amethystShardEntity.setProperties(amethystGolemEntity, amethystGolemEntity.getPitch(), amethystGolemEntity.getYaw(), -20.0F, 0.7F, 1.0F);
+                amethystShardEntity.setVelocity(amethystGolemEntity, amethystGolemEntity.getPitch(), amethystGolemEntity.getYaw(), -20.0F, 0.7F, 1.0F);
                 world.spawnEntity(amethystShardEntity);
 
             }

@@ -12,7 +12,7 @@ import net.adventurez.init.ItemInit;
 import net.adventurez.init.SoundInit;
 import net.adventurez.init.TagInit;
 import net.minecraft.entity.EntityType;
-import net.minecraft.entity.ai.goal.FollowTargetGoal;
+import net.minecraft.entity.ai.goal.ActiveTargetGoal;
 import net.minecraft.entity.attribute.EntityAttributes;
 import net.minecraft.entity.data.DataTracker;
 import net.minecraft.entity.data.TrackedData;
@@ -52,7 +52,7 @@ public abstract class IronGolemEntityMixin extends GolemEntity implements Entity
     private void readCustomDataFromNbtMixin(NbtCompound nbt, CallbackInfo info) {
         this.dataTracker.set(BLACKSTONED, nbt.getBoolean("Blackstoned"));
         if (nbt.getBoolean("Blackstoned"))
-            this.targetSelector.add(3, new FollowTargetGoal<>(this, CreeperEntity.class, false, true));
+            this.targetSelector.add(3, new ActiveTargetGoal<>(this, CreeperEntity.class, false, true));
     }
 
     @Inject(method = "interactMob", at = @At(value = "INVOKE_ASSIGN", target = "Lnet/minecraft/entity/player/PlayerEntity;getStackInHand(Lnet/minecraft/util/Hand;)Lnet/minecraft/item/ItemStack;"), cancellable = true, locals = LocalCapture.CAPTURE_FAILSOFT)
@@ -72,7 +72,7 @@ public abstract class IronGolemEntityMixin extends GolemEntity implements Entity
             }
         } else if (itemStack.isOf(ItemInit.STONE_GOLEM_HEART)) {
             if (!this.world.isClient) {
-                this.targetSelector.add(3, new FollowTargetGoal<>(this, CreeperEntity.class, false, true));
+                this.targetSelector.add(3, new ActiveTargetGoal<>(this, CreeperEntity.class, false, true));
                 this.dataTracker.set(BLACKSTONED, true);
                 this.getAttributeInstance(EntityAttributes.GENERIC_MAX_HEALTH).setBaseValue(this.getAttributeBaseValue(EntityAttributes.GENERIC_MAX_HEALTH) + 100.0D);
                 this.getAttributeInstance(EntityAttributes.GENERIC_ATTACK_DAMAGE).setBaseValue(this.getAttributeBaseValue(EntityAttributes.GENERIC_ATTACK_DAMAGE) + 5.0D);

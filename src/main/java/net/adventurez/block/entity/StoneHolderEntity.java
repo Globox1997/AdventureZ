@@ -7,7 +7,6 @@ import net.adventurez.init.EntityInit;
 import net.adventurez.init.ItemInit;
 import net.adventurez.init.SoundInit;
 import net.adventurez.init.TagInit;
-import net.fabricmc.fabric.api.block.entity.BlockEntityClientSerializable;
 import net.minecraft.block.BlockState;
 import net.minecraft.block.Blocks;
 import net.minecraft.block.SlabBlock;
@@ -22,6 +21,7 @@ import net.minecraft.inventory.Inventories;
 import net.minecraft.inventory.Inventory;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NbtCompound;
+import net.minecraft.network.packet.s2c.play.BlockEntityUpdateS2CPacket;
 import net.minecraft.particle.ParticleTypes;
 import net.minecraft.server.world.ServerWorld;
 import net.minecraft.sound.SoundCategory;
@@ -32,7 +32,7 @@ import net.minecraft.util.math.Direction;
 import net.minecraft.world.World;
 import net.minecraft.util.ItemScatterer;
 
-public class StoneHolderEntity extends BlockEntity implements Inventory, BlockEntityClientSerializable {
+public class StoneHolderEntity extends BlockEntity implements Inventory {
     private DefaultedList<ItemStack> inventory;
     private boolean startBuildingGolem = false;
     private int buildGolemCounter = 0;
@@ -54,13 +54,12 @@ public class StoneHolderEntity extends BlockEntity implements Inventory, BlockEn
     }
 
     @Override
-    public NbtCompound writeNbt(NbtCompound nbt) {
+    public void writeNbt(NbtCompound nbt) {
         super.writeNbt(nbt);
         Inventories.writeNbt(nbt, inventory);
         nbt.putInt("buildcounter", buildGolemCounter);
         nbt.putInt("tickcounter", tickCounter);
         nbt.putBoolean("startbuilding", startBuildingGolem);
-        return nbt;
     }
 
     public static void clientTick(World world, BlockPos pos, BlockState state, StoneHolderEntity blockEntity) {
@@ -349,18 +348,12 @@ public class StoneHolderEntity extends BlockEntity implements Inventory, BlockEn
     }
 
     @Override
-    public void fromClientTag(NbtCompound tag) {
-        inventory.clear();
-        Inventories.readNbt(tag, inventory);
-        buildGolemCounter = tag.getInt("buildcounter");
-        startBuildingGolem = tag.getBoolean("startbuilding");
+    public BlockEntityUpdateS2CPacket toUpdatePacket() {
+        return BlockEntityUpdateS2CPacket.create(this);
     }
 
     @Override
-    public NbtCompound toClientTag(NbtCompound tag) {
-        Inventories.writeNbt(tag, inventory);
-        tag.putInt("buildcounter", buildGolemCounter);
-        tag.putBoolean("startbuilding", startBuildingGolem);
-        return tag;
+    public NbtCompound toInitialChunkDataNbt() {
+        return this.createNbt();
     }
 }

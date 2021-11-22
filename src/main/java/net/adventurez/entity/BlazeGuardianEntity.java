@@ -15,7 +15,7 @@ import net.minecraft.entity.EntityType;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.SpawnReason;
 import net.minecraft.entity.SpawnRestriction;
-import net.minecraft.entity.ai.goal.FollowTargetGoal;
+import net.minecraft.entity.ai.goal.ActiveTargetGoal;
 import net.minecraft.entity.ai.goal.GoToWalkTargetGoal;
 import net.minecraft.entity.ai.goal.Goal;
 import net.minecraft.entity.ai.goal.LookAroundGoal;
@@ -100,7 +100,7 @@ public class BlazeGuardianEntity extends HostileEntity {
         this.goalSelector.add(8, new LookAroundGoal(this));
         this.targetSelector.add(1, (new RevengeGoal(this, new Class[0])).setGroupRevenge());
         this.targetSelector.add(2, (new RevengeGoal(this, new Class[] { BlazeEntity.class })));
-        this.targetSelector.add(3, new FollowTargetGoal<>(this, PlayerEntity.class, true));
+        this.targetSelector.add(3, new ActiveTargetGoal<>(this, PlayerEntity.class, true));
     }
 
     @Override

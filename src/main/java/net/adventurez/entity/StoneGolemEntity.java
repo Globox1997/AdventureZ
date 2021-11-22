@@ -18,7 +18,7 @@ import net.minecraft.entity.EntityGroup;
 import net.minecraft.entity.EntityType;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.SpawnReason;
-import net.minecraft.entity.ai.goal.FollowTargetGoal;
+import net.minecraft.entity.ai.goal.ActiveTargetGoal;
 import net.minecraft.entity.ai.goal.LookAtEntityGoal;
 import net.minecraft.entity.ai.goal.MeleeAttackGoal;
 import net.minecraft.entity.ai.goal.SwimGoal;
@@ -99,8 +99,8 @@ public class StoneGolemEntity extends HostileEntity {
         this.goalSelector.add(2, new WanderAroundFarGoal(this, 0.6D));
         this.goalSelector.add(3, new LookAtEntityGoal(this, PlayerEntity.class, 60.0F));
         this.goalSelector.add(4, new LookAtEntityGoal(this, MobEntity.class, 8.0F));
-        this.targetSelector.add(1, new FollowTargetGoal<>(this, PlayerEntity.class, false));
-        this.targetSelector.add(2, new FollowTargetGoal<>(this, IronGolemEntity.class, true));
+        this.targetSelector.add(1, new ActiveTargetGoal<>(this, PlayerEntity.class, false));
+        this.targetSelector.add(2, new ActiveTargetGoal<>(this, IronGolemEntity.class, true));
     }
 
     @Override

@@ -10,7 +10,7 @@ import net.minecraft.block.BlockState;
 import net.minecraft.entity.EntityType;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.ai.brain.MemoryModuleType;
-import net.minecraft.entity.ai.goal.FollowTargetGoal;
+import net.minecraft.entity.ai.goal.ActiveTargetGoal;
 import net.minecraft.entity.ai.goal.LookAroundGoal;
 import net.minecraft.entity.ai.goal.LookAtEntityGoal;
 import net.minecraft.entity.ai.goal.MeleeAttackGoal;
@@ -69,9 +69,9 @@ public class PiglinBeastEntity extends HostileEntity {
         this.goalSelector.add(5, new LookAtEntityGoal(this, PlayerEntity.class, 12.0F));
         this.goalSelector.add(6, new LookAroundGoal(this));
         this.goalSelector.add(7, new LookAtEntityGoal(this, MobEntity.class, 8.0F));
-        this.targetSelector.add(1, new FollowTargetGoal<>(this, WitherSkeletonEntity.class, true));
-        this.targetSelector.add(2, new FollowTargetGoal<>(this, PlayerEntity.class, true));
-        this.targetSelector.add(3, new FollowTargetGoal<>(this, BlazeGuardianEntity.class, true));
+        this.targetSelector.add(1, new ActiveTargetGoal<>(this, WitherSkeletonEntity.class, true));
+        this.targetSelector.add(2, new ActiveTargetGoal<>(this, PlayerEntity.class, true));
+        this.targetSelector.add(3, new ActiveTargetGoal<>(this, BlazeGuardianEntity.class, true));
         this.targetSelector.add(4, (new RevengeGoal(this, new Class[] { PiglinEntity.class })));
     }
 
