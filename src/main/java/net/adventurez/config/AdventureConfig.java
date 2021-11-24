@@ -112,4 +112,8 @@ public class AdventureConfig implements ConfigData {
     public boolean allow_all_items_on_holder = false;
     @ConfigEntry.Category("misc")
     public float warthog_rare_chance = 0.01F;
+    @ConfigEntry.Category("misc")
+    public int stoned_heart_duration = 72000;
+    @ConfigEntry.Category("misc")
+    public int stoned_heart_amplifier = 0;
 }

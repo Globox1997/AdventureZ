@@ -51,7 +51,7 @@ public class StoneGolemHeartItem extends Item {
         if (user.isSneaking()) {
             world.playSound(null, user.getX(), user.getY(), user.getZ(), SoundInit.GOLEM_AWAKENS_EVENT, SoundCategory.PLAYERS, 1.4F, 1.0F);
             if (!world.isClient) {
-                user.addStatusEffect(new StatusEffectInstance(EffectInit.BLACKSTONED_HEART, 72000, 0, false, false, true));
+                user.addStatusEffect(new StatusEffectInstance(EffectInit.BLACKSTONED_HEART, ConfigInit.CONFIG.stoned_heart_duration, ConfigInit.CONFIG.stoned_heart_amplifier, false, false, true));
                 itemStack.decrement(1);
             }
             return TypedActionResult.success(itemStack, world.isClient());
