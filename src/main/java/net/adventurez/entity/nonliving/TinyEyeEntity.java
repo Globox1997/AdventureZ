@@ -177,7 +177,7 @@ public class TinyEyeEntity extends ExplosiveProjectileEntity {
         this.checkBlockCollision();
         vec3d = this.getVelocity();
         this.updatePosition(this.getX() + vec3d.x, this.getY() + vec3d.y, this.getZ() + vec3d.z);
-        ProjectileUtil.method_7484(this, 0.5F);
+        ProjectileUtil.setRotationFromVelocity(this, 0.5F);
         if (this.world.isClient) {
         } else if (this.target != null && !this.target.isRemoved()) {
             if (this.stepCount > 0) {
