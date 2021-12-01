@@ -46,14 +46,14 @@ dependencies {
 		exclude(group: "net.fabricmc.fabric-api")
 	}
 	// VoidZ
-	modCompileOnly "com.github.Globox1997:VoidZ:43774d0fe8",{
+	modCompileOnly "com.github.Globox1997:VoidZ:1.18-SNAPSHOT",{
 		exclude(group: "net.fabricmc.fabric-api")
 		exclude(module:"AdventureZ")
 	}
 	// Flan
-	modCompileOnly ("curse.maven:flan-404578:404578"),{
-		exclude(group: "net.fabricmc.fabric-api")
-	}
+	// modCompileOnly ("curse.maven:flan-404578:404578"),{
+	// 	exclude(group: "net.fabricmc.fabric-api")
+	// }
 	// Dragonloot
 	modCompileOnly ('curse.maven:dragonloot-424480:3529611'){
 		exclude(group: "net.fabricmc.fabric-api")
