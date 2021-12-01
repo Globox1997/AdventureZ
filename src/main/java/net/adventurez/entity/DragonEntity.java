@@ -472,11 +472,9 @@ public class DragonEntity extends PathAwareEntity implements InventoryChangedLis
     public ActionResult interactMob(PlayerEntity player, Hand hand) {
         ItemStack itemStack = player.getStackInHand(hand);
         Item item = itemStack.getItem();
-        if (!this.isBaby()) {
-            if (this.hasPassengers()) {
-                return super.interactMob(player, hand);
-            }
-        }
+        if (!this.isBaby() && this.hasPassengers())
+            return super.interactMob(player, hand);
+
         if (this.world.isClient) {
             boolean bl = this.isOwner(player) || this.isTamed() || this.dragonFood(item) && !this.isTamed();
             return bl ? ActionResult.CONSUME : ActionResult.PASS;
@@ -564,10 +562,11 @@ public class DragonEntity extends PathAwareEntity implements InventoryChangedLis
         if (item == ItemInit.ORC_SKIN) {
             healingFood = 6;
             return true;
-        } else if (item == Items.PORKCHOP || item == Items.BEEF) {
+        } else if (item == Items.PORKCHOP || item == Items.BEEF || item == ItemInit.MAMMOTH_MEAT || item == ItemInit.RAW_VENISON || item == ItemInit.RHINO_MEAT || item == ItemInit.WARTHOG_MEAT
+                || item == ItemInit.ENDER_WHALE_MEAT) {
             healingFood = 5;
             return true;
-        } else if (item == Items.MUTTON || item == Items.CHICKEN) {
+        } else if (item == Items.MUTTON || item == Items.CHICKEN || item == ItemInit.IGUANA_MEAT) {
             healingFood = 4;
             return true;
         } else if (item == Items.RABBIT) {
