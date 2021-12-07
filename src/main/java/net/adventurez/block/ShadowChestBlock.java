@@ -147,7 +147,7 @@ public class ShadowChestBlock extends AbstractChestBlock<ShadowChestEntity> impl
 
     @Override
     public FluidState getFluidState(BlockState state) {
-        return (Boolean) state.get(WATERLOGGED) ? Fluids.WATER.getStill(false) : super.getFluidState(state);
+        return (Boolean) state.get(WATERLOGGED) ? Fluids.WATER.getStill(false) : Fluids.EMPTY.getDefaultState();
     }
 
     @Override
@@ -182,7 +182,9 @@ public class ShadowChestBlock extends AbstractChestBlock<ShadowChestEntity> impl
                 world.updateComparators(pos, this);
             }
 
-            super.onStateReplaced(state, world, pos, newState, moved);
+            if (state.hasBlockEntity()) {
+                world.removeBlockEntity(pos);
+            }
         }
     }
 
