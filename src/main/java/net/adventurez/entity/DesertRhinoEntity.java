@@ -1,7 +1,6 @@
 package net.adventurez.entity;
 
 import java.util.EnumSet;
-import java.util.List;
 import java.util.Random;
 
 import net.adventurez.init.SoundInit;
@@ -58,9 +57,9 @@ public class DesertRhinoEntity extends HostileEntity {
     }
 
     public static boolean canSpawn(EntityType<DesertRhinoEntity> type, ServerWorldAccess world, SpawnReason spawnReason, BlockPos pos, Random random) {
-        List<DesertRhinoEntity> list = world.getEntitiesByClass(DesertRhinoEntity.class, new Box(pos).expand(120D), EntityPredicates.EXCEPT_SPECTATOR);
         return ((world.getBlockState(pos.down()).isOf(Blocks.SAND) || world.getBlockState(pos.down()).isOf(Blocks.SANDSTONE)) && world.getBaseLightLevel(pos, 0) > 8 && world.isSkyVisible(pos)
-                && list.isEmpty() && world.getRandom().nextFloat() < 0.5F) || spawnReason == SpawnReason.SPAWNER;
+                && world.getEntitiesByClass(DesertRhinoEntity.class, new Box(pos).expand(120D), EntityPredicates.EXCEPT_SPECTATOR).isEmpty() && world.getRandom().nextFloat() < 0.5F)
+                || spawnReason == SpawnReason.SPAWNER;
     }
 
     @Override

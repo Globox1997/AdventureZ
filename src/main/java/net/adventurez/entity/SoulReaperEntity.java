@@ -1,8 +1,5 @@
 package net.adventurez.entity;
 
-import java.util.List;
-import java.util.Objects;
-import java.util.Optional;
 import java.util.Random;
 
 import org.jetbrains.annotations.Nullable;
@@ -48,17 +45,12 @@ import net.minecraft.sound.SoundEvents;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Box;
 import net.minecraft.util.math.MathHelper;
-import net.minecraft.util.registry.RegistryKey;
 import net.minecraft.entity.mob.AbstractPiglinEntity;
 import net.minecraft.entity.mob.HostileEntity;
 import net.minecraft.entity.mob.PathAwareEntity;
-import net.minecraft.world.Difficulty;
-import net.minecraft.world.LightType;
 import net.minecraft.world.LocalDifficulty;
 import net.minecraft.world.ServerWorldAccess;
 import net.minecraft.world.World;
-import net.minecraft.world.biome.Biome;
-import net.minecraft.world.biome.BiomeKeys;
 
 public class SoulReaperEntity extends HostileEntity implements RangedAttackMob {
     private final BowAttackGoal<SoulReaperEntity> bowAttackGoal = new BowAttackGoal<>(this, 1.0D, 40, 15.0F);
@@ -122,14 +114,9 @@ public class SoulReaperEntity extends HostileEntity implements RangedAttackMob {
     }
 
     public static boolean canSpawn(EntityType<SoulReaperEntity> type, ServerWorldAccess world, SpawnReason spawnReason, BlockPos pos, Random random) {
-        Optional<RegistryKey<Biome>> optional = world.getBiomeKey(pos);
-        List<SoulReaperEntity> list = world.getEntitiesByClass(SoulReaperEntity.class, new Box(pos).expand(60D), EntityPredicates.EXCEPT_SPECTATOR);
-        boolean bl = (world.getDifficulty() != Difficulty.PEACEFUL && world.getLightLevel(LightType.BLOCK, pos) < 10 && canSpawnInDark(type, world, spawnReason, pos, random)
-                && world.getBlockState(pos.up(3)).isAir() && list.isEmpty() && random.nextInt(7) == 0) || spawnReason == SpawnReason.SPAWNER;
-        if (Objects.equals(optional, Optional.of(BiomeKeys.SOUL_SAND_VALLEY))) {
-            return bl;
-        } else
-            return false;
+        return (canSpawnInDark(type, world, spawnReason, pos, random) && world.getBlockState(pos.up(3)).isAir()
+                && world.getEntitiesByClass(SoulReaperEntity.class, new Box(pos).expand(60D), EntityPredicates.EXCEPT_SPECTATOR).isEmpty() && random.nextInt(7) == 0)
+                || spawnReason == SpawnReason.SPAWNER;
     }
 
     @Override

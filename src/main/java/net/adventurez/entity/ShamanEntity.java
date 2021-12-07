@@ -40,7 +40,6 @@ import net.minecraft.sound.SoundEvents;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.SpawnHelper;
 import net.minecraft.world.World;
-import net.minecraft.world.Difficulty;
 import net.minecraft.world.ServerWorldAccess;
 
 public class ShamanEntity extends SpellCastingEntity {
@@ -77,8 +76,8 @@ public class ShamanEntity extends SpellCastingEntity {
     }
 
     public static boolean canSpawn(EntityType<ShamanEntity> type, ServerWorldAccess world, SpawnReason spawnReason, BlockPos pos, Random random) {
-        boolean bl = (world.getDifficulty() != Difficulty.PEACEFUL && canSpawnInDark(type, world, spawnReason, pos, random) && world.isSkyVisible(pos)) || spawnReason == SpawnReason.SPAWNER;
-        return bl;
+        return (canSpawnInDark(type, world, spawnReason, pos, random) && world.isSkyVisible(pos)) || spawnReason == SpawnReason.SPAWNER;
+
     }
 
     @Override

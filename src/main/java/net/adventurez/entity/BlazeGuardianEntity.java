@@ -1,8 +1,6 @@
 package net.adventurez.entity;
 
 import java.util.EnumSet;
-import java.util.Objects;
-import java.util.Optional;
 import java.util.Random;
 
 import org.jetbrains.annotations.Nullable;
@@ -39,14 +37,10 @@ import net.minecraft.sound.SoundEvents;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.MathHelper;
 import net.minecraft.util.math.Vec3d;
-import net.minecraft.util.registry.RegistryKey;
-import net.minecraft.world.Difficulty;
 import net.minecraft.world.LocalDifficulty;
 import net.minecraft.world.ServerWorldAccess;
 import net.minecraft.world.SpawnHelper;
 import net.minecraft.world.World;
-import net.minecraft.world.biome.Biome;
-import net.minecraft.world.biome.BiomeKeys;
 import net.minecraft.world.explosion.Explosion;
 import net.minecraft.entity.mob.BlazeEntity;
 import net.minecraft.entity.mob.HostileEntity;
@@ -290,10 +284,7 @@ public class BlazeGuardianEntity extends HostileEntity {
     }
 
     public static boolean canSpawn(EntityType<BlazeGuardianEntity> type, ServerWorldAccess world, SpawnReason spawnReason, BlockPos pos, Random random) {
-        Optional<RegistryKey<Biome>> optional = world.getBiomeKey(pos);
-        boolean bl = (world.getDifficulty() != Difficulty.PEACEFUL && world.getBlockState(pos.down()).isOf(Blocks.NETHERRACK) && world.getBaseLightLevel(pos, 0) < 10 && random.nextInt(4) == 0
-                && Objects.equals(optional, Optional.of(BiomeKeys.NETHER_WASTES)) && canMobSpawn(type, world, spawnReason, pos, random)) || spawnReason == SpawnReason.SPAWNER;
-        return bl;
+        return (world.getBlockState(pos.down()).isOf(Blocks.NETHERRACK) && canSpawnInDark(type, world, spawnReason, pos, random) && random.nextInt(4) == 0) || spawnReason == SpawnReason.SPAWNER;
     }
 
     static {

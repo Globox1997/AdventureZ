@@ -2,7 +2,6 @@ package net.adventurez.init;
 
 import net.fabricmc.fabric.api.biome.v1.BiomeModifications;
 import net.fabricmc.fabric.api.biome.v1.BiomeSelectors;
-import net.fabricmc.fabric.api.event.registry.RegistryEntryAddedCallback;
 import net.fabricmc.fabric.mixin.object.builder.SpawnRestrictionAccessor;
 
 import net.adventurez.entity.*;
@@ -10,7 +9,6 @@ import net.minecraft.entity.SpawnGroup;
 import net.minecraft.entity.SpawnRestriction;
 import net.minecraft.entity.mob.HostileEntity;
 import net.minecraft.entity.passive.AnimalEntity;
-import net.minecraft.util.registry.BuiltinRegistries;
 import net.minecraft.world.biome.Biome;
 import net.minecraft.world.biome.BiomeKeys;
 import net.minecraft.world.Heightmap;
@@ -20,19 +18,10 @@ public class SpawnInit {
     public static void init() {
         setSpawnRestriction();
         addSpawnEntries();
-        // for (Biome biome : BuiltinRegistries.BIOME) {
-        // addSpawnEntries(biome);
-        // }
-        // RegistryEntryAddedCallback.event(BuiltinRegistries.BIOME).register((i, identifier, biome) -> SpawnInit.addSpawnEntries(biome));
-        // RegistryEntryAddedCallback.event(BuiltinRegistries.BIOME).register(
-        // (i, identifier, biome) -> System.out.println("!!!Callback " + biome + "::" + biome.getSpawnSettings().getSpawnEntries(SpawnGroup.MONSTER).getEntries() + "::" + biome.getCategory()));
-        // RegistryEntryAddedCallback.event(BuiltinRegistries.BIOME).register(
-        // (i, identifier, biome) -> System.out.println("!!!SecondCallback " + biome + "::" + biome.getSpawnSettings().getSpawnEntries(SpawnGroup.MONSTER).getEntries() + "::" + biome.getCategory()));
-        // System.out.println(x);
     }
 
     // MONSTER tries to spawn often, CREATURE tries more rarely to spawn + in groups
-    private static void addSpawnEntries() {// Biome biome
+    private static void addSpawnEntries() {
         BiomeModifications.addSpawn(BiomeSelectors.includeByKey(BiomeKeys.BASALT_DELTAS), SpawnGroup.MONSTER, EntityInit.SMALLSTONEGOLEM_ENTITY, ConfigInit.CONFIG.small_stone_golem_spawn_weight, 1,
                 1);
         BiomeModifications.addSpawn(BiomeSelectors.includeByKey(BiomeKeys.NETHER_WASTES), SpawnGroup.MONSTER, EntityInit.BLAZEGUARDIAN_ENTITY, ConfigInit.CONFIG.blaze_guardian_spawn_weight, 1, 1);
@@ -49,37 +38,6 @@ public class SpawnInit {
                 ConfigInit.CONFIG.enderwarthog_spawn_weight, 1, 1);
         BiomeModifications.addSpawn(BiomeSelectors.categories(Biome.Category.FOREST), SpawnGroup.CREATURE, EntityInit.DEER_ENTITY, ConfigInit.CONFIG.deer_spawn_weight, 2, 3);
     }
-    // private static void addSpawnEntries(Biome biome) {// Biome biome
-    // if (biome.getCategory().equals(Biome.Category.NETHER)) {
-    // BiomeModifications.addSpawn(BiomeSelectors.includeByKey(BiomeKeys.BASALT_DELTAS), SpawnGroup.MONSTER, EntityInit.SMALLSTONEGOLEM_ENTITY, ConfigInit.CONFIG.small_stone_golem_spawn_weight,
-    // 1, 1);
-    // BiomeModifications.addSpawn(BiomeSelectors.includeByKey(BiomeKeys.NETHER_WASTES), SpawnGroup.MONSTER, EntityInit.BLAZEGUARDIAN_ENTITY, ConfigInit.CONFIG.blaze_guardian_spawn_weight, 1,
-    // 1);
-    // BiomeModifications.addSpawn(BiomeSelectors.includeByKey(BiomeKeys.SOUL_SAND_VALLEY), SpawnGroup.MONSTER, EntityInit.SOULREAPER_ENTITY, ConfigInit.CONFIG.nightmare_spawn_weight, 1, 1);
-    // System.out.println("Nether Check " + biome + "::" + biome.getSpawnSettings().getSpawnEntries(SpawnGroup.MONSTER).getEntries());
-    // }
-    // if (biome.getCategory().equals(Biome.Category.MUSHROOM)) {
-    // BiomeModifications.addSpawn(BiomeSelectors.categories(Biome.Category.MUSHROOM), SpawnGroup.CREATURE, EntityInit.RED_FUNGUS_ENTITY, ConfigInit.CONFIG.fungus_spawn_weight, 2, 3);
-    // BiomeModifications.addSpawn(BiomeSelectors.categories(Biome.Category.MUSHROOM), SpawnGroup.CREATURE, EntityInit.BROWN_FUNGUS_ENTITY, ConfigInit.CONFIG.fungus_spawn_weight, 2, 3);
-    // }
-    // if (biome.getCategory().equals(Biome.Category.PLAINS))
-    // BiomeModifications.addSpawn(BiomeSelectors.categories(Biome.Category.PLAINS), SpawnGroup.MONSTER, EntityInit.ORC_ENTITY, ConfigInit.CONFIG.orc_spawn_weight, 2, 4);
-    // if (biome.getCategory().equals(Biome.Category.ICY) || biome.getCategory().equals(Biome.Category.TAIGA))
-    // BiomeModifications.addSpawn(BiomeSelectors.categories(Biome.Category.ICY, Biome.Category.TAIGA), SpawnGroup.CREATURE, EntityInit.MAMMOTH_ENTITY, ConfigInit.CONFIG.mammoth_spawn_weight, 2,
-    // 2);
-    // if (biome.getCategory().equals(Biome.Category.THEEND)) {
-    // BiomeModifications.addSpawn(BiomeSelectors.categories(Biome.Category.THEEND), SpawnGroup.CREATURE, EntityInit.ENDER_WHALE_ENTITY, ConfigInit.CONFIG.ender_whale_spawn_weight, 1, 1);
-    // BiomeModifications.addSpawn(BiomeSelectors.includeByKey(BiomeKeys.END_HIGHLANDS, BiomeKeys.END_MIDLANDS), SpawnGroup.MONSTER, EntityInit.ENDERWARTHOG_ENTITY,
-    // ConfigInit.CONFIG.enderwarthog_spawn_weight, 1, 1);
-    // }
-    // if (biome.getCategory().equals(Biome.Category.MESA))
-    // BiomeModifications.addSpawn(BiomeSelectors.categories(Biome.Category.MESA), SpawnGroup.CREATURE, EntityInit.IGUANA_ENTITY, ConfigInit.CONFIG.iguana_spawn_weight, 1, 2);
-    // if (biome.getCategory().equals(Biome.Category.DESERT))
-    // BiomeModifications.addSpawn(BiomeSelectors.categories(Biome.Category.DESERT), SpawnGroup.MONSTER, EntityInit.DESERT_RHINO_ENTITY, ConfigInit.CONFIG.desert_rhino_spawn_weight, 1, 1);
-    // if (biome.getCategory().equals(Biome.Category.SWAMP))
-    // BiomeModifications.addSpawn(BiomeSelectors.categories(Biome.Category.SWAMP), SpawnGroup.MONSTER, EntityInit.SHAMAN_ENTITY, ConfigInit.CONFIG.shaman_spawn_weight, 1, 1);
-
-    // }
 
     private static void setSpawnRestriction() {
         SpawnRestrictionAccessor.callRegister(EntityInit.SMALLSTONEGOLEM_ENTITY, SpawnRestriction.Location.ON_GROUND, Heightmap.Type.MOTION_BLOCKING_NO_LEAVES, SmallStoneGolemEntity::canSpawn);

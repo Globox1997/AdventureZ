@@ -1,7 +1,5 @@
 package net.adventurez.entity;
 
-import java.util.Objects;
-import java.util.Optional;
 import java.util.Random;
 
 import net.adventurez.init.SoundInit;
@@ -22,13 +20,9 @@ import net.minecraft.entity.mob.MobEntity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.sound.SoundEvent;
 import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.registry.RegistryKey;
-import net.minecraft.world.Difficulty;
 import net.minecraft.world.ServerWorldAccess;
 import net.minecraft.world.World;
 import net.minecraft.world.WorldView;
-import net.minecraft.world.biome.Biome;
-import net.minecraft.world.biome.BiomeKeys;
 
 public class SmallStoneGolemEntity extends HostileEntity {
 
@@ -55,12 +49,7 @@ public class SmallStoneGolemEntity extends HostileEntity {
     }
 
     public static boolean canSpawn(EntityType<SmallStoneGolemEntity> type, ServerWorldAccess world, SpawnReason spawnReason, BlockPos pos, Random random) {
-        Optional<RegistryKey<Biome>> optional = world.getBiomeKey(pos);
-        boolean bl = (world.getDifficulty() != Difficulty.PEACEFUL && isSpawnDark(world, pos, random) && canMobSpawn(type, world, spawnReason, pos, random)) || spawnReason == SpawnReason.SPAWNER;
-        if (Objects.equals(optional, Optional.of(BiomeKeys.BASALT_DELTAS))) {
-            return bl;
-        } else
-            return false;
+        return canSpawnInDark(type, world, spawnReason, pos, random) || spawnReason == SpawnReason.SPAWNER;
     }
 
     @Override

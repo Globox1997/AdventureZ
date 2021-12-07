@@ -1,8 +1,6 @@
 package net.adventurez.entity;
 
 import java.util.List;
-import java.util.Objects;
-import java.util.Optional;
 import java.util.Random;
 
 import net.adventurez.init.EntityInit;
@@ -49,12 +47,8 @@ import net.minecraft.sound.SoundEvent;
 import net.minecraft.sound.SoundEvents;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.MathHelper;
-import net.minecraft.util.registry.RegistryKey;
 import net.minecraft.world.SpawnHelper;
 import net.minecraft.world.World;
-import net.minecraft.world.biome.Biome;
-import net.minecraft.world.biome.BiomeKeys;
-import net.minecraft.world.Difficulty;
 import net.minecraft.world.Heightmap;
 import net.minecraft.world.ServerWorldAccess;
 
@@ -94,13 +88,7 @@ public class SummonerEntity extends SpellCastingEntity {
     }
 
     public static boolean canSpawn(EntityType<SummonerEntity> type, ServerWorldAccess world, SpawnReason spawnReason, BlockPos pos, Random random) {
-        Optional<RegistryKey<Biome>> optional = world.getBiomeKey(pos);
-        boolean bl = (world.getDifficulty() != Difficulty.PEACEFUL && canSpawnInDark(type, world, spawnReason, pos, random) && world.isSkyVisible(pos) && world.getLevelProperties().isRaining())
-                || spawnReason == SpawnReason.SPAWNER;
-        if (Objects.equals(optional, Optional.of(BiomeKeys.TAIGA)) || Objects.equals(optional, Optional.of(BiomeKeys.SNOWY_TAIGA)) || Objects.equals(optional, Optional.of(BiomeKeys.SNOWY_TAIGA))) {
-            return bl;
-        } else
-            return false;
+        return (canSpawnInDark(type, world, spawnReason, pos, random) && world.isSkyVisible(pos) && world.getLevelProperties().isRaining()) || spawnReason == SpawnReason.SPAWNER;
     }
 
     @Override
