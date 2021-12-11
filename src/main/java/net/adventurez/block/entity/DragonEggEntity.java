@@ -1,7 +1,5 @@
 package net.adventurez.block.entity;
 
-import java.util.List;
-
 import net.adventurez.entity.DragonEntity;
 import net.adventurez.entity.TheEyeEntity;
 import net.adventurez.init.BlockInit;
@@ -16,10 +14,8 @@ import net.minecraft.entity.SpawnReason;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.nbt.NbtCompound;
 import net.minecraft.particle.ParticleTypes;
-import net.minecraft.predicate.entity.EntityPredicates;
 import net.minecraft.server.world.ServerWorld;
 import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.math.Box;
 import net.minecraft.world.World;
 
 public class DragonEggEntity extends BlockEntity {
@@ -105,7 +101,7 @@ public class DragonEggEntity extends BlockEntity {
             return false;
     }
 
-    public void tick() {
+    private void tick() {
         this.updateTheEyeSummoning();
         this.updateDragonHatching();
     }
@@ -115,14 +111,11 @@ public class DragonEggEntity extends BlockEntity {
             overallHatchingTick++;
             if (overallHatchingTick == 20) {
                 if (!this.isHatchAble) {
-                    Box box = new Box(this.getPos());
-                    List<PlayerEntity> list = world.getEntitiesByClass(PlayerEntity.class, box.expand(2D), EntityPredicates.EXCEPT_SPECTATOR);
-                    for (int i = 0; i < list.size(); ++i) {
-                        PlayerEntity playerEntity = (PlayerEntity) list.get(i);
-                        if (playerEntity instanceof PlayerEntity && playerEntity.hasStatusEffect(EffectInit.FAME)) {
-                            this.isHatchAble = true;
-                        }
-                    }
+                    if (((ServerWorld) this.world).getEnderDragonFight() != null && !((ServerWorld) this.world).getEnderDragonFight().hasPreviouslyKilled())
+                        return;
+                    PlayerEntity playerEntity = world.getClosestPlayer(this.getPos().getX() + 0.5D, this.getPos().getY(), this.getPos().getZ() + 0.5D, 2.5D, true);
+                    if (playerEntity != null && playerEntity.hasStatusEffect(EffectInit.FAME))
+                        enableEggHatching();
                 } else {
                     this.hatchTick++;
                     if (this.hatchTick % 60 == 0) {
@@ -199,6 +192,10 @@ public class DragonEggEntity extends BlockEntity {
         world.addParticle(ParticleTypes.END_ROD, d1, e1, f1, 0.0D, 0.0D, 0.0D);
         world.addParticle(ParticleTypes.END_ROD, d2, e2, f2, 0.0D, 0.0D, 0.0D);
         world.addParticle(ParticleTypes.END_ROD, d3, e3, f3, 0.0D, 0.0D, 0.0D);
+    }
+
+    public void enableEggHatching() {
+        this.isHatchAble = true;
     }
 
 }

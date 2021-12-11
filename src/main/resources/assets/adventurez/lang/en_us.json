@@ -179,5 +179,6 @@
   "text.autoconfig.adventurez.option.enderwarthog_spawn_weight": "Enderwarthog Spawn Weight",
   "text.autoconfig.adventurez.option.warthog_rare_chance": "Enderwarthog Rare Chance",
   "text.autoconfig.adventurez.option.stoned_heart_duration": "Stoned Heart Duration",
-  "text.autoconfig.adventurez.option.stoned_heart_amplifier": "Stoned Heart Amplifier"
+  "text.autoconfig.adventurez.option.stoned_heart_amplifier": "Stoned Heart Amplifier",
+  "text.autoconfig.adventurez.option.allow_other_dragon_hatching": "Allow Other Dragon Hatching"
 }

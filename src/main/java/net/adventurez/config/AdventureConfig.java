@@ -116,4 +116,6 @@ public class AdventureConfig implements ConfigData {
     public int stoned_heart_duration = 72000;
     @ConfigEntry.Category("misc")
     public int stoned_heart_amplifier = 0;
+    @ConfigEntry.Category("misc")
+    public boolean allow_other_dragon_hatching = false;
 }
