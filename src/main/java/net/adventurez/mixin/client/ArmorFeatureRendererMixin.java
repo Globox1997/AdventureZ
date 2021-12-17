@@ -40,30 +40,41 @@ public abstract class ArmorFeatureRendererMixin<T extends LivingEntity, M extend
         this.bodyModel = bodyModel;
     }
 
-    @Inject(method = "render", at = @At("FIELD"))
-    private void renderGlowingArmorMixin(MatrixStack matrixStack, VertexConsumerProvider vertexConsumerProvider, int i, T livingEntity, float f, float g, float h, float j, float k, float l,
+    @Inject(method = "render", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/render/entity/feature/ArmorFeatureRenderer;renderArmor(Lnet/minecraft/client/util/math/MatrixStack;Lnet/minecraft/client/render/VertexConsumerProvider;Lnet/minecraft/entity/LivingEntity;Lnet/minecraft/entity/EquipmentSlot;ILnet/minecraft/client/render/entity/model/BipedEntityModel;)V", ordinal = 3))
+    private void renderGlowingArmorOneMixin(MatrixStack matrixStack, VertexConsumerProvider vertexConsumerProvider, int i, T livingEntity, float f, float g, float h, float j, float k, float l,
             CallbackInfo info) {
         ItemStack golemChestplate = livingEntity.getEquippedStack(EquipmentSlot.CHEST);
-        if (golemChestplate.getItem().equals(ItemInit.STONE_GOLEM_CHESTPLATE)) {
+        if (golemChestplate.isOf(ItemInit.STONE_GOLEM_CHESTPLATE)) {
             if (StoneGolemArmor.fireTime(golemChestplate)) {
                 VertexConsumer vertexConsumer = ItemRenderer.getArmorGlintConsumer(vertexConsumerProvider,
-                        RenderLayer.getArmorCutoutNoCull(new Identifier("minecraft:textures/models/armor/stone_golem_layer_1_overlay.png")), true, false);
+                        RenderLayer.getArmorCutoutNoCull(new Identifier("minecraft:textures/models/armor/stone_golem_layer_1_overlay.png")), false, false);
                 bodyModel.render(matrixStack, vertexConsumer, 220, OverlayTexture.DEFAULT_UV, 1.0F, 1.0F, 1.0F, 1.0F);
             }
         }
+    }
 
+    @Inject(method = "render", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/render/entity/feature/ArmorFeatureRenderer;renderArmor(Lnet/minecraft/client/util/math/MatrixStack;Lnet/minecraft/client/render/VertexConsumerProvider;Lnet/minecraft/entity/LivingEntity;Lnet/minecraft/entity/EquipmentSlot;ILnet/minecraft/client/render/entity/model/BipedEntityModel;)V", ordinal = 2))
+    private void renderGlowingArmorTwoMixin(MatrixStack matrixStack, VertexConsumerProvider vertexConsumerProvider, int i, T livingEntity, float f, float g, float h, float j, float k, float l,
+            CallbackInfo info) {
+        ItemStack golemChestplate = livingEntity.getEquippedStack(EquipmentSlot.CHEST);
+        if (golemChestplate.isOf(ItemInit.STONE_GOLEM_CHESTPLATE)) {
+            if (StoneGolemArmor.fireTime(golemChestplate)) {
+                VertexConsumer vertexConsumer = ItemRenderer.getArmorGlintConsumer(vertexConsumerProvider,
+                        RenderLayer.getArmorCutoutNoCull(new Identifier("minecraft:textures/models/armor/stone_golem_layer_1_overlay.png")), false, false);
+                bodyModel.render(matrixStack, vertexConsumer, 220, OverlayTexture.DEFAULT_UV, 1.0F, 1.0F, 1.0F, 1.0F);
+            }
+        }
     }
 
     @Inject(method = "render", at = @At("TAIL"))
     private void renderGlowingHelmetMixin(MatrixStack matrixStack, VertexConsumerProvider vertexConsumerProvider, int i, T livingEntity, float f, float g, float h, float j, float k, float l,
             CallbackInfo info) {
         ItemStack golemChestplate = livingEntity.getEquippedStack(EquipmentSlot.CHEST);
-        if (golemChestplate.getItem().equals(ItemInit.STONE_GOLEM_CHESTPLATE)) {
+        if (golemChestplate.isOf(ItemInit.STONE_GOLEM_CHESTPLATE)) {
             if (StoneGolemArmor.fireTime(golemChestplate)) {
                 VertexConsumer vertexConsumer = ItemRenderer.getArmorGlintConsumer(vertexConsumerProvider,
                         RenderLayer.getArmorCutoutNoCull(new Identifier("textures/models/armor/stone_golem_layer_1_overlay_helmet.png")), false, false);
                 bodyModel.render(matrixStack, vertexConsumer, 220, OverlayTexture.DEFAULT_UV, 1.0F, 1.0F, 1.0F, 1.0F);
-
             }
         }
     }
