@@ -82,6 +82,8 @@ public class TheEyeEntity extends FlyingEntity {
     private int deathTimer;
     private int duplicationTimer = 0;
 
+    private final boolean isVoidZLoaded = FabricLoader.getInstance().isModLoaded("voidz");
+
     public TheEyeEntity(EntityType<? extends TheEyeEntity> entityType, World world) {
         super(entityType, world);
         if (this.duplicationTimer <= 0) {
@@ -459,7 +461,7 @@ public class TheEyeEntity extends FlyingEntity {
             if (!this.world.isClient) {
                 this.bossBar.setPercent(0.0F);
                 BlockPos deathPos = new BlockPos(this.getX(), this.getY() - 1, this.getZ());
-                if (deathTimer == 20 && !FabricLoader.getInstance().isModLoaded("voidz")) {
+                if (deathTimer == 20 && !this.isVoidZLoaded) {
                     Box box = new Box(this.getBlockPos());
                     List<PlayerEntity> list = world.getEntitiesByClass(PlayerEntity.class, box.expand(128D), EntityPredicates.EXCEPT_SPECTATOR);
                     for (int i = 0; i < list.size(); ++i) {
@@ -480,7 +482,7 @@ public class TheEyeEntity extends FlyingEntity {
                     }
                     // Platform
                     this.placeDeathStructure(deathPos);
-                    if (FabricLoader.getInstance().isModLoaded("voidz")) {
+                    if (this.isVoidZLoaded) {
                         world.setBlockState(deathPos.up(8).north().west(), BlockInit.PORTAL_BLOCK.getDefaultState(), 3);
                     } else {
                         world.setBlockState(deathPos.up(8).north().west(), Blocks.DRAGON_EGG.getDefaultState(), 3);
