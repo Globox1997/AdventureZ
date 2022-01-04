@@ -6,6 +6,8 @@ import io.netty.buffer.Unpooled;
 import net.adventurez.entity.DragonEntity;
 import net.adventurez.item.armor.StoneGolemArmor;
 import net.adventurez.network.KeybindPacket;
+import net.fabricmc.api.EnvType;
+import net.fabricmc.api.Environment;
 import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientTickEvents;
 import net.fabricmc.fabric.api.client.keybinding.v1.KeyBindingHelper;
 import net.minecraft.client.MinecraftClient;
@@ -15,7 +17,9 @@ import net.minecraft.client.util.InputUtil;
 import net.minecraft.network.PacketByteBuf;
 import net.minecraft.network.packet.c2s.play.CustomPayloadC2SPacket;
 
+@Environment(EnvType.CLIENT)
 public class KeybindInit {
+
     public static KeyBinding dragonFlyDownKeyBind;
     public static KeyBinding armorKeyBind;
     public static KeyBinding dragonFireBreathBind;

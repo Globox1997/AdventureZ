@@ -7,6 +7,8 @@ import net.adventurez.init.ParticleInit.ShardParticle;
 import net.adventurez.init.ParticleInit.SprintParticle;
 import net.adventurez.init.ParticleInit.VoidCloudParticle;
 import net.adventurez.network.EntitySpawnPacket;
+import net.fabricmc.api.EnvType;
+import net.fabricmc.api.Environment;
 import net.fabricmc.fabric.api.blockrenderlayer.v1.BlockRenderLayerMap;
 import net.fabricmc.fabric.api.client.networking.v1.ClientPlayNetworking;
 import net.fabricmc.fabric.api.client.particle.v1.ParticleFactoryRegistry;
@@ -21,6 +23,7 @@ import net.minecraft.client.render.entity.EmptyEntityRenderer;
 import net.minecraft.client.render.entity.model.EntityModelLayer;
 import net.minecraft.util.Identifier;
 
+@Environment(EnvType.CLIENT)
 public class RenderInit {
     public static final boolean isCanvasLoaded = FabricLoader.getInstance().isModLoaded("canvas");
     public static final boolean isIrisLoaded = FabricLoader.getInstance().isModLoaded("iris");

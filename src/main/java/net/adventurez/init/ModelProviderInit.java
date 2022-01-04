@@ -1,10 +1,12 @@
 package net.adventurez.init;
 
+import net.fabricmc.api.EnvType;
+import net.fabricmc.api.Environment;
 import net.fabricmc.fabric.api.object.builder.v1.client.model.FabricModelPredicateProviderRegistry;
 import net.minecraft.util.Identifier;
 import net.minecraft.nbt.NbtCompound;
-//import net.minecraft.client.item.ModelPredicateProviderRegistry;
 
+@Environment(EnvType.CLIENT)
 public class ModelProviderInit {
 
     public static void init() {
