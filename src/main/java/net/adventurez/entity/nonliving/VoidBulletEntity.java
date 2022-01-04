@@ -40,11 +40,12 @@ public class VoidBulletEntity extends ExplosiveProjectileEntity {
 
     public VoidBulletEntity(World world, LivingEntity owner, double velocityX, double velocityY, double velocityZ) {
         super(EntityInit.VOID_BULLET_ENTITY, owner, velocityX, velocityY, velocityZ, world);
-        this.refreshPositionAndAngles(owner.getX() + velocityX * 1.24D, owner.getY() + owner.getBoundingBox().getYLength() * 0.6D + velocityY * 1.24D, owner.getZ() + velocityZ * 1.24D,
-                -owner.getYaw(), owner.getPitch());
+        this.refreshPositionAndAngles(owner.getX() + velocityX * 1.2D, owner.getY() + owner.getBoundingBox().getYLength() * 0.6D + velocityY * 1.2D, owner.getZ() + velocityZ * 1.2D, -owner.getYaw(),
+                owner.getPitch());
         this.prevPitch = owner.getPitch();
-        this.prevYaw = -owner.getYaw();
-
+        this.setYaw(-owner.getYaw());
+        this.powerX *= 1.8D;
+        this.powerZ *= 1.8D;
     }
 
     @Override
@@ -118,10 +119,10 @@ public class VoidBulletEntity extends ExplosiveProjectileEntity {
                 double d = (double) this.getPos().getX() + 0.3F * this.world.random.nextFloat();
                 double e = (double) ((float) this.getPos().getY() + this.world.random.nextFloat() * 0.3F);
                 double f = (double) this.getPos().getZ() + 0.3F * this.world.random.nextFloat();
-                double g = (double) (world.random.nextFloat() * 0.2D);
-                double h = (double) world.random.nextFloat() * 0.2D;
-                double l = (double) (world.random.nextFloat() * 0.2D);
-                ((ServerWorld) world).spawnParticles(ParticleTypes.SMOKE, d, e, f, 3, g, h, l, 1.0D);
+                double g = (double) (world.random.nextFloat() * 0.1D);
+                double h = (double) world.random.nextFloat() * 0.1D;
+                double l = (double) (world.random.nextFloat() * 0.1D);
+                ((ServerWorld) world).spawnParticles(ParticleTypes.SMOKE, d, e, f, 3, g, h, l, 0.1D);
             }
             this.discard();
         }
