@@ -100,18 +100,14 @@ public class VoidBulletEntity extends ExplosiveProjectileEntity {
     @Override
     public void onEntityHit(EntityHitResult entityHitResult) {
         super.onEntityHit(entityHitResult);
-        Entity entity = this.getOwner();
         Entity hittedEntity = entityHitResult.getEntity();
-        if (!this.world.isClient && entity != null && !(hittedEntity instanceof VoidShadeEntity) && !(hittedEntity instanceof VoidBulletEntity)) {
+
+        if (!this.world.isClient && !(hittedEntity instanceof VoidBulletEntity) && !(hittedEntity instanceof VoidShadeEntity)) {
             this.playSound(SoundEvents.ENTITY_ENDER_EYE_DEATH, 1.0F, 1.0F);
-            hittedEntity.damage(createDamageSource(this), 7.0F);
+            hittedEntity.damage(createBulletDamageSource(this), 7.0F);
             this.discard();
         }
 
-    }
-
-    public static DamageSource createDamageSource(Entity entity) {
-        return new EntityDamageSource("voidBullet", entity).setProjectile();
     }
 
     @Override
@@ -139,6 +135,10 @@ public class VoidBulletEntity extends ExplosiveProjectileEntity {
     @Override
     public Packet<?> createSpawnPacket() {
         return EntitySpawnPacket.createPacket(this);
+    }
+
+    private static DamageSource createBulletDamageSource(Entity entity) {
+        return new EntityDamageSource("voidBullet", entity).setProjectile();
     }
 
 }
