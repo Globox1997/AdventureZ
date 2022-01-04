@@ -122,9 +122,9 @@ public class ParticleInit {
             this.startY = this.y;
             this.startZ = this.z;
             this.scale = 0.5F * (this.random.nextFloat() * 0.05F + 0.4F);
-            this.colorRed = this.random.nextFloat() * 0.2F;
-            this.colorGreen = this.random.nextFloat() * 0.2F;
-            this.colorBlue = this.random.nextFloat() * 0.2F;
+            this.red = this.random.nextFloat() * 0.2F;
+            this.green = this.random.nextFloat() * 0.2F;
+            this.blue = this.random.nextFloat() * 0.2F;
             this.maxAge = (int) (this.random.nextFloat() * 2.0F) + 10;
         }
 
