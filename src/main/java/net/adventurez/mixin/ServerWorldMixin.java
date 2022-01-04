@@ -4,7 +4,6 @@ import java.util.List;
 import java.util.concurrent.Executor;
 
 import org.spongepowered.asm.mixin.Mixin;
-import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.At.Shift;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
@@ -21,6 +20,7 @@ import net.minecraft.server.world.ServerWorld;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.ChunkPos;
 import net.minecraft.util.registry.RegistryKey;
+import net.minecraft.world.Heightmap;
 import net.minecraft.world.SpawnHelper;
 import net.minecraft.world.World;
 import net.minecraft.world.chunk.WorldChunk;
@@ -39,7 +39,7 @@ public abstract class ServerWorldMixin extends World {
 
     }
 
-    @Inject(method = "Lnet/minecraft/server/world/ServerWorld;tickChunk(Lnet/minecraft/world/chunk/WorldChunk;I)V", at = @At(value = "INVOKE", target = "Lnet/minecraft/entity/LightningEntity;setCosmetic(Z)V", shift = Shift.AFTER))
+    @Inject(method = "tickChunk", at = @At(value = "INVOKE", target = "Lnet/minecraft/entity/LightningEntity;setCosmetic(Z)V", shift = Shift.AFTER))
     public void tickChunk(WorldChunk chunk, int randomTickSpeed, CallbackInfo info) {
         int summonerSpawnChance = ConfigInit.CONFIG.summoner_thunder_spawn_chance;
         if (summonerSpawnChance != 0) {
@@ -48,7 +48,7 @@ public abstract class ServerWorldMixin extends World {
                 ChunkPos chunkPos = chunk.getPos();
                 int i = chunkPos.getStartX();
                 int j = chunkPos.getStartZ();
-                BlockPos blockPos = this.getSurface(this.getRandomPosInChunk(i, 0, j, 15));
+                BlockPos blockPos = this.getTopPosition(Heightmap.Type.MOTION_BLOCKING, this.getRandomPosInChunk(i, 0, j, 15));
                 if (SpawnHelper.canSpawn(SpawnRestriction.Location.ON_GROUND, chunk.getWorld(), blockPos, EntityInit.SUMMONER_ENTITY)) {
                     SummonerEntity summonerEntity = (SummonerEntity) EntityInit.SUMMONER_ENTITY.create(this);
                     summonerEntity.updatePosition((double) blockPos.getX(), (double) blockPos.getY(), (double) blockPos.getZ());
@@ -58,11 +58,6 @@ public abstract class ServerWorldMixin extends World {
                 }
             }
         }
-    }
-
-    @Shadow
-    protected BlockPos getSurface(BlockPos pos) {
-        return pos;
     }
 
 }
