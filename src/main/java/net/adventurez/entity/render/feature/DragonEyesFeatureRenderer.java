@@ -12,12 +12,13 @@ import net.minecraft.client.render.VertexConsumerProvider;
 import net.minecraft.client.render.entity.feature.FeatureRenderer;
 import net.minecraft.client.render.entity.feature.FeatureRendererContext;
 import net.minecraft.client.util.math.MatrixStack;
+import net.minecraft.util.Identifier;
 
 @Environment(EnvType.CLIENT)
 public class DragonEyesFeatureRenderer extends FeatureRenderer<DragonEntity, DragonModel<DragonEntity>> {
-    private static final RenderLayer EYE_LAYER = ExtraRenderLayer.getGlowing("adventurez:textures/entity/feature/dragon_eyes_feature.png");
-    private static final RenderLayer FRIENDLY_EYE_LAYER = ExtraRenderLayer.getGlowing("adventurez:textures/entity/feature/friendly_dragon_eyes_feature.png");
-    private static final RenderLayer FRIENDLY_ORANGE_EYE_LAYER = ExtraRenderLayer.getGlowing("adventurez:textures/entity/feature/friendly_orange_dragon_eyes_feature.png");
+    private static final RenderLayer EYE_LAYER = ExtraRenderLayer.getGlowing(new Identifier("adventurez:textures/entity/feature/dragon_eyes_feature.png"));
+    private static final RenderLayer FRIENDLY_EYE_LAYER = ExtraRenderLayer.getGlowing(new Identifier("adventurez:textures/entity/feature/friendly_dragon_eyes_feature.png"));
+    private static final RenderLayer FRIENDLY_ORANGE_EYE_LAYER = ExtraRenderLayer.getGlowing(new Identifier("adventurez:textures/entity/feature/friendly_orange_dragon_eyes_feature.png"));
 
     public DragonEyesFeatureRenderer(FeatureRendererContext<DragonEntity, DragonModel<DragonEntity>> featureRendererContext) {
         super(featureRendererContext);

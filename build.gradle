@@ -61,6 +61,10 @@ dependencies {
 	modCompileOnly 'com.github.Globox1997:MedievalWeapons:1.18-SNAPSHOT',{
 		exclude(group: "net.fabricmc.fabric-api")
 	}
+	// Iris
+	modCompileOnly ('curse.maven:irisshaders-455508:3558900'){
+		exclude(group: "net.fabricmc.fabric-api")
+	}
 }
 
 processResources {

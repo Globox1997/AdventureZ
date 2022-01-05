@@ -17,7 +17,7 @@ import net.minecraft.util.Identifier;
 
 @Environment(EnvType.CLIENT)
 public class StoneGolemLavaFeatureRenderer extends FeatureRenderer<StoneGolemEntity, StoneGolemModel<StoneGolemEntity>> {
-    private static final RenderLayer LAVA_LAYER = ExtraRenderLayer.getGlowing("adventurez:textures/entity/feature/lava_feature_golem.png");
+    private static final RenderLayer LAVA_LAYER = ExtraRenderLayer.getGlowing(new Identifier("adventurez:textures/entity/feature/lava_feature_golem.png"));
     private static final RenderLayer FLOWING_LAVA_LAYER = RenderLayer.getEntityCutoutNoCull(new Identifier("adventurez:textures/entity/feature/lava_feature_golem.png"));
 
     public StoneGolemLavaFeatureRenderer(FeatureRendererContext<StoneGolemEntity, StoneGolemModel<StoneGolemEntity>> featureRendererContext) {

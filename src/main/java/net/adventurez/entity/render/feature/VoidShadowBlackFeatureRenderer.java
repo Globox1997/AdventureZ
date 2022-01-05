@@ -18,7 +18,7 @@ import net.minecraft.util.Identifier;
 public class VoidShadowBlackFeatureRenderer extends FeatureRenderer<VoidShadowEntity, VoidShadowModel<VoidShadowEntity>> {
     private static final Identifier TEXTURE = new Identifier("adventurez:textures/entity/black_void_shadow.png");
     private static final RenderLayer BLACK_LAYER = RenderLayer.getEntityCutoutNoCull(TEXTURE);
-    private static final RenderLayer EYE_LAYER = ExtraRenderLayer.getGlowing("adventurez:textures/entity/feature/black_void_shadow_eyes_feature.png");
+    private static final RenderLayer EYE_LAYER = ExtraRenderLayer.getGlowing(new Identifier("adventurez:textures/entity/feature/black_void_shadow_eyes_feature.png"));
 
     public VoidShadowBlackFeatureRenderer(FeatureRendererContext<VoidShadowEntity, VoidShadowModel<VoidShadowEntity>> featureRendererContext) {
         super(featureRendererContext);

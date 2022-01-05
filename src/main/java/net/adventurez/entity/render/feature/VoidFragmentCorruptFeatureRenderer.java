@@ -12,10 +12,11 @@ import net.minecraft.client.render.VertexConsumerProvider;
 import net.minecraft.client.render.entity.feature.FeatureRenderer;
 import net.minecraft.client.render.entity.feature.FeatureRendererContext;
 import net.minecraft.client.util.math.MatrixStack;
+import net.minecraft.util.Identifier;
 
 @Environment(EnvType.CLIENT)
 public class VoidFragmentCorruptFeatureRenderer extends FeatureRenderer<VoidFragmentEntity, VoidFragmentModel<VoidFragmentEntity>> {
-    private static final RenderLayer CORRUPT_LAYER = ExtraRenderLayer.getGlowing("adventurez:textures/entity/feature/void_fragment_corrupt_feature.png");
+    private static final RenderLayer CORRUPT_LAYER = ExtraRenderLayer.getGlowing(new Identifier("adventurez:textures/entity/feature/void_fragment_corrupt_feature.png"));
 
     public VoidFragmentCorruptFeatureRenderer(FeatureRendererContext<VoidFragmentEntity, VoidFragmentModel<VoidFragmentEntity>> featureRendererContext) {
         super(featureRendererContext);

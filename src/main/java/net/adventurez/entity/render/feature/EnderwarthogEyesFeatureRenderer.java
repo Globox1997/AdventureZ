@@ -16,7 +16,7 @@ import net.minecraft.util.Identifier;
 
 @Environment(EnvType.CLIENT)
 public class EnderwarthogEyesFeatureRenderer extends FeatureRenderer<EnderwarthogEntity, EnderwarthogModel<EnderwarthogEntity>> {
-    private static final RenderLayer EYE_LAYER = ExtraRenderLayer.getGlowing("adventurez:textures/entity/feature/enderwarthog_eyes_feature.png");
+    private static final RenderLayer EYE_LAYER = ExtraRenderLayer.getGlowing(new Identifier("adventurez:textures/entity/feature/enderwarthog_eyes_feature.png"));
     private static final RenderLayer RARE_LAYER = RenderLayer.getEntityCutoutNoCull(new Identifier("adventurez:textures/entity/feature/rare_enderwarthog.png"));
 
     public EnderwarthogEyesFeatureRenderer(FeatureRendererContext<EnderwarthogEntity, EnderwarthogModel<EnderwarthogEntity>> featureRendererContext) {

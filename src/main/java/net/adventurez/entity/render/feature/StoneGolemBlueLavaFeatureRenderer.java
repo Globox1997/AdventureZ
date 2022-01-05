@@ -12,10 +12,11 @@ import net.minecraft.client.render.VertexConsumerProvider;
 import net.minecraft.client.render.entity.feature.FeatureRenderer;
 import net.minecraft.client.render.entity.feature.FeatureRendererContext;
 import net.minecraft.client.util.math.MatrixStack;
+import net.minecraft.util.Identifier;
 
 @Environment(EnvType.CLIENT)
 public class StoneGolemBlueLavaFeatureRenderer extends FeatureRenderer<StoneGolemEntity, StoneGolemModel<StoneGolemEntity>> {
-    private static final RenderLayer BLUE_LAVA_LAYER = ExtraRenderLayer.getGlowing("adventurez:textures/entity/feature/blue_lava_feature_golem.png");
+    private static final RenderLayer BLUE_LAVA_LAYER = ExtraRenderLayer.getGlowing(new Identifier("adventurez:textures/entity/feature/blue_lava_feature_golem.png"));
 
     public StoneGolemBlueLavaFeatureRenderer(FeatureRendererContext<StoneGolemEntity, StoneGolemModel<StoneGolemEntity>> featureRendererContext) {
         super(featureRendererContext);

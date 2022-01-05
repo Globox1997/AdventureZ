@@ -12,10 +12,11 @@ import net.minecraft.client.render.VertexConsumerProvider;
 import net.minecraft.client.render.entity.feature.FeatureRenderer;
 import net.minecraft.client.render.entity.feature.FeatureRendererContext;
 import net.minecraft.client.util.math.MatrixStack;
+import net.minecraft.util.Identifier;
 
 @Environment(EnvType.CLIENT)
 public class EnderWhaleGlowFeatureRenderer extends FeatureRenderer<EnderWhaleEntity, EnderWhaleModel<EnderWhaleEntity>> {
-    private static final RenderLayer GLOW_LAYER = ExtraRenderLayer.getGlowing("adventurez:textures/entity/feature/ender_whale_glow_feature.png");
+    private static final RenderLayer GLOW_LAYER = ExtraRenderLayer.getGlowing(new Identifier("adventurez:textures/entity/feature/ender_whale_glow_feature.png"));
 
     public EnderWhaleGlowFeatureRenderer(FeatureRendererContext<EnderWhaleEntity, EnderWhaleModel<EnderWhaleEntity>> featureRendererContext) {
         super(featureRendererContext);

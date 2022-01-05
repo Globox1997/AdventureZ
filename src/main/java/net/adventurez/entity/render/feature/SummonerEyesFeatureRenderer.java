@@ -12,10 +12,11 @@ import net.minecraft.client.render.VertexConsumerProvider;
 import net.minecraft.client.render.entity.feature.FeatureRenderer;
 import net.minecraft.client.render.entity.feature.FeatureRendererContext;
 import net.minecraft.client.util.math.MatrixStack;
+import net.minecraft.util.Identifier;
 
 @Environment(EnvType.CLIENT)
 public class SummonerEyesFeatureRenderer extends FeatureRenderer<SummonerEntity, SummonerModel<SummonerEntity>> {
-    private static final RenderLayer EYE_LAYER = ExtraRenderLayer.getGlowing("adventurez:textures/entity/feature/summoner_eyes_feature.png");
+    private static final RenderLayer EYE_LAYER = ExtraRenderLayer.getGlowing(new Identifier("adventurez:textures/entity/feature/summoner_eyes_feature.png"));
 
     public SummonerEyesFeatureRenderer(FeatureRendererContext<SummonerEntity, SummonerModel<SummonerEntity>> featureRendererContext) {
         super(featureRendererContext);
