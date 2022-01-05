@@ -1,6 +1,9 @@
 {
-    "name": "AdventureZ Handbook",
-    "landing_text": "This is the AdventureZ handbook",
+    "name": "item.adventurez.handbook",
+    "landing_text": "This is the AdventureZ handbook and contains information about most mobs/items/blocks to help you figure out how stuff works and what will await for you!",
+    "subtitle": "Creatures await you",
     "show_progress": false,
-    "model": "adventurez:adventurez_guide"
+    "model": "adventurez:handbook",
+    "dont_generate_book": true,
+    "custom_book_item": "adventurez:handbook"
 }

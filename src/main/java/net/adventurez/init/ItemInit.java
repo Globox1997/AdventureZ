@@ -34,6 +34,7 @@ public class ItemInit {
     public static final Item MAMMOTH_TUSK = register("mammoth_tusk", new Item(new Item.Settings().group(ItemGroup.MATERIALS)));
     public static final Item RHINO_LEATHER = register("rhino_leather", new Item(new Item.Settings().group(ItemGroup.MATERIALS)));
     public static final Item WARTHOG_SHELL_PIECE = register("warthog_shell_piece", new Item(new Item.Settings().group(ItemGroup.MATERIALS)));
+    public static final Item HANDBOOK = register("handbook", new HandbookItem(new Item.Settings().group(ItemGroup.MISC)));
 
     // Food
     public static final Item MAMMOTH_MEAT = register("mammoth_meat",

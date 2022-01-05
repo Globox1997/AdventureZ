@@ -1,0 +1,22 @@
+{
+    "parent": "minecraft:recipes/root",
+    "rewards": {
+        "recipes": [
+            "adventurez:handbook"
+        ]
+    },
+    "criteria": {
+        "got_the_ender_eye": {
+            "trigger": "minecraft:inventory_changed",
+            "conditions": {
+                "items": [
+                    {
+                        "items": [
+                            "minecraft:ender_eye"
+                        ]
+                    }
+                ]
+            }
+        }
+    }
+}
