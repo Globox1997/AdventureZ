@@ -22,7 +22,6 @@
     "EndPortalBlockMixin",
     "EnderPearlEntityMixin",
     "MobSpawnerLogicMixin",
-    "NetherFortressGeneratorMixin",
     "SmallFireballEntityMixin",
     "PiglinEntityMixin",
     "ArrowEntityMixin",

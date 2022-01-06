@@ -54,10 +54,10 @@ public class BlazeGuardianEntity extends HostileEntity {
     public static final TrackedData<Boolean> SHIELD_SOUTH;
     public static final TrackedData<Boolean> SHIELD_WEST;
     private boolean isTryingToShockwave = false;
-    private final BlazeGuardianShieldEntity shield_north;
-    private final BlazeGuardianShieldEntity shield_east;
-    private final BlazeGuardianShieldEntity shield_south;
-    private final BlazeGuardianShieldEntity shield_west;
+    private final BlazeGuardianShieldEntity shield_north = new BlazeGuardianShieldEntity(EntityInit.BLAZEGUARDIAN_SHIELD_ENTITY, this, "shield_north");
+    private final BlazeGuardianShieldEntity shield_east = new BlazeGuardianShieldEntity(EntityInit.BLAZEGUARDIAN_SHIELD_ENTITY, this, "shield_east");
+    private final BlazeGuardianShieldEntity shield_south = new BlazeGuardianShieldEntity(EntityInit.BLAZEGUARDIAN_SHIELD_ENTITY, this, "shield_south");
+    private final BlazeGuardianShieldEntity shield_west = new BlazeGuardianShieldEntity(EntityInit.BLAZEGUARDIAN_SHIELD_ENTITY, this, "shield_west");
 
     public BlazeGuardianEntity(EntityType<? extends HostileEntity> entityType, World world) {
         super(entityType, world);
@@ -66,17 +66,6 @@ public class BlazeGuardianEntity extends HostileEntity {
         this.setPathfindingPenalty(PathNodeType.DANGER_FIRE, 0.0F);
         this.setPathfindingPenalty(PathNodeType.DAMAGE_FIRE, 0.0F);
         this.experiencePoints = 20;
-
-        shield_north = new BlazeGuardianShieldEntity(EntityInit.BLAZEGUARDIAN_SHIELD_ENTITY, this, "shield_north");
-        shield_east = new BlazeGuardianShieldEntity(EntityInit.BLAZEGUARDIAN_SHIELD_ENTITY, this, "shield_east");
-        shield_south = new BlazeGuardianShieldEntity(EntityInit.BLAZEGUARDIAN_SHIELD_ENTITY, this, "shield_south");
-        shield_west = new BlazeGuardianShieldEntity(EntityInit.BLAZEGUARDIAN_SHIELD_ENTITY, this, "shield_west");
-        if (this.world instanceof ServerWorld) {
-            world.spawnEntity(shield_north);
-            world.spawnEntity(shield_east);
-            world.spawnEntity(shield_south);
-            world.spawnEntity(shield_west);
-        }
     }
 
     public static DefaultAttributeContainer.Builder createBlazeGuardianAttributes() {
@@ -120,21 +109,17 @@ public class BlazeGuardianEntity extends HostileEntity {
     public void readCustomDataFromNbt(NbtCompound tag) {
         super.readCustomDataFromNbt(tag);
         this.dataTracker.set(SHIELD_NORTH, tag.getBoolean("ShieldNorth"));
-        if (!tag.getBoolean("ShieldNorth")) {
-            this.shield_north.discard();
-        }
+        if (tag.getBoolean("ShieldNorth"))
+            world.spawnEntity(shield_north);
         this.dataTracker.set(SHIELD_EAST, tag.getBoolean("ShieldEast"));
-        if (!tag.getBoolean("ShieldEast")) {
-            this.shield_east.discard();
-        }
+        if (tag.getBoolean("ShieldEast"))
+            world.spawnEntity(shield_east);
         this.dataTracker.set(SHIELD_SOUTH, tag.getBoolean("ShieldSouth"));
-        if (!tag.getBoolean("ShieldSouth")) {
-            this.shield_south.discard();
-        }
+        if (tag.getBoolean("ShieldSouth"))
+            world.spawnEntity(shield_south);
         this.dataTracker.set(SHIELD_WEST, tag.getBoolean("ShieldWest"));
-        if (!tag.getBoolean("ShieldWest")) {
-            this.shield_west.discard();
-        }
+        if (tag.getBoolean("ShieldWest"))
+            world.spawnEntity(shield_west);
     }
 
     private void movePart(BlazeGuardianShieldEntity blazeGuardianShieldEntity, double dx, double dy, double dz) {
@@ -279,6 +264,12 @@ public class BlazeGuardianEntity extends HostileEntity {
                     }
                 }
             }
+        }
+        if (this.world instanceof ServerWorld) {
+            world.spawnEntity(shield_north);
+            world.spawnEntity(shield_east);
+            world.spawnEntity(shield_south);
+            world.spawnEntity(shield_west);
         }
         return super.initialize(serverWorldAccess, difficulty, spawnReason, entityData, entityTag);
     }
