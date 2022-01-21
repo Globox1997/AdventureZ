@@ -30,6 +30,7 @@
     "AmethystClusterBlockMixin",
     "IronGolemEntityMixin",
     "DesertWellFeatureMixin",
+    "AnvilScreenHandlerMixin",
     "accessor.LivingEntityAccessor",
     "accessor.FallingBlockAccessor",
     "accessor.EntityAccessor",
