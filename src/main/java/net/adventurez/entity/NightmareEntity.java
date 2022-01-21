@@ -110,7 +110,7 @@ public class NightmareEntity extends SkeletonHorseEntity {
     public ActionResult interactMob(PlayerEntity player, Hand hand) {
         ItemStack itemStack = player.getStackInHand(hand);
 
-        if (this.hasPassengers()) {
+        if (this.hasPassengers() || this.isBaby()) {
             return super.interactMob(player, hand);
         }
 
