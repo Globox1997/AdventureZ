@@ -191,6 +191,9 @@ public class ShadowChestEntity extends LootableContainerBlockEntity implements C
     }
 
     public void setRandomLoot() {
+        // LootableContainerBlockEntity.setLootTable(world, this.world.random, this.pos, LootTables.END_CITY_TREASURE_CHEST);
+        List<ItemStack> tableList = this.world.getServer().getLootManager().getTable(LootTables.END_CITY_TREASURE_CHEST).generateLoot(
+                (new LootContext.Builder((ServerWorld) this.world)).parameter(LootContextParameters.ORIGIN, Vec3d.ofCenter(this.pos)).random(this.world.random).build(LootContextTypes.CHEST));
         for (int i = 0; i < 27; i++) {
             if (i == 20 && this.world.random.nextFloat() < 0.2F && FabricLoader.getInstance().isModLoaded("medievalweapons")) {
                 this.inventory.set(i, new ItemStack(net.medievalweapons.init.ItemInit.THALLEOUS_SWORD));
@@ -220,8 +223,6 @@ public class ShadowChestEntity extends LootableContainerBlockEntity implements C
                     this.inventory.set(i, stack);
                     break;
                 case 7:
-                    List<ItemStack> tableList = this.world.getServer().getLootManager().getTable(LootTables.END_CITY_TREASURE_CHEST).generateLoot((new LootContext.Builder((ServerWorld) this.world))
-                            .parameter(LootContextParameters.ORIGIN, new Vec3d(0.0D, 0.0D, 0.0D)).random(this.world.random).build(LootContextTypes.CHEST));
                     this.inventory.set(i, tableList.get(this.world.random.nextInt(tableList.size())));
                     break;
                 default:
