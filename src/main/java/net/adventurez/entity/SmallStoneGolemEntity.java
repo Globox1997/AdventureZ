@@ -84,8 +84,7 @@ public class SmallStoneGolemEntity extends HostileEntity {
 
     @Override
     public boolean canSpawn(WorldView view) {
-        BlockPos posentity = new BlockPos(this.getX(), this.getY(), this.getZ());
-        return view.intersectsEntities(this) && !world.containsFluid(this.getBoundingBox()) && this.world.getBlockState(posentity).getBlock().canMobSpawnInside();
+        return super.canSpawn(view) && this.world.getBlockState(new BlockPos(this.getX(), this.getY(), this.getZ())).getBlock().canMobSpawnInside();
     }
 
 }
