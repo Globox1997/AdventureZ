@@ -475,6 +475,8 @@ public class TheEyeEntity extends FlyingEntity {
                     world.playSound(null, deathPos, SoundInit.EYE_DEATH_PLATFORM_EVENT, SoundCategory.HOSTILE, 1F, 1F);
                 }
                 if (deathTimer >= 200) {
+              //      if(this.world.getHeight() )
+
                     for (int o = 0; o < 15; o++) {
                         ((ServerWorld) this.world).spawnParticles(ParticleTypes.EXPLOSION, deathPos.getX() - 6 + this.world.random.nextInt(13), deathPos.getY() - 1 + this.world.random.nextInt(11),
                                 deathPos.getZ() - 6 + this.world.random.nextInt(13), 0, 0.0D, 0.0D, 0.0D, 0.01D);
