@@ -33,6 +33,7 @@ import net.minecraft.entity.EntityType;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.MovementType;
 import net.minecraft.entity.SpawnReason;
+import net.minecraft.entity.Tameable;
 import net.minecraft.entity.ai.goal.LookAroundGoal;
 import net.minecraft.entity.ai.goal.LookAtEntityGoal;
 import net.minecraft.entity.ai.goal.SwimGoal;
@@ -78,7 +79,7 @@ import net.minecraft.world.LocalDifficulty;
 import net.minecraft.world.ServerWorldAccess;
 import net.minecraft.world.World;
 
-public class DragonEntity extends PathAwareEntity implements InventoryChangedListener {
+public class DragonEntity extends PathAwareEntity implements InventoryChangedListener, Tameable {
 
     public static final TrackedData<Boolean> IS_FLYING;
     public static final TrackedData<Boolean> IS_START_FLYING;
@@ -680,6 +681,7 @@ public class DragonEntity extends PathAwareEntity implements InventoryChangedLis
     }
 
     @Nullable
+    @Override
     public UUID getOwnerUuid() {
         return (UUID) ((Optional<UUID>) this.dataTracker.get(OWNER_UUID)).orElse((UUID) (Object) null);
     }
@@ -694,6 +696,7 @@ public class DragonEntity extends PathAwareEntity implements InventoryChangedLis
     }
 
     @Nullable
+    @Override
     public LivingEntity getOwner() {
         try {
             UUID uUID = this.getOwnerUuid();
