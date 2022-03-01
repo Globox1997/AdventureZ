@@ -51,7 +51,7 @@ dependencies {
 	// 	exclude(group: "net.fabricmc.fabric-api")
 	// }
 	// Dragonloot
-	modCompileOnly ('curse.maven:dragonloot-424480:3529611'){
+	modCompileOnly ('curse.maven:dragonloot-424480:3596055'){
 		exclude(group: "net.fabricmc.fabric-api")
 	}
 	// Canvas
@@ -62,7 +62,7 @@ dependencies {
 		exclude(group: "net.fabricmc.fabric-api")
 	}
 	// Iris
-	modCompileOnly ('curse.maven:irisshaders-455508:3558900'){
+	modCompileOnly ('curse.maven:irisshaders-455508:3612857'){
 		exclude(group: "net.fabricmc.fabric-api")
 	}
 }
