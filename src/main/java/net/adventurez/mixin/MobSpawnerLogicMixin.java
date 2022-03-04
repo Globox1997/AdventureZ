@@ -60,8 +60,9 @@ public class MobSpawnerLogicMixin {
             } else if (this.spawnEntry.getNbt() != null) {
                 Optional<EntityType<?>> optionalEntityType = EntityType.fromNbt(this.spawnEntry.getNbt());
                 if (optionalEntityType.isPresent() && optionalEntityType.get().equals(EntityType.BLAZE)
-                    && !world.getEntitiesByClass(BlazeGuardianEntity.class, new Box(pos).expand(16D), EntityPredicates.EXCEPT_SPECTATOR).isEmpty())
-                spawnDelay = 600;
+                    && !world.getEntitiesByClass(BlazeGuardianEntity.class, new Box(pos).expand(16D), EntityPredicates.EXCEPT_SPECTATOR).isEmpty()) {
+                    spawnDelay = 600;
+                }
             }
         }
     }
