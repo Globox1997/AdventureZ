@@ -15,6 +15,7 @@ import net.minecraft.entity.SpawnGroup;
 import net.minecraft.server.world.ServerWorld;
 import net.minecraft.util.collection.Pool;
 import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.registry.RegistryEntry;
 import net.minecraft.world.SpawnHelper;
 import net.minecraft.world.biome.Biome;
 import net.minecraft.world.biome.SpawnSettings;
@@ -27,8 +28,8 @@ public class SpawnHelperMixin {
     private static final Pool<SpawnSettings.SpawnEntry> ADDED_SPAWNS;
 
     @Inject(method = "getSpawnEntries", at = @At(value = "FIELD", target = "Lnet/minecraft/world/gen/feature/NetherFortressFeature;MONSTER_SPAWNS:Lnet/minecraft/util/collection/Pool;", ordinal = 0), cancellable = true)
-    private static void getSpawnEntriesMixin(ServerWorld world, StructureAccessor structureAccessor, ChunkGenerator chunkGenerator, SpawnGroup spawnGroup, BlockPos pos, @Nullable Biome biome,
-            CallbackInfoReturnable<Pool<SpawnSettings.SpawnEntry>> info) {
+    private static void getSpawnEntriesMixin(ServerWorld world, StructureAccessor structureAccessor, ChunkGenerator chunkGenerator, SpawnGroup spawnGroup, BlockPos pos,
+            @Nullable RegistryEntry<Biome> biomeEntry, CallbackInfoReturnable<Pool<SpawnSettings.SpawnEntry>> info) {
         List<SpawnSettings.SpawnEntry> spawnersList = new ArrayList<>(NetherFortressFeature.MONSTER_SPAWNS.getEntries());
         spawnersList.addAll(ADDED_SPAWNS.getEntries());
         info.setReturnValue(Pool.of(spawnersList));

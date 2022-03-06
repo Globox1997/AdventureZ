@@ -299,8 +299,8 @@ public class TheEyeEntity extends FlyingEntity {
         }
     }
 
-    public static boolean canDestroy(BlockState block) {
-        return !block.isAir() && !TagInit.UNBREAKABLE_BLOCKS.contains(block.getBlock());
+    private boolean canDestroy(BlockState block) {
+        return !block.isAir() && !block.getBlock().getRegistryEntry().isIn(TagInit.UNBREAKABLE_BLOCKS);
     }
 
     public void setEyeInvulnerabletime() {
@@ -475,7 +475,7 @@ public class TheEyeEntity extends FlyingEntity {
                     world.playSound(null, deathPos, SoundInit.EYE_DEATH_PLATFORM_EVENT, SoundCategory.HOSTILE, 1F, 1F);
                 }
                 if (deathTimer >= 200) {
-              //      if(this.world.getHeight() )
+                    // if(this.world.getHeight() )
 
                     for (int o = 0; o < 15; o++) {
                         ((ServerWorld) this.world).spawnParticles(ParticleTypes.EXPLOSION, deathPos.getX() - 6 + this.world.random.nextInt(13), deathPos.getY() - 1 + this.world.random.nextInt(11),
