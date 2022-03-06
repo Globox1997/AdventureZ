@@ -24,9 +24,7 @@ public abstract class EndPortalBlockMixin {
             if (world instanceof ServerWorld) {
                 RegistryKey<World> registryKey = world.getRegistryKey() == World.END ? World.OVERWORLD : World.END;
                 ServerWorld serverWorld = ((ServerWorld) world).getServer().getWorld(registryKey);
-                if (serverWorld == null) {
-                    return ActionResult.PASS;
-                }
+                if (serverWorld == null) return ActionResult.PASS;
                 dragonEntity.moveToWorld(serverWorld);
             }
             return ActionResult.SUCCESS;

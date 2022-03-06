@@ -1,5 +1,6 @@
 package net.adventurez.mixin;
 
+import java.util.Optional;
 import org.jetbrains.annotations.Nullable;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
@@ -57,9 +58,13 @@ public class MobSpawnerLogicMixin {
                 world.spawnEntity(blazeGuardianEntity);
                 spawnDelay = 600;
                 this.spawnGuardian = false;
-            } else if (this.spawnEntry.getNbt() != null && EntityType.fromNbt(this.spawnEntry.getNbt()).get().equals(EntityType.BLAZE)
-                    && !world.getEntitiesByClass(BlazeGuardianEntity.class, new Box(pos).expand(16D), EntityPredicates.EXCEPT_SPECTATOR).isEmpty())
-                spawnDelay = 600;
+            } else if (this.spawnEntry.getNbt() != null) {
+                Optional<EntityType<?>> optionalEntityType = EntityType.fromNbt(this.spawnEntry.getNbt());
+                if (optionalEntityType.isPresent() && optionalEntityType.get().equals(EntityType.BLAZE)
+                    && !world.getEntitiesByClass(BlazeGuardianEntity.class, new Box(pos).expand(16D), EntityPredicates.EXCEPT_SPECTATOR).isEmpty()) {
+                    spawnDelay = 600;
+                }
+            }
         }
     }
 }
