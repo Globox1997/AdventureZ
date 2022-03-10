@@ -220,6 +220,9 @@ public class ShadowChestEntity extends LootableContainerBlockEntity implements C
                     Enchantment enchantment = list.get(world.random.nextInt(list.size()));
                     EnchantedBookItem.addEnchantment(stack,
                             new EnchantmentLevelEntry(enchantment, ConfigInit.CONFIG.allow_special_enchant_loot ? enchantment.getMaxLevel() + 1 : enchantment.getMaxLevel()));
+                    NbtCompound nbt = stack.getNbt();
+                    nbt.putBoolean("void_drop", true);
+                    stack.setNbt(nbt);
                     this.inventory.set(i, stack);
                     break;
                 case 7:
