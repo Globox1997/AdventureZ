@@ -20,8 +20,6 @@ import net.minecraft.screen.AnvilScreenHandler;
 public class AnvilScreenHandlerMixin {
 
     @Unique
-    private int maxLevel = 0;
-    @Unique
     private int enchantmentLevel = 0;
     @Unique
     private boolean isVoidShadowDrop = false;
@@ -30,7 +28,6 @@ public class AnvilScreenHandlerMixin {
     private void updateResultMixin(CallbackInfo info, ItemStack itemStack, int i, int j, int k, ItemStack itemStack2, ItemStack itemStack3, Map<Enchantment, Integer> map, boolean bl,
             Map<Enchantment, Integer> l, boolean m, boolean n, Iterator var12, Enchantment p, int q, int r) {
         if (itemStack3.isOf(Items.ENCHANTED_BOOK) && itemStack3.hasNbt() && itemStack3.getNbt().contains("void_drop") && itemStack3.getNbt().getBoolean("void_drop")) {
-            maxLevel = p.getMaxLevel();
             enchantmentLevel = r;
             isVoidShadowDrop = true;
         } else
@@ -39,7 +36,7 @@ public class AnvilScreenHandlerMixin {
 
     @ModifyVariable(method = "updateResult", at = @At(value = "INVOKE_ASSIGN", target = "Lnet/minecraft/enchantment/Enchantment;getMaxLevel()I", ordinal = 1), ordinal = 4)
     private int updateResultModifyMixin(int original) {
-        if (isVoidShadowDrop && maxLevel < enchantmentLevel && maxLevel == enchantmentLevel - 1)
+        if (isVoidShadowDrop)
             return enchantmentLevel;
         else
             return original;
