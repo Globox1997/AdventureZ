@@ -480,14 +480,16 @@ public class TheEyeEntity extends FlyingEntity {
                     for (int o = 0; o < 15; o++) {
                         ((ServerWorld) this.world).spawnParticles(ParticleTypes.EXPLOSION, deathPos.getX() - 6 + this.world.random.nextInt(13), deathPos.getY() - 1 + this.world.random.nextInt(11),
                                 deathPos.getZ() - 6 + this.world.random.nextInt(13), 0, 0.0D, 0.0D, 0.0D, 0.01D);
-                        world.playSound(null, deathPos, SoundEvents.ENTITY_GENERIC_EXPLODE, SoundCategory.BLOCKS, 1F, 1F);
+                        this.world.playSound(null, deathPos, SoundEvents.ENTITY_GENERIC_EXPLODE, SoundCategory.BLOCKS, 1F, 1F);
                     }
                     // Platform
+                    if (this.world.getHeight() - 10 < deathPos.getY())
+                        deathPos = deathPos.down(deathPos.getY() - this.world.getHeight() + 10);
                     this.placeDeathStructure(deathPos);
                     if (this.isVoidZLoaded) {
-                        world.setBlockState(deathPos.up(8).north().west(), BlockInit.PORTAL_BLOCK.getDefaultState(), 3);
+                        this.world.setBlockState(deathPos.up(8).north().west(), BlockInit.PORTAL_BLOCK.getDefaultState(), 3);
                     } else {
-                        world.setBlockState(deathPos.up(8).north().west(), Blocks.DRAGON_EGG.getDefaultState(), 3);
+                        this.world.setBlockState(deathPos.up(8).north().west(), Blocks.DRAGON_EGG.getDefaultState(), 3);
                     }
                     if (this.world.random.nextFloat() <= 0.01F)
                         this.dropItem(ItemInit.PRIME_EYE);
