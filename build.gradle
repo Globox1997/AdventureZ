@@ -58,11 +58,11 @@ dependencies {
 	// modCompileOnly "grondag:canvas-mc117-1.17:1.0.+"
 
 	// Medieval Weapons
-	modCompileOnly 'com.github.Globox1997:MedievalWeapons:1.18-SNAPSHOT',{
+	modCompileOnly "com.github.Globox1997:MedievalWeapons:1.18-SNAPSHOT",{
 		exclude(group: "net.fabricmc.fabric-api")
 	}
 	// Iris
-	modCompileOnly ('curse.maven:irisshaders-455508:3669331'){
+	modCompileOnly ('curse.maven:irisshaders-455508:3687476'){
 		exclude(group: "net.fabricmc.fabric-api")
 	}
 }
