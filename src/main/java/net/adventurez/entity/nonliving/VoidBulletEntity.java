@@ -44,8 +44,8 @@ public class VoidBulletEntity extends ExplosiveProjectileEntity {
                 owner.getPitch());
         this.prevPitch = owner.getPitch();
         this.setYaw(-owner.getYaw());
-        this.powerX *= 1.8D;
-        this.powerZ *= 1.8D;
+        this.powerX *= 3.6D;
+        this.powerZ *= 3.6D;
     }
 
     @Override
@@ -139,7 +139,20 @@ public class VoidBulletEntity extends ExplosiveProjectileEntity {
     }
 
     private static DamageSource createBulletDamageSource(Entity entity) {
-        return new EntityDamageSource("voidBullet", entity).setProjectile();
+        return new BulletDamageSource("voidBullet", entity).setProjectile();
+    }
+
+    private static class BulletDamageSource extends EntityDamageSource {
+
+        public BulletDamageSource(String name, Entity source) {
+            super(name, source);
+        }
+
+        @Override
+        public boolean bypassesArmor() {
+            return true;
+        }
+
     }
 
 }
