@@ -1,0 +1,11 @@
+{
+    "type": "minecraft:crafting_shapeless",
+    "ingredients": [
+        {
+            "item": "adventurez:mammoth_fur"
+        }
+    ],
+    "result": {
+        "item": "rotten:hide"
+    }
+}

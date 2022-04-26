@@ -1,5 +1,8 @@
 package net.adventurez.init;
 
+import net.fabricmc.fabric.api.resource.ResourceManagerHelper;
+import net.fabricmc.fabric.api.resource.ResourcePackActivationType;
+import net.fabricmc.loader.api.FabricLoader;
 import net.minecraft.block.Block;
 import net.minecraft.item.Item;
 import net.minecraft.tag.TagKey;
@@ -18,6 +21,9 @@ public class TagInit {
     public static final TagKey<Item> PIGLIN_NOT_ATTACK_ITEMS = TagKey.of(Registry.ITEM_KEY, new Identifier("adventurez", "piglin_not_attack_items"));
 
     public static void init() {
+        if (FabricLoader.getInstance().isModLoaded("rotten"))
+            ResourceManagerHelper.registerBuiltinResourcePack(new Identifier("fleshz_compat"), FabricLoader.getInstance().getModContainer("adventurez").orElseThrow(),
+                    ResourcePackActivationType.DEFAULT_ENABLED);
     }
 
 }
