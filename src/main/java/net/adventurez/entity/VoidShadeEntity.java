@@ -36,7 +36,7 @@ public class VoidShadeEntity extends FlyingEntity implements Monster {
     }
 
     public static DefaultAttributeContainer.Builder createVoidShadeAttributes() {
-        return HostileEntity.createHostileAttributes().add(EntityAttributes.GENERIC_MAX_HEALTH, 20.0D).add(EntityAttributes.GENERIC_MOVEMENT_SPEED, 0.11D)
+        return HostileEntity.createHostileAttributes().add(EntityAttributes.GENERIC_MAX_HEALTH, 20.0D).add(EntityAttributes.GENERIC_MOVEMENT_SPEED, 0.15D)
                 .add(EntityAttributes.GENERIC_ATTACK_DAMAGE, 7.0D).add(EntityAttributes.GENERIC_ATTACK_KNOCKBACK, 0.5D).add(EntityAttributes.GENERIC_KNOCKBACK_RESISTANCE, 10.0D)
                 .add(EntityAttributes.GENERIC_FOLLOW_RANGE, 80.0D);
     }
@@ -118,21 +118,22 @@ public class VoidShadeEntity extends FlyingEntity implements Monster {
         @Override
         public void tick() {
             LivingEntity livingEntity = this.voidShadeEntity.getTarget();
-            if (livingEntity.distanceTo(this.voidShadeEntity) < 7.0D) {
+            if (livingEntity.distanceTo(this.voidShadeEntity) < 12.0D) {
                 World world = this.voidShadeEntity.world;
                 ++this.cooldown;
                 if (this.cooldown == 20) {
                     ((ServerWorld) this.voidShadeEntity.world).playSoundFromEntity(null, this.voidShadeEntity, SoundInit.SHADOW_CAST_EVENT, SoundCategory.HOSTILE, 1.0F, 1.0F);
                     Vec3d vec3d = this.voidShadeEntity.getRotationVec(1.0F);
-                    VoidBulletEntity voidBulletEntity = new VoidBulletEntity(world, this.voidShadeEntity, vec3d.x + world.random.nextFloat() * 0.7F - 0.35F, vec3d.y,
-                            vec3d.z + world.random.nextFloat() * 0.7F - 0.35F);
+                    VoidBulletEntity voidBulletEntity = new VoidBulletEntity(world, this.voidShadeEntity, vec3d.x + world.random.nextFloat() * 0.5F - 0.25F, vec3d.y,
+                            vec3d.z + world.random.nextFloat() * 0.5F - 0.25F);
                     world.spawnEntity(voidBulletEntity);
 
                     this.cooldown = -40;
                 }
-            } else if (this.cooldown > 0) {
+                if (livingEntity.distanceTo(this.voidShadeEntity) < 1.0D)
+                    this.voidShadeEntity.tryAttack(livingEntity);
+            } else if (this.cooldown > 0)
                 --this.cooldown;
-            }
         }
     }
 
