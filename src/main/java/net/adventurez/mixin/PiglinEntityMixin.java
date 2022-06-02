@@ -58,6 +58,7 @@ public abstract class PiglinEntityMixin extends AbstractPiglinEntity {
         super.onDeath(source);
     }
 
+    @SuppressWarnings({ "unchecked", "rawtypes" })
     private boolean isEntityNearby(EntityType entityType, double distance, int count) {
         List<LivingEntity> list = this.world.getEntitiesByType(entityType, this.getBoundingBox().expand(distance), EntityPredicates.EXCEPT_SPECTATOR);
         if (list.size() >= count) {

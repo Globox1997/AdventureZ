@@ -24,6 +24,7 @@ public class AnvilScreenHandlerMixin {
     @Unique
     private boolean isVoidShadowDrop = false;
 
+    @SuppressWarnings("rawtypes")
     @Inject(method = "updateResult", at = @At(value = "INVOKE_ASSIGN", target = "Lnet/minecraft/enchantment/Enchantment;getMaxLevel()I", ordinal = 0), locals = LocalCapture.CAPTURE_FAILSOFT)
     private void updateResultMixin(CallbackInfo info, ItemStack itemStack, int i, int j, int k, ItemStack itemStack2, ItemStack itemStack3, Map<Enchantment, Integer> map, boolean bl,
             Map<Enchantment, Integer> l, boolean m, boolean n, Iterator var12, Enchantment p, int q, int r) {

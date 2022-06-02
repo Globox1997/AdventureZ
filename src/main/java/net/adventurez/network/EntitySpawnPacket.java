@@ -35,6 +35,7 @@ public class EntitySpawnPacket {
         return ServerPlayNetworking.createS2CPacket(ID, buf);
     }
 
+    @SuppressWarnings("resource")
     @Environment(EnvType.CLIENT)
     public static void onPacket(MinecraftClient client, ClientPlayNetworkHandler networkHandler, PacketByteBuf buffer, PacketSender sender) {
         EntityType<?> type = Registry.ENTITY_TYPE.get(buffer.readVarInt());

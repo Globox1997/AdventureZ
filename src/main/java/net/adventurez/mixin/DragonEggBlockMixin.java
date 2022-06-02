@@ -56,6 +56,7 @@ public class DragonEggBlockMixin implements BlockEntityProvider {
         return checkType(type, BlockInit.DRAGON_EGG_ENTITY, world.isClient ? DragonEggEntity::clientTick : DragonEggEntity::serverTick);
     }
 
+    @SuppressWarnings("unchecked")
     private static <E extends BlockEntity, A extends BlockEntity> BlockEntityTicker<A> checkType(BlockEntityType<A> givenType, BlockEntityType<E> expectedType, BlockEntityTicker<? super E> ticker) {
         return expectedType == givenType ? (BlockEntityTicker<A>) ticker : null;
     }
