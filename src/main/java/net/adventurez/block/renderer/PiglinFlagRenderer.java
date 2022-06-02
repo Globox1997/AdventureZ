@@ -53,12 +53,13 @@ public class PiglinFlagRenderer implements BlockEntityRenderer<PiglinFlagEntity>
 
     }
 
+    // Light rendering bug
     @Override
     public void render(PiglinFlagEntity entity, float tickDelta, MatrixStack matrices, VertexConsumerProvider vertexConsumerProvider, int light, int overlay) {
         matrices.push();
         int lightAbove = WorldRenderer.getLightmapCoordinates(entity.getWorld(), entity.getPos().up());
-        VertexConsumer vertexConsumer = vertexConsumerProvider.getBuffer(RenderLayer.getEntityAlpha(new Identifier("adventurez:textures/block/piglin_flag_block.png")));
-
+        // getEntityAlpha works but will always lighten up the flag
+        VertexConsumer vertexConsumer = vertexConsumerProvider.getBuffer(RenderLayer.getEntityCutoutNoCull(new Identifier("adventurez:textures/block/piglin_flag_block.png")));
         BlockState state = entity.getCachedState();
         Direction blockDirection = state.get(HorizontalFacingBlock.FACING);
         if (state.getBlock() instanceof PiglinFlagBlock) {
