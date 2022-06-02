@@ -10,6 +10,8 @@ import net.adventurez.init.EntityInit;
 import net.minecraft.block.BlockState;
 import net.minecraft.block.Blocks;
 import net.minecraft.block.OreBlock;
+import net.minecraft.enchantment.EnchantmentHelper;
+import net.minecraft.enchantment.Enchantments;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.SpawnReason;
 import net.minecraft.entity.SpawnRestriction;
@@ -29,7 +31,7 @@ public class OreBlockMixin {
     public void onBroken(WorldAccess world, BlockPos pos, BlockState state) {
         PlayerEntity player = world.getClosestPlayer((double) pos.getX(), (double) pos.getY(), (double) pos.getZ(), 16D, false);
         if (!world.isClient() && state.isOf(Blocks.NETHER_GOLD_ORE) && player != null && ConfigInit.CONFIG.piglin_beast_ore_spawn_chance != 0 && !player.isCreative()
-                && player.world.getRegistryKey() == World.NETHER) {
+                && player.world.getRegistryKey() == World.NETHER && EnchantmentHelper.getLevel(Enchantments.SILK_TOUCH, player.getMainHandStack()) == 0) {
             List<LivingEntity> list = world.getEntitiesByClass(LivingEntity.class, player.getBoundingBox().expand(40D), EntityPredicates.EXCEPT_SPECTATOR);
             for (int i = 0; i < list.size(); ++i) {
                 LivingEntity entity = (LivingEntity) list.get(i);
