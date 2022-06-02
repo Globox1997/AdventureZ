@@ -34,7 +34,7 @@ public abstract class PiglinEntityMixin extends AbstractPiglinEntity {
         if (!world.isClient && ConfigInit.CONFIG.piglin_beast_attack_piglin_spawn_chance != 0) {
             if (this.getAttacker() != null && this.getAttacker() instanceof PlayerEntity && world.getRegistryKey() == World.NETHER) {
                 int spawnChanceInt = world.random.nextInt(ConfigInit.CONFIG.piglin_beast_attack_piglin_spawn_chance) + 1;
-                if (spawnChanceInt == 1 && isEntityNearby(EntityType.PIGLIN, 12D, 6) && !isEntityNearby(EntityInit.PIGLINBEAST_ENTITY, 40D, 1)) {
+                if (spawnChanceInt == 1 && isEntityNearby(EntityType.PIGLIN, 12D, 2) && !isEntityNearby(EntityInit.PIGLINBEAST_ENTITY, 40D, 1)) {
                     PiglinBeastEntity beastEntity = (PiglinBeastEntity) EntityInit.PIGLINBEAST_ENTITY.create(world);
                     int posYOfPlayer = this.getBlockPos().getY();
                     for (int counter = 0; counter < 100; counter++) {
