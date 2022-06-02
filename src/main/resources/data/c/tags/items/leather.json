@@ -1,0 +1,8 @@
+{
+    "replace": false,
+    "values": [
+        "adventurez:mammoth_fur",
+        "adventurez:rhino_leather",
+        "minecraft:leather"
+    ]
+}
