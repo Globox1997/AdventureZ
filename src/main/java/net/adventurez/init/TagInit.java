@@ -8,6 +8,7 @@ import net.minecraft.item.Item;
 import net.minecraft.tag.TagKey;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.registry.Registry;
+import net.minecraft.world.biome.Biome;
 
 public class TagInit {
 
@@ -19,6 +20,8 @@ public class TagInit {
     public static final TagKey<Item> LEATHER_ITEMS = TagKey.of(Registry.ITEM_KEY, new Identifier("adventurez", "leather_items"));
     public static final TagKey<Item> HOLDER_ITEMS = TagKey.of(Registry.ITEM_KEY, new Identifier("adventurez", "holder_items"));
     public static final TagKey<Item> PIGLIN_NOT_ATTACK_ITEMS = TagKey.of(Registry.ITEM_KEY, new Identifier("adventurez", "piglin_not_attack_items"));
+
+    public static final TagKey<Biome> IS_MUSHROOM = TagKey.of(Registry.BIOME_KEY, new Identifier("c", "mushroom"));
 
     public static void init() {
         if (FabricLoader.getInstance().isModLoaded("rotten"))

@@ -1,7 +1,6 @@
 package net.adventurez.entity;
 
 import java.util.EnumSet;
-import java.util.Random;
 
 import com.google.common.collect.UnmodifiableIterator;
 
@@ -44,6 +43,7 @@ import net.minecraft.util.math.Box;
 import net.minecraft.util.math.Direction;
 import net.minecraft.util.math.MathHelper;
 import net.minecraft.util.math.Vec3d;
+import net.minecraft.util.math.random.Random;
 import net.minecraft.world.Heightmap;
 import net.minecraft.world.SpawnHelper;
 import net.minecraft.world.World;
@@ -105,8 +105,7 @@ public class EnderWhaleEntity extends FlyingEntity implements ItemSteerable {
         return this.getFirstPassenger();
     }
 
-    @Override
-    public boolean canBeControlledByRider() {
+    private boolean canBeControlledByRider() {
         Entity entity = this.getPrimaryPassenger();
         if (!(entity instanceof PlayerEntity)) {
             return false;

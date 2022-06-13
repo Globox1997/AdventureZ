@@ -1,8 +1,8 @@
 package net.adventurez.init;
 
-import net.fabricmc.fabric.api.loot.v1.FabricLootPoolBuilder;
-import net.fabricmc.fabric.api.loot.v1.event.LootTableLoadingCallback;
 import net.minecraft.loot.provider.number.BinomialLootNumberProvider;
+import net.fabricmc.fabric.api.loot.v2.LootTableEvents;
+import net.minecraft.loot.LootPool;
 import net.minecraft.loot.LootTables;
 import net.minecraft.loot.entry.ItemEntry;
 import net.minecraft.util.Identifier;
@@ -22,21 +22,18 @@ public class LootInit {
     }
 
     public static void init() {
-
-        LootTableLoadingCallback.EVENT.register((resourceManager, lootManager, id, supplier, setter) -> {
+        LootTableEvents.MODIFY.register((resourceManager, lootManager, id, supplier, setter) -> {
             if (addedLootTable(id)) {
-                FabricLootPoolBuilder poolBuilder = FabricLootPoolBuilder.builder().rolls(BinomialLootNumberProvider.create(1, 0.01F)).with(ItemEntry.builder(ItemInit.GILDED_STONE));
-                supplier.pool(poolBuilder);
+                LootPool pool = LootPool.builder().with(ItemEntry.builder(ItemInit.GILDED_STONE).build()).rolls(BinomialLootNumberProvider.create(1, 0.01F)).build();
+                supplier.pool(pool);
             }
         });
-
-        LootTableLoadingCallback.EVENT.register((resourceManager, lootManager, id, supplier, setter) -> {
+        LootTableEvents.MODIFY.register((resourceManager, lootManager, id, supplier, setter) -> {
             if ("minecraft:entities/piglin_brute".equals(id.toString())) {
-                FabricLootPoolBuilder poolBuilder = FabricLootPoolBuilder.builder().rolls(BinomialLootNumberProvider.create(1, 0.1F)).with(ItemEntry.builder(ItemInit.GILDED_STONE));
-                supplier.pool(poolBuilder);
+                LootPool pool = LootPool.builder().with(ItemEntry.builder(ItemInit.GILDED_STONE).build()).rolls(BinomialLootNumberProvider.create(1, 0.1F)).build();
+                supplier.pool(pool);
             }
         });
-
     }
 
 }

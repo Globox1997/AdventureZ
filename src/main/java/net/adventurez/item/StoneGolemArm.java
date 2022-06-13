@@ -19,7 +19,6 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.item.Items;
 import net.minecraft.sound.SoundCategory;
 import net.minecraft.text.Text;
-import net.minecraft.text.TranslatableText;
 import net.minecraft.util.Hand;
 import net.minecraft.util.TypedActionResult;
 import net.minecraft.util.UseAction;
@@ -37,10 +36,10 @@ public class StoneGolemArm extends Item {
     public void appendTooltip(ItemStack itemStack, World world, List<Text> tooltip, TooltipContext tooltipContext) {
         super.appendTooltip(itemStack, world, tooltip, tooltipContext);
         if (ConfigInit.CONFIG.allow_extra_tooltips) {
-            tooltip.add(new TranslatableText("item.adventurez.moreinfo.tooltip"));
+            tooltip.add(Text.translatable("item.adventurez.moreinfo.tooltip"));
             if (InputUtil.isKeyPressed(MinecraftClient.getInstance().getWindow().getHandle(), 340)) {
-                tooltip.remove(new TranslatableText("item.adventurez.moreinfo.tooltip"));
-                tooltip.add(new TranslatableText("item.adventurez.stone_golem_arm.tooltip"));
+                tooltip.remove(Text.translatable("item.adventurez.moreinfo.tooltip"));
+                tooltip.add(Text.translatable("item.adventurez.stone_golem_arm.tooltip"));
             }
         }
     }

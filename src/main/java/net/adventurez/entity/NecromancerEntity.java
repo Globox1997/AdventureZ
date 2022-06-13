@@ -1,7 +1,6 @@
 package net.adventurez.entity;
 
 import java.util.List;
-import java.util.Random;
 
 import net.adventurez.init.EffectInit;
 import net.adventurez.init.EntityInit;
@@ -36,6 +35,7 @@ import net.minecraft.sound.SoundEvents;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Box;
 import net.minecraft.util.math.MathHelper;
+import net.minecraft.util.math.random.Random;
 import net.minecraft.world.ServerWorldAccess;
 import net.minecraft.world.SpawnHelper;
 import net.minecraft.world.World;

@@ -1,12 +1,12 @@
 package net.adventurez.entity.goal;
 
 import java.util.EnumSet;
-import java.util.Random;
 
 import net.adventurez.entity.DragonEntity;
 import net.minecraft.entity.ai.goal.Goal;
 import net.minecraft.util.math.MathHelper;
 import net.minecraft.util.math.Vec3d;
+import net.minecraft.util.math.random.Random;
 
 public class DragonFlyRandomlyGoal extends Goal {
     private final DragonEntity dragonEntity;

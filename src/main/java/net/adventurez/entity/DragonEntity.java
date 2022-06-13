@@ -68,7 +68,6 @@ import net.minecraft.sound.SoundEvents;
 import net.minecraft.util.ActionResult;
 import net.minecraft.util.Arm;
 import net.minecraft.util.Hand;
-import net.minecraft.util.Util;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Box;
 import net.minecraft.util.math.Direction;
@@ -361,8 +360,7 @@ public class DragonEntity extends PathAwareEntity implements InventoryChangedLis
 
     }
 
-    @Override
-    public boolean canBeControlledByRider() {
+    private boolean canBeControlledByRider() {
         return this.getPrimaryPassenger() instanceof LivingEntity;
     }
 
@@ -735,7 +733,7 @@ public class DragonEntity extends PathAwareEntity implements InventoryChangedLis
     public void onDeath(DamageSource source) {
         if (!this.world.isClient) {
             if (this.world.getGameRules().getBoolean(GameRules.SHOW_DEATH_MESSAGES) && this.getOwner() instanceof ServerPlayerEntity) {
-                this.getOwner().sendSystemMessage(this.getDamageTracker().getDeathMessage(), Util.NIL_UUID);
+                this.getOwner().sendMessage(this.getDamageTracker().getDeathMessage());
             }
             if (FabricLoader.getInstance().isModLoaded("dragonloot")) {
                 this.dropStack(new ItemStack(net.dragonloot.init.ItemInit.DRAGON_SCALE_ITEM, this.getSize()));

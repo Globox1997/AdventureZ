@@ -1,5 +1,5 @@
 plugins {
-	id 'fabric-loom' version '0.11-SNAPSHOT'
+	id 'fabric-loom' version '0.12-SNAPSHOT'
 	id 'maven-publish'
 }
 
@@ -58,11 +58,11 @@ dependencies {
 	// modCompileOnly "grondag:canvas-mc117-1.17:1.0.+"
 
 	// Medieval Weapons
-	modCompileOnly "com.github.Globox1997:MedievalWeapons:1.18-SNAPSHOT",{
+	modCompileOnly "com.github.Globox1997:MedievalWeapons:1.19-SNAPSHOT",{
 		exclude(group: "net.fabricmc.fabric-api")
 	}
 	// Iris
-	modCompileOnly ('curse.maven:irisshaders-455508:3687476'){
+	modCompileOnly ('curse.maven:irisshaders-455508:3821021'){
 		exclude(group: "net.fabricmc.fabric-api")
 	}
 }

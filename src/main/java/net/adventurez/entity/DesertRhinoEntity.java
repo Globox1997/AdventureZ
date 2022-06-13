@@ -1,7 +1,6 @@
 package net.adventurez.entity;
 
 import java.util.EnumSet;
-import java.util.Random;
 
 import net.adventurez.init.SoundInit;
 import net.minecraft.block.BlockState;
@@ -36,6 +35,7 @@ import net.minecraft.sound.SoundEvent;
 import net.minecraft.util.Hand;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Box;
+import net.minecraft.util.math.random.Random;
 import net.minecraft.world.Difficulty;
 import net.minecraft.world.ServerWorldAccess;
 import net.minecraft.world.World;

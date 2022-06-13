@@ -30,6 +30,7 @@ import net.minecraft.world.GameRules;
 import net.minecraft.world.World;
 import net.minecraft.world.explosion.Explosion;
 
+@SuppressWarnings("deprecation")
 public class ThrownRockEntity extends ThrownItemEntity {
 
     public ThrownRockEntity(EntityType<? extends ThrownRockEntity> entityType, World world) {
@@ -49,6 +50,7 @@ public class ThrownRockEntity extends ThrownItemEntity {
         return Items.BLACKSTONE;
     }
 
+    // getLandingBlockState found at addSoulSpeedBoostIfNeeded in LivingEntity
     @Environment(EnvType.CLIENT)
     private ParticleEffect getParticleParameters() {
         BlockState state = this.getLandingBlockState();

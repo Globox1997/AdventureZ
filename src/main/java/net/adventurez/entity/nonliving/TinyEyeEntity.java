@@ -244,6 +244,7 @@ public class TinyEyeEntity extends ExplosiveProjectileEntity {
         return new EntityDamageSource("tinyEye", entity).setProjectile();
     }
 
+    @SuppressWarnings("deprecation")
     private void teleportEntityRandom(LivingEntity livingEntity) {
         for (int counter = 0; counter < 100; counter++) {
             float randomFloat = this.world.getRandom().nextFloat() * 6.2831855F;

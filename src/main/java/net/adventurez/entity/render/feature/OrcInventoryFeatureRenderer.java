@@ -6,6 +6,7 @@ import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.model.ModelPart;
+import net.minecraft.client.render.OverlayTexture;
 import net.minecraft.client.render.VertexConsumerProvider;
 import net.minecraft.client.render.entity.feature.FeatureRenderer;
 import net.minecraft.client.render.entity.feature.FeatureRendererContext;
@@ -31,8 +32,8 @@ public class OrcInventoryFeatureRenderer extends FeatureRenderer<OrcEntity, OrcM
             modelPart.rotate(matrixStack);
             matrixStack.multiply(Vec3f.POSITIVE_Y.getDegreesQuaternion(90F));
             matrixStack.translate(-0.295D, -0.3D, 0.0D);
-            MinecraftClient.getInstance().getHeldItemRenderer().renderItem(orcEntity, Registry.ITEM.get(itemId).getDefaultStack(), ModelTransformation.Mode.THIRD_PERSON_RIGHT_HAND, false,
-                    matrixStack, vertexConsumerProvider, i);
+            MinecraftClient.getInstance().getItemRenderer().renderItem(orcEntity, Registry.ITEM.get(itemId).getDefaultStack(), ModelTransformation.Mode.THIRD_PERSON_RIGHT_HAND, false, matrixStack,
+                    vertexConsumerProvider, orcEntity.world, i, OverlayTexture.DEFAULT_UV, orcEntity.getId() + ModelTransformation.Mode.THIRD_PERSON_RIGHT_HAND.ordinal());
             matrixStack.pop();
         }
     }

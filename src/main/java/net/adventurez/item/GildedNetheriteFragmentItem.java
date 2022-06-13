@@ -9,7 +9,6 @@ import net.minecraft.client.util.InputUtil;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.text.Text;
-import net.minecraft.text.TranslatableText;
 import net.minecraft.world.World;
 
 public class GildedNetheriteFragmentItem extends Item {
@@ -22,10 +21,10 @@ public class GildedNetheriteFragmentItem extends Item {
     public void appendTooltip(ItemStack itemStack, World world, List<Text> tooltip, TooltipContext tooltipContext) {
         super.appendTooltip(itemStack, world, tooltip, tooltipContext);
         if (ConfigInit.CONFIG.allow_extra_tooltips) {
-            tooltip.add(new TranslatableText("item.adventurez.moreinfo.tooltip"));
+            tooltip.add(Text.translatable("item.adventurez.moreinfo.tooltip"));
             if (InputUtil.isKeyPressed(MinecraftClient.getInstance().getWindow().getHandle(), 340)) {
-                tooltip.remove(new TranslatableText("item.adventurez.moreinfo.tooltip"));
-                tooltip.add(new TranslatableText("item.adventurez.gilded_netherite_fragment.tooltip"));
+                tooltip.remove(Text.translatable("item.adventurez.moreinfo.tooltip"));
+                tooltip.add(Text.translatable("item.adventurez.gilded_netherite_fragment.tooltip"));
             }
         }
     }

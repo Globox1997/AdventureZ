@@ -11,9 +11,9 @@ import net.adventurez.mixin.accessor.ChestLidAnimatorAccessor;
 import net.fabricmc.loader.api.FabricLoader;
 import net.minecraft.block.BlockState;
 import net.minecraft.block.entity.ChestLidAnimator;
+import net.minecraft.block.entity.LidOpenable;
 import net.minecraft.block.entity.LootableContainerBlockEntity;
 import net.minecraft.block.entity.ViewerCountManager;
-import net.minecraft.client.block.ChestAnimationProgress;
 import net.minecraft.enchantment.Enchantment;
 import net.minecraft.enchantment.EnchantmentLevelEntry;
 import net.minecraft.entity.player.PlayerEntity;
@@ -34,14 +34,13 @@ import net.minecraft.screen.ScreenHandler;
 import net.minecraft.server.world.ServerWorld;
 import net.minecraft.sound.SoundCategory;
 import net.minecraft.text.Text;
-import net.minecraft.text.TranslatableText;
 import net.minecraft.util.collection.DefaultedList;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Vec3d;
 import net.minecraft.util.registry.Registry;
 import net.minecraft.world.World;
 
-public class ShadowChestEntity extends LootableContainerBlockEntity implements ChestAnimationProgress {
+public class ShadowChestEntity extends LootableContainerBlockEntity implements LidOpenable {
 
     private final ChestLidAnimator lidAnimator = new ChestLidAnimator();
     private DefaultedList<ItemStack> inventory;
@@ -167,7 +166,7 @@ public class ShadowChestEntity extends LootableContainerBlockEntity implements C
 
     @Override
     protected Text getContainerName() {
-        return new TranslatableText("adventurez.container.shadowchest");
+        return Text.translatable("adventurez.container.shadowchest");
     }
 
     @Override

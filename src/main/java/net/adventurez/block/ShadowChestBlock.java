@@ -1,7 +1,5 @@
 package net.adventurez.block;
 
-import java.util.Random;
-
 import org.jetbrains.annotations.Nullable;
 
 import net.adventurez.block.entity.ShadowChestEntity;
@@ -43,6 +41,7 @@ import net.minecraft.util.ItemScatterer;
 import net.minecraft.util.hit.BlockHitResult;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Direction;
+import net.minecraft.util.math.random.Random;
 import net.minecraft.util.shape.VoxelShape;
 import net.minecraft.world.BlockView;
 import net.minecraft.world.World;
@@ -55,9 +54,7 @@ public class ShadowChestBlock extends AbstractChestBlock<ShadowChestEntity> impl
     protected static final VoxelShape SHAPE;
 
     public ShadowChestBlock(AbstractBlock.Settings settings) {
-        super(settings, () -> {
-            return BlockInit.SHADOW_CHEST_ENTITY;
-        });
+        super(settings, () -> BlockInit.SHADOW_CHEST_ENTITY);
         this.setDefaultState((BlockState) ((BlockState) ((BlockState) this.stateManager.getDefaultState()).with(FACING, Direction.NORTH)).with(WATERLOGGED, false));
     }
 
@@ -114,20 +111,35 @@ public class ShadowChestBlock extends AbstractChestBlock<ShadowChestEntity> impl
         return world.isClient ? checkType(type, BlockInit.SHADOW_CHEST_ENTITY, ShadowChestEntity::clientTick) : null;
     }
 
+    // @Override
+    // public void randomDisplayTick(BlockState state, World world, BlockPos pos, Random random) {
+    // for (int i = 0; i < 3; ++i) {
+    // int j = random.nextInt(2) * 2 - 1;
+    // int k = random.nextInt(2) * 2 - 1;
+    // double d = (double) pos.getX() + 0.5D + 0.25D * (double) j;
+    // double e = (double) ((float) pos.getY() + random.nextFloat());
+    // double f = (double) pos.getZ() + 0.5D + 0.25D * (double) k;
+    // double g = (double) (random.nextFloat() * (float) j);
+    // double h = ((double) random.nextFloat() - 0.5D) * 0.125D;
+    // double l = (double) (random.nextFloat() * (float) k);
+    // world.addParticle(ParticleTypes.PORTAL, d, e, f, g, h, l);
+    // }
+
+    // }
+
     @Override
     public void randomDisplayTick(BlockState state, World world, BlockPos pos, Random random) {
         for (int i = 0; i < 3; ++i) {
             int j = random.nextInt(2) * 2 - 1;
             int k = random.nextInt(2) * 2 - 1;
-            double d = (double) pos.getX() + 0.5D + 0.25D * (double) j;
-            double e = (double) ((float) pos.getY() + random.nextFloat());
-            double f = (double) pos.getZ() + 0.5D + 0.25D * (double) k;
-            double g = (double) (random.nextFloat() * (float) j);
-            double h = ((double) random.nextFloat() - 0.5D) * 0.125D;
-            double l = (double) (random.nextFloat() * (float) k);
+            double d = (double) pos.getX() + 0.5 + 0.25 * (double) j;
+            double e = (float) pos.getY() + random.nextFloat();
+            double f = (double) pos.getZ() + 0.5 + 0.25 * (double) k;
+            double g = random.nextFloat() * (float) j;
+            double h = ((double) random.nextFloat() - 0.5) * 0.125;
+            double l = random.nextFloat() * (float) k;
             world.addParticle(ParticleTypes.PORTAL, d, e, f, g, h, l);
         }
-
     }
 
     @Override
@@ -150,6 +162,8 @@ public class ShadowChestBlock extends AbstractChestBlock<ShadowChestEntity> impl
         return (Boolean) state.get(WATERLOGGED) ? Fluids.WATER.getStill(false) : Fluids.EMPTY.getDefaultState();
     }
 
+    // Found in ChestBlock
+    @SuppressWarnings("deprecation")
     @Override
     public BlockState getStateForNeighborUpdate(BlockState state, Direction direction, BlockState neighborState, WorldAccess world, BlockPos pos, BlockPos neighborPos) {
         if ((Boolean) state.get(WATERLOGGED)) {

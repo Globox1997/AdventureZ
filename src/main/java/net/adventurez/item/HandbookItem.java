@@ -11,7 +11,6 @@ import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.text.Text;
-import net.minecraft.text.TranslatableText;
 import net.minecraft.util.Hand;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.TypedActionResult;
@@ -38,7 +37,7 @@ public class HandbookItem extends Item {
     @Override
     public void appendTooltip(ItemStack stack, @Nullable World world, List<Text> tooltip, TooltipContext context) {
         if (!isPatchouliLoaded)
-            tooltip.add(new TranslatableText("item.adventurez.patchouli_book.tooltip"));
+            tooltip.add(Text.translatable("item.adventurez.patchouli_book.tooltip"));
     }
 
 }

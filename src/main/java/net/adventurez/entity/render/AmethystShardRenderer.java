@@ -31,6 +31,7 @@ public class AmethystShardRenderer extends EntityRenderer<AmethystShardEntity> {
     @Override
     public void render(AmethystShardEntity amethystShardEntity, float f, float g, MatrixStack matrixStack, VertexConsumerProvider vertexConsumerProvider, int i) {
         matrixStack.push();
+        // lerpAngle found at this.dolphin.setPitch(MathHelper.lerpAngle(this.dolphin.getPitch(), 0.0f, 0.2f));
         float h = MathHelper.lerpAngle(amethystShardEntity.prevYaw, amethystShardEntity.getYaw(), g);
         float j = MathHelper.lerp(g, amethystShardEntity.prevPitch, amethystShardEntity.getPitch());
         matrixStack.scale(-1.0F, -1.0F, 1.0F);

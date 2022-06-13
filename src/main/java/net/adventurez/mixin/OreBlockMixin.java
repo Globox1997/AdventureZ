@@ -24,6 +24,7 @@ import net.minecraft.world.SpawnHelper;
 import net.minecraft.world.World;
 import net.minecraft.world.WorldAccess;
 
+@SuppressWarnings("deprecation")
 @Mixin(OreBlock.class)
 public class OreBlockMixin {
     private boolean isBeastNear = false;
@@ -50,6 +51,7 @@ public class OreBlockMixin {
                     // int posY = world.getTopY(Heightmap.Type.WORLD_SURFACE_WG, posX, posZ); doesnt work in nether
                     int posY = posYOfPlayer - 20 + world.getRandom().nextInt(40);
                     BlockPos spawnPos = new BlockPos(posX, posY, posZ);
+                    // isRegionLoaded foun in Raid class at getRavagerSpawnLocation
                     if (world.isRegionLoaded(spawnPos.getX() - 4, spawnPos.getY() - 4, spawnPos.getZ() - 4, spawnPos.getX() + 4, spawnPos.getY() + 4, spawnPos.getZ() + 4)
                             && SpawnHelper.canSpawn(SpawnRestriction.Location.ON_GROUND, world, spawnPos, EntityInit.PIGLINBEAST_ENTITY)) {
                         beastEntity.refreshPositionAndAngles(spawnPos, 0.0F, 0.0F);

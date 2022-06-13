@@ -1,7 +1,5 @@
 package net.adventurez.entity;
 
-import java.util.Random;
-
 import org.jetbrains.annotations.Nullable;
 
 import net.adventurez.init.EntityInit;
@@ -45,6 +43,7 @@ import net.minecraft.sound.SoundEvents;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Box;
 import net.minecraft.util.math.MathHelper;
+import net.minecraft.util.math.random.Random;
 import net.minecraft.entity.mob.AbstractPiglinEntity;
 import net.minecraft.entity.mob.HostileEntity;
 import net.minecraft.entity.mob.PathAwareEntity;
@@ -94,8 +93,9 @@ public class SoulReaperEntity extends HostileEntity implements RangedAttackMob {
     @Nullable
     public EntityData initialize(ServerWorldAccess serverWorldAccess, LocalDifficulty difficulty, SpawnReason spawnReason, @Nullable EntityData entityData, @Nullable NbtCompound entityTag) {
         entityData = super.initialize(serverWorldAccess, difficulty, spawnReason, entityData, entityTag);
-        this.initEquipment(difficulty);
-        this.updateEnchantments(difficulty);
+        Random random = world.getRandom();
+        this.initEquipment(random, difficulty);
+        this.updateEnchantments(random, difficulty);
         this.bowAttackGoal.setAttackInterval(40);
         this.goalSelector.add(4, this.bowAttackGoal);
         if (spawnReason.equals(SpawnReason.COMMAND) || spawnReason.equals(SpawnReason.NATURAL) || spawnReason.equals(SpawnReason.CHUNK_GENERATION)) {
@@ -150,8 +150,8 @@ public class SoulReaperEntity extends HostileEntity implements RangedAttackMob {
     }
 
     @Override
-    public void initEquipment(LocalDifficulty difficulty) {
-        super.initEquipment(difficulty);
+    public void initEquipment(Random random, LocalDifficulty difficulty) {
+        super.initEquipment(random, difficulty);
         this.equipStack(EquipmentSlot.MAINHAND, new ItemStack(Items.BOW));
     }
 

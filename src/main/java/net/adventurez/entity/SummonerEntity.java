@@ -1,7 +1,6 @@
 package net.adventurez.entity;
 
 import java.util.List;
-import java.util.Random;
 
 import net.adventurez.init.EntityInit;
 import net.adventurez.init.SoundInit;
@@ -47,6 +46,7 @@ import net.minecraft.sound.SoundEvent;
 import net.minecraft.sound.SoundEvents;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.MathHelper;
+import net.minecraft.util.math.random.Random;
 import net.minecraft.world.SpawnHelper;
 import net.minecraft.world.World;
 import net.minecraft.world.Heightmap;
@@ -267,6 +267,7 @@ public class SummonerEntity extends SpellCastingEntity {
                 return true;
         }
 
+        @SuppressWarnings("deprecation")
         @Override
         public void castSpell() {
             for (int counter = 0; counter < 100; counter++) {

@@ -1,6 +1,5 @@
 package net.adventurez.entity;
 
-import java.util.Random;
 import java.util.UUID;
 
 import org.jetbrains.annotations.Nullable;
@@ -41,6 +40,7 @@ import net.minecraft.sound.SoundEvents;
 import net.minecraft.tag.BlockTags;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.intprovider.UniformIntProvider;
+import net.minecraft.util.math.random.Random;
 import net.minecraft.util.TimeHelper;
 import net.minecraft.world.World;
 import net.minecraft.world.WorldAccess;

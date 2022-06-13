@@ -2,7 +2,6 @@ package net.adventurez.entity;
 
 import java.util.EnumSet;
 import java.util.List;
-import java.util.Random;
 
 import org.jetbrains.annotations.Nullable;
 
@@ -45,6 +44,7 @@ import net.minecraft.sound.SoundEvent;
 import net.minecraft.util.Hand;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Vec3d;
+import net.minecraft.util.math.random.Random;
 import net.minecraft.util.registry.Registry;
 
 public class OrcEntity extends HostileEntity {

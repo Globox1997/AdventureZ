@@ -24,7 +24,6 @@ import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.inventory.Inventory;
 import net.minecraft.item.ItemStack;
 import net.minecraft.text.Text;
-import net.minecraft.text.TranslatableText;
 import net.minecraft.util.ActionResult;
 import net.minecraft.util.Hand;
 import net.minecraft.util.ItemScatterer;
@@ -57,12 +56,12 @@ public class StoneHolderBlock extends Block implements BlockEntityProvider {
     @Environment(EnvType.CLIENT)
     public void appendTooltip(ItemStack stack, @Nullable BlockView world, List<Text> tooltip, TooltipContext options) {
         if (ConfigInit.CONFIG.allow_extra_tooltips) {
-            tooltip.add(new TranslatableText("item.adventurez.moreinfo.tooltip"));
+            tooltip.add(Text.translatable("item.adventurez.moreinfo.tooltip"));
             if (InputUtil.isKeyPressed(MinecraftClient.getInstance().getWindow().getHandle(), 340)) {
-                tooltip.remove(new TranslatableText("item.adventurez.moreinfo.tooltip"));
-                tooltip.add(new TranslatableText("block.adventurez.stone_holder_block.tooltip"));
-                tooltip.add(new TranslatableText("block.adventurez.stone_holder_block.tooltip2"));
-                tooltip.add(new TranslatableText("block.adventurez.stone_holder_block.tooltip3"));
+                tooltip.remove(Text.translatable("item.adventurez.moreinfo.tooltip"));
+                tooltip.add(Text.translatable("block.adventurez.stone_holder_block.tooltip"));
+                tooltip.add(Text.translatable("block.adventurez.stone_holder_block.tooltip2"));
+                tooltip.add(Text.translatable("block.adventurez.stone_holder_block.tooltip3"));
             }
         }
     }
@@ -98,6 +97,8 @@ public class StoneHolderBlock extends Block implements BlockEntityProvider {
         return SHAPE;
     }
 
+    // Found in ChestBlock
+    @SuppressWarnings("deprecation")
     @Override
     public void onStateReplaced(BlockState state, World world, BlockPos pos, BlockState newState, boolean moved) {
         if (!state.isOf(newState.getBlock())) {
@@ -106,7 +107,6 @@ public class StoneHolderBlock extends Block implements BlockEntityProvider {
                 ItemScatterer.spawn(world, pos, (Inventory) blockEntity);
                 world.updateComparators(pos, this);
             }
-
             super.onStateReplaced(state, world, pos, newState, moved);
         }
     }

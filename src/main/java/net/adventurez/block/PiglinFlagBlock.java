@@ -20,7 +20,6 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.state.StateManager;
 import net.minecraft.state.property.DirectionProperty;
 import net.minecraft.text.Text;
-import net.minecraft.text.TranslatableText;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Direction;
 import net.minecraft.util.shape.VoxelShape;
@@ -68,12 +67,12 @@ public class PiglinFlagBlock extends Block implements BlockEntityProvider {
     @Environment(EnvType.CLIENT)
     public void appendTooltip(ItemStack stack, @Nullable BlockView world, List<Text> tooltip, TooltipContext options) {
         if (ConfigInit.CONFIG.allow_extra_tooltips) {
-            tooltip.add(new TranslatableText("item.adventurez.moreinfo.tooltip"));
+            tooltip.add(Text.translatable("item.adventurez.moreinfo.tooltip"));
             if (InputUtil.isKeyPressed(MinecraftClient.getInstance().getWindow().getHandle(), 340)) {
-                tooltip.remove(new TranslatableText("item.adventurez.moreinfo.tooltip"));
-                tooltip.add(new TranslatableText("block.adventurez.piglin_flag_block.tooltip"));
-                tooltip.add(new TranslatableText("block.adventurez.piglin_flag_block.tooltip2"));
-                tooltip.add(new TranslatableText("block.adventurez.piglin_flag_block.tooltip3"));
+                tooltip.remove(Text.translatable("item.adventurez.moreinfo.tooltip"));
+                tooltip.add(Text.translatable("block.adventurez.piglin_flag_block.tooltip"));
+                tooltip.add(Text.translatable("block.adventurez.piglin_flag_block.tooltip2"));
+                tooltip.add(Text.translatable("block.adventurez.piglin_flag_block.tooltip3"));
             }
         }
     }

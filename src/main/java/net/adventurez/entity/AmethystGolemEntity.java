@@ -1,7 +1,5 @@
 package net.adventurez.entity;
 
-import java.util.Random;
-
 import org.jetbrains.annotations.Nullable;
 
 import net.adventurez.entity.nonliving.AmethystShardEntity;
@@ -32,6 +30,7 @@ import net.minecraft.sound.SoundCategory;
 import net.minecraft.sound.SoundEvent;
 import net.minecraft.util.Hand;
 import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.math.random.Random;
 import net.minecraft.world.Difficulty;
 import net.minecraft.world.LocalDifficulty;
 import net.minecraft.world.ServerWorldAccess;

@@ -3,7 +3,6 @@ package net.adventurez.entity;
 import java.util.EnumSet;
 import java.util.List;
 import java.util.Optional;
-import java.util.Random;
 
 import net.adventurez.entity.nonliving.TinyEyeEntity;
 import net.adventurez.init.EffectInit;
@@ -48,9 +47,9 @@ import net.minecraft.server.world.ServerWorld;
 import net.minecraft.sound.SoundCategory;
 import net.minecraft.sound.SoundEvent;
 import net.minecraft.sound.SoundEvents;
-import net.minecraft.structure.Structure;
-import net.minecraft.structure.StructureManager;
 import net.minecraft.structure.StructurePlacementData;
+import net.minecraft.structure.StructureTemplate;
+import net.minecraft.structure.StructureTemplateManager;
 import net.minecraft.text.Text;
 import net.minecraft.util.BlockMirror;
 import net.minecraft.util.BlockRotation;
@@ -60,6 +59,7 @@ import net.minecraft.util.math.Box;
 import net.minecraft.util.math.Direction;
 import net.minecraft.util.math.MathHelper;
 import net.minecraft.util.math.Vec3d;
+import net.minecraft.util.math.random.Random;
 import net.minecraft.world.Difficulty;
 import net.minecraft.world.GameRules;
 import net.minecraft.world.SpawnHelper;
@@ -70,6 +70,7 @@ import net.minecraft.world.Heightmap;
 
 import org.jetbrains.annotations.Nullable;
 
+@SuppressWarnings("deprecation")
 public class TheEyeEntity extends FlyingEntity {
     private static final TrackedData<Integer> BEAM_TARGET_ID;
     public static final TrackedData<Integer> INVUL_TIMER;
@@ -515,8 +516,8 @@ public class TheEyeEntity extends FlyingEntity {
     }
 
     private void placeDeathStructure(BlockPos blockPos) {
-        StructureManager structureManager = ((ServerWorld) world).getStructureManager();
-        Optional<Structure> structure = structureManager.getStructure(new Identifier("adventurez:eyeland"));
+        StructureTemplateManager structureTemplateManager = ((ServerWorld) world).getStructureTemplateManager();
+        Optional<StructureTemplate> structure = structureTemplateManager.getTemplate(new Identifier("adventurez:eyeland"));
         structure.get().place((ServerWorld) world, blockPos.west(5).north(5), blockPos,
                 (new StructurePlacementData()).setMirror(BlockMirror.NONE).setRotation(BlockRotation.NONE).setIgnoreEntities(true), world.random, Block.NOTIFY_LISTENERS);
     }

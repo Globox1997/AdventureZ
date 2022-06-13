@@ -1,7 +1,5 @@
 package net.adventurez.entity;
 
-import java.util.Random;
-
 import net.adventurez.init.SoundInit;
 import net.minecraft.block.BlockState;
 import net.minecraft.entity.EntityGroup;
@@ -20,6 +18,7 @@ import net.minecraft.entity.mob.MobEntity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.sound.SoundEvent;
 import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.math.random.Random;
 import net.minecraft.world.ServerWorldAccess;
 import net.minecraft.world.World;
 import net.minecraft.world.WorldView;
