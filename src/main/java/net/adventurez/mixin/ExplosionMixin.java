@@ -33,13 +33,13 @@ public class ExplosionMixin {
         this.entity = entity;
     }
 
-    @Inject(method = "collectBlocksAndDamageEntities", at = @At(value = "INVOKE", target = "Lnet/minecraft/util/math/Vec3d;<init>(DDD)V", shift = Shift.AFTER, ordinal = 0), locals = LocalCapture.CAPTURE_FAILSOFT)
-    public void collectBlocksAndDamageEntitiesMixin(CallbackInfo info, Set<BlockPos> set, int i, float q, int r, int s, int t, int u, int v, int w, List<Entity> list) {
+    @Inject(method = "collectBlocksAndDamageEntities", at = @At(value = "INVOKE_ASSIGN", target = "Lnet/minecraft/world/World;getOtherEntities(Lnet/minecraft/entity/Entity;Lnet/minecraft/util/math/Box;)Ljava/util/List;", shift = Shift.AFTER), locals = LocalCapture.CAPTURE_FAILSOFT)
+    public void collectBlocksAndDamageEntitiesMixin(CallbackInfo info, Set<BlockPos> set, int i, float q, int k, int l, int r, int s, int t, int u, List<Entity> list) {
         if (this.entity != null) {
             if (this.entity instanceof BlazeGuardianEntity || this.entity instanceof VoidFragmentEntity) {
                 List<Entity> removeList = new ArrayList<Entity>();
-                for (int k = 0; k < list.size(); ++k) {
-                    Entity entityFromList = (Entity) list.get(k);
+                for (int o = 0; o < list.size(); ++o) {
+                    Entity entityFromList = (Entity) list.get(o);
                     if (!(entityFromList instanceof PlayerEntity)) {
                         removeList.add(entityFromList);
                     }
