@@ -393,7 +393,7 @@ public class BlazeGuardianEntity extends HostileEntity {
         @Override
         public boolean canStart() {
             LivingEntity livingEntity = this.guardian.getTarget();
-            return livingEntity != null && livingEntity.isAlive() && this.guardian.canTarget(livingEntity) && this.guardian.squaredDistanceTo(livingEntity) < 8D;
+            return livingEntity != null && livingEntity.isAlive() && this.guardian.canTarget(livingEntity) && this.guardian.squaredDistanceTo(livingEntity) < 12D;
         }
 
         @Override
