@@ -274,6 +274,12 @@ public class BlazeGuardianEntity extends HostileEntity {
         return super.initialize(serverWorldAccess, difficulty, spawnReason, entityData, entityTag);
     }
 
+    // another idea to spawn the shields
+    // @Override
+    // public void onSpawnPacket(EntitySpawnS2CPacket packet) {
+    // super.onSpawnPacket(packet);
+    // }
+
     public static boolean canSpawn(EntityType<BlazeGuardianEntity> type, ServerWorldAccess world, SpawnReason spawnReason, BlockPos pos, Random random) {
         return ((world.getBlockState(pos.down()).isOf(Blocks.NETHERRACK) || world.getBlockState(pos.down()).isOf(Blocks.NETHER_BRICKS)) && canSpawnInDark(type, world, spawnReason, pos, random)
                 && random.nextInt(4) == 0) || spawnReason == SpawnReason.SPAWNER;
