@@ -2,6 +2,8 @@ package net.adventurez.entity;
 
 import org.jetbrains.annotations.Nullable;
 
+import io.netty.buffer.Unpooled;
+
 import java.util.Optional;
 import java.util.UUID;
 
@@ -15,6 +17,7 @@ import net.adventurez.init.ConfigInit;
 import net.adventurez.init.ItemInit;
 import net.adventurez.init.SoundInit;
 import net.adventurez.mixin.accessor.LivingEntityAccessor;
+import net.adventurez.network.GeneralPacket;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
 import net.fabricmc.loader.api.FabricLoader;
@@ -55,6 +58,8 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.item.Items;
 import net.minecraft.nbt.NbtCompound;
 import net.minecraft.nbt.NbtList;
+import net.minecraft.network.PacketByteBuf;
+import net.minecraft.network.packet.s2c.play.CustomPayloadS2CPacket;
 import net.minecraft.particle.ParticleEffect;
 import net.minecraft.particle.ParticleTypes;
 import net.minecraft.screen.GenericContainerScreenHandler;
@@ -65,6 +70,7 @@ import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.sound.SoundCategory;
 import net.minecraft.sound.SoundEvent;
 import net.minecraft.sound.SoundEvents;
+import net.minecraft.tag.FluidTags;
 import net.minecraft.util.ActionResult;
 import net.minecraft.util.Arm;
 import net.minecraft.util.Hand;
@@ -93,6 +99,7 @@ public class DragonEntity extends PathAwareEntity implements InventoryChangedLis
     public static final TrackedData<Boolean> OTHER_EYES;
     public static final TrackedData<Integer> DRAGON_SIZE;
     public static final TrackedData<Boolean> FIRE_BREATH;
+    public static final TrackedData<Boolean> RED_DRAGON;
 
     private boolean sitting;
     public boolean isFlying;
@@ -109,6 +116,8 @@ public class DragonEntity extends PathAwareEntity implements InventoryChangedLis
     private int dragonAgeFoodBonus;
     private int fireBreathCooldown;
     public boolean fireBreathActive;
+    private int startFlyingTime = 0;
+    private int fluidTicker = 0;
 
     public DragonEntity(EntityType<? extends PathAwareEntity> entityType, World world) {
         super(entityType, world);
@@ -149,6 +158,7 @@ public class DragonEntity extends PathAwareEntity implements InventoryChangedLis
         this.dataTracker.startTracking(OTHER_EYES, false);
         this.dataTracker.startTracking(DRAGON_SIZE, 1);
         this.dataTracker.startTracking(FIRE_BREATH, false);
+        this.dataTracker.startTracking(RED_DRAGON, false);
     }
 
     @Override
@@ -178,7 +188,9 @@ public class DragonEntity extends PathAwareEntity implements InventoryChangedLis
         tag.putBoolean("OtherDragonEars", this.getDataTracker().get(DragonEntity.OTHER_EARS));
         tag.putBoolean("OtherDragonTail", this.getDataTracker().get(DragonEntity.OTHER_TAIL));
         tag.putBoolean("OtherDragonEyes", this.getDataTracker().get(DragonEntity.OTHER_EYES));
+        tag.putBoolean("RedDragon", this.getDataTracker().get(DragonEntity.RED_DRAGON));
         tag.putInt("DragonAge", this.dragonAge);
+        tag.putInt("StartFlyingTime", this.startFlyingTime);
     }
 
     @Override
@@ -202,7 +214,7 @@ public class DragonEntity extends PathAwareEntity implements InventoryChangedLis
         this.isFlying = tag.getBoolean("IsFlying");
         this.dataTracker.set(IS_FLYING, this.isFlying);
         this.sitting = tag.getBoolean("SittingDragon");
-        this.setInSittingPose(this.sitting);
+        this.setSitting(this.sitting);
         this.hasSaddle = tag.getBoolean("HasSaddle");
         this.dataTracker.set(HAS_SADDLE, this.hasSaddle);
         this.setHasChest(tag.getBoolean("HasChest"));
@@ -222,7 +234,10 @@ public class DragonEntity extends PathAwareEntity implements InventoryChangedLis
         this.dataTracker.set(OTHER_EARS, tag.getBoolean("OtherDragonEars"));
         this.dataTracker.set(OTHER_TAIL, tag.getBoolean("OtherDragonTail"));
         this.dataTracker.set(OTHER_EYES, tag.getBoolean("OtherDragonEyes"));
+        this.dataTracker.set(RED_DRAGON, tag.getBoolean("RedDragon"));
         this.dragonAge = tag.getInt("DragonAge");
+        if (this.isFlying)
+            this.startFlyingTime = tag.getInt("StartFlyingTime");
     }
 
     @Override
@@ -238,7 +253,7 @@ public class DragonEntity extends PathAwareEntity implements InventoryChangedLis
                 this.headYaw = livingEntity.headYaw;
                 boolean shouldFlyUp = false;
                 boolean shouldFlyDown = false;
-                shouldFlyUp = ((LivingEntityAccessor) livingEntity).jumping();
+                shouldFlyUp = ((LivingEntityAccessor) livingEntity).jumping(); // Pressing jump button for going upwards
                 if (this.world.isClient && livingEntity instanceof ClientPlayerEntity) {
                     ClientPlayerEntity clientPlayerEntity = (ClientPlayerEntity) livingEntity;
                     shouldFlyDown = InputUtil.isKeyPressed(MinecraftClient.getInstance().getWindow().getHandle(), this.keyBind);
@@ -277,13 +292,20 @@ public class DragonEntity extends PathAwareEntity implements InventoryChangedLis
                     this.dragonForwardSpeed *= 0.7F;
                 }
 
-                if (shouldFlyUp && this.onGround && !this.isFlying && this.startFlyingTimer < 20) {
-                    // && !this.getDataTracker().get(CLIENT_END_FLYING)
-                    this.startFlyingTimer++;
-                    this.getDataTracker().set(CLIENT_START_FLYING, true);
-                    this.getDataTracker().set(IS_START_FLYING, true);
+                // To do, set proper sit position
+                if (shouldFlyUp && !this.isFlying && this.startFlyingTimer < 10) {
+                    if (this.isTouchingWater() && this.getFluidHeight(FluidTags.WATER) > 0.5D) {
+                        if (!this.world.isClient && this.getFirstPassenger() instanceof ServerPlayerEntity) {
+                            CustomPayloadS2CPacket packet = new CustomPayloadS2CPacket(GeneralPacket.VELOCITY_PACKET, new PacketByteBuf(Unpooled.buffer().writeInt(this.getId()).writeFloat(0.05F)));
+                            ((ServerPlayerEntity) this.getFirstPassenger()).networkHandler.sendPacket(packet);
+                        }
+                    } else {
+                        this.startFlyingTimer++;
+                        this.getDataTracker().set(CLIENT_START_FLYING, true);
+                        this.getDataTracker().set(IS_START_FLYING, true);
+                    }
                 }
-                if (!shouldFlyUp && this.onGround && !this.isFlying && this.startFlyingTimer > 0) {
+                if (!shouldFlyUp && !this.isFlying && this.startFlyingTimer > 0) {
                     this.startFlyingTimer--;
                     this.getDataTracker().set(IS_START_FLYING, false);
                 }
@@ -291,9 +313,11 @@ public class DragonEntity extends PathAwareEntity implements InventoryChangedLis
                     this.getDataTracker().set(CLIENT_START_FLYING, false);
                 }
 
-                if (this.startFlyingTimer >= 20 && (!this.isFlying || !this.getDataTracker().get(IS_FLYING))) {
+                if (this.startFlyingTimer >= 10 && (!this.isFlying || !this.getDataTracker().get(IS_FLYING))) {
                     this.isFlying = true;
                     this.getDataTracker().set(IS_FLYING, true);
+                    this.startFlyingTimer = 0;
+                    this.startFlyingTime = (int) this.world.getTime();
                 }
                 if (this.isFlying && this.onGround) {// && shouldFlyDown only client: bad
                     this.onGroundTicker++;
@@ -301,24 +325,23 @@ public class DragonEntity extends PathAwareEntity implements InventoryChangedLis
                         this.onGroundTicker = 0;
                         this.isFlying = false;
                         this.getDataTracker().set(IS_FLYING, false);
-                        this.startFlyingTimer = 0;
                         this.getDataTracker().set(CLIENT_END_FLYING, true);
                     }
 
                 }
                 if ((this.isFlying || this.getDataTracker().get(IS_FLYING)) && shouldFlyUp) {
-                    flySpeed = 0.1F;
+                    flySpeed = 0.15F;
                 }
                 if ((this.isFlying || this.getDataTracker().get(IS_FLYING)) && shouldFlyDown) {
-                    flySpeed = -0.1F;
+                    flySpeed = -0.2F;
                 }
                 if ((this.isFlying || this.getDataTracker().get(IS_FLYING)) && !shouldFlyDown && !shouldFlyUp) {
-                    flySpeed *= 0.5F;
+                    flySpeed *= 0.4F;
                 }
 
                 if (this.isLogicalSideForUpdatingMovement()) {
                     this.setMovementSpeed((float) this.getAttributeValue(EntityAttributes.GENERIC_MOVEMENT_SPEED));
-                    if (!this.getDataTracker().get(IS_FLYING) && !this.isFlying) {
+                    if ((!this.getDataTracker().get(IS_FLYING) && !this.isFlying) || (this.isTouchingWater() && this.getFluidHeight(FluidTags.WATER) > 0.2D)) {
                         super.travel(new Vec3d((double) f, movementInput.y, (double) g));
                     } else {
                         Vec3d vec3d;
@@ -357,6 +380,8 @@ public class DragonEntity extends PathAwareEntity implements InventoryChangedLis
                 }
             }
         }
+        if (this.isFlying && this.startFlyingTime != 0 && (int) (this.world.getTime() - this.startFlyingTime) % 25 == 0)
+            this.playWingFlapSound();
 
     }
 
@@ -507,14 +532,14 @@ public class DragonEntity extends PathAwareEntity implements InventoryChangedLis
                         }
                         return ActionResult.FAIL;
                     }
-                    this.setInSittingPose(false);
+                    this.setSitting(false);
                     this.putPlayerOnBack(player);
                     return ActionResult.SUCCESS;
                 } else if (this.isInSittingPose()) {
-                    this.setInSittingPose(false);
+                    this.setSitting(false);
                     return ActionResult.SUCCESS;
                 } else if (this.onGround) {
-                    this.setInSittingPose(true);
+                    this.setSitting(true);
                     return ActionResult.SUCCESS;
                 } else
                     return ActionResult.PASS;
@@ -604,6 +629,23 @@ public class DragonEntity extends PathAwareEntity implements InventoryChangedLis
                     this.world.sendEntityStatus(this, (byte) 9);
                 }
             }
+            if (this.isTouchingWater() || this.isInLava()) {
+                if (this.isFlying && this.getFluidHeight(FluidTags.WATER) > 1.2D) {
+                    this.fluidTicker++;
+                    if (this.fluidTicker >= 30) {
+                        this.isFlying = false;
+                        this.getDataTracker().set(IS_FLYING, false);
+                        this.getDataTracker().set(IS_START_FLYING, false);
+                        this.getDataTracker().set(CLIENT_START_FLYING, false);
+                        this.getDataTracker().set(CLIENT_END_FLYING, false);
+                        this.startFlyingTimer = 0;
+                        this.fluidTicker = 0;
+                    }
+                } else if (this.world.isClient && this.hasPassengers() && !this.isFlying && this.getFluidHeight(FluidTags.WATER) > 1.0D) {
+                    this.addVelocity(0.0D, 0.05D, 0.0D);
+                }
+            } else if (this.fluidTicker != 0)
+                this.fluidTicker = 0;
         }
 
         if (this.fireBreathCooldown > 60) {
@@ -747,15 +789,28 @@ public class DragonEntity extends PathAwareEntity implements InventoryChangedLis
         return ((Byte) this.dataTracker.get(TAMEABLE_FLAGS) & 1) != 0;
     }
 
-    public void setInSittingPose(boolean inSittingPose) {
+    private void setInSittingPose(boolean inSittingPose) {
         this.sitting = inSittingPose;
         byte b = (Byte) this.dataTracker.get(TAMEABLE_FLAGS);
         if (inSittingPose) {
             this.dataTracker.set(TAMEABLE_FLAGS, (byte) (b | 1));
         } else {
-            this.dataTracker.set(TAMEABLE_FLAGS, (byte) (b & -2));
+            this.dataTracker.set(TAMEABLE_FLAGS, (byte) (b & 0xFFFFFFFE));
         }
 
+    }
+
+    public void setSitting(boolean sitting) {
+        this.sitting = sitting;
+        setInSittingPose(sitting);
+    }
+
+    @Override
+    public int getMaxLookPitchChange() {
+        if (this.isInSittingPose()) {
+            return 20;
+        }
+        return super.getMaxLookPitchChange();
     }
 
     @Override
@@ -765,10 +820,22 @@ public class DragonEntity extends PathAwareEntity implements InventoryChangedLis
 
     @Override
     protected void fall(double heightDifference, boolean onGround, BlockState landedState, BlockPos landedPosition) {
-        if (!this.isFlying) {
-            super.fall(heightDifference, onGround, landedState, landedPosition);
+        if (!this.world.isClient && !this.isFlying && !onGround && heightDifference < -0.7D) {
+            if (this.sitting)
+                this.setSitting(false);
+            if (!this.hasPassengers()) {
+                this.isFlying = true;
+                this.getDataTracker().set(IS_FLYING, true);
+                this.getDataTracker().set(IS_START_FLYING, false);
+                this.getDataTracker().set(CLIENT_START_FLYING, false);
+                this.startFlyingTime = (int) this.world.getTime();
+            }
         }
+        super.fall(heightDifference, onGround, landedState, landedPosition);
+    }
 
+    private void playWingFlapSound() {
+        this.world.playSoundFromEntity(null, this, SoundEvents.ENTITY_ENDER_DRAGON_FLAP, this.getSoundCategory(), 5.0f, 0.8f + this.random.nextFloat() * 0.3f);
     }
 
     public void setKeyBind(String key) {
@@ -792,7 +859,7 @@ public class DragonEntity extends PathAwareEntity implements InventoryChangedLis
 
     @Override
     protected void playStepSound(BlockPos pos, BlockState state) {
-        this.playSound(SoundInit.ORC_STEP_EVENT, 0.7F, 1.0F);
+        this.playSound(SoundInit.DRAGON_STEP_EVENT, 0.7F, 1.0F);
     }
 
     @Override
@@ -870,6 +937,8 @@ public class DragonEntity extends PathAwareEntity implements InventoryChangedLis
         this.getDataTracker().set(OTHER_EARS, world.getRandom().nextBoolean());
         this.getDataTracker().set(OTHER_TAIL, world.getRandom().nextBoolean());
         this.getDataTracker().set(OTHER_EYES, world.getRandom().nextBoolean());
+        if (world.getDimension().ultrawarm())
+            this.getDataTracker().set(RED_DRAGON, world.getRandom().nextBoolean());
         if (spawnReason.equals(SpawnReason.COMMAND)) {
             this.setSize(3);
         } else {
@@ -950,7 +1019,22 @@ public class DragonEntity extends PathAwareEntity implements InventoryChangedLis
         if (passenger instanceof MobEntity) {
             MobEntity mobEntity = (MobEntity) passenger;
             this.bodyYaw = mobEntity.bodyYaw;
+
+            // float slowlyIncreasingFloat = ((float) Math.floorMod(this.world.getTime(), 100L) + animationProgress) / 100.0F;
+            // float mediumSpeedSin = MathHelper.cos(12.566370614F * slowlyIncreasingFloat );
+            // float bodyFloating = -mediumSpeedSin - 4.0F;
+            // this.body.pivotY = bodyFloating;
+            if (this.world.isClient) {
+                float offSet = 12F;
+                if (passenger.equals(this.getPrimaryPassenger()))
+                    offSet = 1F;
+                float f = MathHelper.sin(this.bodyYaw * 0.017453292F) * offSet;
+                float g = MathHelper.cos(this.bodyYaw * 0.017453292F) * offSet;
+
+                passenger.setPosition(this.getX() + (double) (0.1F * f), this.getBodyY(0.66F) + passenger.getHeightOffset(), this.getZ() - (double) (0.1F * g));
+            }
         }
+
     }
 
     @Override
@@ -962,6 +1046,9 @@ public class DragonEntity extends PathAwareEntity implements InventoryChangedLis
     public boolean damage(DamageSource source, float amount) {
         if (source == DamageSource.IN_WALL) {
             return false;
+        }
+        if (!this.world.isClient) {
+            this.setSitting(false);
         }
         return this.isInvulnerableTo(source) ? false : super.damage(source, amount);
     }
@@ -980,6 +1067,7 @@ public class DragonEntity extends PathAwareEntity implements InventoryChangedLis
         OTHER_EYES = DataTracker.registerData(DragonEntity.class, TrackedDataHandlerRegistry.BOOLEAN);
         DRAGON_SIZE = DataTracker.registerData(DragonEntity.class, TrackedDataHandlerRegistry.INTEGER);
         FIRE_BREATH = DataTracker.registerData(DragonEntity.class, TrackedDataHandlerRegistry.BOOLEAN);
+        RED_DRAGON = DataTracker.registerData(DragonEntity.class, TrackedDataHandlerRegistry.BOOLEAN);
     }
 
 }

@@ -40,11 +40,11 @@ public class DragonSitGoal extends Goal {
     @Override
     public void start() {
         this.dragonEntity.getNavigation().stop();
-        this.dragonEntity.setInSittingPose(true);
+        this.dragonEntity.setSitting(true);
     }
 
     @Override
     public void stop() {
-        this.dragonEntity.setInSittingPose(false);
+        this.dragonEntity.setSitting(false);
     }
 }

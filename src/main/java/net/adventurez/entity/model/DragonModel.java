@@ -71,8 +71,6 @@ public class DragonModel<T extends DragonEntity> extends CompositeEntityModel<T>
     private float startFlyingTicker;
     private boolean endFlying;
     private int endFlyingTicker;
-    private boolean isPlayingSound;
-    private int delayerSoundTick;
     private boolean randomYawFire;
     private int randomYawFireTick;
 
@@ -285,7 +283,6 @@ public class DragonModel<T extends DragonEntity> extends CompositeEntityModel<T>
         if (entity.getDataTracker().get(DragonEntity.CLIENT_START_FLYING)) {
             if (entity.getDataTracker().get(DragonEntity.IS_START_FLYING)) {
                 startFlyingTicker = MathHelper.clamp(startFlyingTicker + 0.05164F, 0.0F, 1.4981F);
-                // System.out.println(startFlyingTicker);
             } else {
                 startFlyingTicker = MathHelper.clamp(startFlyingTicker - 0.05164F, 0.0F, 1.4981F);
             }
@@ -311,9 +308,6 @@ public class DragonModel<T extends DragonEntity> extends CompositeEntityModel<T>
                 this.frontFootRight.pitch = 1.2217F + 0.3F * MathHelper.wrap(limbAngle, walkFloat) * limbDistance * 1.3F * 0.2F;
                 this.frontFootLeft.pitch = 1.2217F - 0.3F * MathHelper.wrap(limbAngle, walkFloat) * limbDistance * 1.3F * 0.2F;
             }
-            if (this.wingRight.roll <= -0.8F && startFlyingTicker >= 1.4981F && !this.isPlayingSound) {
-                this.playDragonWingSound(entity);
-            }
         } else
 
         // While Flying Animation
@@ -327,9 +321,6 @@ public class DragonModel<T extends DragonEntity> extends CompositeEntityModel<T>
             this.wingLeft.roll = -this.wingRight.roll;
             this.wingTipLeft.roll = -this.wingTipRight.roll;
 
-            if (this.wingRight.roll <= -0.78F && mediumSpeedSin <= -0.98F && !this.isPlayingSound) {
-                this.playDragonWingSound(entity);
-            }
             // Body Floating
             float bodyFloating = -mediumSpeedSin - 4.0F;
             this.body.pivotY = bodyFloating;
@@ -405,7 +396,7 @@ public class DragonModel<T extends DragonEntity> extends CompositeEntityModel<T>
         // End of Flying Animation
         if (entity.getDataTracker().get(DragonEntity.CLIENT_END_FLYING)) {
             float mediumSpeedSin = MathHelper.cos(12.566370614F * slowlyIncreasingFloat - (betweenFloater + 3.1415926535897F)); // 1to-1
-            if (mediumSpeedSin < 0.02F && mediumSpeedSin > -0.02F) {
+            if (mediumSpeedSin < 0.04F && mediumSpeedSin > -0.04F) {
                 endFlying = true;
             }
             if (endFlying == false) {
@@ -450,14 +441,11 @@ public class DragonModel<T extends DragonEntity> extends CompositeEntityModel<T>
                 this.frontFootRight.pitch = 1.2217F + 0.3F * MathHelper.wrap(limbAngle, walkFloat) * limbDistance * 1.3F * 0.2F;
                 this.frontFootLeft.pitch = 1.2217F - 0.3F * MathHelper.wrap(limbAngle, walkFloat) * limbDistance * 1.3F * 0.2F;
             }
-            if (this.wingRight.roll <= -0.79F && mediumSpeedSin <= -0.999F && !this.isPlayingSound) {
-                this.playDragonWingSound(entity);
-            }
 
         } else
 
         // Walk Animation
-        if (!entity.isInSittingPose()) {
+        if (!entity.isInSittingPose() || entity.hasPassengers()) {
             float walkFloat = 32.0F;
             this.rearLegRight.pitch = -0.9599F + 0.3F * MathHelper.wrap(limbAngle, walkFloat) * limbDistance * 1.3F;
             this.rearLegLeft.pitch = -0.9599F - 0.3F * MathHelper.wrap(limbAngle, walkFloat) * limbDistance * 1.3F;
@@ -547,7 +535,7 @@ public class DragonModel<T extends DragonEntity> extends CompositeEntityModel<T>
                 Float pitcher = this.head.pitch + this.neck.pitch + this.neck2.pitch + this.neck3.pitch + this.neck4.pitch;
                 yawler = (yawler / (float) (Math.PI)) * 1.5F;
                 pitcher = pitcher * 3F;
-                entity.world.addParticle(ParticleTypes.FLAME, true, entity.getX() + Math.sin((entity.bodyYaw / 360F) * 2F * Math.PI + (Math.PI) + yawler) * 6D, entity.getY() - pitcher + 1.9D,
+                entity.world.addParticle(ParticleTypes.FLAME, true, entity.getX() + Math.sin((entity.bodyYaw / 360F) * 2F * Math.PI + (Math.PI) + yawler) * 6D, entity.getY() - pitcher + 1.95D,
                         entity.getZ() - Math.cos((entity.bodyYaw / 360F) * 2F * Math.PI + (Math.PI) + yawler) * 6D, 0.0D, 0.0D, 0.0D);
 
                 this.jaw.pitch = yawPitch;
@@ -557,13 +545,6 @@ public class DragonModel<T extends DragonEntity> extends CompositeEntityModel<T>
                 }
             }
 
-        }
-        if (this.isPlayingSound == true) {
-            this.delayerSoundTick++;
-            if (this.delayerSoundTick >= 10) {
-                this.isPlayingSound = false;
-                this.delayerSoundTick = 0;
-            }
         }
 
     }
@@ -596,10 +577,4 @@ public class DragonModel<T extends DragonEntity> extends CompositeEntityModel<T>
 
     }
 
-    private void playDragonWingSound(Entity entity) {
-        // System.out.println(entity.world.getTime() + " : ");
-        // entity.world.playSound(entity.getX(), entity.getY(), entity.getZ(), SoundEvents.ENTITY_ENDER_DRAGON_FLAP, entity.getSoundCategory(), 5.0F, 0.8F + entity.world.random.nextFloat() * 0.3F,
-        // false);
-        this.isPlayingSound = true;
-    }
 }
