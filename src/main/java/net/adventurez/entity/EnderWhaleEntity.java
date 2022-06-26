@@ -32,6 +32,7 @@ import net.minecraft.entity.data.TrackedDataHandlerRegistry;
 import net.minecraft.entity.mob.FlyingEntity;
 import net.minecraft.entity.mob.MobEntity;
 import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.item.Items;
 import net.minecraft.nbt.NbtCompound;
 import net.minecraft.predicate.entity.EntityPredicates;
 import net.minecraft.recipe.Ingredient;
@@ -152,6 +153,13 @@ public class EnderWhaleEntity extends FlyingEntity implements ItemSteerable {
     @Override
     public ActionResult interactMob(PlayerEntity player, Hand hand) {
         if (!player.shouldCancelInteraction()) {
+            if ((player.getStackInHand(hand).isOf(Items.CHORUS_FRUIT) || player.getStackInHand(hand).isOf(Items.POPPED_CHORUS_FRUIT)) && this.getMaxHealth() - this.getHealth() > 0.1F) {
+                if (!this.world.isClient && !player.isCreative()) {
+                    player.getStackInHand(hand).decrement(1);
+                    this.heal(4F);
+                }
+                return ActionResult.success(this.world.isClient);
+            }
             if (!this.hasPassengers()) {
                 if (!this.world.isClient) {
                     player.startRiding(this);
