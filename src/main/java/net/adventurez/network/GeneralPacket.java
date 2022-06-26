@@ -9,7 +9,7 @@ public class GeneralPacket {
     public static void init() {
         ClientPlayNetworking.registerGlobalReceiver(VELOCITY_PACKET, (client, handler, buf, sender) -> {
             if (client.player != null)
-                client.player.setVelocity(0, buf.readInt() * 0.15D, 0);
+                client.world.getEntityById(buf.readInt()).addVelocity(0.0D, buf.readFloat(), 0.0D);
         });
     }
 }

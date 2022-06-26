@@ -854,7 +854,7 @@ public class VoidShadowEntity extends FlyingEntity implements Monster {
                     for (int i = 0; i < playerList.size(); i++) {
                         if (playerList.get(i) instanceof ServerPlayerEntity) {
                             CustomPayloadS2CPacket packet = new CustomPayloadS2CPacket(GeneralPacket.VELOCITY_PACKET,
-                                    new PacketByteBuf(Unpooled.buffer().writeInt(this.voidShadow.random.nextInt(10) + 5)));
+                                    new PacketByteBuf(Unpooled.buffer().writeInt(playerList.get(i).getId()).writeFloat(this.voidShadow.random.nextFloat() * 2F)));
                             ((ServerPlayerEntity) playerList.get(i)).networkHandler.sendPacket(packet);
                         }
                     }
