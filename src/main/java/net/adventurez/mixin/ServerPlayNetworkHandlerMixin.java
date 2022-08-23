@@ -22,14 +22,14 @@ public class ServerPlayNetworkHandlerMixin {
     @Shadow
     private int vehicleFloatingTicks;
 
-    @Inject(method = "onClientCommand", at = @At(value = "TAIL"))
-    public void onClientCommandMixin(ClientCommandC2SPacket packet, CallbackInfo info) {
-        if (this.player.getVehicle() instanceof DragonEntity && ((DragonEntity) this.player.getVehicle()).hasChest()) {
+    @Inject(method = "onClientCommand", at = @At(value = "INVOKE", target = "Lnet/minecraft/server/network/ServerPlayerEntity;updateLastActionTime()V"))
+    private void onClientCommandMixin(ClientCommandC2SPacket packet, CallbackInfo info) {
+        if (player.getVehicle() != null && player.getVehicle() instanceof DragonEntity && ((DragonEntity) this.player.getVehicle()).hasChest()) {
             ((DragonEntity) this.player.getVehicle()).openInventory(this.player);
         }
     }
 
-    @Inject(method = "tick", at = @At(value = "INVOKE", target = "Lnet/minecraft/entity/Entity;getPrimaryPassenger()Lnet/minecraft/entity/Entity;", shift = Shift.AFTER, opcode = 1))
+    @Inject(method = "tick", at = @At(value = "INVOKE", target = "Lnet/minecraft/entity/Entity;getPrimaryPassenger()Lnet/minecraft/entity/Entity;", shift = Shift.AFTER, ordinal = 1))
     private void tickMixin(CallbackInfo info) {
         if (vehicleFloatingTicks >= 70 && player.getVehicle() != null && (player.getVehicle() instanceof DragonEntity || player.getVehicle() instanceof EnderWhaleEntity)) {
             vehicleFloatingTicks = 0;
