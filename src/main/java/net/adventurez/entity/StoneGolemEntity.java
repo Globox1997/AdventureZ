@@ -17,7 +17,6 @@ import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityGroup;
 import net.minecraft.entity.EntityType;
 import net.minecraft.entity.LivingEntity;
-import net.minecraft.entity.SpawnReason;
 import net.minecraft.entity.ai.goal.ActiveTargetGoal;
 import net.minecraft.entity.ai.goal.LookAtEntityGoal;
 import net.minecraft.entity.ai.goal.MeleeAttackGoal;
@@ -43,7 +42,6 @@ import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.nbt.NbtCompound;
 import net.minecraft.particle.ParticleTypes;
 import net.minecraft.server.network.ServerPlayerEntity;
-import net.minecraft.server.world.ServerWorld;
 import net.minecraft.sound.SoundEvent;
 import net.minecraft.text.Text;
 import net.minecraft.util.math.BlockPos;
@@ -101,6 +99,7 @@ public class StoneGolemEntity extends HostileEntity {
         this.goalSelector.add(4, new LookAtEntityGoal(this, MobEntity.class, 8.0F));
         this.targetSelector.add(1, new ActiveTargetGoal<>(this, PlayerEntity.class, false));
         this.targetSelector.add(2, new ActiveTargetGoal<>(this, IronGolemEntity.class, true));
+
     }
 
     @Override
@@ -385,6 +384,8 @@ public class StoneGolemEntity extends HostileEntity {
         this.attackTick = 10;
         this.world.sendEntityStatus(this, (byte) 4);
         this.playSound(SoundInit.GOLEM_HIT_EVENT, 1.0F, 1.0F);
+        if (target instanceof LivingEntity)
+            ((LivingEntity) target).setOnFireFor(3 + this.world.random.nextInt(6));
         return super.tryAttack(target);
     }
 
@@ -443,8 +444,19 @@ public class StoneGolemEntity extends HostileEntity {
     public boolean damage(DamageSource source, float amount) {
         if (this.getDataTracker().get(INVULNERABLE)) {
             return false;
-        } else
+        } else {
+            if (source.getSource() instanceof LivingEntity) {
+                this.setAttacker((LivingEntity) source.getSource());
+                this.setTarget((LivingEntity) source.getSource());
+                if (this.world.random.nextFloat() <= 0.05F) {
+                    SmallStoneGolemEntity smallStoneGolemEntity = (SmallStoneGolemEntity) EntityInit.SMALLSTONEGOLEM_ENTITY.create(this.world);
+                    smallStoneGolemEntity.refreshPositionAndAngles(this.getBlockPos(), this.world.random.nextFloat() * 360F, 0.0F);
+                    this.world.spawnEntity(smallStoneGolemEntity);
+                }
+
+            }
             return super.damage(source, amount);
+        }
     }
 
     private void throwRock(LivingEntity target) {
@@ -509,10 +521,8 @@ public class StoneGolemEntity extends HostileEntity {
         if (!this.world.isClient) {
             SmallStoneGolemEntity smallStoneGolemEntity = (SmallStoneGolemEntity) EntityInit.SMALLSTONEGOLEM_ENTITY.create(this.world);
             SmallStoneGolemEntity smallStoneGolemEntitySecond = (SmallStoneGolemEntity) EntityInit.SMALLSTONEGOLEM_ENTITY.create(this.world);
-            smallStoneGolemEntity.refreshPositionAndAngles(this.getBlockPos().east(), 0.0F, 0.0F);
-            smallStoneGolemEntitySecond.refreshPositionAndAngles(this.getBlockPos().west(), 0.0F, 0.0F);
-            smallStoneGolemEntity.initialize(((ServerWorld) this.world), this.world.getLocalDifficulty(this.getBlockPos()), SpawnReason.EVENT, null, null);
-            smallStoneGolemEntitySecond.initialize(((ServerWorld) this.world), this.world.getLocalDifficulty(this.getBlockPos()), SpawnReason.EVENT, null, null);
+            smallStoneGolemEntity.refreshPositionAndAngles(this.getBlockPos().east(), this.world.random.nextFloat() * 360F, 0.0F);
+            smallStoneGolemEntitySecond.refreshPositionAndAngles(this.getBlockPos().west(), this.world.random.nextFloat() * 360F, 0.0F);
             this.world.spawnEntity(smallStoneGolemEntity);
             this.world.spawnEntity(smallStoneGolemEntitySecond);
         }
@@ -544,6 +554,7 @@ public class StoneGolemEntity extends HostileEntity {
             super(StoneGolemEntity.this, 1.0D, true);
         }
 
+        @Override
         public double getSquaredMaxAttackDistance(LivingEntity entity) {
             float f = StoneGolemEntity.this.getWidth() - 0.1F;
             return (double) (f * f * 1.5F + entity.getWidth());
