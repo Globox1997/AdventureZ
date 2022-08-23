@@ -155,8 +155,7 @@ public class IguanaEntity extends AnimalEntity {
 
         @Override
         protected boolean isTargetPos(WorldView world, BlockPos pos) {
-            BlockState blockState = world.getBlockState(pos);
-            if (blockState.isOf(Blocks.DEAD_BUSH))
+            if (world.getBlockState(pos).isOf(Blocks.DEAD_BUSH))
                 return true;
             else
                 return false;
