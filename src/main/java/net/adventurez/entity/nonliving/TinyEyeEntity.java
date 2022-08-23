@@ -277,11 +277,6 @@ public class TinyEyeEntity extends ExplosiveProjectileEntity {
     }
 
     @Override
-    public boolean collides() {
-        return true;
-    }
-
-    @Override
     public Packet<?> createSpawnPacket() {
         return EntitySpawnPacket.createPacket(this);
     }
