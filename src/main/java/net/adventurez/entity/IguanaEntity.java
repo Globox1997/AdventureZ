@@ -111,14 +111,13 @@ public class IguanaEntity extends AnimalEntity {
         private final IguanaEntity iguanaEntity;
 
         public EatDeadBushGoal(IguanaEntity iguanaEntity, double speed) {
-            super(iguanaEntity, speed, 8);
+            super(iguanaEntity, speed, 12);
             this.iguanaEntity = iguanaEntity;
-            this.cooldown = iguanaEntity.world.random.nextInt(300) + 100;
         }
 
         @Override
         public boolean canStart() {
-            return !this.iguanaEntity.isBaby() && super.canStart();
+            return !this.iguanaEntity.isBaby() && !this.iguanaEntity.isInLove() && super.canStart();
         }
 
         @Override
@@ -136,9 +135,11 @@ public class IguanaEntity extends AnimalEntity {
         @Override
         public void tick() {
             if (!this.iguanaEntity.world.isClient && this.hasReached()) {
+                if (this.iguanaEntity.getHealth() < this.iguanaEntity.getMaxHealth())
+                    this.iguanaEntity.heal(2f);
+
                 this.iguanaEntity.world.breakBlock(targetPos, false);
                 this.iguanaEntity.setLoveTicks(600);
-                this.stop();
             }
             super.tick();
         }
@@ -150,7 +151,8 @@ public class IguanaEntity extends AnimalEntity {
 
         @Override
         protected int getInterval(PathAwareEntity mob) {
-            return 400 + mob.getRandom().nextInt(600);
+            return 60;
+            // return 400 + mob.getRandom().nextInt(600);
         }
 
         @Override
