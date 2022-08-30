@@ -17,6 +17,7 @@ repositories {
 	maven { url "https://maven.terraformersmc.com/" }
 	maven { url "https://www.cursemaven.com" }
 	maven { url "https://maven.jamieswhiteshirt.com/libs-release/" }
+	maven { url = uri("https://storage.googleapis.com/devan-maven/") }
 	// Canvas
     // maven { url = "https://maven.dblsaiko.net/" }
     // maven { url = "http://server.bbkr.space:8081/artifactory/libs-release/" }
@@ -61,6 +62,8 @@ dependencies {
 	modCompileOnly "com.github.Globox1997:MedievalWeapons:1.19-SNAPSHOT",{
 		exclude(group: "net.fabricmc.fabric-api")
 	}
+	modCompileOnly("net.devtech:arrp:0.6.4")
+
 	// Iris
 	modCompileOnly ('curse.maven:irisshaders-455508:3821021'){
 		exclude(group: "net.fabricmc.fabric-api")
