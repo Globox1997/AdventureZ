@@ -95,6 +95,11 @@ public class EnderWhaleEntity extends FlyingEntity implements ItemSteerable {
     }
 
     @Override
+    public boolean canBeLeashedBy(PlayerEntity player) {
+        return false;
+    }
+
+    @Override
     public void readCustomDataFromNbt(NbtCompound nbt) {
         super.readCustomDataFromNbt(nbt);
         this.saddledComponent.readNbt(nbt);
