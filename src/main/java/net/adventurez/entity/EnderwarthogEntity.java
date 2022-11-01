@@ -188,7 +188,7 @@ public class EnderwarthogEntity extends HostileEntity {
 
         @Override
         protected double getSquaredMaxAttackDistance(LivingEntity entity) {
-            return (double) (this.mob.getWidth() * 1.6F * this.mob.getWidth() * 1.6F + entity.getWidth());
+            return (double) (this.mob.getWidth() * 1.6F * this.mob.getWidth() * 1.5F + entity.getWidth());
         }
 
         @Override
@@ -308,7 +308,7 @@ public class EnderwarthogEntity extends HostileEntity {
                                     attackedPos.getZ() + world.random.nextDouble() * 2.5D - 1.25D, 4, 0.0D, world.random.nextDouble() * 0.15D, 0.D, 1.0D);
                         }
                     target.setVelocity(target.getVelocity().add(0.0D, 0.1D, 0.0D));
-                    target.takeKnockback(4.0D, (double) MathHelper.sin(this.enderwarthogEntity.getYaw() * 0.017453292F), (double) (-MathHelper.cos(this.enderwarthogEntity.getYaw() * 0.017453292F)));
+                    target.takeKnockback(3.0D, (double) MathHelper.sin(this.enderwarthogEntity.getYaw() * 0.017453292F), (double) (-MathHelper.cos(this.enderwarthogEntity.getYaw() * 0.017453292F)));
                 }
                 return true;
             } else
