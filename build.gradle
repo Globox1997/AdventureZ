@@ -1,5 +1,5 @@
 plugins {
-	id 'fabric-loom' version '0.12-SNAPSHOT'
+	id 'fabric-loom' version '1.0-SNAPSHOT'
 	id 'maven-publish'
 }
 
@@ -43,9 +43,12 @@ dependencies {
 		exclude(group: "net.fabricmc.fabric-api")
 	}
 	// VoidZ
-	modCompileOnly "com.github.Globox1997:VoidZ:1.18-SNAPSHOT",{
+	// modCompileOnly "com.github.Globox1997:VoidZ:1.19-SNAPSHOT",{
+	// 	exclude(group: "net.fabricmc.fabric-api")
+	// 	exclude(module:"AdventureZ")
+	// }
+	modCompileOnly ('curse.maven:voidz-486971:3951132'){
 		exclude(group: "net.fabricmc.fabric-api")
-		exclude(module:"AdventureZ")
 	}
 	// Flan
 	// modCompileOnly ("curse.maven:flan-404578:404578"),{
