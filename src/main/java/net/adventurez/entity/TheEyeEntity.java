@@ -171,14 +171,13 @@ public class TheEyeEntity extends FlyingEntity {
         Vec3d vec3d = this.getVelocity().multiply(0.8D, 0.5D, 0.8D);
         if (!this.world.isClient && this.getTarget() != null) {
             Entity entity = this.getTarget();
-            double d = vec3d.y;
+            double d = Math.max(0.0D, vec3d.y);
+
             if (this.getY() < entity.getY() + 12.0D) {
-                d = Math.max(0.0D, d);
                 d += 0.3D - d * 0.6D;
-                if (this.getY() > entity.getY() + 26.0D) {
-                    d -= 0.3D - d * 0.6D;
-                }
-            }
+            } else if (this.getY() > entity.getY() + 26.0D)
+                d -= 0.3D - d * 0.6D;
+
             vec3d = new Vec3d(vec3d.x, d, vec3d.z);
             Vec3d vec3d2 = new Vec3d(entity.getX() - this.getX(), 0.0D, entity.getZ() - this.getZ());
             if (squaredDistanceTo(vec3d2) > 16.0D) {
