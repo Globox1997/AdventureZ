@@ -8,7 +8,6 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 import net.adventurez.entity.DesertRhinoEntity;
 import net.adventurez.init.ConfigInit;
 import net.adventurez.init.EntityInit;
-import net.minecraft.entity.SpawnReason;
 import net.minecraft.entity.SpawnRestriction;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.SpawnHelper;
@@ -36,7 +35,6 @@ public class DesertWellFeatureMixin {
                             spawnPos = spawnPos.north(5).east(3);
                         if (context.getWorld().isAir(spawnPos) && SpawnHelper.canSpawn(SpawnRestriction.Location.ON_GROUND, context.getWorld(), spawnPos, EntityInit.PIGLINBEAST_ENTITY)) {
                             DesertRhinoEntity desertRhinoEntity = (DesertRhinoEntity) EntityInit.DESERT_RHINO_ENTITY.create(context.getWorld().toServerWorld());
-                            desertRhinoEntity.initialize(context.getWorld().toServerWorld(), context.getWorld().getLocalDifficulty(spawnPos), SpawnReason.STRUCTURE, null, null);
                             desertRhinoEntity.refreshPositionAndAngles(spawnPos, context.getRandom().nextFloat() * 360F, 0.0F);
                             context.getWorld().spawnEntity(desertRhinoEntity);
                             break;
