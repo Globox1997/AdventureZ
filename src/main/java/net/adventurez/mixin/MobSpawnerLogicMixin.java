@@ -10,6 +10,7 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 import org.spongepowered.asm.mixin.injection.At;
 
 import net.adventurez.entity.BlazeGuardianEntity;
+import net.adventurez.init.ConfigInit;
 import net.adventurez.init.EntityInit;
 import net.minecraft.entity.EntityType;
 import net.minecraft.entity.SpawnReason;
@@ -49,7 +50,7 @@ public class MobSpawnerLogicMixin {
 
     @Inject(method = "serverTick", at = @At(value = "FIELD", target = "Lnet/minecraft/world/MobSpawnerLogic;spawnDelay:I", ordinal = 1))
     private void serverTick(ServerWorld world, BlockPos pos, CallbackInfo info) {
-        if (this.spawnDelay == 2) {
+        if (this.spawnDelay == 2 && ConfigInit.CONFIG.blaze_guardian_spawn_weight > 0) {
             if (this.spawnGuardian) {
                 BlazeGuardianEntity blazeGuardianEntity = (BlazeGuardianEntity) EntityInit.BLAZEGUARDIAN_ENTITY.create(world.toServerWorld());
                 blazeGuardianEntity.initialize(world.toServerWorld(), world.getLocalDifficulty(pos), SpawnReason.STRUCTURE, null, null);
@@ -61,7 +62,7 @@ public class MobSpawnerLogicMixin {
             } else if (this.spawnEntry.getNbt() != null) {
                 Optional<EntityType<?>> optionalEntityType = EntityType.fromNbt(this.spawnEntry.getNbt());
                 if (optionalEntityType.isPresent() && optionalEntityType.get().equals(EntityType.BLAZE)
-                    && !world.getEntitiesByClass(BlazeGuardianEntity.class, new Box(pos).expand(16D), EntityPredicates.EXCEPT_SPECTATOR).isEmpty()) {
+                        && !world.getEntitiesByClass(BlazeGuardianEntity.class, new Box(pos).expand(16D), EntityPredicates.EXCEPT_SPECTATOR).isEmpty()) {
                     spawnDelay = 600;
                 }
             }
