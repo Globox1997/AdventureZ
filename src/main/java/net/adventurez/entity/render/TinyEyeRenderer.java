@@ -14,6 +14,7 @@ import net.minecraft.util.Identifier;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.MathHelper;
 
+@SuppressWarnings("deprecation")
 @Environment(EnvType.CLIENT)
 public class TinyEyeRenderer extends EntityRenderer<TinyEyeEntity> {
     private static final Identifier TEXTURE = new Identifier("adventurez:textures/entity/the_eye.png");

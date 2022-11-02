@@ -14,6 +14,7 @@ import net.minecraft.util.Identifier;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.MathHelper;
 
+@SuppressWarnings("deprecation")
 @Environment(EnvType.CLIENT)
 public class VoidBulletRenderer extends EntityRenderer<VoidBulletEntity> {
     private static final Identifier TEXTURE = new Identifier("adventurez:textures/entity/void_bullet.png");
