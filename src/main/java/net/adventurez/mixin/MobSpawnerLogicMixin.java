@@ -50,7 +50,7 @@ public class MobSpawnerLogicMixin {
 
     @Inject(method = "serverTick", at = @At(value = "FIELD", target = "Lnet/minecraft/world/MobSpawnerLogic;spawnDelay:I", ordinal = 1))
     private void serverTick(ServerWorld world, BlockPos pos, CallbackInfo info) {
-        if (this.spawnDelay == 2 && ConfigInit.CONFIG.blaze_guardian_spawn_weight > 0) {
+        if (this.spawnDelay == 2 && ConfigInit.CONFIG.allow_guardian_spawner_spawn) {
             if (this.spawnGuardian) {
                 BlazeGuardianEntity blazeGuardianEntity = (BlazeGuardianEntity) EntityInit.BLAZEGUARDIAN_ENTITY.create(world.toServerWorld());
                 blazeGuardianEntity.initialize(world.toServerWorld(), world.getLocalDifficulty(pos), SpawnReason.STRUCTURE, null, null);
