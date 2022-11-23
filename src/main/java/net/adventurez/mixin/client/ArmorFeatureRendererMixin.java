@@ -48,7 +48,7 @@ public abstract class ArmorFeatureRendererMixin<T extends LivingEntity, M extend
     @Inject(method = "render", at = @At("HEAD"))
     private void renderMixin(MatrixStack matrixStack, VertexConsumerProvider vertexConsumerProvider, int i, T livingEntity, float f, float g, float h, float j, float k, float l, CallbackInfo info) {
         ItemStack golemChestplate = livingEntity.getEquippedStack(EquipmentSlot.CHEST);
-        if (golemChestplate.isOf(ItemInit.STONE_GOLEM_CHESTPLATE) && StoneGolemArmor.fireTime(golemChestplate))
+        if (golemChestplate.isOf(ItemInit.STONE_GOLEM_CHESTPLATE) && StoneGolemArmor.isStoneGolemArmorActive(golemChestplate))
             gildedNetheriteArmorOnFire = true;
         else if (gildedNetheriteArmorOnFire)
             gildedNetheriteArmorOnFire = false;

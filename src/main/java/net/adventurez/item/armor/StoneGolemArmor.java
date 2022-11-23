@@ -9,7 +9,6 @@ import com.google.common.collect.ImmutableMultimap.Builder;
 
 import net.adventurez.init.ConfigInit;
 import net.adventurez.init.ItemInit;
-import net.adventurez.init.KeybindInit;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.item.TooltipContext;
 import net.minecraft.client.util.InputUtil;
@@ -67,7 +66,7 @@ public class StoneGolemArmor extends ArmorItem {
                 tooltip.remove(Text.translatable("item.adventurez.moreinfo.tooltip"));
                 tooltip.remove(Text.translatable("item.adventurez.stone_golem_armor.tooltip"));
                 tooltip.add(Text.translatable("item.adventurez.stone_golem_armor.tooltip"));
-                tooltip.add(Text.translatable("item.adventurez.stone_golem_armor.tooltip2", KeybindInit.armorKeyBind.getBoundKeyLocalizedText()));
+                tooltip.add(Text.translatable("item.adventurez.stone_golem_armor.tooltip2"));
                 tooltip.add(Text.translatable("item.adventurez.stone_golem_armor.tooltip3"));
                 tooltip.add(Text.translatable("item.adventurez.stone_golem_armor.tooltip4"));
             }
@@ -79,10 +78,10 @@ public class StoneGolemArmor extends ArmorItem {
         if (stack.getItem() == ItemInit.STONE_GOLEM_CHESTPLATE) {
             NbtCompound tag = stack.getNbt();
             if (tag != null && tag.contains("armor_time")) {
-                if (tag.getBoolean("activating_armor") && tag.getInt("armor_time") + 2400 < (int) world.getTime()) {
+                if (tag.getBoolean("activating_armor") && tag.getInt("armor_time") + (ConfigInit.CONFIG.stone_golem_armor_effect_duration * 2) < (int) world.getTime()) {
                     tag.putBoolean("activating_armor", false);
                 }
-                if (tag.getBoolean("activating_armor") && tag.getInt("armor_time") + 1200 < (int) world.getTime()) {
+                if (tag.getBoolean("activating_armor") && tag.getInt("armor_time") + ConfigInit.CONFIG.stone_golem_armor_effect_duration < (int) world.getTime()) {
                     entity.setFireTicks(0);
                     tag.putBoolean("activating_armor_visuals", false);
                 }
@@ -90,17 +89,20 @@ public class StoneGolemArmor extends ArmorItem {
         }
     }
 
-    public static void fireActive(PlayerEntity player, ItemStack stack) {
-        StatusEffectInstance fire = new StatusEffectInstance(StatusEffect.byRawId(12), 1200, 0, false, false);
+    public static void activateStoneGolemArmor(PlayerEntity player, ItemStack stack) {
+        if (!stack.isOf(ItemInit.STONE_GOLEM_CHESTPLATE))
+            return;
+
+        StatusEffectInstance statusEffectInstance = new StatusEffectInstance(StatusEffect.byRawId(12), ConfigInit.CONFIG.stone_golem_armor_effect_duration, 0, false, false);
         NbtCompound tag = stack.getNbt();
         if (tag != null && tag.contains("activating_armor")) {
             if (tag.getBoolean("activating_armor") == false) {
                 tag.putBoolean("activating_armor", true);
                 tag.putBoolean("activating_armor_visuals", true);
                 tag.putInt("armor_time", (int) player.world.getTime());
-                if (!player.world.isClient) {
-                    player.addStatusEffect(fire);
-                }
+                if (!player.world.isClient)
+                    player.addStatusEffect(statusEffectInstance);
+
                 player.playSound(SoundEvents.BLOCK_FIRE_EXTINGUISH, SoundCategory.PLAYERS, 1.0F, 1.0F);
             }
         } else {
@@ -108,12 +110,15 @@ public class StoneGolemArmor extends ArmorItem {
             tag.putBoolean("activating_armor_visuals", true);
             tag.putInt("armor_time", (int) player.world.getTime());
             stack.setNbt(tag);
-            player.addStatusEffect(fire);
+            player.addStatusEffect(statusEffectInstance);
             player.playSound(SoundEvents.BLOCK_FIRE_EXTINGUISH, SoundCategory.PLAYERS, 1.0F, 1.0F);
         }
     }
 
-    public static boolean fireTime(ItemStack stack) {
+    public static boolean isStoneGolemArmorActive(ItemStack stack) {
+        if (!stack.isOf(ItemInit.STONE_GOLEM_CHESTPLATE))
+            return false;
+
         NbtCompound tag = stack.getNbt();
         if (tag != null && tag.contains("armor_time") && tag.contains("activating_armor")) {
             if (tag.getBoolean("activating_armor_visuals")) {

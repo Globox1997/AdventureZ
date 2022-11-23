@@ -75,7 +75,7 @@
   "item.adventurez.gilded_netherite_fragment": "Gilded Netherite Fragment",
   "item.adventurez.gilded_netherite_fragment.tooltip": "Upgrade Material for the Netherite Armor",
   "item.adventurez.stone_golem_armor.tooltip": "Full Set Effect",
-  "item.adventurez.stone_golem_armor.tooltip2": "Press %1$s to activate",
+  "item.adventurez.stone_golem_armor.tooltip2": "Activated when on fire",
   "item.adventurez.stone_golem_armor.tooltip3": "§9Fire Resistance (1:00)",
   "item.adventurez.stone_golem_armor.tooltip4": "§cRecharge (1:00)",
   "item.adventurez.prime_eye": "Prime Eye",
@@ -112,7 +112,6 @@
   "item.adventurez.moreinfo.tooltip": "§8Hold §6Shift §8For More Info",
   
   "category.adventurez.keybind": "AdventureZ Keybinds",
-  "key.adventurez.activatearmor": "Activate Armor",
   "key.adventurez.dragonflydown": "Dragon Fly Down",
   "key.adventurez.dragonfirebreath": "Dragon Fire Breath",
 
@@ -183,5 +182,7 @@
   "text.autoconfig.adventurez.option.warthog_rare_chance": "Enderwarthog Rare Chance",
   "text.autoconfig.adventurez.option.stoned_heart_duration": "Stoned Heart Duration",
   "text.autoconfig.adventurez.option.stoned_heart_amplifier": "Stoned Heart Amplifier",
-  "text.autoconfig.adventurez.option.allow_other_dragon_hatching": "Allow Other Dragon Hatching"
+  "text.autoconfig.adventurez.option.allow_other_dragon_hatching": "Allow Other Dragon Hatching",
+  "text.autoconfig.adventurez.option.stone_golem_armor_effect_duration": "Stone Golem Armor Effect Duration",
+  "text.autoconfig.adventurez.option.stone_golem_armor_dodge_chance": "Stone Golem Armor Dodge  Chance"
 }

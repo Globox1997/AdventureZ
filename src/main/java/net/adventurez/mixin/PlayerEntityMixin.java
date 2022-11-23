@@ -6,6 +6,7 @@ import org.spongepowered.asm.mixin.injection.At.Shift;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 import org.spongepowered.asm.mixin.injection.At;
 
+import net.adventurez.init.ConfigInit;
 import net.adventurez.init.ItemInit;
 import net.adventurez.item.armor.StoneGolemArmor;
 import net.fabricmc.api.EnvType;
@@ -27,8 +28,11 @@ public abstract class PlayerEntityMixin extends LivingEntity {
 
     @Inject(method = "damage", at = @At(value = "INVOKE", target = "Lnet/minecraft/entity/player/PlayerEntity;dropShoulderEntities()V", shift = Shift.AFTER), cancellable = true)
     private void damageMixin(DamageSource source, float amount, CallbackInfoReturnable<Boolean> info) {
-        if (this.getEquippedStack(EquipmentSlot.CHEST).getItem() == ItemInit.STONE_GOLEM_CHESTPLATE) {
-            if (StoneGolemArmor.fullGolemArmor((PlayerEntity) (Object) this) && this.world.random.nextFloat() <= 0.3F) {
+        if (this.getEquippedStack(EquipmentSlot.CHEST).getItem() == ItemInit.STONE_GOLEM_CHESTPLATE && StoneGolemArmor.fullGolemArmor((PlayerEntity) (Object) this)) {
+            if (this.world.random.nextFloat() <= ConfigInit.CONFIG.stone_golem_armor_dodge_chance)
+                info.setReturnValue(false);
+            else if (source.isFire() && !StoneGolemArmor.isStoneGolemArmorActive(this.getEquippedStack(EquipmentSlot.CHEST))) {
+                StoneGolemArmor.activateStoneGolemArmor((PlayerEntity) (Object) this, this.getEquippedStack(EquipmentSlot.CHEST));
                 info.setReturnValue(false);
             }
         }
@@ -38,7 +42,7 @@ public abstract class PlayerEntityMixin extends LivingEntity {
     @Environment(EnvType.CLIENT)
     public boolean doesRenderOnFire() {
         ItemStack golemChestplate = this.getEquippedStack(EquipmentSlot.CHEST);
-        boolean fireActivated = this.getEquippedStack(EquipmentSlot.CHEST).getItem().equals(ItemInit.STONE_GOLEM_CHESTPLATE) && StoneGolemArmor.fireTime(golemChestplate);
+        boolean fireActivated = this.getEquippedStack(EquipmentSlot.CHEST).getItem().equals(ItemInit.STONE_GOLEM_CHESTPLATE) && StoneGolemArmor.isStoneGolemArmorActive(golemChestplate);
         return this.isOnFire() && !this.isSpectator() && !fireActivated;
     }
 

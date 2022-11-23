@@ -10,6 +10,7 @@ import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import org.spongepowered.asm.mixin.injection.At;
 
+import net.adventurez.init.ConfigInit;
 import net.adventurez.init.EffectInit;
 import net.adventurez.init.ItemInit;
 import net.fabricmc.api.EnvType;
@@ -57,17 +58,18 @@ public abstract class InGameHudMixin extends DrawableHelper {
                         Sprite sprite = this.client.getStatusEffectSpriteManager().getSprite(StatusEffects.FIRE_RESISTANCE);
                         RenderSystem.setShaderTexture(0, sprite.getAtlas().getId());
                         int savedTagInt = tag.getInt("armor_time");
+                        float effectDuration = ConfigInit.CONFIG.stone_golem_armor_effect_duration;
 
-                        if (savedTagInt + 1200 > worldTime) {
+                        if (savedTagInt + effectDuration > worldTime) {
                             int multiplier = 2;
-                            if (savedTagInt + 1100 < worldTime) {
+                            if (savedTagInt + Math.max(effectDuration - 100, 0) < worldTime)
                                 multiplier = 4;
-                            }
+
                             float pulsating = (float) Math.sin((float) ((worldTime * multiplier) - (savedTagInt - 1)) / 6.2831855F);
                             RenderSystem.setShaderColor(1.0F, 1.0F, 1.0F, pulsating + 0.5F);
                             drawSprite(matrixStack, (scaledWidth / 2) - 5, scaledHeight - 49, this.getZOffset(), 10, 10, sprite);
                         } else {
-                            float fading = (1F - (((float) (worldTime - (savedTagInt + 1199F)) / 1200F) - 0.4F));
+                            float fading = (1F - (((float) (worldTime - (savedTagInt + (effectDuration - 1f))) / effectDuration) - 0.4F));
                             RenderSystem.setShaderColor(1.0F, 0.65F, 0.65F, fading);
                             drawSprite(matrixStack, (scaledWidth / 2) - 5, scaledHeight - 49, this.getZOffset(), 10, 10, sprite);
                         }

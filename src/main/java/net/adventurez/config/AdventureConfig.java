@@ -117,5 +117,9 @@ public class AdventureConfig implements ConfigData {
     @ConfigEntry.Category("misc")
     public int stoned_heart_amplifier = 0;
     @ConfigEntry.Category("misc")
+    public int stone_golem_armor_effect_duration = 1200;
+    @ConfigEntry.Category("misc")
+    public float stone_golem_armor_dodge_chance = 0.2f;
+    @ConfigEntry.Category("misc")
     public boolean allow_other_dragon_hatching = false;
 }

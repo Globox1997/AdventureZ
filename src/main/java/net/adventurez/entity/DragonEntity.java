@@ -18,6 +18,7 @@ import net.adventurez.init.ItemInit;
 import net.adventurez.init.SoundInit;
 import net.adventurez.mixin.accessor.LivingEntityAccessor;
 import net.adventurez.network.GeneralPacket;
+import net.adventurez.network.KeybindPacket;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
 import net.fabricmc.loader.api.FabricLoader;
@@ -59,6 +60,7 @@ import net.minecraft.item.Items;
 import net.minecraft.nbt.NbtCompound;
 import net.minecraft.nbt.NbtList;
 import net.minecraft.network.PacketByteBuf;
+import net.minecraft.network.packet.c2s.play.CustomPayloadC2SPacket;
 import net.minecraft.network.packet.s2c.play.CustomPayloadS2CPacket;
 import net.minecraft.particle.ParticleEffect;
 import net.minecraft.particle.ParticleTypes;
@@ -1068,6 +1070,28 @@ public class DragonEntity extends PathAwareEntity implements InventoryChangedLis
         DRAGON_SIZE = DataTracker.registerData(DragonEntity.class, TrackedDataHandlerRegistry.INTEGER);
         FIRE_BREATH = DataTracker.registerData(DragonEntity.class, TrackedDataHandlerRegistry.BOOLEAN);
         RED_DRAGON = DataTracker.registerData(DragonEntity.class, TrackedDataHandlerRegistry.BOOLEAN);
+    }
+
+    @Environment(EnvType.CLIENT)
+    public static void flyDragonDown(ClientPlayerEntity player, String keyString) {
+        if (player.getVehicle() != null && player.getVehicle() instanceof DragonEntity)
+            ((DragonEntity) player.getVehicle()).setKeyBind(keyString);
+    }
+
+    @Environment(EnvType.CLIENT)
+    public static void dragonFireBreath(ClientPlayerEntity player) {
+        if (player.getVehicle() != null && player.getVehicle() instanceof DragonEntity && player.getVehicle().isAlive()) {
+            DragonEntity dragonEntity = (DragonEntity) player.getVehicle();
+            if (dragonEntity.getDataTracker().get(DragonEntity.DRAGON_SIZE) >= 3) {
+                // Call on Server
+                PacketByteBuf buf = new PacketByteBuf(Unpooled.buffer());
+                buf.writeInt(player.getVehicle().getId());
+                CustomPayloadC2SPacket packet = new CustomPayloadC2SPacket(KeybindPacket.FIRE_BREATH_PACKET, buf);
+                MinecraftClient.getInstance().getNetworkHandler().sendPacket(packet);
+                // Call on client
+                ((DragonEntity) player.getVehicle()).fireBreathActive = true;
+            }
+        }
     }
 
 }

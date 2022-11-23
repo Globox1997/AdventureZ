@@ -22,8 +22,7 @@ public abstract class InGameOverlayRendererMixin {
     @Inject(method = "renderOverlays", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/network/ClientPlayerEntity;isOnFire()Z"), cancellable = true)
     private static void fireOverlayMixin(MinecraftClient minecraftClient, MatrixStack matrixStack, CallbackInfo info) {
         ItemStack itemStack = minecraftClient.player.getEquippedStack(EquipmentSlot.CHEST);
-        if (!itemStack.isEmpty() && itemStack.isOf(ItemInit.STONE_GOLEM_CHESTPLATE) && StoneGolemArmor.fireTime(itemStack)) {
+        if (!itemStack.isEmpty() && itemStack.isOf(ItemInit.STONE_GOLEM_CHESTPLATE) && StoneGolemArmor.isStoneGolemArmorActive(itemStack))
             info.cancel();
-        }
     }
 }
