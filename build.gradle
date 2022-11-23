@@ -62,7 +62,7 @@ dependencies {
 	// modCompileOnly "grondag:canvas-mc117-1.17:1.0.+"
 
 	// Medieval Weapons
-	modCompileOnly "com.github.Globox1997:MedievalWeapons:1.19-SNAPSHOT",{
+	modCompileOnly ('curse.maven:medievalweapons-411400:4088548'){
 		exclude(group: "net.fabricmc.fabric-api")
 	}
 	modCompileOnly("net.devtech:arrp:0.6.4")
