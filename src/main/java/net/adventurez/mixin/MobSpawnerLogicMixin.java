@@ -34,8 +34,13 @@ public class MobSpawnerLogicMixin {
 
     @Inject(method = "setEntityId", at = @At("HEAD"))
     private void setEntityId(EntityType<?> type, CallbackInfo info) {
-        if (type.equals(EntityType.BLAZE))
+        if (type == null) {
+            return;
+        }
+
+        if (type.equals(EntityType.BLAZE)) {
             this.spawnGuardian = true;
+        }
     }
 
     @Inject(method = "readNbt", at = @At("HEAD"))
