@@ -18,6 +18,8 @@ repositories {
 	maven { url "https://www.cursemaven.com" }
 	maven { url "https://maven.jamieswhiteshirt.com/libs-release/" }
 	maven { url = uri("https://storage.googleapis.com/devan-maven/") }
+	maven { url = uri("https://ueaj.dev/maven") }
+	maven { url = "https://api.modrinth.com/maven" }
 	// Canvas
     // maven { url = "https://maven.dblsaiko.net/" }
     // maven { url = "http://server.bbkr.space:8081/artifactory/libs-release/" }
@@ -68,7 +70,7 @@ dependencies {
 	modCompileOnly("net.devtech:arrp:0.6.4")
 
 	// Iris
-	modCompileOnly ('curse.maven:irisshaders-455508:3821021'){
+	modCompileOnly ('maven.modrinth:iris:1.6.2+1.19.2'){
 		exclude(group: "net.fabricmc.fabric-api")
 	}
 }
