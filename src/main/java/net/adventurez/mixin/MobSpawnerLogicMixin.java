@@ -34,7 +34,6 @@ public class MobSpawnerLogicMixin {
 
     @Inject(method = "setEntityId", at = @At("HEAD"))
     private void setEntityId(EntityType<?> type, CallbackInfo info) {
-
         if (type == null) {
             return;
         }
