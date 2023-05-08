@@ -14,7 +14,7 @@ import net.minecraft.util.Identifier;
 
 @Environment(EnvType.CLIENT)
 public class OrcRenderer extends MobEntityRenderer<OrcEntity, OrcModel<OrcEntity>> {
-    private static final Identifier TEXTURE = new Identifier("adventurez:textures/entity/ork.png");
+    private static final Identifier TEXTURE = new Identifier("adventurez:textures/entity/orc.png");
 
     public OrcRenderer(EntityRendererFactory.Context context) {
         super(context, new OrcModel<>(context.getPart(RenderInit.ORC_LAYER)), 0.7F);
