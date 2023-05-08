@@ -10,7 +10,10 @@ public class KeybindPacket {
 
     public static void init() {
         ServerPlayNetworking.registerGlobalReceiver(FIRE_BREATH_PACKET, (server, player, handler, buffer, sender) -> {
-            ((DragonEntity) player.getVehicle()).fireBreathActive = true;
+            server.execute(()->{
+               if(player.getVehicle() instanceof  DragonEntity) {
+                   ((DragonEntity) player.getVehicle()).fireBreathActive = true;
+               }});
         });
 
     }

@@ -8,8 +8,11 @@ public class GeneralPacket {
 
     public static void init() {
         ClientPlayNetworking.registerGlobalReceiver(VELOCITY_PACKET, (client, handler, buf, sender) -> {
-            if (client.player != null)
-                client.world.getEntityById(buf.readInt()).addVelocity(0.0D, buf.readFloat(), 0.0D);
+            int entityId = buf.readInt();
+            float velocity = buf.readFloat();
+           client.execute(()->{
+               client.world.getEntityById(entityId).addVelocity(0.0D, velocity, 0.0D);
+           });
         });
     }
 }
