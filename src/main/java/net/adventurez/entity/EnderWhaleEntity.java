@@ -105,6 +105,11 @@ public class EnderWhaleEntity extends FlyingEntity implements ItemSteerable {
         this.saddledComponent.readNbt(nbt);
     }
 
+    @Override
+    protected boolean canAddPassenger(Entity passenger) {
+        return this.getPassengerList().size() < 2;
+    }
+
     @Nullable
     @Override
     public Entity getPrimaryPassenger() {
