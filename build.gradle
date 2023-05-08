@@ -1,5 +1,5 @@
 plugins {
-	id 'fabric-loom' version '1.0-SNAPSHOT'
+	id 'fabric-loom' version '1.1-SNAPSHOT'
 	id 'maven-publish'
 }
 
@@ -17,10 +17,6 @@ repositories {
 	maven { url "https://maven.terraformersmc.com/" }
 	maven { url "https://www.cursemaven.com" }
 	maven { url "https://maven.jamieswhiteshirt.com/libs-release/" }
-	maven { url = uri("https://storage.googleapis.com/devan-maven/") }
-	// Canvas
-    // maven { url = "https://maven.dblsaiko.net/" }
-    // maven { url = "http://server.bbkr.space:8081/artifactory/libs-release/" }
 }
 
 dependencies {
@@ -58,15 +54,6 @@ dependencies {
 	modCompileOnly ('curse.maven:dragonloot-424480:3683636'){
 		exclude(group: "net.fabricmc.fabric-api")
 	}
-	// Canvas
-	// modCompileOnly "grondag:canvas-mc117-1.17:1.0.+"
-
-	// Medieval Weapons
-	modCompileOnly ('curse.maven:medievalweapons-411400:4088548'){
-		exclude(group: "net.fabricmc.fabric-api")
-	}
-	modCompileOnly("net.devtech:arrp:0.6.4")
-
 	// Iris
 	modCompileOnly ('curse.maven:irisshaders-455508:3821021'){
 		exclude(group: "net.fabricmc.fabric-api")
@@ -77,7 +64,7 @@ processResources {
 	inputs.property "version", project.version
 
 	filesMatching("fabric.mod.json") {
-		expand "version": project.version
+		expand "version": project.version, "fabric_version": project.fabric_version, "loader_version": project.loader_version, "minecraft_version": project.minecraft_version, "cloth_config_version": project.cloth_config_version
 	}
 }
 

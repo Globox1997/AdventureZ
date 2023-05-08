@@ -34,6 +34,7 @@ import net.minecraft.screen.ScreenHandler;
 import net.minecraft.server.world.ServerWorld;
 import net.minecraft.sound.SoundCategory;
 import net.minecraft.text.Text;
+import net.minecraft.util.Identifier;
 import net.minecraft.util.collection.DefaultedList;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Vec3d;
@@ -195,7 +196,7 @@ public class ShadowChestEntity extends LootableContainerBlockEntity implements L
                 (new LootContext.Builder((ServerWorld) this.world)).parameter(LootContextParameters.ORIGIN, Vec3d.ofCenter(this.pos)).random(this.world.random).build(LootContextTypes.CHEST));
         for (int i = 0; i < 27; i++) {
             if (i == 20 && this.world.random.nextFloat() < 0.2F && FabricLoader.getInstance().isModLoaded("medievalweapons")) {
-                this.inventory.set(i, new ItemStack(net.medievalweapons.init.ItemInit.THALLEOUS_SWORD));
+                this.inventory.set(i, new ItemStack(Registry.ITEM.get(new Identifier("medievalweapons", "thalleous_sword"))));
                 continue;
             }
             if (i == 13)
