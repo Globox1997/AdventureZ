@@ -21,11 +21,11 @@ import net.minecraft.client.render.WorldRenderer;
 import net.minecraft.client.render.block.entity.BlockEntityRenderer;
 import net.minecraft.client.render.block.entity.BlockEntityRendererFactory;
 import net.minecraft.client.util.math.MatrixStack;
-import net.minecraft.util.math.Vec3f;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Direction;
 import net.minecraft.util.math.MathHelper;
+import net.minecraft.util.math.RotationAxis;
 
 @Environment(EnvType.CLIENT)
 public class PiglinFlagRenderer implements BlockEntityRenderer<PiglinFlagEntity> {
@@ -66,14 +66,14 @@ public class PiglinFlagRenderer implements BlockEntityRenderer<PiglinFlagEntity>
 
             if (blockDirection.equals(Direction.NORTH)) {
                 matrices.translate(1D, 0D, 1D);
-                matrices.multiply(Vec3f.POSITIVE_Y.getDegreesQuaternion(180F));
+                matrices.multiply(RotationAxis.POSITIVE_Y.rotationDegrees(180F));
             } else if (blockDirection.equals(Direction.EAST)) {
                 matrices.translate(0D, 0D, 1D);
-                matrices.multiply(Vec3f.POSITIVE_Y.getDegreesQuaternion(90F));
+                matrices.multiply(RotationAxis.POSITIVE_Y.rotationDegrees(90F));
             } else if (blockDirection.equals(Direction.SOUTH)) {
             } else if (blockDirection.equals(Direction.WEST)) {
                 matrices.translate(1D, 0D, 0D);
-                matrices.multiply(Vec3f.POSITIVE_Y.getDegreesQuaternion(270F));
+                matrices.multiply(RotationAxis.POSITIVE_Y.rotationDegrees(270F));
             }
         }
         matrices.scale(1.0F, -1.0F, 1.0F);

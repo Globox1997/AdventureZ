@@ -49,6 +49,7 @@ import net.minecraft.network.packet.s2c.play.CustomPayloadS2CPacket;
 import net.minecraft.particle.ParticleEffect;
 import net.minecraft.particle.ParticleTypes;
 import net.minecraft.predicate.entity.EntityPredicates;
+import net.minecraft.registry.tag.DamageTypeTags;
 import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.server.world.ServerWorld;
 import net.minecraft.sound.SoundCategory;
@@ -238,7 +239,7 @@ public class VoidShadowEntity extends FlyingEntity implements Monster {
 
     @Override
     public void checkDespawn() {
-        if (this.world.getDifficulty() == Difficulty.PEACEFUL) {
+        if (this.getWorld().getDifficulty() == Difficulty.PEACEFUL) {
             this.discard();
         }
     }
@@ -306,7 +307,7 @@ public class VoidShadowEntity extends FlyingEntity implements Monster {
         if (source.getSource() instanceof ThrownRockEntity) {
             return false;
         }
-        if (source.isProjectile()) {
+        if (source.isIn(DamageTypeTags.IS_PROJECTILE)) {
             if (source.getSource() instanceof ArrowEntity) {
                 ArrowEntity arrowEntity = (ArrowEntity) source.getSource();
                 if (arrowEntity.isGlowing()) {
@@ -322,11 +323,11 @@ public class VoidShadowEntity extends FlyingEntity implements Monster {
 
     @Override
     public void onDeath(DamageSource source) {
-        if (!this.world.isClient) {
+        if (!this.getWorld().isClient()) {
             if (!this.blockPosList.isEmpty()) {
                 for (int u = 0; u < this.blockPosList.size(); ++u) {
-                    this.world.setBlockState(this.blockPosList.get(u), BlockInit.VOID_BLOCK.getDefaultState());
-                    this.world.playSound(null, this.blockPosList.get(u), SoundEvents.BLOCK_STONE_PLACE, SoundCategory.BLOCKS, 1F, 1F);
+                    this.getWorld().setBlockState(this.blockPosList.get(u), BlockInit.VOID_BLOCK.getDefaultState());
+                    this.getWorld().playSound(null, this.blockPosList.get(u), SoundEvents.BLOCK_STONE_PLACE, SoundCategory.BLOCKS, 1F, 1F);
                 }
             }
         }
@@ -352,7 +353,7 @@ public class VoidShadowEntity extends FlyingEntity implements Monster {
         float f = (this.random.nextFloat() - 0.5F) * 16.0F;
         float g = (this.random.nextFloat() - 0.5F) * 10.0F;
         float h = (this.random.nextFloat() - 0.5F) * 16.0F;
-        this.world.addParticle(particleEffect, this.getX() + (double) f, this.getY() + 2.0D + (double) g, this.getZ() + (double) h, 0.0D, 0.0D, 0.0D);
+        this.getWorld().addParticle(particleEffect, this.getX() + (double) f, this.getY() + 2.0D + (double) g, this.getZ() + (double) h, 0.0D, 0.0D, 0.0D);
     }
 
     @Override
@@ -360,7 +361,7 @@ public class VoidShadowEntity extends FlyingEntity implements Monster {
         ++this.ticksSinceDeath;
         this.setAiDisabled(true);
         this.setTarget(null);
-        if (this.world.isClient) {
+        if (this.getWorld().isClient()) {
             if (this.ticksSinceDeath >= 0 && this.ticksSinceDeath < 40) {
                 for (int i = 0; i < 10; i++) {
                     deathParticles(ParticleTypes.PORTAL);
@@ -371,10 +372,10 @@ public class VoidShadowEntity extends FlyingEntity implements Monster {
                 deathParticles(ParticleTypes.FALLING_OBSIDIAN_TEAR);
             }
         }
-        if (!this.world.isClient) {
+        if (!this.getWorld().isClient()) {
             this.bossBar.setPercent(0.0F);
             if (this.ticksSinceDeath == 1 && !this.isSilent()) {
-                this.world.syncGlobalEvent(1028, this.getBlockPos(), 0);
+                this.getWorld().syncGlobalEvent(1028, this.getBlockPos(), 0);
             }
             if (this.hasVoidMiddleCoordinates() && this.ticksSinceDeath == 40) {
                 this.teleport(this.getVoidMiddle().getX(), this.getVoidMiddle().up(5).getY(), this.getVoidMiddle().getZ());
@@ -387,26 +388,26 @@ public class VoidShadowEntity extends FlyingEntity implements Monster {
                 deathParticles(ParticleTypes.SMOKE);
             }
         }
-        if (this.ticksSinceDeath >= 200 && !this.world.isClient) {
+        if (this.ticksSinceDeath >= 200 && !this.getWorld().isClient()) {
             Box box = new Box(this.getBlockPos());
-            List<PlayerEntity> list = world.getEntitiesByClass(PlayerEntity.class, box.expand(128D), EntityPredicates.EXCEPT_SPECTATOR);
+            List<PlayerEntity> list = this.getWorld().getEntitiesByClass(PlayerEntity.class, box.expand(128D), EntityPredicates.EXCEPT_SPECTATOR);
             for (int i = 0; i < list.size(); ++i) {
                 list.get(i).addStatusEffect(new StatusEffectInstance(EffectInit.FAME, 48000, 0, false, false, true));
             }
             if (this.isInVoidDungeon) {
-                boolean direction = this.world.random.nextInt(2) == 0;
+                boolean direction = this.getWorld().getRandom().nextInt(2) == 0;
 
                 BlockPos pos = direction ? this.getVoidMiddle().north(3) : this.getVoidMiddle().south(3);
                 BlockState state = net.adventurez.init.BlockInit.SHADOW_CHEST_BLOCK.getDefaultState().with(ShadowChestBlock.FACING, direction ? Direction.SOUTH : Direction.NORTH);
-                this.world.setBlockState(pos, state, 3);
-                state.getBlock().onPlaced(world, pos, state, null, ItemStack.EMPTY);
+                this.getWorld().setBlockState(pos, state, 3);
+                state.getBlock().onPlaced(this.getWorld(), pos, state, null, ItemStack.EMPTY);
 
-                PortalBlockEntity portalBlockEntity = (PortalBlockEntity) world.getBlockEntity(this.getVoidMiddle().down());
+                PortalBlockEntity portalBlockEntity = (PortalBlockEntity) this.getWorld().getBlockEntity(this.getVoidMiddle().down());
                 if (portalBlockEntity != null) {
-                    portalBlockEntity.bossTime = (int) world.getLevelProperties().getTime();
+                    portalBlockEntity.bossTime = (int) this.getWorld().getLevelProperties().getTime();
                 }
             } else {
-                this.world.setBlockState(this.getBlockPos(), Blocks.DRAGON_EGG.getDefaultState(), 3);
+                this.getWorld().setBlockState(this.getBlockPos(), Blocks.DRAGON_EGG.getDefaultState(), 3);
             }
             this.discard();
         }
@@ -508,7 +509,7 @@ public class VoidShadowEntity extends FlyingEntity implements Monster {
                 Vec3d vec3d = new Vec3d((double) pos.getX() - this.voidShadowEntity.getX(), (double) pos.getY() - this.voidShadowEntity.getY(), (double) pos.getZ() - this.voidShadowEntity.getZ());
                 this.voidShadowEntity.setYaw(-((float) MathHelper.atan2(vec3d.x, vec3d.z)) * 57.295776F);
                 this.voidShadowEntity.bodyYaw = this.voidShadowEntity.getYaw();
-                this.voidShadowEntity.setTarget(this.voidShadowEntity.world.getClosestPlayer(PLAYER_PREDICATE, this.voidShadowEntity));
+                this.voidShadowEntity.setTarget(this.voidShadowEntity.getWorld().getClosestPlayer(PLAYER_PREDICATE, this.voidShadowEntity));
             } else if (this.voidShadowEntity.getTarget() == null) {
                 Vec3d vec3d = this.voidShadowEntity.getVelocity();
                 this.voidShadowEntity.setYaw(-((float) MathHelper.atan2(vec3d.x, vec3d.z)) * 57.295776F);
@@ -556,30 +557,30 @@ public class VoidShadowEntity extends FlyingEntity implements Monster {
                 if (throwBlocks >= 10) {
                     BlockPos pos = this.voidShadow.getBlockPos();
                     for (int i = 0; i < (this.voidShadow.isHalfLife ? 60 : 40); i++) {
-                        if (!this.voidShadow.world.isClient) {
-                            double random = this.voidShadow.world.random.nextDouble() + 0.3D;
-                            double anotherRandom = this.voidShadow.world.random.nextDouble();
-                            double anotherExtraRandom = this.voidShadow.world.random.nextDouble() - 0.5D;
-                            double anotherExtraXXXRandom = this.voidShadow.world.random.nextDouble() - 0.5D;
+                        if (!this.voidShadow.getWorld().isClient()) {
+                            double random = this.voidShadow.getWorld().getRandom().nextDouble() + 0.3D;
+                            double anotherRandom = this.voidShadow.getWorld().getRandom().nextDouble();
+                            double anotherExtraRandom = this.voidShadow.getWorld().getRandom().nextDouble() - 0.5D;
+                            double anotherExtraXXXRandom = this.voidShadow.getWorld().getRandom().nextDouble() - 0.5D;
                             Block block;
                             if (this.voidShadow.hasVoidMiddleCoordinates()) {
-                                block = this.voidShadow.world.getBlockState(this.voidShadow.getVoidMiddle().north().down()).getBlock();
-                            } else if (!this.voidShadow.world.getBlockState(pos.down(5)).isAir()) {
-                                block = this.voidShadow.world.getBlockState(pos.down(5)).getBlock();
+                                block = this.voidShadow.getWorld().getBlockState(this.voidShadow.getVoidMiddle().north().down()).getBlock();
+                            } else if (!this.voidShadow.getWorld().getBlockState(pos.down(5)).isAir()) {
+                                block = this.voidShadow.getWorld().getBlockState(pos.down(5)).getBlock();
                             } else {
                                 block = Blocks.STONE;
                             }
-                            ThrownRockEntity thrownRockEntity = new ThrownRockEntity(this.voidShadow.world, this.voidShadow);
+                            ThrownRockEntity thrownRockEntity = new ThrownRockEntity(this.voidShadow.getWorld(), this.voidShadow);
                             Vec3d vec3d = new Vec3d(livingEntity.getX() - this.voidShadow.getX(), livingEntity.getY() - this.voidShadow.getY(), livingEntity.getZ() - this.voidShadow.getZ());
                             vec3d = vec3d.add(anotherExtraRandom * 12.0D, 5.0D * anotherRandom, anotherExtraXXXRandom * 12.0D);
                             vec3d = vec3d.normalize();
                             thrownRockEntity.setVelocity(thrownRockEntity.getVelocity().add(vec3d.multiply(1.4D * random)));
                             thrownRockEntity.setItem(new ItemStack(block.asItem()));
-                            this.voidShadow.world.spawnEntity(thrownRockEntity);
+                            this.voidShadow.getWorld().spawnEntity(thrownRockEntity);
 
                         }
                     }
-                    this.voidShadow.world.playSoundFromEntity((PlayerEntity) null, this.voidShadow, SoundInit.ROCK_THROW_EVENT, SoundCategory.HOSTILE, 1.0F, 1.0F);
+                    this.voidShadow.getWorld().playSoundFromEntity((PlayerEntity) null, this.voidShadow, SoundInit.ROCK_THROW_EVENT, SoundCategory.HOSTILE, 1.0F, 1.0F);
                     throwBlocks = 0;
                     this.stop();
                 }
@@ -639,13 +640,13 @@ public class VoidShadowEntity extends FlyingEntity implements Monster {
             destroyBlocksTicker++;
             if (destroyBlocksTicker == 40 && this.voidShadow.getTarget() != null) {
                 Box box = new Box(this.voidShadow.getBlockPos());
-                List<PlayerEntity> playerList = this.voidShadow.world.getPlayers(PLAYER_PREDICATE, this.voidShadow, box.expand(120D));
+                List<PlayerEntity> playerList = this.voidShadow.getWorld().getPlayers(PLAYER_PREDICATE, this.voidShadow, box.expand(120D));
                 for (int i = 0; i < playerList.size(); ++i) {
                     PlayerEntity playerEntity = playerList.get(i);
                     if (!playerEntity.isCreative() && !playerEntity.isSpectator()) {
-                        if (!this.voidShadow.world.getBlockState(playerEntity.getBlockPos().down()).isAir()) {
+                        if (!this.voidShadow.getWorld().getBlockState(playerEntity.getBlockPos().down()).isAir()) {
                             playerBlockPosList.add(playerEntity.getBlockPos().down());
-                        } else if (!this.voidShadow.world.getBlockState(playerEntity.getBlockPos().down(2)).isAir()) {
+                        } else if (!this.voidShadow.getWorld().getBlockState(playerEntity.getBlockPos().down(2)).isAir()) {
                             playerBlockPosList.add(playerEntity.getBlockPos().down(2));
                         }
                     }
@@ -655,21 +656,21 @@ public class VoidShadowEntity extends FlyingEntity implements Monster {
                     int radius = this.voidShadow.isHalfLife ? 5 : 3;
                     for (int k = -radius; k <= radius; k++) {
                         for (int i = -radius; i <= radius; i++) {
-                            BlockPos blockPos = pos.add(k, 0, i).add(Math.sin(k) * i, 0, Math.cos(k) * i);
-                            if (!this.voidShadow.blockPosList.contains(blockPos) && !this.voidShadow.world.getBlockState(blockPos).isAir()
-                                    && !this.voidShadow.world.getBlockState(blockPos).isIn(TagInit.UNBREAKABLE_BLOCKS)) {
+                            BlockPos blockPos = pos.add(k, 0, i).add(MathHelper.floor(Math.sin(k)) * i, 0, MathHelper.floor(Math.cos(k)) * i);
+                            if (!this.voidShadow.blockPosList.contains(blockPos) && !this.voidShadow.getWorld().getBlockState(blockPos).isAir()
+                                    && !this.voidShadow.getWorld().getBlockState(blockPos).isIn(TagInit.UNBREAKABLE_BLOCKS)) {
                                 this.voidShadow.blockPosList.add(blockPos);
                             }
                         }
                     }
                 }
                 for (int u = 0; u < this.voidShadow.blockPosList.size(); ++u) {
-                    this.voidShadow.world.setBlockState(this.voidShadow.blockPosList.get(u), BlockInit.VOID_BLOCK.getDefaultState().with(VoidBlock.ACTIVATED, true));
+                    this.voidShadow.getWorld().setBlockState(this.voidShadow.blockPosList.get(u), BlockInit.VOID_BLOCK.getDefaultState().with(VoidBlock.ACTIVATED, true));
                 }
 
             }
             if (destroyBlocksTicker == 110) {
-                ((ServerWorld) this.voidShadow.world).playSoundFromEntity(null, this.voidShadow, SoundInit.SHADOW_CAST_EVENT, SoundCategory.HOSTILE, 20.0F, 1.0F);
+                ((ServerWorld) this.voidShadow.getWorld()).playSoundFromEntity(null, this.voidShadow, SoundInit.SHADOW_CAST_EVENT, SoundCategory.HOSTILE, 20.0F, 1.0F);
             }
             if (destroyBlocksTicker == 120) {
                 this.voidShadow.dataTracker.set(HOVERING_MAGIC_HANDS, false);
@@ -690,15 +691,15 @@ public class VoidShadowEntity extends FlyingEntity implements Monster {
         public void start() {
             this.voidShadow.dataTracker.set(HOVERING_MAGIC_HANDS, true);
             canStartTicker = 0;
-            ((ServerWorld) this.voidShadow.world).playSoundFromEntity(null, this.voidShadow, SoundInit.SHADOW_PREPARE_EVENT, SoundCategory.HOSTILE, 20.0F, 1.0F);
+            ((ServerWorld) this.voidShadow.getWorld()).playSoundFromEntity(null, this.voidShadow, SoundInit.SHADOW_PREPARE_EVENT, SoundCategory.HOSTILE, 20.0F, 1.0F);
         }
 
         @Override
         public void stop() {
             canStartTicker++;
             for (int u = 0; u < this.voidShadow.blockPosList.size(); ++u) {
-                this.voidShadow.world.setBlockState(this.voidShadow.blockPosList.get(u), BlockInit.VOID_BLOCK.getDefaultState());
-                this.voidShadow.world.playSound(null, this.voidShadow.blockPosList.get(u), SoundEvents.BLOCK_STONE_PLACE, SoundCategory.BLOCKS, 1F, 1F);
+                this.voidShadow.getWorld().setBlockState(this.voidShadow.blockPosList.get(u), BlockInit.VOID_BLOCK.getDefaultState());
+                this.voidShadow.getWorld().playSound(null, this.voidShadow.blockPosList.get(u), SoundEvents.BLOCK_STONE_PLACE, SoundCategory.BLOCKS, 1F, 1F);
             }
             if (!this.voidShadow.blockPosList.isEmpty()) {
                 this.voidShadow.blockPosList.clear();
@@ -727,7 +728,7 @@ public class VoidShadowEntity extends FlyingEntity implements Monster {
                 if (summonStartTicker >= 200) {
 
                     Box box = new Box(voidShadow.getBlockPos());
-                    List<VoidFragmentEntity> list = voidShadow.world.getEntitiesByClass(VoidFragmentEntity.class, box.expand(120D), EntityPredicates.EXCEPT_SPECTATOR);
+                    List<VoidFragmentEntity> list = voidShadow.getWorld().getEntitiesByClass(VoidFragmentEntity.class, box.expand(120D), EntityPredicates.EXCEPT_SPECTATOR);
                     if (list.isEmpty() || list.size() < 2) {
                         return true;
                     }
@@ -746,7 +747,7 @@ public class VoidShadowEntity extends FlyingEntity implements Monster {
                 BlockPos pos = this.voidShadow.getVoidMiddle();
                 Boolean isOrb = this.voidShadow.random.nextFloat() < 0.35F;
                 for (int i = 0; i < (isOrb ? 4 : 10); i++) {
-                    if (!this.voidShadow.world.isClient) {
+                    if (!this.voidShadow.getWorld().isClient()) {
                         BlockPos spawnPos;
                         if (isOrb) {
                             if (i < 2) {
@@ -757,18 +758,18 @@ public class VoidShadowEntity extends FlyingEntity implements Monster {
                         } else {
                             spawnPos = new BlockPos(pos.getX() - 35 + voidShadow.random.nextInt(70), pos.getY(), pos.getZ() - 35 + voidShadow.random.nextInt(70));
                         }
-                        if (!this.voidShadow.world.getBlockState(spawnPos.down()).isAir()) {
-                            VoidFragmentEntity voidFragmentEntity = (VoidFragmentEntity) EntityInit.VOID_FRAGMENT_ENTITY.create(voidShadow.world);
-                            voidFragmentEntity.initialize((ServerWorld) voidShadow.world, voidShadow.world.getLocalDifficulty(pos), SpawnReason.EVENT, null, null);
+                        if (!this.voidShadow.getWorld().getBlockState(spawnPos.down()).isAir()) {
+                            VoidFragmentEntity voidFragmentEntity = (VoidFragmentEntity) EntityInit.VOID_FRAGMENT_ENTITY.create(voidShadow.getWorld());
+                            voidFragmentEntity.initialize((ServerWorld) voidShadow.getWorld(), voidShadow.getWorld().getLocalDifficulty(pos), SpawnReason.EVENT, null, null);
                             voidFragmentEntity.setVoidOrb(isOrb);
-                            voidFragmentEntity.refreshPositionAndAngles(spawnPos, voidShadow.world.random.nextFloat() * 360F, 0.0F);
-                            voidShadow.world.spawnEntity(voidFragmentEntity);
+                            voidFragmentEntity.refreshPositionAndAngles(spawnPos, voidShadow.getWorld().getRandom().nextFloat() * 360F, 0.0F);
+                            voidShadow.getWorld().spawnEntity(voidFragmentEntity);
                             if (!isOrb) {
-                                VoidCloudEntity voidCloudEntity = new VoidCloudEntity(voidShadow.world, voidFragmentEntity.getX(), voidFragmentEntity.getY(), voidFragmentEntity.getZ());
-                                int random = voidShadow.world.random.nextInt(7) + 6;
+                                VoidCloudEntity voidCloudEntity = new VoidCloudEntity(voidShadow.getWorld(), voidFragmentEntity.getX(), voidFragmentEntity.getY(), voidFragmentEntity.getZ());
+                                int random = voidShadow.getWorld().getRandom().nextInt(7) + 6;
                                 voidCloudEntity.setRadius(random);
                                 voidCloudEntity.setDuration(random * 140);
-                                voidShadow.world.spawnEntity(voidCloudEntity);
+                                voidShadow.getWorld().spawnEntity(voidCloudEntity);
                             }
                         }
                     }
@@ -782,13 +783,13 @@ public class VoidShadowEntity extends FlyingEntity implements Monster {
         @Override
         public void start() {
             this.voidShadow.dataTracker.set(HOVERING_MAGIC_HANDS, true);
-            ((ServerWorld) this.voidShadow.world).playSoundFromEntity(null, this.voidShadow, SoundInit.SHADOW_PREPARE_EVENT, SoundCategory.HOSTILE, 20.0F, 1.0F);
+            ((ServerWorld) this.voidShadow.getWorld()).playSoundFromEntity(null, this.voidShadow, SoundInit.SHADOW_PREPARE_EVENT, SoundCategory.HOSTILE, 20.0F, 1.0F);
         }
 
         @Override
         public void stop() {
             this.voidShadow.dataTracker.set(HOVERING_MAGIC_HANDS, false);
-            ((ServerWorld) this.voidShadow.world).playSoundFromEntity(null, this.voidShadow, SoundInit.SHADOW_CAST_EVENT, SoundCategory.HOSTILE, 20.0F, 1.0F);
+            ((ServerWorld) this.voidShadow.getWorld()).playSoundFromEntity(null, this.voidShadow, SoundInit.SHADOW_CAST_EVENT, SoundCategory.HOSTILE, 20.0F, 1.0F);
         }
 
     }
@@ -822,7 +823,7 @@ public class VoidShadowEntity extends FlyingEntity implements Monster {
             this.voidShadow.setTarget(null);
             if (tick == 60) {
                 Box box = new Box(this.voidShadow.getBlockPos());
-                playerList = this.voidShadow.world.getPlayers(PLAYER_PREDICATE, this.voidShadow, box.expand(120D));
+                playerList = this.voidShadow.getWorld().getPlayers(PLAYER_PREDICATE, this.voidShadow, box.expand(120D));
                 for (int i = 0; i < playerList.size(); ++i) {
                     PlayerEntity playerEntity = playerList.get(i);
                     playerEntity.addStatusEffect(new StatusEffectInstance(StatusEffects.SLOWNESS, 60 + this.voidShadow.random.nextInt(80), this.voidShadow.random.nextInt(4), false, false, true));
@@ -837,17 +838,17 @@ public class VoidShadowEntity extends FlyingEntity implements Monster {
                         BlockPos blockPos = pos.add(k, 0, i);
 
                         if (this.voidShadow.random.nextFloat() < 0.4F) {
-                            if (!this.voidShadow.blockPosList.contains(blockPos) && !this.voidShadow.world.getBlockState(blockPos).isAir()
-                                    && !this.voidShadow.world.getBlockState(blockPos).isIn(TagInit.UNBREAKABLE_BLOCKS)) {
+                            if (!this.voidShadow.blockPosList.contains(blockPos) && !this.voidShadow.getWorld().getBlockState(blockPos).isAir()
+                                    && !this.voidShadow.getWorld().getBlockState(blockPos).isIn(TagInit.UNBREAKABLE_BLOCKS)) {
                                 this.voidShadow.blockPosList.add(blockPos);
                             }
                         }
                     }
                 }
                 for (int u = 0; u < this.voidShadow.blockPosList.size(); ++u) {
-                    this.voidShadow.world.setBlockState(this.voidShadow.blockPosList.get(u), BlockInit.INFESTED_VOID_BLOCK.getDefaultState());
+                    this.voidShadow.getWorld().setBlockState(this.voidShadow.blockPosList.get(u), BlockInit.INFESTED_VOID_BLOCK.getDefaultState());
                 }
-                ((ServerWorld) this.voidShadow.world).playSoundFromEntity(null, this.voidShadow, SoundInit.SHADOW_CAST_EVENT, SoundCategory.HOSTILE, 20.0F, 1.0F);
+                ((ServerWorld) this.voidShadow.getWorld()).playSoundFromEntity(null, this.voidShadow, SoundInit.SHADOW_CAST_EVENT, SoundCategory.HOSTILE, 20.0F, 1.0F);
             }
             if (tick >= 300) {
                 if (this.voidShadow.getHealth() < this.voidShadow.getMaxHealth() / 10 && !playerList.isEmpty()) {
@@ -858,7 +859,7 @@ public class VoidShadowEntity extends FlyingEntity implements Monster {
                             ((ServerPlayerEntity) playerList.get(i)).networkHandler.sendPacket(packet);
                         }
                     }
-                    ((ServerWorld) this.voidShadow.world).playSoundFromEntity(null, this.voidShadow, SoundInit.SHADOW_IDLE_EVENT, SoundCategory.HOSTILE, 20.0F, 1.0F);
+                    ((ServerWorld) this.voidShadow.getWorld()).playSoundFromEntity(null, this.voidShadow, SoundInit.SHADOW_IDLE_EVENT, SoundCategory.HOSTILE, 20.0F, 1.0F);
                 }
                 tick = 0;
                 this.stop();
@@ -878,7 +879,7 @@ public class VoidShadowEntity extends FlyingEntity implements Monster {
             this.voidShadow.moveControl.moveTo((double) voidShadow.getVoidMiddle().getX(), (double) voidShadow.getVoidMiddle().getY(), (double) voidShadow.getVoidMiddle().getZ(), 1.0D);
             this.voidShadow.addVelocity(0D, 0.2D, 0D);
             this.voidShadow.dataTracker.set(CIRCLING_HANDS, true);
-            ((ServerWorld) this.voidShadow.world).playSoundFromEntity(null, this.voidShadow, SoundInit.SHADOW_PREPARE_EVENT, SoundCategory.HOSTILE, 20.0F, 1.0F);
+            ((ServerWorld) this.voidShadow.getWorld()).playSoundFromEntity(null, this.voidShadow, SoundInit.SHADOW_PREPARE_EVENT, SoundCategory.HOSTILE, 20.0F, 1.0F);
         }
 
         @Override
@@ -886,10 +887,10 @@ public class VoidShadowEntity extends FlyingEntity implements Monster {
             voidShadow.circling = true;
             voidShadow.wasCircling = false;
             this.voidShadow.dataTracker.set(CIRCLING_HANDS, false);
-            ((ServerWorld) this.voidShadow.world).playSoundFromEntity(null, this.voidShadow, SoundInit.SHADOW_CAST_EVENT, SoundCategory.HOSTILE, 20.0F, 1.0F);
+            ((ServerWorld) this.voidShadow.getWorld()).playSoundFromEntity(null, this.voidShadow, SoundInit.SHADOW_CAST_EVENT, SoundCategory.HOSTILE, 20.0F, 1.0F);
             insanityStartTicker = 0;
             for (int u = 0; u < this.voidShadow.blockPosList.size(); ++u) {
-                this.voidShadow.world.setBlockState(this.voidShadow.blockPosList.get(u), BlockInit.VOID_BLOCK.getDefaultState());
+                this.voidShadow.getWorld().setBlockState(this.voidShadow.blockPosList.get(u), BlockInit.VOID_BLOCK.getDefaultState());
             }
             if (!this.playerList.isEmpty()) {
                 this.playerList.clear();
@@ -917,7 +918,7 @@ public class VoidShadowEntity extends FlyingEntity implements Monster {
                 summonStartTicker++;
                 if (summonStartTicker >= 80) {
                     Box box = new Box(voidShadow.getBlockPos());
-                    List<VoidShadeEntity> list = voidShadow.world.getEntitiesByClass(VoidShadeEntity.class, box.expand(120D), EntityPredicates.EXCEPT_SPECTATOR);
+                    List<VoidShadeEntity> list = voidShadow.getWorld().getEntitiesByClass(VoidShadeEntity.class, box.expand(120D), EntityPredicates.EXCEPT_SPECTATOR);
                     if (list.size() < 6) {
                         return true;
                     }
@@ -934,12 +935,12 @@ public class VoidShadowEntity extends FlyingEntity implements Monster {
             if (summonTick >= 40 && this.voidShadow.getTarget() != null) {
                 BlockPos pos = this.voidShadow.getVoidMiddle();
                 for (int i = 0; i < (this.voidShadow.isHalfLife ? 24 : 16); i++) {
-                    if (!this.voidShadow.world.isClient) {
+                    if (!this.voidShadow.getWorld().isClient()) {
                         BlockPos spawnPos = new BlockPos(pos.getX() - 35 + voidShadow.random.nextInt(70), pos.getY(), pos.getZ() - 35 + voidShadow.random.nextInt(70));
-                        VoidShadeEntity voidShadeEntity = (VoidShadeEntity) EntityInit.VOID_SHADE_ENTITY.create(voidShadow.world);
-                        voidShadeEntity.initialize((ServerWorld) voidShadow.world, voidShadow.world.getLocalDifficulty(pos), SpawnReason.EVENT, null, null);
-                        voidShadeEntity.refreshPositionAndAngles(spawnPos, voidShadow.world.random.nextFloat() * 360F, 0.0F);
-                        voidShadow.world.spawnEntity(voidShadeEntity);
+                        VoidShadeEntity voidShadeEntity = (VoidShadeEntity) EntityInit.VOID_SHADE_ENTITY.create(voidShadow.getWorld());
+                        voidShadeEntity.initialize((ServerWorld) voidShadow.getWorld(), voidShadow.getWorld().getLocalDifficulty(pos), SpawnReason.EVENT, null, null);
+                        voidShadeEntity.refreshPositionAndAngles(spawnPos, voidShadow.getWorld().getRandom().nextFloat() * 360F, 0.0F);
+                        voidShadow.getWorld().spawnEntity(voidShadeEntity);
                     }
                 }
                 summonTick = 0;
@@ -951,13 +952,13 @@ public class VoidShadowEntity extends FlyingEntity implements Monster {
         @Override
         public void start() {
             this.voidShadow.dataTracker.set(HOVERING_MAGIC_HANDS, true);
-            ((ServerWorld) this.voidShadow.world).playSoundFromEntity(null, this.voidShadow, SoundInit.SHADOW_PREPARE_EVENT, SoundCategory.HOSTILE, 20.0F, 1.0F);
+            ((ServerWorld) this.voidShadow.getWorld()).playSoundFromEntity(null, this.voidShadow, SoundInit.SHADOW_PREPARE_EVENT, SoundCategory.HOSTILE, 20.0F, 1.0F);
         }
 
         @Override
         public void stop() {
             this.voidShadow.dataTracker.set(HOVERING_MAGIC_HANDS, false);
-            ((ServerWorld) this.voidShadow.world).playSoundFromEntity(null, this.voidShadow, SoundInit.SHADOW_CAST_EVENT, SoundCategory.HOSTILE, 20.0F, 1.0F);
+            ((ServerWorld) this.voidShadow.getWorld()).playSoundFromEntity(null, this.voidShadow, SoundInit.SHADOW_CAST_EVENT, SoundCategory.HOSTILE, 20.0F, 1.0F);
         }
 
     }

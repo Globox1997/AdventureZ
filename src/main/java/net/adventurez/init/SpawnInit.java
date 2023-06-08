@@ -8,7 +8,7 @@ import net.minecraft.entity.SpawnGroup;
 import net.minecraft.entity.SpawnRestriction;
 import net.minecraft.entity.mob.HostileEntity;
 import net.minecraft.entity.passive.AnimalEntity;
-import net.minecraft.tag.BiomeTags;
+import net.minecraft.registry.tag.BiomeTags;
 import net.minecraft.world.biome.BiomeKeys;
 import net.minecraft.world.Heightmap;
 

@@ -61,7 +61,7 @@ public class EnderwarthogEntity extends HostileEntity {
 
     public EnderwarthogEntity(EntityType<? extends HostileEntity> entityType, World world) {
         super(entityType, world);
-        this.stepHeight = 1.0F;
+        this.setStepHeight(1.0f);
         this.experiencePoints = 10;
     }
 
@@ -112,7 +112,7 @@ public class EnderwarthogEntity extends HostileEntity {
     @Override
     public void tick() {
         super.tick();
-        if (!this.world.isClient && sprintedTicker > 0) {
+        if (!this.getWorld().isClient() && sprintedTicker > 0) {
             sprintedTicker--;
         }
 
@@ -120,7 +120,7 @@ public class EnderwarthogEntity extends HostileEntity {
 
     @Override
     public void checkDespawn() {
-        if (this.world.getDifficulty() == Difficulty.PEACEFUL) {
+        if (this.getWorld().getDifficulty() == Difficulty.PEACEFUL) {
             this.discard();
         }
     }
@@ -147,7 +147,8 @@ public class EnderwarthogEntity extends HostileEntity {
 
     @Override
     public boolean tryAttack(Entity target) {
-        this.world.playSound(null, this.getX(), this.getY(), this.getZ(), SoundInit.ENDERWARTHOG_ATTACK_EVENT, SoundCategory.HOSTILE, 1.0F, 0.8F + this.world.random.nextFloat() * 0.4F);
+        this.getWorld().playSound(null, this.getX(), this.getY(), this.getZ(), SoundInit.ENDERWARTHOG_ATTACK_EVENT, SoundCategory.HOSTILE, 1.0F,
+                0.8F + this.getWorld().getRandom().nextFloat() * 0.4F);
         return super.tryAttack(target);
     }
 
@@ -157,7 +158,7 @@ public class EnderwarthogEntity extends HostileEntity {
         entityData = super.initialize(serverWorldAccess, difficulty, spawnReason, entityData, entityTag);
         if (spawnReason.equals(SpawnReason.COMMAND))
             this.dataTracker.set(RARE_VARIANT, true);
-        if ((spawnReason.equals(SpawnReason.NATURAL) || spawnReason.equals(SpawnReason.CHUNK_GENERATION)) && this.world.random.nextFloat() <= ConfigInit.CONFIG.warthog_rare_chance) {
+        if ((spawnReason.equals(SpawnReason.NATURAL) || spawnReason.equals(SpawnReason.CHUNK_GENERATION)) && this.getWorld().getRandom().nextFloat() <= ConfigInit.CONFIG.warthog_rare_chance) {
             this.dataTracker.set(RARE_VARIANT, true);
             this.getAttributeInstance(EntityAttributes.GENERIC_MAX_HEALTH).setBaseValue(this.getAttributeBaseValue(EntityAttributes.GENERIC_MAX_HEALTH) + 20.0D);
         }
@@ -212,7 +213,7 @@ public class EnderwarthogEntity extends HostileEntity {
 
     private class SprintAttackGoal extends Goal {
         private final EnderwarthogEntity enderwarthogEntity;
-        private BlockPos targetPos;
+        private Vec3d targetPos;
         private int cooldown;
 
         public SprintAttackGoal(EnderwarthogEntity enderwarthogEntity) {
@@ -226,16 +227,17 @@ public class EnderwarthogEntity extends HostileEntity {
                 return false;
             } else {
                 LivingEntity livingEntity = this.enderwarthogEntity.getTarget();
-                if (livingEntity == null)
+                if (livingEntity == null) {
                     return false;
-                else if (!livingEntity.isAlive())
+                } else if (!livingEntity.isAlive()) {
                     return false;
-                else {
+                } else {
                     if (this.enderwarthogEntity.canSee(livingEntity) && Math.abs(livingEntity.getY() - this.enderwarthogEntity.getY()) <= 3.0D && livingEntity.isOnGround()) {
-                        this.targetPos = new BlockPos(livingEntity.getPos());
+                        this.targetPos = livingEntity.getPos();
                         return true;
-                    } else
+                    } else {
                         return false;
+                    }
                 }
             }
         }
@@ -258,9 +260,9 @@ public class EnderwarthogEntity extends HostileEntity {
                     Vec3d vec3d = new Vec3d(this.enderwarthogEntity.getX(), this.enderwarthogEntity.getEyeY(), this.enderwarthogEntity.getZ());
                     Vec3d vec3d2 = new Vec3d(targetPos.getX() - this.enderwarthogEntity.getX(), targetPos.getY() + 1.8D, targetPos.getZ() - this.enderwarthogEntity.getZ()).normalize().multiply(8.0D,
                             0.0D, 8.0D);
-                    BlockHitResult blockHitResult = this.enderwarthogEntity.world
+                    BlockHitResult blockHitResult = this.enderwarthogEntity.getWorld()
                             .raycast(new RaycastContext(vec3d, vec3d.add(vec3d2), RaycastContext.ShapeType.COLLIDER, RaycastContext.FluidHandling.NONE, this.enderwarthogEntity));
-                    return blockHitResult.getType() != HitResult.Type.BLOCK && !this.enderwarthogEntity.world.getBlockState(blockHitResult.getBlockPos().down(3)).isAir();
+                    return blockHitResult.getType() != HitResult.Type.BLOCK && !this.enderwarthogEntity.getWorld().getBlockState(blockHitResult.getBlockPos().down(3)).isAir();
                 }
             }
         }
@@ -279,9 +281,9 @@ public class EnderwarthogEntity extends HostileEntity {
             float q = (float) (MathHelper.atan2(e, d) * 57.2957763671875D) - 90.0F;
             this.enderwarthogEntity.setYaw(this.wrapDegrees(this.enderwarthogEntity.getYaw(), q, 90.0F));
             this.enderwarthogEntity.move(MovementType.SELF, new Vec3d(d, 0.0D, e).normalize().multiply(0.6D));
-            if (!this.enderwarthogEntity.world.isClient) {
+            if (!this.enderwarthogEntity.getWorld().isClient()) {
                 Vec3d vec3d2 = new Vec3d(targetPos.getX() - this.enderwarthogEntity.getX(), targetPos.getY() + 1.8D, targetPos.getZ() - this.enderwarthogEntity.getZ()).normalize();
-                ((ServerWorld) world).spawnParticles(ParticleInit.SPRINT_PARTICLE, this.enderwarthogEntity.getParticleX(0.7D), this.enderwarthogEntity.getRandomBodyY(),
+                ((ServerWorld) getWorld()).spawnParticles(ParticleInit.SPRINT_PARTICLE, this.enderwarthogEntity.getParticleX(0.7D), this.enderwarthogEntity.getRandomBodyY(),
                         this.enderwarthogEntity.getParticleZ(0.7D), 0, vec3d2.x, 0.0D, vec3d2.z, 1.0D);
             }
 
@@ -289,7 +291,7 @@ public class EnderwarthogEntity extends HostileEntity {
 
         @Override
         public void stop() {
-            this.cooldown = 100 + world.random.nextInt(100);
+            this.cooldown = 100 + this.enderwarthogEntity.getWorld().getRandom().nextInt(100);
             this.enderwarthogEntity.setAttacking(false);
             this.enderwarthogEntity.sprintedTicker = 40;
             super.stop();
@@ -300,19 +302,24 @@ public class EnderwarthogEntity extends HostileEntity {
             if (squaredDistance <= d) {
                 this.enderwarthogEntity.swingHand(Hand.MAIN_HAND);
                 if (this.enderwarthogEntity.tryAttack(target)) {
-                    BlockPos attackedPos = new BlockPos(target.getX(), target.getY(), target.getZ());
-                    if (!this.enderwarthogEntity.world.getBlockState(attackedPos.down()).isAir())
+                    Vec3d attackedPos = new Vec3d(target.getX(), target.getY(), target.getZ());
+
+                    if (!this.enderwarthogEntity.getWorld().getBlockState(BlockPos.ofFloored(attackedPos).down()).isAir())
                         for (int i = 0; i < 30; i++) {
-                            ((ServerWorld) world).spawnParticles(new BlockStateParticleEffect(ParticleTypes.BLOCK, this.enderwarthogEntity.world.getBlockState(attackedPos.down())),
-                                    attackedPos.getX() + world.random.nextDouble() * 2.5D - 1.25D, attackedPos.getY() + world.random.nextDouble() * 0.2D,
-                                    attackedPos.getZ() + world.random.nextDouble() * 2.5D - 1.25D, 4, 0.0D, world.random.nextDouble() * 0.15D, 0.D, 1.0D);
+                            ((ServerWorld) getWorld()).spawnParticles(
+                                    new BlockStateParticleEffect(ParticleTypes.BLOCK, this.enderwarthogEntity.getWorld().getBlockState(BlockPos.ofFloored(attackedPos).down())),
+                                    attackedPos.getX() + this.enderwarthogEntity.getWorld().getRandom().nextDouble() * 2.5D - 1.25D,
+                                    attackedPos.getY() + this.enderwarthogEntity.getWorld().getRandom().nextDouble() * 0.2D,
+                                    attackedPos.getZ() + this.enderwarthogEntity.getWorld().getRandom().nextDouble() * 2.5D - 1.25D, 4, 0.0D,
+                                    this.enderwarthogEntity.getWorld().getRandom().nextDouble() * 0.15D, 0.D, 1.0D);
                         }
                     target.setVelocity(target.getVelocity().add(0.0D, 0.1D, 0.0D));
                     target.takeKnockback(3.0D, (double) MathHelper.sin(this.enderwarthogEntity.getYaw() * 0.017453292F), (double) (-MathHelper.cos(this.enderwarthogEntity.getYaw() * 0.017453292F)));
                 }
                 return true;
-            } else
+            } else {
                 return false;
+            }
         }
 
         private float wrapDegrees(float from, float to, float max) {

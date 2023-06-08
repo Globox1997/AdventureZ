@@ -6,25 +6,31 @@ import net.adventurez.entity.render.*;
 import net.adventurez.init.ParticleInit.ShardParticle;
 import net.adventurez.init.ParticleInit.SprintParticle;
 import net.adventurez.init.ParticleInit.VoidCloudParticle;
-import net.adventurez.network.EntitySpawnPacket;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
 import net.fabricmc.fabric.api.blockrenderlayer.v1.BlockRenderLayerMap;
-import net.fabricmc.fabric.api.client.networking.v1.ClientPlayNetworking;
 import net.fabricmc.fabric.api.client.particle.v1.ParticleFactoryRegistry;
-import net.fabricmc.fabric.api.client.rendering.v1.BlockEntityRendererRegistry;
 import net.fabricmc.fabric.api.client.rendering.v1.EntityModelLayerRegistry;
 import net.fabricmc.fabric.api.client.rendering.v1.EntityRendererRegistry;
-import net.fabricmc.fabric.api.event.client.ClientSpriteRegistryCallback;
+import net.fabricmc.fabric.api.client.rendering.v1.HudRenderCallback;
 import net.fabricmc.loader.api.FabricLoader;
+import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.render.RenderLayer;
+import net.minecraft.client.render.block.entity.BlockEntityRendererFactories;
 import net.minecraft.client.render.block.entity.ChestBlockEntityRenderer;
 import net.minecraft.client.render.entity.EmptyEntityRenderer;
 import net.minecraft.client.render.entity.model.EntityModelLayer;
+import net.minecraft.entity.EquipmentSlot;
+import net.minecraft.item.ItemStack;
+import net.minecraft.nbt.NbtCompound;
 import net.minecraft.util.Identifier;
 
 @Environment(EnvType.CLIENT)
 public class RenderInit {
+
+    private static final Identifier WITHERED_TEXTURE = new Identifier("adventurez:textures/misc/withered.png");
+    private static final Identifier ACTIVE_ARMOR_TEXTURE = new Identifier("adventurez:textures/misc/active_armor.png");
+
     public static final boolean isCanvasLoaded = FabricLoader.getInstance().isModLoaded("canvas");
     public static final boolean isIrisLoaded = FabricLoader.getInstance().isModLoaded("iris");
     public static final boolean isSodiumLoaded = FabricLoader.getInstance().isModLoaded("sodium");
@@ -132,23 +138,58 @@ public class RenderInit {
         EntityModelLayerRegistry.registerModelLayer(DEER_LAYER, DeerModel::getTexturedModelData);
         EntityModelLayerRegistry.registerModelLayer(ENDERWARTHOG_LAYER, EnderwarthogModel::getTexturedModelData);
 
-        // Network
-        ClientPlayNetworking.registerGlobalReceiver(EntitySpawnPacket.ID, EntitySpawnPacket::onPacket);
-
-        // Sprite Callback
-        ClientSpriteRegistryCallback.event(new Identifier("textures/atlas/chest.png"))
-                .register((spriteAtlasTexture, registry) -> registry.register(new Identifier("entity/chest/shadow_chest_block")));
-
         // Blocks
-        BlockEntityRendererRegistry.register(BlockInit.STONE_HOLDER_ENTITY, StoneHolderRenderer::new);
+        BlockEntityRendererFactories.register(BlockInit.STONE_HOLDER_ENTITY, StoneHolderRenderer::new);
         BlockRenderLayerMap.INSTANCE.putBlock(BlockInit.STONE_HOLDER_BLOCK, RenderLayer.getCutout());
-        BlockEntityRendererRegistry.register(BlockInit.PIGLIN_FLAG_ENTITY, PiglinFlagRenderer::new);
+        BlockEntityRendererFactories.register(BlockInit.PIGLIN_FLAG_ENTITY, PiglinFlagRenderer::new);
         BlockRenderLayerMap.INSTANCE.putBlock(BlockInit.PIGLIN_FLAG_BLOCK, RenderLayer.getCutout());
-        BlockEntityRendererRegistry.register(BlockInit.SHADOW_CHEST_ENTITY, ChestBlockEntityRenderer::new);
+        BlockEntityRendererFactories.register(BlockInit.SHADOW_CHEST_ENTITY, ChestBlockEntityRenderer::new);
 
         // Particles
         ParticleFactoryRegistry.getInstance().register(ParticleInit.AMETHYST_SHARD_PARTICLE, ShardParticle.ShardFactory::new);
         ParticleFactoryRegistry.getInstance().register(ParticleInit.VOID_CLOUD_PARTICLE, VoidCloudParticle.CloudFactory::new);
         ParticleFactoryRegistry.getInstance().register(ParticleInit.SPRINT_PARTICLE, SprintParticle.SprintFactory::new);
+
+        HudRenderCallback.EVENT.register((drawContext, tickDelta) -> {
+            MinecraftClient client = MinecraftClient.getInstance();
+            if (!client.options.hudHidden) {
+                ItemStack itemStack = client.player.getEquippedStack(EquipmentSlot.CHEST);
+                if (!itemStack.isEmpty() && itemStack.isOf(ItemInit.STONE_GOLEM_CHESTPLATE)) {
+                    NbtCompound tag = itemStack.getNbt();
+                    if (tag != null && tag.contains("armor_time") && tag.contains("activating_armor")) {
+                        if (tag.getBoolean("activating_armor")) {
+                            int scaledWidth = client.getWindow().getScaledWidth();
+                            int scaledHeight = client.getWindow().getScaledHeight();
+                            int worldTime = (int) client.player.getWorld().getTime();
+                            int savedTagInt = tag.getInt("armor_time");
+                            float effectDuration = ConfigInit.CONFIG.stone_golem_armor_effect_duration;
+                            drawContext.getMatrices().push();
+                            if (savedTagInt + effectDuration > worldTime) {
+                                int multiplier = 2;
+                                if (savedTagInt + Math.max(effectDuration - 100, 0) < worldTime)
+                                    multiplier = 4;
+
+                                float pulsating = (float) Math.sin((float) ((worldTime * multiplier) - (savedTagInt - 1)) / 6.2831855F);
+                                drawContext.setShaderColor(1.0F, 1.0F, 1.0F, pulsating + 0.5F);
+                                drawContext.drawTexture(ACTIVE_ARMOR_TEXTURE, (scaledWidth / 2) - 5, scaledHeight - 49, 10, 10, 0, 0, 16, 16, 16, 16);
+                            } else {
+                                float fading = (1F - (((float) (worldTime - (savedTagInt + (effectDuration - 1f))) / effectDuration) - 0.4F));
+                                drawContext.setShaderColor(1.0F, 0.65F, 0.65F, fading);
+                                drawContext.drawTexture(ACTIVE_ARMOR_TEXTURE, (scaledWidth / 2) - 5, scaledHeight - 49, 10, 10, 0, 0, 16, 16, 16, 16);
+                            }
+                            drawContext.getMatrices().pop();
+                            drawContext.setShaderColor(1.0F, 1.0F, 1.0F, 1.0F);
+                        }
+                    }
+                }
+                if (client.player.hasStatusEffect(EffectInit.WITHERING)) {
+                    drawContext.setShaderColor(1.0F, 1.0F, 1.0F, client.player.getStatusEffect(EffectInit.WITHERING).getDuration() / 280F);
+                    int scaledWidth = client.getWindow().getScaledWidth();
+                    int scaledHeight = client.getWindow().getScaledHeight();
+                    drawContext.drawTexture(WITHERED_TEXTURE, scaledWidth / 2 - 64, scaledHeight / 2 - 64, 0.0F, 0.0F, 128, 128, 128, 128);
+                    drawContext.setShaderColor(1.0F, 1.0F, 1.0F, 1.0F);
+                }
+            }
+        });
     }
 }

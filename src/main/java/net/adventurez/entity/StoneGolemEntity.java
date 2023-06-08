@@ -78,7 +78,7 @@ public class StoneGolemEntity extends HostileEntity {
 
     public StoneGolemEntity(EntityType<? extends StoneGolemEntity> entityType, World world) {
         super(entityType, world);
-        this.stepHeight = 1.0F;
+        this.setStepHeight(1.0f);
         this.experiencePoints = 200;
         this.bossBar = (ServerBossBar) (new ServerBossBar(this.getDisplayName(), BossBar.Color.RED, BossBar.Style.PROGRESS));
     }
@@ -212,7 +212,7 @@ public class StoneGolemEntity extends HostileEntity {
                     this.lavaRegenerateLife = 0;
                 }
             }
-            if (this.horizontalCollision && this.world.getGameRules().getBoolean(GameRules.DO_MOB_GRIEFING)) {
+            if (this.horizontalCollision && this.getWorld().getGameRules().getBoolean(GameRules.DO_MOB_GRIEFING)) {
                 boolean bl = false;
                 Box box = this.getBoundingBox().expand(0.25D);
                 Iterator<BlockPos> var8 = BlockPos.iterate(MathHelper.floor(box.minX), MathHelper.floor(box.minY + 0.25D), MathHelper.floor(box.minZ), MathHelper.floor(box.maxX),
@@ -224,18 +224,18 @@ public class StoneGolemEntity extends HostileEntity {
                     BlockState blockState;
                     do {
                         if (!var8.hasNext()) {
-                            if (!bl && this.onGround) {
+                            if (!bl && this.isOnGround()) {
                                 this.jump();
                             }
                             break label60;
                         }
 
                         blockPos = (BlockPos) var8.next();
-                        blockState = this.world.getBlockState(blockPos);
+                        blockState = this.getWorld().getBlockState(blockPos);
                         block = blockState.getBlock();
                     } while (!(block instanceof Block && !blockState.isIn(TagInit.UNBREAKABLE_BLOCKS)));
 
-                    bl = this.world.breakBlock(blockPos, true, this) || bl;
+                    bl = this.getWorld().breakBlock(blockPos, true, this) || bl;
                 }
             }
 
@@ -287,7 +287,7 @@ public class StoneGolemEntity extends HostileEntity {
             double d = this.getX() - (double) this.getWidth() * Math.sin((double) (this.bodyYaw * 0.017453292F)) + (this.random.nextDouble() * 0.6D - 0.3D);
             double e = this.getY() + (double) this.getHeight() - 0.3D;
             double f = this.getZ() + (double) this.getWidth() * Math.cos((double) (this.bodyYaw * 0.017453292F)) + (this.random.nextDouble() * 0.6D - 0.3D);
-            this.world.addParticle(ParticleTypes.ENTITY_EFFECT, d, e, f, 0.4980392156862745D, 0.5137254901960784D, 0.5725490196078431D);
+            this.getWorld().addParticle(ParticleTypes.ENTITY_EFFECT, d, e, f, 0.4980392156862745D, 0.5137254901960784D, 0.5725490196078431D);
         }
 
     }
@@ -309,7 +309,7 @@ public class StoneGolemEntity extends HostileEntity {
             if (this.random.nextDouble() < 0.5D) {
                 this.stunTick = 40;
                 this.playSound(SoundInit.GOLEM_IDLE_EVENT, 1.0F, 1.0F);
-                this.world.sendEntityStatus(this, (byte) 39);
+                this.getWorld().sendEntityStatus(this, (byte) 39);
                 target.pushAwayFrom(this);
             } else {
                 this.knockBack(target);
@@ -322,12 +322,12 @@ public class StoneGolemEntity extends HostileEntity {
 
     private void roar() {
         if (this.isAlive()) {
-            List<LivingEntity> list = this.world.getEntitiesByClass(LivingEntity.class, this.getBoundingBox().expand(5.0D), NOT_STONEGOLEM);
+            List<LivingEntity> list = this.getWorld().getEntitiesByClass(LivingEntity.class, this.getBoundingBox().expand(5.0D), NOT_STONEGOLEM);
 
             LivingEntity entity;
             for (Iterator<LivingEntity> var2 = list.iterator(); var2.hasNext(); this.knockBack(entity)) {
                 entity = (LivingEntity) var2.next();
-                entity.damage(DamageSource.mob(this), 10.0F);
+                entity.damage(this.getDamageSources().mobAttack(this), 10.0F);
                 entity.setVelocity(entity.getVelocity().add(0.0D, 0.63D, 0.0D));
             }
 
@@ -337,7 +337,7 @@ public class StoneGolemEntity extends HostileEntity {
                 double d = this.random.nextGaussian() * 0.2D;
                 double e = this.random.nextGaussian() * 0.2D;
                 double f = this.random.nextGaussian() * 0.2D;
-                this.world.addParticle(ParticleTypes.POOF, vec3d.x, vec3d.y, vec3d.z, d, e, f);
+                this.getWorld().addParticle(ParticleTypes.POOF, vec3d.x, vec3d.y, vec3d.z, d, e, f);
             }
         }
 
@@ -382,10 +382,10 @@ public class StoneGolemEntity extends HostileEntity {
     @Override
     public boolean tryAttack(Entity target) {
         this.attackTick = 10;
-        this.world.sendEntityStatus(this, (byte) 4);
+        this.getWorld().sendEntityStatus(this, (byte) 4);
         this.playSound(SoundInit.GOLEM_HIT_EVENT, 1.0F, 1.0F);
         if (target instanceof LivingEntity)
-            ((LivingEntity) target).setOnFireFor(3 + this.world.random.nextInt(6));
+            ((LivingEntity) target).setOnFireFor(3 + this.getWorld().getRandom().nextInt(6));
         return super.tryAttack(target);
     }
 
@@ -424,7 +424,7 @@ public class StoneGolemEntity extends HostileEntity {
 
     @Override
     public void checkDespawn() {
-        if (this.world.getDifficulty() == Difficulty.PEACEFUL) {
+        if (this.getWorld().getDifficulty() == Difficulty.PEACEFUL) {
             this.discard();
         }
 
@@ -448,10 +448,10 @@ public class StoneGolemEntity extends HostileEntity {
             if (source.getSource() instanceof LivingEntity) {
                 this.setAttacker((LivingEntity) source.getSource());
                 this.setTarget((LivingEntity) source.getSource());
-                if (this.world.random.nextFloat() <= 0.05F) {
-                    SmallStoneGolemEntity smallStoneGolemEntity = (SmallStoneGolemEntity) EntityInit.SMALLSTONEGOLEM_ENTITY.create(this.world);
-                    smallStoneGolemEntity.refreshPositionAndAngles(this.getBlockPos(), this.world.random.nextFloat() * 360F, 0.0F);
-                    this.world.spawnEntity(smallStoneGolemEntity);
+                if (this.getWorld().getRandom().nextFloat() <= 0.05F) {
+                    SmallStoneGolemEntity smallStoneGolemEntity = (SmallStoneGolemEntity) EntityInit.SMALLSTONEGOLEM_ENTITY.create(this.getWorld());
+                    smallStoneGolemEntity.refreshPositionAndAngles(this.getBlockPos(), this.getWorld().getRandom().nextFloat() * 360F, 0.0F);
+                    this.getWorld().spawnEntity(smallStoneGolemEntity);
                 }
 
             }
@@ -482,15 +482,15 @@ public class StoneGolemEntity extends HostileEntity {
         double x = target.getX() - this.getX() - x_vector;
         double y = target.getBodyY(1D) - this.getBodyY(0.1D);
         double z = target.getZ() - this.getZ() - z_vector;
-        ThrownRockEntity thrownRockEntity = new ThrownRockEntity(this.world, this.getX() + x_vector, this.getY() + 0.5D, this.getZ() + z_vector);
+        ThrownRockEntity thrownRockEntity = new ThrownRockEntity(this.getWorld(), this.getX() + x_vector, this.getY() + 0.5D, this.getZ() + z_vector);
         thrownRockEntity.setOwner(this);
-        if (!world.isClient) {
+        if (!this.getWorld().isClient()) {
             if (this.squaredDistanceTo(getTarget()) < 800D) {
                 thrownRockEntity.setVelocity(x, y, z, 1.8F, 3.0F);
-                this.world.spawnEntity(thrownRockEntity);
+                this.getWorld().spawnEntity(thrownRockEntity);
             } else {
                 thrownRockEntity.setVelocity(x, y + 4D, z, 1.8F, 2.0F);
-                this.world.spawnEntity(thrownRockEntity);
+                this.getWorld().spawnEntity(thrownRockEntity);
             }
         }
     }
@@ -518,13 +518,13 @@ public class StoneGolemEntity extends HostileEntity {
 
     @Override
     public void onDeath(DamageSource source) {
-        if (!this.world.isClient) {
-            SmallStoneGolemEntity smallStoneGolemEntity = (SmallStoneGolemEntity) EntityInit.SMALLSTONEGOLEM_ENTITY.create(this.world);
-            SmallStoneGolemEntity smallStoneGolemEntitySecond = (SmallStoneGolemEntity) EntityInit.SMALLSTONEGOLEM_ENTITY.create(this.world);
-            smallStoneGolemEntity.refreshPositionAndAngles(this.getBlockPos().east(), this.world.random.nextFloat() * 360F, 0.0F);
-            smallStoneGolemEntitySecond.refreshPositionAndAngles(this.getBlockPos().west(), this.world.random.nextFloat() * 360F, 0.0F);
-            this.world.spawnEntity(smallStoneGolemEntity);
-            this.world.spawnEntity(smallStoneGolemEntitySecond);
+        if (!this.getWorld().isClient()) {
+            SmallStoneGolemEntity smallStoneGolemEntity = (SmallStoneGolemEntity) EntityInit.SMALLSTONEGOLEM_ENTITY.create(this.getWorld());
+            SmallStoneGolemEntity smallStoneGolemEntitySecond = (SmallStoneGolemEntity) EntityInit.SMALLSTONEGOLEM_ENTITY.create(this.getWorld());
+            smallStoneGolemEntity.refreshPositionAndAngles(this.getBlockPos().east(), this.getWorld().getRandom().nextFloat() * 360F, 0.0F);
+            smallStoneGolemEntitySecond.refreshPositionAndAngles(this.getBlockPos().west(), this.getWorld().getRandom().nextFloat() * 360F, 0.0F);
+            this.getWorld().spawnEntity(smallStoneGolemEntity);
+            this.getWorld().spawnEntity(smallStoneGolemEntitySecond);
         }
         super.onDeath(source);
     }
@@ -533,8 +533,9 @@ public class StoneGolemEntity extends HostileEntity {
         private PathNodeMaker() {
         }
 
-        protected PathNodeType adjustNodeType(BlockView world, boolean canOpenDoors, boolean canEnterOpenDoors, BlockPos pos, PathNodeType type) {
-            return type == PathNodeType.LAVA ? PathNodeType.OPEN : super.adjustNodeType(world, false, false, pos, type);
+        @Override
+        protected PathNodeType adjustNodeType(BlockView world, BlockPos pos, PathNodeType type) {
+            return type == PathNodeType.LAVA ? PathNodeType.OPEN : super.adjustNodeType(world, pos, type);
         }
     }
 
@@ -543,6 +544,7 @@ public class StoneGolemEntity extends HostileEntity {
             super(mobEntity, world);
         }
 
+        @Override
         protected PathNodeNavigator createPathNodeNavigator(int range) {
             this.nodeMaker = new StoneGolemEntity.PathNodeMaker();
             return new PathNodeNavigator(this.nodeMaker, range);

@@ -26,7 +26,7 @@ public class ThrownRockRenderer extends EntityRenderer<ThrownRockEntity> {
 
     @Override
     public int getBlockLight(ThrownRockEntity ThrownRockEntity, BlockPos blockPos) {
-        return ThrownRockEntity.world.getLightLevel(blockPos);
+        return ThrownRockEntity.getWorld().getLightLevel(blockPos);
     }
 
     @Override

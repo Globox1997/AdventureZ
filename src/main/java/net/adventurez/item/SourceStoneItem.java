@@ -56,7 +56,7 @@ public class SourceStoneItem extends Item {
                             tryTeleport(world, blockHitResult.getBlockPos(), blockHitResult.getSide(), playerEntity);
                         } else if (hitResult.getType() == HitResult.Type.ENTITY) {
                             EntityHitResult entityHitResult = (EntityHitResult) hitResult;
-                            tryTeleport(world, new BlockPos(entityHitResult.getPos()), entityHitResult.getEntity().getHorizontalFacing(), playerEntity);
+                            tryTeleport(world, entityHitResult.getEntity().getBlockPos(), entityHitResult.getEntity().getHorizontalFacing(), playerEntity);
                         }
                     }
                 } else {

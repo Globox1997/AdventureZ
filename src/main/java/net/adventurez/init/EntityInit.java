@@ -2,122 +2,116 @@ package net.adventurez.init;
 
 import net.adventurez.entity.*;
 import net.adventurez.entity.nonliving.*;
+import net.fabricmc.fabric.api.itemgroup.v1.ItemGroupEvents;
 import net.fabricmc.fabric.api.object.builder.v1.entity.FabricDefaultAttributeRegistry;
 import net.fabricmc.fabric.api.object.builder.v1.entity.FabricEntityTypeBuilder;
+import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityDimensions;
 import net.minecraft.entity.EntityType;
 import net.minecraft.entity.SpawnGroup;
+import net.minecraft.entity.damage.DamageType;
+import net.minecraft.entity.mob.MobEntity;
 import net.minecraft.item.Item;
-import net.minecraft.item.ItemGroup;
 import net.minecraft.item.SpawnEggItem;
+import net.minecraft.registry.Registries;
+import net.minecraft.registry.Registry;
+import net.minecraft.registry.RegistryKey;
+import net.minecraft.registry.RegistryKeys;
 import net.minecraft.util.Identifier;
-import net.minecraft.util.registry.Registry;
 
+@SuppressWarnings("unchecked")
 public class EntityInit {
     // Hostile
-    public static final EntityType<StoneGolemEntity> STONEGOLEM_ENTITY = FabricEntityTypeBuilder.create(SpawnGroup.MONSTER, StoneGolemEntity::new).fireImmune()
-            .dimensions(EntityDimensions.fixed(3.36F, 4.44F)).build();
-    public static final EntityType<SmallStoneGolemEntity> SMALLSTONEGOLEM_ENTITY = FabricEntityTypeBuilder.create(SpawnGroup.MONSTER, SmallStoneGolemEntity::new).fireImmune()
-            .dimensions(EntityDimensions.fixed(1.2F, 1.2F)).build();
-    public static final EntityType<PiglinBeastEntity> PIGLINBEAST_ENTITY = FabricEntityTypeBuilder.create(SpawnGroup.MONSTER, PiglinBeastEntity::new).fireImmune()
-            .dimensions(EntityDimensions.fixed(1.55F, 3.35F)).build();
-    public static final EntityType<SoulReaperEntity> SOULREAPER_ENTITY = FabricEntityTypeBuilder.create(SpawnGroup.MONSTER, SoulReaperEntity::new).fireImmune()
-            .dimensions(EntityDimensions.fixed(0.7F, 2.4F)).build();
-    public static final EntityType<NecromancerEntity> NECROMANCER_ENTITY = FabricEntityTypeBuilder.create(SpawnGroup.MONSTER, NecromancerEntity::new).fireImmune()
-            .dimensions(EntityDimensions.fixed(0.9F, 2.4F)).build();
-    public static final EntityType<WitherPuppetEntity> WITHERPUPPET_ENTITY = FabricEntityTypeBuilder.create(SpawnGroup.MONSTER, WitherPuppetEntity::new).fireImmune()
-            .dimensions(EntityDimensions.fixed(0.7F, 1.32F)).build();
-    public static final EntityType<SkeletonVanguardEntity> SKELETON_VANGUARD_ENTITY = FabricEntityTypeBuilder.create(SpawnGroup.MONSTER, SkeletonVanguardEntity::new)
-            .dimensions(EntityDimensions.fixed(0.7F, 2.1F)).build();
-    public static final EntityType<SummonerEntity> SUMMONER_ENTITY = FabricEntityTypeBuilder.create(SpawnGroup.MONSTER, SummonerEntity::new).dimensions(EntityDimensions.fixed(0.9F, 2.65F)).build();
-    public static final EntityType<BlazeGuardianEntity> BLAZEGUARDIAN_ENTITY = FabricEntityTypeBuilder.create(SpawnGroup.MONSTER, BlazeGuardianEntity::new).fireImmune()
-            .dimensions(EntityDimensions.fixed(0.8F, 2.25F)).build();
-    public static final EntityType<TheEyeEntity> THE_EYE_ENTITY = FabricEntityTypeBuilder.create(SpawnGroup.MONSTER, TheEyeEntity::new).fireImmune().dimensions(EntityDimensions.fixed(2.8F, 3.5F))
-            .build();
-    public static final EntityType<VoidShadowEntity> VOID_SHADOW_ENTITY = FabricEntityTypeBuilder.create(SpawnGroup.MONSTER, VoidShadowEntity::new).fireImmune()
-            .dimensions(EntityDimensions.fixed(10.2F, 15.3F)).build();
-    public static final EntityType<OrcEntity> ORC_ENTITY = FabricEntityTypeBuilder.create(SpawnGroup.MONSTER, OrcEntity::new).dimensions(EntityDimensions.changing(1.35F, 2.2F)).build();
-    public static final EntityType<VoidFragmentEntity> VOID_FRAGMENT_ENTITY = FabricEntityTypeBuilder.create(SpawnGroup.MONSTER, VoidFragmentEntity::new)
-            .dimensions(EntityDimensions.changing(1.0F, 1.0F)).build();
-    public static final EntityType<VoidShadeEntity> VOID_SHADE_ENTITY = FabricEntityTypeBuilder.create(SpawnGroup.MONSTER, VoidShadeEntity::new).dimensions(EntityDimensions.fixed(1.0F, 2.1F))
-            .build();
-    public static final EntityType<AmethystGolemEntity> AMETHYST_GOLEM_ENTITY = FabricEntityTypeBuilder.create(SpawnGroup.MONSTER, AmethystGolemEntity::new)
-            .dimensions(EntityDimensions.fixed(1.8F, 2.2F)).build();
-    public static final EntityType<DesertRhinoEntity> DESERT_RHINO_ENTITY = FabricEntityTypeBuilder.create(SpawnGroup.MONSTER, DesertRhinoEntity::new).dimensions(EntityDimensions.fixed(2.3F, 2.35F))
-            .build();
-    public static final EntityType<ShamanEntity> SHAMAN_ENTITY = FabricEntityTypeBuilder.create(SpawnGroup.MONSTER, ShamanEntity::new).dimensions(EntityDimensions.fixed(0.9F, 2.01F)).build();
-    public static final EntityType<EnderwarthogEntity> ENDERWARTHOG_ENTITY = FabricEntityTypeBuilder.create(SpawnGroup.MONSTER, EnderwarthogEntity::new)
-            .dimensions(EntityDimensions.fixed(2.3F, 2.15F)).build();
+    public static final EntityType<StoneGolemEntity> STONEGOLEM_ENTITY = register("stone_golem", 2956072, 1445648,
+            FabricEntityTypeBuilder.create(SpawnGroup.MONSTER, StoneGolemEntity::new).fireImmune().dimensions(EntityDimensions.fixed(3.36F, 4.44F)).build());
+    public static final EntityType<SmallStoneGolemEntity> SMALLSTONEGOLEM_ENTITY = register("small_stone_golem", 4077380, 4400440,
+            FabricEntityTypeBuilder.create(SpawnGroup.MONSTER, SmallStoneGolemEntity::new).fireImmune().dimensions(EntityDimensions.fixed(1.2F, 1.2F)).build());
+    public static final EntityType<PiglinBeastEntity> PIGLINBEAST_ENTITY = register("piglin_beast", 5121815, 14192743,
+            FabricEntityTypeBuilder.create(SpawnGroup.MONSTER, PiglinBeastEntity::new).fireImmune().dimensions(EntityDimensions.fixed(1.55F, 3.35F)).build());
+    public static final EntityType<SoulReaperEntity> SOULREAPER_ENTITY = register("soul_reaper", 1381653, 5329747,
+            FabricEntityTypeBuilder.create(SpawnGroup.MONSTER, SoulReaperEntity::new).fireImmune().dimensions(EntityDimensions.fixed(0.7F, 2.4F)).build());
+    public static final EntityType<NecromancerEntity> NECROMANCER_ENTITY = register("necromancer", 1447446, 15514145,
+            FabricEntityTypeBuilder.create(SpawnGroup.MONSTER, NecromancerEntity::new).fireImmune().dimensions(EntityDimensions.fixed(0.9F, 2.4F)).build());
+    public static final EntityType<WitherPuppetEntity> WITHERPUPPET_ENTITY = register("wither_puppet", 1250067, 3092271,
+            FabricEntityTypeBuilder.create(SpawnGroup.MONSTER, WitherPuppetEntity::new).fireImmune().dimensions(EntityDimensions.fixed(0.7F, 1.32F)).build());
+    public static final EntityType<SkeletonVanguardEntity> SKELETON_VANGUARD_ENTITY = register("skeleton_vanguard", 12369084, 11766305,
+            FabricEntityTypeBuilder.create(SpawnGroup.MONSTER, SkeletonVanguardEntity::new).dimensions(EntityDimensions.fixed(0.7F, 2.1F)).build());
+    public static final EntityType<SummonerEntity> SUMMONER_ENTITY = register("summoner", 12369084, 5847892,
+            FabricEntityTypeBuilder.create(SpawnGroup.MONSTER, SummonerEntity::new).dimensions(EntityDimensions.fixed(0.9F, 2.65F)).build());
+    public static final EntityType<BlazeGuardianEntity> BLAZEGUARDIAN_ENTITY = register("blaze_guardian", 16766248, 9122817,
+            FabricEntityTypeBuilder.create(SpawnGroup.MONSTER, BlazeGuardianEntity::new).fireImmune().dimensions(EntityDimensions.fixed(0.8F, 2.25F)).build());
+    public static final EntityType<TheEyeEntity> THE_EYE_ENTITY = register("the_eye", 1984565, 1059889,
+            FabricEntityTypeBuilder.create(SpawnGroup.MONSTER, TheEyeEntity::new).fireImmune().dimensions(EntityDimensions.fixed(2.8F, 3.5F)).build());
+    public static final EntityType<VoidShadowEntity> VOID_SHADOW_ENTITY = register("void_shadow", 1441901, 393244,
+            FabricEntityTypeBuilder.create(SpawnGroup.MONSTER, VoidShadowEntity::new).fireImmune().dimensions(EntityDimensions.fixed(10.2F, 15.3F)).build());
+    public static final EntityType<OrcEntity> ORC_ENTITY = register("orc", 2255437, 3512689,
+            FabricEntityTypeBuilder.create(SpawnGroup.MONSTER, OrcEntity::new).dimensions(EntityDimensions.changing(1.35F, 2.2F)).build());
+    public static final EntityType<VoidShadeEntity> VOID_SHADE_ENTITY = register("void_shade", 1179727, 2956161,
+            FabricEntityTypeBuilder.create(SpawnGroup.MONSTER, VoidShadeEntity::new).dimensions(EntityDimensions.fixed(1.0F, 2.1F)).build());
+    public static final EntityType<AmethystGolemEntity> AMETHYST_GOLEM_ENTITY = register("amethyst_golem", 5395026, 9267916,
+            FabricEntityTypeBuilder.create(SpawnGroup.MONSTER, AmethystGolemEntity::new).dimensions(EntityDimensions.fixed(1.8F, 2.2F)).build());
+    public static final EntityType<DesertRhinoEntity> DESERT_RHINO_ENTITY = register("desert_rhino", 7884087, 12031588,
+            FabricEntityTypeBuilder.create(SpawnGroup.MONSTER, DesertRhinoEntity::new).dimensions(EntityDimensions.fixed(2.3F, 2.35F)).build());
+    public static final EntityType<ShamanEntity> SHAMAN_ENTITY = register("shaman", 210734, 8739394,
+            FabricEntityTypeBuilder.create(SpawnGroup.MONSTER, ShamanEntity::new).dimensions(EntityDimensions.fixed(0.9F, 2.01F)).build());
+    public static final EntityType<EnderwarthogEntity> ENDERWARTHOG_ENTITY = register("enderwarthog", 2828080, 6553725,
+            FabricEntityTypeBuilder.create(SpawnGroup.MONSTER, EnderwarthogEntity::new).dimensions(EntityDimensions.fixed(2.3F, 2.15F)).build());
 
     // Passive
-    public static final EntityType<RedFungusEntity> RED_FUNGUS_ENTITY = FabricEntityTypeBuilder.create(SpawnGroup.CREATURE, RedFungusEntity::new).dimensions(EntityDimensions.fixed(1.05F, 1.4F))
-            .build();
-    public static final EntityType<BrownFungusEntity> BROWN_FUNGUS_ENTITY = FabricEntityTypeBuilder.create(SpawnGroup.CREATURE, BrownFungusEntity::new).dimensions(EntityDimensions.fixed(1.35F, 1.8F))
-            .build();
-    public static final EntityType<NightmareEntity> NIGHTMARE_ENTITY = FabricEntityTypeBuilder.create(SpawnGroup.CREATURE, NightmareEntity::new).fireImmune()
-            .dimensions(EntityDimensions.fixed(1.4F, 1.6F)).build();
-    public static final EntityType<DragonEntity> DRAGON_ENTITY = FabricEntityTypeBuilder.create(SpawnGroup.CREATURE, DragonEntity::new).dimensions(EntityDimensions.changing(4.8F, 3.3F)).fireImmune()
-            .build();
-    public static final EntityType<MammothEntity> MAMMOTH_ENTITY = FabricEntityTypeBuilder.create(SpawnGroup.CREATURE, MammothEntity::new).dimensions(EntityDimensions.changing(2.8F, 3.5F)).build();
-    public static final EntityType<EnderWhaleEntity> ENDER_WHALE_ENTITY = FabricEntityTypeBuilder.create(SpawnGroup.CREATURE, EnderWhaleEntity::new).dimensions(EntityDimensions.fixed(4.0F, 2.5F))
-            .build();
-    public static final EntityType<IguanaEntity> IGUANA_ENTITY = FabricEntityTypeBuilder.create(SpawnGroup.CREATURE, IguanaEntity::new).dimensions(EntityDimensions.changing(1.5F, 0.5F)).build();
-    public static final EntityType<DeerEntity> DEER_ENTITY = FabricEntityTypeBuilder.create(SpawnGroup.CREATURE, DeerEntity::new).dimensions(EntityDimensions.changing(1.4F, 1.8F)).build();
+    public static final EntityType<RedFungusEntity> RED_FUNGUS_ENTITY = register("red_fungus", 13084791, 13183785,
+            FabricEntityTypeBuilder.create(SpawnGroup.CREATURE, RedFungusEntity::new).dimensions(EntityDimensions.fixed(1.05F, 1.4F)).build());
+    public static final EntityType<BrownFungusEntity> BROWN_FUNGUS_ENTITY = register("brown_fungus", 13084791, 9925201,
+            FabricEntityTypeBuilder.create(SpawnGroup.CREATURE, BrownFungusEntity::new).dimensions(EntityDimensions.fixed(1.35F, 1.8F)).build());
+    public static final EntityType<NightmareEntity> NIGHTMARE_ENTITY = register("nightmare", 1381653, 3012863,
+            FabricEntityTypeBuilder.create(SpawnGroup.CREATURE, NightmareEntity::new).fireImmune().dimensions(EntityDimensions.fixed(1.4F, 1.6F)).build());
+    public static final EntityType<DragonEntity> DRAGON_ENTITY = register("dragon", 1842204, 14711290,
+            FabricEntityTypeBuilder.create(SpawnGroup.CREATURE, DragonEntity::new).dimensions(EntityDimensions.changing(4.8F, 3.3F)).fireImmune().build());
+    public static final EntityType<MammothEntity> MAMMOTH_ENTITY = register("mammoth", 4732462, 6376763,
+            FabricEntityTypeBuilder.create(SpawnGroup.CREATURE, MammothEntity::new).dimensions(EntityDimensions.changing(2.8F, 3.5F)).build());
+    public static final EntityType<EnderWhaleEntity> ENDER_WHALE_ENTITY = register("ender_whale", 1711667, 6179950,
+            FabricEntityTypeBuilder.create(SpawnGroup.CREATURE, EnderWhaleEntity::new).dimensions(EntityDimensions.fixed(4.0F, 2.5F)).build());
+    public static final EntityType<IguanaEntity> IGUANA_ENTITY = register("iguana", 11485475, 8988193,
+            FabricEntityTypeBuilder.create(SpawnGroup.CREATURE, IguanaEntity::new).dimensions(EntityDimensions.changing(1.5F, 0.5F)).build());
+    public static final EntityType<DeerEntity> DEER_ENTITY = register("deer", 5780491, 9725748,
+            FabricEntityTypeBuilder.create(SpawnGroup.CREATURE, DeerEntity::new).dimensions(EntityDimensions.changing(1.4F, 1.8F)).build());
 
     // Nonliving Entity
-    public static final EntityType<ThrownRockEntity> THROWNROCK_ENTITY = FabricEntityTypeBuilder.<ThrownRockEntity>create(SpawnGroup.MISC, ThrownRockEntity::new)
-            .dimensions(EntityDimensions.fixed(1.5F, 1.5F)).build();
-    public static final EntityType<GildedStoneEntity> GILDEDSTONE_ENTITY = FabricEntityTypeBuilder.<GildedStoneEntity>create(SpawnGroup.MISC, GildedStoneEntity::new)
-            .dimensions(EntityDimensions.fixed(0.4F, 0.7F)).build();
-    public static final EntityType<TinyEyeEntity> TINYEYE_ENTITY = FabricEntityTypeBuilder.<TinyEyeEntity>create(SpawnGroup.MISC, TinyEyeEntity::new).dimensions(EntityDimensions.fixed(0.4F, 0.4F))
-            .build();
-    public static final EntityType<VoidBulletEntity> VOID_BULLET_ENTITY = FabricEntityTypeBuilder.<VoidBulletEntity>create(SpawnGroup.MISC, VoidBulletEntity::new)
-            .dimensions(EntityDimensions.fixed(0.5F, 0.5F)).build();
-    public static final EntityType<FireBreathEntity> FIRE_BREATH_ENTITY = FabricEntityTypeBuilder.<FireBreathEntity>create(SpawnGroup.MISC, FireBreathEntity::new)
-            .dimensions(EntityDimensions.fixed(0.3F, 0.3F)).build();
-    public static final EntityType<BlazeGuardianShieldEntity> BLAZEGUARDIAN_SHIELD_ENTITY = FabricEntityTypeBuilder.<BlazeGuardianShieldEntity>create(SpawnGroup.MISC, BlazeGuardianShieldEntity::new)
-            .fireImmune().dimensions(EntityDimensions.changing(0.65F, 1.6F)).build();
-    public static final EntityType<AmethystShardEntity> AMETHYST_SHARD_ENTITY = FabricEntityTypeBuilder.<AmethystShardEntity>create(SpawnGroup.MISC, AmethystShardEntity::new)
-            .dimensions(EntityDimensions.fixed(0.6F, 0.8F)).build();
-    public static final EntityType<VoidCloudEntity> VOID_CLOUD_ENTITY = FabricEntityTypeBuilder.<VoidCloudEntity>create(SpawnGroup.MISC, VoidCloudEntity::new)
-            .dimensions(EntityDimensions.changing(6.0F, 0.5F)).fireImmune().build();
+    public static final EntityType<ThrownRockEntity> THROWNROCK_ENTITY = register("thrown_rock", 0, 0,
+            FabricEntityTypeBuilder.<ThrownRockEntity>create(SpawnGroup.MISC, ThrownRockEntity::new).dimensions(EntityDimensions.fixed(1.5F, 1.5F)).build());
+    public static final EntityType<GildedStoneEntity> GILDEDSTONE_ENTITY = register("gilded_stone", 0, 0,
+            FabricEntityTypeBuilder.<GildedStoneEntity>create(SpawnGroup.MISC, GildedStoneEntity::new).dimensions(EntityDimensions.fixed(0.4F, 0.7F)).build());
+    public static final EntityType<TinyEyeEntity> TINYEYE_ENTITY = register("tiny_eye", 0, 0,
+            FabricEntityTypeBuilder.<TinyEyeEntity>create(SpawnGroup.MISC, TinyEyeEntity::new).dimensions(EntityDimensions.fixed(0.4F, 0.4F)).build());
+    public static final EntityType<VoidBulletEntity> VOID_BULLET_ENTITY = register("void_bullet", 0, 0,
+            FabricEntityTypeBuilder.<VoidBulletEntity>create(SpawnGroup.MISC, VoidBulletEntity::new).dimensions(EntityDimensions.fixed(0.5F, 0.5F)).build());
+    public static final EntityType<FireBreathEntity> FIRE_BREATH_ENTITY = register("fire_breath", 0, 0,
+            FabricEntityTypeBuilder.<FireBreathEntity>create(SpawnGroup.MISC, FireBreathEntity::new).dimensions(EntityDimensions.fixed(0.3F, 0.3F)).build());
+    public static final EntityType<BlazeGuardianShieldEntity> BLAZEGUARDIAN_SHIELD_ENTITY = register("blaze_guardian_shield", 0, 0,
+            FabricEntityTypeBuilder.<BlazeGuardianShieldEntity>create(SpawnGroup.MISC, BlazeGuardianShieldEntity::new).fireImmune().dimensions(EntityDimensions.fixed(0.65F, 1.6F)).build());
+    public static final EntityType<AmethystShardEntity> AMETHYST_SHARD_ENTITY = register("amethyst_shard", 0, 0,
+            FabricEntityTypeBuilder.<AmethystShardEntity>create(SpawnGroup.MISC, AmethystShardEntity::new).dimensions(EntityDimensions.fixed(0.6F, 0.8F)).build());
+    public static final EntityType<VoidCloudEntity> VOID_CLOUD_ENTITY = register("void_cloud", 0, 0,
+            FabricEntityTypeBuilder.<VoidCloudEntity>create(SpawnGroup.MISC, VoidCloudEntity::new).dimensions(EntityDimensions.changing(6.0F, 0.5F)).fireImmune().build());
+    public static final EntityType<VoidFragmentEntity> VOID_FRAGMENT_ENTITY = register("void_fragment", 1376335, 3670138,
+            FabricEntityTypeBuilder.create(SpawnGroup.MONSTER, VoidFragmentEntity::new).dimensions(EntityDimensions.changing(1.0F, 1.0F)).build());
+
+    // Damage Types
+    public static final RegistryKey<DamageType> AMETHYST_SHARD = RegistryKey.of(RegistryKeys.DAMAGE_TYPE, new Identifier("adventurez", "amethyst_shard"));
+    public static final RegistryKey<DamageType> VOID_BULLET = RegistryKey.of(RegistryKeys.DAMAGE_TYPE, new Identifier("adventurez", "void_bullet"));
+    public static final RegistryKey<DamageType> FIRE_BREATH = RegistryKey.of(RegistryKeys.DAMAGE_TYPE, new Identifier("adventurez", "fire_breath"));
+    public static final RegistryKey<DamageType> TINY_EYE = RegistryKey.of(RegistryKeys.DAMAGE_TYPE, new Identifier("adventurez", "tiny_eye"));
+    public static final RegistryKey<DamageType> ROCK = RegistryKey.of(RegistryKeys.DAMAGE_TYPE, new Identifier("adventurez", "rock"));
+
+    private static <T extends Entity> EntityType<T> register(String id, int primaryColor, int secondaryColor, EntityType<T> entityType) {
+        if (primaryColor != 0) {
+            Item item = Registry.register(Registries.ITEM, new Identifier("adventurez", "spawn_" + id),
+                    new SpawnEggItem((EntityType<? extends MobEntity>) entityType, primaryColor, secondaryColor, new Item.Settings()));
+            ItemGroupEvents.modifyEntriesEvent(ItemInit.ADVENTUREZ_ITEM_GROUP).register(entries -> entries.add(item));
+        }
+        return Registry.register(Registries.ENTITY_TYPE, new Identifier("adventurez", id), entityType);
+    }
 
     public static void init() {
-        Registry.register(Registry.ENTITY_TYPE, new Identifier("adventurez", "stone_golem"), STONEGOLEM_ENTITY);
-        Registry.register(Registry.ENTITY_TYPE, new Identifier("adventurez", "thrown_rock"), THROWNROCK_ENTITY);
-        Registry.register(Registry.ENTITY_TYPE, new Identifier("adventurez", "gilded_stone"), GILDEDSTONE_ENTITY);
-        Registry.register(Registry.ENTITY_TYPE, new Identifier("adventurez", "small_stone_golem"), SMALLSTONEGOLEM_ENTITY);
-        Registry.register(Registry.ENTITY_TYPE, new Identifier("adventurez", "piglin_beast"), PIGLINBEAST_ENTITY);
-        Registry.register(Registry.ENTITY_TYPE, new Identifier("adventurez", "nightmare"), NIGHTMARE_ENTITY);
-        Registry.register(Registry.ENTITY_TYPE, new Identifier("adventurez", "soul_reaper"), SOULREAPER_ENTITY);
-        Registry.register(Registry.ENTITY_TYPE, new Identifier("adventurez", "necromancer"), NECROMANCER_ENTITY);
-        Registry.register(Registry.ENTITY_TYPE, new Identifier("adventurez", "wither_puppet"), WITHERPUPPET_ENTITY);
-        Registry.register(Registry.ENTITY_TYPE, new Identifier("adventurez", "skeleton_vanguard"), SKELETON_VANGUARD_ENTITY);
-        Registry.register(Registry.ENTITY_TYPE, new Identifier("adventurez", "summoner"), SUMMONER_ENTITY);
-        Registry.register(Registry.ENTITY_TYPE, new Identifier("adventurez", "blaze_guardian"), BLAZEGUARDIAN_ENTITY);
-        Registry.register(Registry.ENTITY_TYPE, new Identifier("adventurez", "the_eye"), THE_EYE_ENTITY);
-        Registry.register(Registry.ENTITY_TYPE, new Identifier("adventurez", "void_shadow"), VOID_SHADOW_ENTITY);
-        Registry.register(Registry.ENTITY_TYPE, new Identifier("adventurez", "tiny_eye"), TINYEYE_ENTITY);
-        Registry.register(Registry.ENTITY_TYPE, new Identifier("adventurez", "red_fungus"), RED_FUNGUS_ENTITY);
-        Registry.register(Registry.ENTITY_TYPE, new Identifier("adventurez", "brown_fungus"), BROWN_FUNGUS_ENTITY);
-        Registry.register(Registry.ENTITY_TYPE, new Identifier("adventurez", "orc"), ORC_ENTITY);
-        Registry.register(Registry.ENTITY_TYPE, new Identifier("adventurez", "dragon"), DRAGON_ENTITY);
-        Registry.register(Registry.ENTITY_TYPE, new Identifier("adventurez", "mammoth"), MAMMOTH_ENTITY);
-        Registry.register(Registry.ENTITY_TYPE, new Identifier("adventurez", "void_fragment"), VOID_FRAGMENT_ENTITY);
-        Registry.register(Registry.ENTITY_TYPE, new Identifier("adventurez", "void_shade"), VOID_SHADE_ENTITY);
-        Registry.register(Registry.ENTITY_TYPE, new Identifier("adventurez", "void_bullet"), VOID_BULLET_ENTITY);
-        Registry.register(Registry.ENTITY_TYPE, new Identifier("adventurez", "fire_breath"), FIRE_BREATH_ENTITY);
-        Registry.register(Registry.ENTITY_TYPE, new Identifier("adventurez", "blaze_guardian_shield"), BLAZEGUARDIAN_SHIELD_ENTITY);
-        Registry.register(Registry.ENTITY_TYPE, new Identifier("adventurez", "ender_whale"), ENDER_WHALE_ENTITY);
-        Registry.register(Registry.ENTITY_TYPE, new Identifier("adventurez", "iguana"), IGUANA_ENTITY);
-        Registry.register(Registry.ENTITY_TYPE, new Identifier("adventurez", "amethyst_golem"), AMETHYST_GOLEM_ENTITY);
-        Registry.register(Registry.ENTITY_TYPE, new Identifier("adventurez", "amethyst_shard"), AMETHYST_SHARD_ENTITY);
-        Registry.register(Registry.ENTITY_TYPE, new Identifier("adventurez", "desert_rhino"), DESERT_RHINO_ENTITY);
-        Registry.register(Registry.ENTITY_TYPE, new Identifier("adventurez", "void_cloud"), VOID_CLOUD_ENTITY);
-        Registry.register(Registry.ENTITY_TYPE, new Identifier("adventurez", "shaman"), SHAMAN_ENTITY);
-        Registry.register(Registry.ENTITY_TYPE, new Identifier("adventurez", "deer"), DEER_ENTITY);
-        Registry.register(Registry.ENTITY_TYPE, new Identifier("adventurez", "enderwarthog"), ENDERWARTHOG_ENTITY);
-
         // Attributes
         FabricDefaultAttributeRegistry.register(STONEGOLEM_ENTITY, StoneGolemEntity.createStoneGolemAttributes());
         FabricDefaultAttributeRegistry.register(SMALLSTONEGOLEM_ENTITY, SmallStoneGolemEntity.createSmallStoneGolemAttributes());
@@ -145,35 +139,5 @@ public class EntityInit {
         FabricDefaultAttributeRegistry.register(SHAMAN_ENTITY, ShamanEntity.createShamanAttributes());
         FabricDefaultAttributeRegistry.register(DEER_ENTITY, DeerEntity.createDeerAttributes());
         FabricDefaultAttributeRegistry.register(ENDERWARTHOG_ENTITY, EnderwarthogEntity.createEnderwarthogAttributes());
-
-        // Spawn Eggs
-        Registry.register(Registry.ITEM, new Identifier("adventurez", "spawn_stone_golem"), new SpawnEggItem(STONEGOLEM_ENTITY, 2956072, 1445648, new Item.Settings().group(ItemGroup.MISC)));
-        Registry.register(Registry.ITEM, new Identifier("adventurez", "spawn_small_stone_golem"),
-                new SpawnEggItem(SMALLSTONEGOLEM_ENTITY, 4077380, 4400440, new Item.Settings().group(ItemGroup.MISC)));
-        Registry.register(Registry.ITEM, new Identifier("adventurez", "spawn_piglin_beast"), new SpawnEggItem(PIGLINBEAST_ENTITY, 5121815, 14192743, new Item.Settings().group(ItemGroup.MISC)));
-        Registry.register(Registry.ITEM, new Identifier("adventurez", "spawn_nightmare"), new SpawnEggItem(NIGHTMARE_ENTITY, 1381653, 3012863, new Item.Settings().group(ItemGroup.MISC)));
-        Registry.register(Registry.ITEM, new Identifier("adventurez", "spawn_soul_reaper"), new SpawnEggItem(SOULREAPER_ENTITY, 1381653, 5329747, new Item.Settings().group(ItemGroup.MISC)));
-        Registry.register(Registry.ITEM, new Identifier("adventurez", "spawn_necromancer"), new SpawnEggItem(NECROMANCER_ENTITY, 1447446, 15514145, new Item.Settings().group(ItemGroup.MISC)));
-        Registry.register(Registry.ITEM, new Identifier("adventurez", "spawn_wither_puppet"), new SpawnEggItem(WITHERPUPPET_ENTITY, 1250067, 3092271, new Item.Settings().group(ItemGroup.MISC)));
-        Registry.register(Registry.ITEM, new Identifier("adventurez", "spawn_skeleton_vanguard"),
-                new SpawnEggItem(SKELETON_VANGUARD_ENTITY, 12369084, 11766305, new Item.Settings().group(ItemGroup.MISC)));
-        Registry.register(Registry.ITEM, new Identifier("adventurez", "spawn_summoner"), new SpawnEggItem(SUMMONER_ENTITY, 12369084, 5847892, new Item.Settings().group(ItemGroup.MISC)));
-        Registry.register(Registry.ITEM, new Identifier("adventurez", "spawn_blaze_guardian"), new SpawnEggItem(BLAZEGUARDIAN_ENTITY, 16766248, 9122817, new Item.Settings().group(ItemGroup.MISC)));
-        Registry.register(Registry.ITEM, new Identifier("adventurez", "spawn_the_eye"), new SpawnEggItem(THE_EYE_ENTITY, 1984565, 1059889, new Item.Settings().group(ItemGroup.MISC)));
-        Registry.register(Registry.ITEM, new Identifier("adventurez", "spawn_void_shadow"), new SpawnEggItem(VOID_SHADOW_ENTITY, 1441901, 393244, new Item.Settings().group(ItemGroup.MISC)));
-        Registry.register(Registry.ITEM, new Identifier("adventurez", "spawn_red_fungus"), new SpawnEggItem(RED_FUNGUS_ENTITY, 13084791, 13183785, new Item.Settings().group(ItemGroup.MISC)));
-        Registry.register(Registry.ITEM, new Identifier("adventurez", "spawn_brown_fungus"), new SpawnEggItem(BROWN_FUNGUS_ENTITY, 13084791, 9925201, new Item.Settings().group(ItemGroup.MISC)));
-        Registry.register(Registry.ITEM, new Identifier("adventurez", "spawn_orc"), new SpawnEggItem(ORC_ENTITY, 2255437, 3512689, new Item.Settings().group(ItemGroup.MISC)));
-        Registry.register(Registry.ITEM, new Identifier("adventurez", "spawn_dragon"), new SpawnEggItem(DRAGON_ENTITY, 1842204, 14711290, new Item.Settings().group(ItemGroup.MISC)));
-        Registry.register(Registry.ITEM, new Identifier("adventurez", "spawn_mammoth"), new SpawnEggItem(MAMMOTH_ENTITY, 4732462, 6376763, new Item.Settings().group(ItemGroup.MISC)));
-        Registry.register(Registry.ITEM, new Identifier("adventurez", "spawn_void_fragment"), new SpawnEggItem(VOID_FRAGMENT_ENTITY, 1376335, 3670138, new Item.Settings().group(ItemGroup.MISC)));
-        Registry.register(Registry.ITEM, new Identifier("adventurez", "spawn_void_shade"), new SpawnEggItem(VOID_SHADE_ENTITY, 1179727, 2956161, new Item.Settings().group(ItemGroup.MISC)));
-        Registry.register(Registry.ITEM, new Identifier("adventurez", "spawn_ender_whale"), new SpawnEggItem(ENDER_WHALE_ENTITY, 1711667, 6179950, new Item.Settings().group(ItemGroup.MISC)));
-        Registry.register(Registry.ITEM, new Identifier("adventurez", "spawn_iguana"), new SpawnEggItem(IGUANA_ENTITY, 11485475, 8988193, new Item.Settings().group(ItemGroup.MISC)));
-        Registry.register(Registry.ITEM, new Identifier("adventurez", "spawn_amethyst_golem"), new SpawnEggItem(AMETHYST_GOLEM_ENTITY, 5395026, 9267916, new Item.Settings().group(ItemGroup.MISC)));
-        Registry.register(Registry.ITEM, new Identifier("adventurez", "spawn_desert_rhino"), new SpawnEggItem(DESERT_RHINO_ENTITY, 7884087, 12031588, new Item.Settings().group(ItemGroup.MISC)));
-        Registry.register(Registry.ITEM, new Identifier("adventurez", "spawn_shaman"), new SpawnEggItem(SHAMAN_ENTITY, 210734, 8739394, new Item.Settings().group(ItemGroup.MISC)));
-        Registry.register(Registry.ITEM, new Identifier("adventurez", "spawn_deer"), new SpawnEggItem(DEER_ENTITY, 5780491, 9725748, new Item.Settings().group(ItemGroup.MISC)));
-        Registry.register(Registry.ITEM, new Identifier("adventurez", "spawn_enderwarthog"), new SpawnEggItem(ENDERWARTHOG_ENTITY, 2828080, 6553725, new Item.Settings().group(ItemGroup.MISC)));
     }
 }

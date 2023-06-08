@@ -70,7 +70,7 @@ public class SoulReaperEntity extends HostileEntity implements RangedAttackMob {
     public SoulReaperEntity(EntityType<? extends HostileEntity> entityType, World world) {
         super(entityType, world);
         this.setPathfindingPenalty(PathNodeType.LAVA, 8.0F);
-        this.stepHeight = 1.0F;
+        this.setStepHeight(1.0f);
         this.experiencePoints = 30;
     }
 
@@ -93,13 +93,13 @@ public class SoulReaperEntity extends HostileEntity implements RangedAttackMob {
     @Nullable
     public EntityData initialize(ServerWorldAccess serverWorldAccess, LocalDifficulty difficulty, SpawnReason spawnReason, @Nullable EntityData entityData, @Nullable NbtCompound entityTag) {
         entityData = super.initialize(serverWorldAccess, difficulty, spawnReason, entityData, entityTag);
-        Random random = world.getRandom();
+        Random random = this.getWorld().getRandom();
         this.initEquipment(random, difficulty);
         this.updateEnchantments(random, difficulty);
         this.bowAttackGoal.setAttackInterval(40);
         this.goalSelector.add(4, this.bowAttackGoal);
         if (spawnReason.equals(SpawnReason.COMMAND) || spawnReason.equals(SpawnReason.NATURAL) || spawnReason.equals(SpawnReason.CHUNK_GENERATION)) {
-            NightmareEntity nightmareEntity = (NightmareEntity) EntityInit.NIGHTMARE_ENTITY.create(this.world);
+            NightmareEntity nightmareEntity = (NightmareEntity) EntityInit.NIGHTMARE_ENTITY.create(this.getWorld());
             nightmareEntity.refreshPositionAndAngles(this.getX(), this.getY(), this.getZ(), this.getYaw(), 0.0F);
             nightmareEntity.initialize(serverWorldAccess, difficulty, spawnReason, (EntityData) null, (NbtCompound) null);
             serverWorldAccess.spawnEntity(nightmareEntity);
@@ -164,7 +164,7 @@ public class SoulReaperEntity extends HostileEntity implements RangedAttackMob {
 
     @Override
     public void tickMovement() {
-        if (this.world != null && !this.world.isClient) {
+        if (this.getWorld() != null && !this.getWorld().isClient) {
             LivingEntity target = this.getTarget();
             if (target != null) {
                 if (this.distanceTo(target) > 7F) {
@@ -193,15 +193,15 @@ public class SoulReaperEntity extends HostileEntity implements RangedAttackMob {
 
     @Override
     public void attack(LivingEntity target, float pullProgress) {
-        ItemStack itemStack = this.getArrowType(this.getStackInHand(ProjectileUtil.getHandPossiblyHolding(this, Items.BOW)));
+        ItemStack itemStack = this.getProjectileType(this.getStackInHand(ProjectileUtil.getHandPossiblyHolding(this, Items.BOW)));
         PersistentProjectileEntity persistentProjectileEntity = this.createArrowProjectile(itemStack, pullProgress);
         double d = target.getX() - this.getX();
         double e = target.getBodyY(0.3333333333333333D) - persistentProjectileEntity.getY();
         double f = target.getZ() - this.getZ();
         double g = (double) MathHelper.sqrt((float) (d * d + f * f));
-        persistentProjectileEntity.setVelocity(d, e + g * 0.21D, f, 1.3F, (float) (14 - this.world.getDifficulty().getId() * 4));
+        persistentProjectileEntity.setVelocity(d, e + g * 0.21D, f, 1.3F, (float) (14 - this.getWorld().getDifficulty().getId() * 4));
         this.playSound(SoundEvents.ENTITY_SKELETON_SHOOT, 1.0F, 1.0F / (this.getRandom().nextFloat() * 0.4F + 0.8F));
-        this.world.spawnEntity(persistentProjectileEntity);
+        this.getWorld().spawnEntity(persistentProjectileEntity);
     }
 
     public PersistentProjectileEntity createArrowProjectile(ItemStack arrow, float damageModifier) {

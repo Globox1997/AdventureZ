@@ -24,11 +24,12 @@ import net.minecraft.item.EnchantedBookItem;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.Items;
 import net.minecraft.loot.LootTables;
-import net.minecraft.loot.context.LootContext;
+import net.minecraft.loot.context.LootContextParameterSet;
 import net.minecraft.loot.context.LootContextParameters;
 import net.minecraft.loot.context.LootContextTypes;
 import net.minecraft.nbt.NbtCompound;
 import net.minecraft.particle.ParticleTypes;
+import net.minecraft.registry.Registries;
 import net.minecraft.screen.GenericContainerScreenHandler;
 import net.minecraft.screen.ScreenHandler;
 import net.minecraft.server.world.ServerWorld;
@@ -38,7 +39,6 @@ import net.minecraft.util.Identifier;
 import net.minecraft.util.collection.DefaultedList;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Vec3d;
-import net.minecraft.util.registry.Registry;
 import net.minecraft.world.World;
 
 public class ShadowChestEntity extends LootableContainerBlockEntity implements LidOpenable {
@@ -191,45 +191,47 @@ public class ShadowChestEntity extends LootableContainerBlockEntity implements L
     }
 
     public void setRandomLoot() {
-        // LootableContainerBlockEntity.setLootTable(world, this.world.random, this.pos, LootTables.END_CITY_TREASURE_CHEST);
-        List<ItemStack> tableList = this.world.getServer().getLootManager().getTable(LootTables.END_CITY_TREASURE_CHEST).generateLoot(
-                (new LootContext.Builder((ServerWorld) this.world)).parameter(LootContextParameters.ORIGIN, Vec3d.ofCenter(this.pos)).random(this.world.random).build(LootContextTypes.CHEST));
-        for (int i = 0; i < 27; i++) {
-            if (i == 20 && this.world.random.nextFloat() < 0.2F && FabricLoader.getInstance().isModLoaded("medievalweapons")) {
-                this.inventory.set(i, new ItemStack(Registry.ITEM.get(new Identifier("medievalweapons", "thalleous_sword"))));
-                continue;
-            }
-            if (i == 13)
-                this.inventory.set(i, new ItemStack(ItemInit.SOURCE_STONE));
-            else if (i == 1)
-                this.inventory.set(i, new ItemStack(Items.DRAGON_EGG));
-            else {
-                switch (this.world.random.nextInt(10)) {
-                case 0:
-                    this.inventory.set(i, new ItemStack(Items.ENDER_PEARL, this.world.random.nextInt(5) + 1));
-                    break;
-                case 4:
-                    this.inventory.set(i, new ItemStack(Items.GOLDEN_APPLE, 1));
-                    break;
-                case 5:
-                    this.inventory.set(i, new ItemStack(Items.EXPERIENCE_BOTTLE, this.world.random.nextInt(12) + 1));
-                    break;
-                case 6:
-                    ItemStack stack = new ItemStack(Items.ENCHANTED_BOOK);
-                    List<Enchantment> list = Registry.ENCHANTMENT.stream().filter(Enchantment::isAvailableForRandomSelection).collect(Collectors.toList());
-                    Enchantment enchantment = list.get(world.random.nextInt(list.size()));
-                    EnchantedBookItem.addEnchantment(stack,
-                            new EnchantmentLevelEntry(enchantment, ConfigInit.CONFIG.allow_special_enchant_loot ? enchantment.getMaxLevel() + 1 : enchantment.getMaxLevel()));
-                    NbtCompound nbt = stack.getNbt();
-                    nbt.putBoolean("void_drop", true);
-                    stack.setNbt(nbt);
-                    this.inventory.set(i, stack);
-                    break;
-                case 7:
-                    this.inventory.set(i, tableList.get(this.world.random.nextInt(tableList.size())));
-                    break;
-                default:
-                    break;
+        if (!this.getWorld().isClient()) {
+            List<ItemStack> tableList = this.getWorld().getServer().getLootManager().getLootTable(LootTables.END_CITY_TREASURE_CHEST)
+                    .generateLoot(new LootContextParameterSet.Builder((ServerWorld) this.getWorld()).add(LootContextParameters.ORIGIN, Vec3d.ofCenter(this.pos)).build(LootContextTypes.CHEST));
+
+            for (int i = 0; i < 27; i++) {
+                if (i == 20 && this.getWorld().getRandom().nextFloat() < 0.2F && FabricLoader.getInstance().isModLoaded("medievalweapons")) {
+                    this.inventory.set(i, new ItemStack(Registries.ITEM.get(new Identifier("medievalweapons", "thalleous_sword"))));
+                    continue;
+                }
+                if (i == 13)
+                    this.inventory.set(i, new ItemStack(ItemInit.SOURCE_STONE));
+                else if (i == 1)
+                    this.inventory.set(i, new ItemStack(Items.DRAGON_EGG));
+                else {
+                    switch (this.getWorld().getRandom().nextInt(10)) {
+                    case 0:
+                        this.inventory.set(i, new ItemStack(Items.ENDER_PEARL, this.getWorld().getRandom().nextInt(5) + 1));
+                        break;
+                    case 4:
+                        this.inventory.set(i, new ItemStack(Items.GOLDEN_APPLE, 1));
+                        break;
+                    case 5:
+                        this.inventory.set(i, new ItemStack(Items.EXPERIENCE_BOTTLE, this.getWorld().getRandom().nextInt(12) + 1));
+                        break;
+                    case 6:
+                        ItemStack stack = new ItemStack(Items.ENCHANTED_BOOK);
+                        List<Enchantment> list = Registries.ENCHANTMENT.stream().filter(Enchantment::isAvailableForRandomSelection).collect(Collectors.toList());
+                        Enchantment enchantment = list.get(this.getWorld().getRandom().nextInt(list.size()));
+                        EnchantedBookItem.addEnchantment(stack,
+                                new EnchantmentLevelEntry(enchantment, ConfigInit.CONFIG.allow_special_enchant_loot ? enchantment.getMaxLevel() + 1 : enchantment.getMaxLevel()));
+                        NbtCompound nbt = stack.getNbt();
+                        nbt.putBoolean("void_drop", true);
+                        stack.setNbt(nbt);
+                        this.inventory.set(i, stack);
+                        break;
+                    case 7:
+                        this.inventory.set(i, tableList.get(this.getWorld().getRandom().nextInt(tableList.size())));
+                        break;
+                    default:
+                        break;
+                    }
                 }
             }
         }

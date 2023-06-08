@@ -40,12 +40,12 @@ import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.ToolItem;
 import net.minecraft.nbt.NbtCompound;
+import net.minecraft.registry.Registries;
 import net.minecraft.sound.SoundEvent;
 import net.minecraft.util.Hand;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Vec3d;
 import net.minecraft.util.math.random.Random;
-import net.minecraft.util.registry.Registry;
 
 public class OrcEntity extends HostileEntity {
     public static final TrackedData<Integer> ORK_SIZE;
@@ -56,6 +56,8 @@ public class OrcEntity extends HostileEntity {
 
     public OrcEntity(EntityType<? extends HostileEntity> entityType, World world) {
         super(entityType, world);
+        this.setStepHeight(1.0f);
+        this.reinitDimensions();
     }
 
     public static DefaultAttributeContainer.Builder createOrkAttributes() {
@@ -114,8 +116,9 @@ public class OrcEntity extends HostileEntity {
 
     @Override
     public boolean canImmediatelyDespawn(double distanceSquared) {
-        if (!this.inventory.getStack(0).isEmpty())
+        if (!this.inventory.getStack(0).isEmpty()) {
             return false;
+        }
         return true;
     }
 
@@ -127,6 +130,9 @@ public class OrcEntity extends HostileEntity {
         this.dataTracker.set(ORK_SIZE, size);
         this.refreshPosition();
         this.calculateDimensions();
+        this.getAttributeInstance(EntityAttributes.GENERIC_MAX_HEALTH).setBaseValue((double) (16D + (float) size * 6D));
+        this.getAttributeInstance(EntityAttributes.GENERIC_MOVEMENT_SPEED).setBaseValue((double) (0.26F - 0.012F * (float) size));
+        this.getAttributeInstance(EntityAttributes.GENERIC_ATTACK_DAMAGE).setBaseValue((double) size * 3D + 2D);
         if (healOrc) {
             this.setHealth(this.getMaxHealth());
         }
@@ -181,11 +187,7 @@ public class OrcEntity extends HostileEntity {
     @Nullable
     @Override
     public EntityData initialize(ServerWorldAccess world, LocalDifficulty difficulty, SpawnReason spawnReason, @Nullable EntityData entityData, @Nullable NbtCompound entityTag) {
-        int random = this.random.nextInt(3) + 1;
-        this.getAttributeInstance(EntityAttributes.GENERIC_MAX_HEALTH).setBaseValue((double) (16D + random * 6D));
-        this.getAttributeInstance(EntityAttributes.GENERIC_MOVEMENT_SPEED).setBaseValue((double) (0.26F - 0.012F * (float) random));
-        this.getAttributeInstance(EntityAttributes.GENERIC_ATTACK_DAMAGE).setBaseValue((double) random * 3D + 2D);
-        this.setSize(random, true);
+        this.setSize(this.getRandom().nextInt(3) + 1, true);
         return super.initialize(world, difficulty, spawnReason, entityData, entityTag);
     }
 
@@ -196,7 +198,7 @@ public class OrcEntity extends HostileEntity {
 
     @Override
     public boolean damage(DamageSource source, float amount) {
-        if (this.world.random.nextInt(3) == 0 && !this.dataTracker.get(DOUBLE_HAND_ATTACK)) {
+        if (this.getWorld().getRandom().nextInt(3) == 0 && !this.dataTracker.get(DOUBLE_HAND_ATTACK)) {
             dataTracker.set(DOUBLE_HAND_ATTACK, true);
         } else {
             dataTracker.set(DOUBLE_HAND_ATTACK, false);
@@ -220,12 +222,13 @@ public class OrcEntity extends HostileEntity {
     public boolean isBigOrc() {
         if (this.getSize() == 3) {
             return true;
-        } else
+        } else {
             return false;
+        }
     }
 
     private void setItemId(Item item) {
-        this.dataTracker.set(INVENTORY_ITEM_ID, Registry.ITEM.getRawId(item));
+        this.dataTracker.set(INVENTORY_ITEM_ID, Registries.ITEM.getRawId(item));
     }
 
     static {
@@ -254,11 +257,11 @@ public class OrcEntity extends HostileEntity {
                 this.resetCooldown();
                 this.mob.swingHand(Hand.MAIN_HAND);
                 this.mob.tryAttack(target);
-                if (!this.orcEntity.isBigOrc() && this.orcEntity.inventory.isEmpty() && this.orcEntity.world.random.nextFloat() <= 0.3F && target instanceof PlayerEntity) {
+                if (!this.orcEntity.isBigOrc() && this.orcEntity.inventory.isEmpty() && this.orcEntity.getWorld().getRandom().nextFloat() <= 0.3F && target instanceof PlayerEntity) {
                     PlayerEntity playerEntity = (PlayerEntity) target;
                     for (int i = 45; i > 0; i--) {
                         if (!playerEntity.getInventory().getStack(i).isEmpty() && playerEntity.getInventory().getStack(i).getItem() instanceof ToolItem
-                                && playerEntity.world.random.nextFloat() < 0.3F) {
+                                && playerEntity.getWorld().getRandom().nextFloat() < 0.3F) {
                             this.orcEntity.inventory.setStack(0, playerEntity.getInventory().getStack(i));
                             this.orcEntity.setItemId(this.orcEntity.inventory.getStack(0).getItem());
                             playerEntity.getInventory().setStack(i, ItemStack.EMPTY);
@@ -303,7 +306,7 @@ public class OrcEntity extends HostileEntity {
                 --this.checkSurroundingDelay;
                 return false;
             } else {
-                List<? extends OrcEntity> list = orcEntity.world.getNonSpectatingEntities(orcEntity.getClass(), orcEntity.getBoundingBox().expand(30.0D, 8.0D, 30.0D));
+                List<? extends OrcEntity> list = orcEntity.getWorld().getNonSpectatingEntities(orcEntity.getClass(), orcEntity.getBoundingBox().expand(30.0D, 8.0D, 30.0D));
                 if (list.size() > 0) {
                     for (int i = 0; i < list.size(); i++) {
                         if (list.get(i).getSize() == 3) {
@@ -383,7 +386,7 @@ public class OrcEntity extends HostileEntity {
 
         @Override
         public boolean canStart() {
-            if (this.orcEntity.isBigOrc() || this.orcEntity.inventory.isEmpty() || this.orcEntity.world.getClosestPlayer(this.orcEntity, 16D) == null) {
+            if (this.orcEntity.isBigOrc() || this.orcEntity.inventory.isEmpty() || this.orcEntity.getWorld().getClosestPlayer(this.orcEntity, 16D) == null) {
                 return false;
             } else {
                 return this.findTarget();
@@ -409,10 +412,11 @@ public class OrcEntity extends HostileEntity {
 
         @Override
         public boolean shouldContinue() {
-            if (this.orcEntity.world.getClosestPlayer(this.orcEntity, 18D) == null)
+            if (this.orcEntity.getWorld().getClosestPlayer(this.orcEntity, 18D) == null) {
                 return false;
-            else
+            } else {
                 return !this.orcEntity.getNavigation().isIdle();
+            }
         }
 
     }

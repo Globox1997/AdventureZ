@@ -4,7 +4,6 @@ import net.minecraft.entity.projectile.thrown.ThrownItemEntity;
 import net.adventurez.init.EffectInit;
 import net.adventurez.init.EntityInit;
 import net.adventurez.init.SoundInit;
-import net.adventurez.network.EntitySpawnPacket;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
 import net.minecraft.block.BlockState;
@@ -12,23 +11,19 @@ import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityType;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.damage.DamageSource;
-import net.minecraft.entity.damage.ProjectileDamageSource;
 import net.minecraft.entity.effect.StatusEffectInstance;
 import net.minecraft.entity.effect.StatusEffects;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.Items;
-import net.minecraft.network.Packet;
 import net.minecraft.particle.BlockStateParticleEffect;
 import net.minecraft.particle.ParticleEffect;
 import net.minecraft.particle.ParticleTypes;
 import net.minecraft.sound.SoundCategory;
 import net.minecraft.util.hit.EntityHitResult;
 import net.minecraft.util.hit.HitResult;
-import net.minecraft.world.GameRules;
 import net.minecraft.world.World;
-import net.minecraft.world.explosion.Explosion;
 
 @SuppressWarnings("deprecation")
 public class ThrownRockEntity extends ThrownItemEntity {
@@ -63,8 +58,8 @@ public class ThrownRockEntity extends ThrownItemEntity {
         if (status == 3) {
             ParticleEffect particleEffect = this.getParticleParameters();
             for (int i = 0; i < 32; ++i)
-                this.world.addParticle(particleEffect, this.getX() + this.world.random.nextDouble() * 0.35D - 0.175D, this.getY(), this.getZ() + this.world.random.nextDouble() * 0.35D - 0.175D, 0.0D,
-                        0.1D, 0.0D);
+                this.getWorld().addParticle(particleEffect, this.getX() + this.getWorld().getRandom().nextDouble() * 0.35D - 0.175D, this.getY(),
+                        this.getZ() + this.getWorld().getRandom().nextDouble() * 0.35D - 0.175D, 0.0D, 0.1D, 0.0D);
         }
 
     }
@@ -73,17 +68,16 @@ public class ThrownRockEntity extends ThrownItemEntity {
     protected void onCollision(HitResult hitResult) {
         super.onCollision(hitResult);
         BlockState state = this.getLandingBlockState();
-        if (this.world.isClient) {
+        if (this.getWorld().isClient()) {
             for (int i = 0; i < 32; ++i)
-                this.world.addParticle(new BlockStateParticleEffect(ParticleTypes.BLOCK, state), this.getX() + this.world.random.nextDouble() * 0.35D - 0.175D, this.getY(),
-                        this.getZ() + this.world.random.nextDouble() * 0.35D - 0.175D, 0.0D, 0.1D, 0.0D);
+                this.getWorld().addParticle(new BlockStateParticleEffect(ParticleTypes.BLOCK, state), this.getX() + this.getWorld().random.nextDouble() * 0.35D - 0.175D, this.getY(),
+                        this.getZ() + this.getWorld().random.nextDouble() * 0.35D - 0.175D, 0.0D, 0.1D, 0.0D);
         } else {
             if (this.getOwner() instanceof PlayerEntity && ((PlayerEntity) this.getOwner()).hasStatusEffect(EffectInit.BLACKSTONED_HEART)) {
-                Explosion.DestructionType destructionType = this.world.getGameRules().getBoolean(GameRules.DO_MOB_GRIEFING) ? Explosion.DestructionType.DESTROY : Explosion.DestructionType.NONE;
-                this.world.createExplosion(this, this.getX(), this.getEyeY(), this.getZ(), 1.5F, false, destructionType);
+                this.getWorld().createExplosion(this, this.getX(), this.getEyeY(), this.getZ(), 1.5F, false, World.ExplosionSourceType.MOB);
             }
-            this.world.playSound(null, this.getBlockPos(), SoundInit.ROCK_IMPACT_EVENT, SoundCategory.BLOCKS, 0.7F, 1F);
-            this.world.sendEntityStatus(this, (byte) 3);
+            this.getWorld().playSound(null, this.getBlockPos(), SoundInit.ROCK_IMPACT_EVENT, SoundCategory.BLOCKS, 0.7F, 1F);
+            this.getWorld().sendEntityStatus(this, (byte) 3);
             this.discard();
         }
     }
@@ -98,7 +92,7 @@ public class ThrownRockEntity extends ThrownItemEntity {
     @Override
     protected void onEntityHit(EntityHitResult entityHitResult) {
         super.onEntityHit(entityHitResult);
-        if (!this.world.isClient) {
+        if (!this.getWorld().isClient()) {
             Entity entity = entityHitResult.getEntity();
             Entity owner = this.getOwner();
             DamageSource damageSource = createDamageSource(this, owner == null ? this : owner);
@@ -126,11 +120,7 @@ public class ThrownRockEntity extends ThrownItemEntity {
     }
 
     private DamageSource createDamageSource(Entity entity, Entity owner) {
-        return new ProjectileDamageSource("rock", entity, owner).setProjectile();
+        return entity.getDamageSources().create(EntityInit.ROCK, entity, owner);
     }
 
-    @Override
-    public Packet<?> createSpawnPacket() {
-        return EntitySpawnPacket.createPacket(this);
-    }
 }

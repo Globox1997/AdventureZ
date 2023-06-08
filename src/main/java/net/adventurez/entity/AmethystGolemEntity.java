@@ -45,7 +45,7 @@ public class AmethystGolemEntity extends HostileEntity {
 
     public AmethystGolemEntity(EntityType<? extends HostileEntity> entityType, World world) {
         super(entityType, world);
-        this.stepHeight = 1.0F;
+        this.setStepHeight(1.0f);
     }
 
     public static DefaultAttributeContainer.Builder createAmethystGolemAttributes() {
@@ -96,7 +96,7 @@ public class AmethystGolemEntity extends HostileEntity {
     @Override
     public void tick() {
         super.tick();
-        if (!this.world.isClient && this.dataTracker.get(BACK_CRYSTALS) < 4) {
+        if (!this.getWorld().isClient() && this.dataTracker.get(BACK_CRYSTALS) < 4) {
             this.grow++;
             if (this.grow >= 3600) {
                 this.dataTracker.set(BACK_CRYSTALS, this.dataTracker.get(BACK_CRYSTALS) + 1);
@@ -109,7 +109,7 @@ public class AmethystGolemEntity extends HostileEntity {
 
     @Override
     public EntityData initialize(ServerWorldAccess world, LocalDifficulty difficulty, SpawnReason spawnReason, @Nullable EntityData entityData, @Nullable NbtCompound entityTag) {
-        int random = this.random.nextInt(5);
+        int random = this.getRandom().nextInt(5);
         this.dataTracker.set(BACK_CRYSTALS, random);
         if (random > 0)
             this.getAttributeInstance(EntityAttributes.GENERIC_MAX_HEALTH).setBaseValue(this.getAttributeBaseValue(EntityAttributes.GENERIC_MAX_HEALTH) + random * 10.0D);
@@ -123,7 +123,7 @@ public class AmethystGolemEntity extends HostileEntity {
 
     @Override
     public void checkDespawn() {
-        if (this.world.getDifficulty() == Difficulty.PEACEFUL) {
+        if (this.getWorld().getDifficulty() == Difficulty.PEACEFUL) {
             this.discard();
         }
     }
@@ -149,19 +149,19 @@ public class AmethystGolemEntity extends HostileEntity {
     }
 
     public void amethystGolemRageMode() {
-        if (this.world instanceof ServerWorld) {
+        if (this.getWorld() instanceof ServerWorld) {
             this.getAttributeInstance(EntityAttributes.GENERIC_ARMOR).setBaseValue(this.getAttributeBaseValue(EntityAttributes.GENERIC_ARMOR) + 2.0D);
             if (!this.isStronger)
                 this.getAttributeInstance(EntityAttributes.GENERIC_MOVEMENT_SPEED).setBaseValue(this.getAttributeBaseValue(EntityAttributes.GENERIC_MOVEMENT_SPEED) + 0.1D);
-            ((ServerWorld) world).playSoundFromEntity(null, this, SoundInit.AMETHYST_GOLEM_RAGE_EVENT, SoundCategory.HOSTILE, 1.0F, 1.0F);
+            ((ServerWorld) this.getWorld()).playSoundFromEntity(null, this, SoundInit.AMETHYST_GOLEM_RAGE_EVENT, SoundCategory.HOSTILE, 1.0F, 1.0F);
             for (int i = 0; i < 20; i++) {
-                double d = (double) this.getX() - 1.0F + this.world.random.nextFloat() * 2.0F;
-                double e = (double) ((float) this.getRandomBodyY() + this.world.random.nextFloat() * 0.1F);
-                double f = (double) this.getZ() - 1.0F + this.world.random.nextFloat() * 2.0F;
-                double g = (double) (world.random.nextFloat() * 0.4D);
-                double h = (double) world.random.nextFloat() * 0.2D;
-                double l = (double) (world.random.nextFloat() * 0.4D);
-                ((ServerWorld) world).spawnParticles(ParticleInit.AMETHYST_SHARD_PARTICLE, d, e, f, 4, g, h, l, 1.0D);
+                double d = (double) this.getX() - 1.0F + this.getWorld().getRandom().nextFloat() * 2.0F;
+                double e = (double) ((float) this.getRandomBodyY() + this.getWorld().getRandom().nextFloat() * 0.1F);
+                double f = (double) this.getZ() - 1.0F + this.getWorld().getRandom().nextFloat() * 2.0F;
+                double g = (double) (this.getWorld().getRandom().nextFloat() * 0.4D);
+                double h = (double) this.getWorld().getRandom().nextFloat() * 0.2D;
+                double l = (double) (this.getWorld().getRandom().nextFloat() * 0.4D);
+                ((ServerWorld) this.getWorld()).spawnParticles(ParticleInit.AMETHYST_SHARD_PARTICLE, d, e, f, 4, g, h, l, 1.0D);
             }
             this.isStronger = true;
         }
@@ -183,7 +183,7 @@ public class AmethystGolemEntity extends HostileEntity {
 
         @Override
         public boolean canStart() {
-            long l = this.amethystGolemEntity.world.getTime();
+            long l = this.amethystGolemEntity.getWorld().getTime();
             if (l - this.lastUpdateTime < 100L || this.cooldown-- > 0) {
                 return false;
             } else {
@@ -221,14 +221,14 @@ public class AmethystGolemEntity extends HostileEntity {
         @Override
         public void start() {
             this.amethystGolemEntity.swingHand(Hand.MAIN_HAND);
-            if (!this.amethystGolemEntity.world.isClient) {
-                ((ServerWorld) this.amethystGolemEntity.world).playSoundFromEntity(null, this.amethystGolemEntity, SoundInit.ROCK_THROW_EVENT, SoundCategory.HOSTILE, 0.74F, 1.0F);
-                AmethystShardEntity amethystShardEntity = new AmethystShardEntity(this.amethystGolemEntity, world);
+            if (!this.amethystGolemEntity.getWorld().isClient()) {
+                ((ServerWorld) this.amethystGolemEntity.getWorld()).playSoundFromEntity(null, this.amethystGolemEntity, SoundInit.ROCK_THROW_EVENT, SoundCategory.HOSTILE, 0.74F, 1.0F);
+                AmethystShardEntity amethystShardEntity = new AmethystShardEntity(this.amethystGolemEntity, this.amethystGolemEntity.getWorld());
                 amethystShardEntity.setVelocity(amethystGolemEntity, amethystGolemEntity.getPitch(), amethystGolemEntity.getYaw(), -20.0F, 0.7F, 1.0F);
-                world.spawnEntity(amethystShardEntity);
+                this.amethystGolemEntity.getWorld().spawnEntity(amethystShardEntity);
 
             }
-            this.cooldown = 80 + this.amethystGolemEntity.random.nextInt(200);
+            this.cooldown = 80 + this.amethystGolemEntity.getRandom().nextInt(200);
             this.stop();
         }
     }

@@ -42,6 +42,7 @@ import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.nbt.NbtCompound;
 import net.minecraft.particle.ParticleTypes;
 import net.minecraft.predicate.entity.EntityPredicates;
+import net.minecraft.registry.tag.DamageTypeTags;
 import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.server.world.ServerWorld;
 import net.minecraft.sound.SoundCategory;
@@ -64,7 +65,6 @@ import net.minecraft.world.Difficulty;
 import net.minecraft.world.GameRules;
 import net.minecraft.world.SpawnHelper;
 import net.minecraft.world.World;
-import net.minecraft.world.explosion.Explosion;
 import net.voidz.init.BlockInit;
 import net.minecraft.world.Heightmap;
 
@@ -169,7 +169,7 @@ public class TheEyeEntity extends FlyingEntity {
     @Override
     public void tickMovement() {
         Vec3d vec3d = this.getVelocity().multiply(0.8D, 0.5D, 0.8D);
-        if (!this.world.isClient && this.getTarget() != null) {
+        if (!this.getWorld().isClient() && this.getTarget() != null) {
             Entity entity = this.getTarget();
             double d = Math.max(0.0D, vec3d.y);
 
@@ -198,10 +198,9 @@ public class TheEyeEntity extends FlyingEntity {
         if (this.getInvulnerableTimer() > 0) {
             j = this.getInvulnerableTimer() - 1;
             if (j <= 0) {
-                Explosion.DestructionType destructionType = this.world.getGameRules().getBoolean(GameRules.DO_MOB_GRIEFING) ? Explosion.DestructionType.DESTROY : Explosion.DestructionType.NONE;
-                this.world.createExplosion(this, this.getX(), this.getEyeY(), this.getZ(), 7.0F, false, destructionType);
+                this.getWorld().createExplosion(this, this.getX(), this.getEyeY(), this.getZ(), 7.0F, false, World.ExplosionSourceType.MOB);
                 if (!this.isSilent()) {
-                    this.world.syncGlobalEvent(1023, this.getBlockPos(), 0);
+                    this.getWorld().syncGlobalEvent(1023, this.getBlockPos(), 0);
                 }
             }
             this.getNavigation().stop();
@@ -213,19 +212,19 @@ public class TheEyeEntity extends FlyingEntity {
             if (livingEntity != null && livingEntity.isAlive()) {
                 if (attackTpCounter >= 120 && !this.hasBeamTarget()) {
                     for (int counter = 0; counter < 100; counter++) {
-                        float randomFloat = this.world.getRandom().nextFloat() * 6.2831855F;
-                        int posX = livingEntity.getBlockPos().getX() + MathHelper.floor(MathHelper.cos(randomFloat) * 9.0F + livingEntity.world.getRandom().nextInt(12));
-                        int posZ = livingEntity.getBlockPos().getZ() + MathHelper.floor(MathHelper.sin(randomFloat) * 9.0F + livingEntity.world.getRandom().nextInt(12));
-                        int posY = livingEntity.world.getTopY(Heightmap.Type.WORLD_SURFACE, posX, posZ) + 10 + livingEntity.world.getRandom().nextInt(12);
+                        float randomFloat = this.getWorld().getRandom().nextFloat() * 6.2831855F;
+                        int posX = livingEntity.getBlockPos().getX() + MathHelper.floor(MathHelper.cos(randomFloat) * 9.0F + livingEntity.getWorld().getRandom().nextInt(12));
+                        int posZ = livingEntity.getBlockPos().getZ() + MathHelper.floor(MathHelper.sin(randomFloat) * 9.0F + livingEntity.getWorld().getRandom().nextInt(12));
+                        int posY = livingEntity.getWorld().getTopY(Heightmap.Type.WORLD_SURFACE, posX, posZ) + 10 + livingEntity.getWorld().getRandom().nextInt(12);
                         BlockPos teleportPos = new BlockPos(posX, posY, posZ);
-                        if (livingEntity.world.isRegionLoaded(teleportPos.getX() - 4, teleportPos.getY() - 4, teleportPos.getZ() - 4, teleportPos.getX() + 4, teleportPos.getY() + 4,
-                                teleportPos.getZ() + 4) && SpawnHelper.canSpawn(SpawnRestriction.Location.ON_GROUND, livingEntity.world, teleportPos, EntityInit.THE_EYE_ENTITY)) {
+                        if (livingEntity.getWorld().isRegionLoaded(teleportPos.getX() - 4, teleportPos.getY() - 4, teleportPos.getZ() - 4, teleportPos.getX() + 4, teleportPos.getY() + 4,
+                                teleportPos.getZ() + 4) && SpawnHelper.canSpawn(SpawnRestriction.Location.ON_GROUND, livingEntity.getWorld(), teleportPos, EntityInit.THE_EYE_ENTITY)) {
                             this.lookControl.lookAt(teleportPos.getX(), teleportPos.getY(), teleportPos.getZ());
-                            if (!world.isClient) {
+                            if (!this.getWorld().isClient()) {
                                 livingEntity.teleport(teleportPos.getX(), teleportPos.getY(), teleportPos.getZ());
                             }
-                            livingEntity.world.playSound(null, teleportPos, SoundEvents.ENTITY_ENDERMAN_TELEPORT, SoundCategory.HOSTILE, 1.0F, 1.0F);
-                            if (this.world.isClient) {
+                            livingEntity.getWorld().playSound(null, teleportPos, SoundEvents.ENTITY_ENDERMAN_TELEPORT, SoundCategory.HOSTILE, 1.0F, 1.0F);
+                            if (this.getWorld().isClient()) {
                                 this.despawnParticlesServer(livingEntity);
                             }
 
@@ -241,7 +240,7 @@ public class TheEyeEntity extends FlyingEntity {
             int n;
             if (this.field_7082 > 0) {
                 --this.field_7082;
-                if (this.field_7082 == 0 && this.world.getGameRules().getBoolean(GameRules.DO_MOB_GRIEFING)) {
+                if (this.field_7082 == 0 && this.getWorld().getGameRules().getBoolean(GameRules.DO_MOB_GRIEFING)) {
                     j = MathHelper.floor(this.getY());
                     n = MathHelper.floor(this.getX());
                     int o = MathHelper.floor(this.getZ());
@@ -254,16 +253,16 @@ public class TheEyeEntity extends FlyingEntity {
                                 int t = j + r;
                                 int u = o + q;
                                 BlockPos blockPos = new BlockPos(s, t, u);
-                                BlockState blockState = this.world.getBlockState(blockPos);
+                                BlockState blockState = this.getWorld().getBlockState(blockPos);
                                 if (canDestroy(blockState)) {
-                                    bl = this.world.breakBlock(blockPos, true, this) || bl;
+                                    bl = this.getWorld().breakBlock(blockPos, true, this) || bl;
                                 }
                             }
                         }
                     }
 
                     if (bl) {
-                        this.world.syncWorldEvent((PlayerEntity) null, 1022, this.getBlockPos(), 0);
+                        this.getWorld().syncWorldEvent((PlayerEntity) null, 1022, this.getBlockPos(), 0);
                     }
                 }
             }
@@ -279,17 +278,17 @@ public class TheEyeEntity extends FlyingEntity {
     @Override
     public void tick() {
         super.tick();
-        if (!this.world.isClient && this.duplicationTimer > 0) {
+        if (!this.getWorld().isClient() && this.duplicationTimer > 0) {
             this.duplicationTimer--;
             if (this.duplicationTimer == 20) {
                 for (int i = 0; i < 50; i++) {
-                    double d = (double) this.getX() - 1.5F + this.world.random.nextFloat() * 3.0F;
-                    double e = (double) ((float) this.getRandomBodyY() + this.world.random.nextFloat() * 0.1F);
-                    double f = (double) this.getZ() - 1.5F + this.world.random.nextFloat() * 3.0F;
-                    double g = (double) (world.random.nextFloat() * 0.2D);
-                    double h = (double) world.random.nextFloat() * 0.1D;
-                    double l = (double) (world.random.nextFloat() * 0.2D);
-                    ((ServerWorld) world).spawnParticles(ParticleTypes.PORTAL, d, e, f, 4, g, h, l, 1.0D);
+                    double d = (double) this.getX() - 1.5F + this.getWorld().getRandom().nextFloat() * 3.0F;
+                    double e = (double) ((float) this.getRandomBodyY() + this.getWorld().getRandom().nextFloat() * 0.1F);
+                    double f = (double) this.getZ() - 1.5F + this.getWorld().getRandom().nextFloat() * 3.0F;
+                    double g = (double) (this.getWorld().getRandom().nextFloat() * 0.2D);
+                    double h = (double) this.getWorld().getRandom().nextFloat() * 0.1D;
+                    double l = (double) (this.getWorld().getRandom().nextFloat() * 0.2D);
+                    ((ServerWorld) this.getWorld()).spawnParticles(ParticleTypes.PORTAL, d, e, f, 4, g, h, l, 1.0D);
                 }
                 this.setAiDisabled(true);
             }
@@ -325,8 +324,8 @@ public class TheEyeEntity extends FlyingEntity {
     public boolean damage(DamageSource source, float amount) {
         if (this.isInvulnerableTo(source)) {
             return false;
-        } else if (source != DamageSource.DROWN && !(source.getAttacker() instanceof TheEyeEntity)) {
-            if (this.getInvulnerableTimer() > 0 && source != DamageSource.OUT_OF_WORLD) {
+        } else if (!source.isIn(DamageTypeTags.IS_DROWNING) && !(source.getAttacker() instanceof TheEyeEntity)) {
+            if (this.getInvulnerableTimer() > 0 && !source.isIn(DamageTypeTags.BYPASSES_INVULNERABILITY)) {
                 return false;
             } else {
                 Entity entity2;
@@ -337,8 +336,9 @@ public class TheEyeEntity extends FlyingEntity {
                     if (this.field_7082 <= 0) {
                         this.field_7082 = 20;
                     }
-                    if (this.world.random.nextFloat() < 0.6F)
+                    if (this.getWorld().getRandom().nextFloat() < 0.6F) {
                         this.gotDamage = true;
+                    }
                     return super.damage(source, amount);
                 }
             }
@@ -357,7 +357,7 @@ public class TheEyeEntity extends FlyingEntity {
 
     @Override
     public void checkDespawn() {
-        if (this.world.getDifficulty() == Difficulty.PEACEFUL) {
+        if (this.getWorld().getDifficulty() == Difficulty.PEACEFUL) {
             this.discard();
         }
     }
@@ -412,11 +412,11 @@ public class TheEyeEntity extends FlyingEntity {
     public LivingEntity getBeamTarget() {
         if (!this.hasBeamTarget()) {
             return null;
-        } else if (this.world.isClient) {
+        } else if (this.getWorld().isClient()) {
             if (this.cachedBeamTarget != null) {
                 return this.cachedBeamTarget;
             } else {
-                Entity entity = this.world.getEntityById((Integer) this.dataTracker.get(BEAM_TARGET_ID));
+                Entity entity = this.getWorld().getEntityById((Integer) this.dataTracker.get(BEAM_TARGET_ID));
                 if (entity instanceof LivingEntity) {
                     this.cachedBeamTarget = (LivingEntity) entity;
                     return this.cachedBeamTarget;
@@ -454,16 +454,16 @@ public class TheEyeEntity extends FlyingEntity {
             this.move(MovementType.SELF, new Vec3d(0.0D, 0.005D, 0.0D));
             this.setAiDisabled(true);
             this.setTarget(null);
-            if (this.world.isClient) {
+            if (this.getWorld().isClient()) {
                 despawnParticlesServer(this);
 
             }
-            if (!this.world.isClient) {
+            if (!this.getWorld().isClient()) {
                 this.bossBar.setPercent(0.0F);
-                BlockPos deathPos = new BlockPos(this.getX(), this.getY() - 1, this.getZ());
+                BlockPos deathPos = BlockPos.ofFloored(this.getX(), this.getY() - 1, this.getZ());
                 if (deathTimer == 20 && !this.isVoidZLoaded) {
                     Box box = new Box(this.getBlockPos());
-                    List<PlayerEntity> list = world.getEntitiesByClass(PlayerEntity.class, box.expand(128D), EntityPredicates.EXCEPT_SPECTATOR);
+                    List<PlayerEntity> list = this.getWorld().getEntitiesByClass(PlayerEntity.class, box.expand(128D), EntityPredicates.EXCEPT_SPECTATOR);
                     for (int i = 0; i < list.size(); ++i) {
                         PlayerEntity playerEntity = (PlayerEntity) list.get(i);
                         if (playerEntity instanceof PlayerEntity) {
@@ -472,27 +472,26 @@ public class TheEyeEntity extends FlyingEntity {
                     }
                 }
                 if (deathTimer == 140) {
-                    world.playSound(null, deathPos, SoundInit.EYE_DEATH_PLATFORM_EVENT, SoundCategory.HOSTILE, 1F, 1F);
+                    this.getWorld().playSound(null, deathPos, SoundInit.EYE_DEATH_PLATFORM_EVENT, SoundCategory.HOSTILE, 1F, 1F);
                 }
                 if (deathTimer >= 200) {
-                    // if(this.world.getHeight() )
-
                     for (int o = 0; o < 15; o++) {
-                        ((ServerWorld) this.world).spawnParticles(ParticleTypes.EXPLOSION, deathPos.getX() - 6 + this.world.random.nextInt(13), deathPos.getY() - 1 + this.world.random.nextInt(11),
-                                deathPos.getZ() - 6 + this.world.random.nextInt(13), 0, 0.0D, 0.0D, 0.0D, 0.01D);
-                        this.world.playSound(null, deathPos, SoundEvents.ENTITY_GENERIC_EXPLODE, SoundCategory.BLOCKS, 1F, 1F);
+                        ((ServerWorld) this.getWorld()).spawnParticles(ParticleTypes.EXPLOSION, deathPos.getX() - 6 + this.getWorld().getRandom().nextInt(13),
+                                deathPos.getY() - 1 + this.getWorld().getRandom().nextInt(11), deathPos.getZ() - 6 + this.getWorld().getRandom().nextInt(13), 0, 0.0D, 0.0D, 0.0D, 0.01D);
+                        this.getWorld().playSound(null, deathPos, SoundEvents.ENTITY_GENERIC_EXPLODE, SoundCategory.BLOCKS, 1F, 1F);
                     }
                     // Platform
-                    if (this.world.getHeight() - 10 < deathPos.getY())
-                        deathPos = deathPos.down(deathPos.getY() - this.world.getHeight() + 10);
+                    if (this.getWorld().getHeight() - 10 < deathPos.getY())
+                        deathPos = deathPos.down(deathPos.getY() - this.getWorld().getHeight() + 10);
                     this.placeDeathStructure(deathPos);
                     if (this.isVoidZLoaded) {
-                        this.world.setBlockState(deathPos.up(8).north().west(), BlockInit.PORTAL_BLOCK.getDefaultState(), 3);
+                        this.getWorld().setBlockState(deathPos.up(8).north().west(), BlockInit.PORTAL_BLOCK.getDefaultState(), 3);
                     } else {
-                        this.world.setBlockState(deathPos.up(8).north().west(), Blocks.DRAGON_EGG.getDefaultState(), 3);
+                        this.getWorld().setBlockState(deathPos.up(8).north().west(), Blocks.DRAGON_EGG.getDefaultState(), 3);
                     }
-                    if (this.world.random.nextFloat() <= 0.01F)
+                    if (this.getWorld().getRandom().nextFloat() <= 0.01F) {
                         this.dropItem(ItemInit.PRIME_EYE);
+                    }
                     this.discard();
                 }
 
@@ -510,15 +509,15 @@ public class TheEyeEntity extends FlyingEntity {
             double x = MathHelper.nextDouble(random, entity.getBoundingBox().minX - 1.5D, entity.getBoundingBox().maxX + 1.5D);
             double y = MathHelper.nextDouble(random, entity.getBoundingBox().minY - 1.5D, entity.getBoundingBox().maxY + 1.5D);
             double z = MathHelper.nextDouble(random, entity.getBoundingBox().minZ - 1.5D, entity.getBoundingBox().maxZ + 1.5D);
-            entity.world.addParticle(ParticleTypes.PORTAL, x, y, z, d, e, f);
+            entity.getWorld().addParticle(ParticleTypes.PORTAL, x, y, z, d, e, f);
         }
     }
 
     private void placeDeathStructure(BlockPos blockPos) {
-        StructureTemplateManager structureTemplateManager = ((ServerWorld) world).getStructureTemplateManager();
+        StructureTemplateManager structureTemplateManager = ((ServerWorld) this.getWorld()).getStructureTemplateManager();
         Optional<StructureTemplate> structure = structureTemplateManager.getTemplate(new Identifier("adventurez:eyeland"));
-        structure.get().place((ServerWorld) world, blockPos.west(5).north(5), blockPos,
-                (new StructurePlacementData()).setMirror(BlockMirror.NONE).setRotation(BlockRotation.NONE).setIgnoreEntities(true), world.random, Block.NOTIFY_LISTENERS);
+        structure.get().place((ServerWorld) this.getWorld(), blockPos.west(5).north(5), blockPos,
+                (new StructurePlacementData()).setMirror(BlockMirror.NONE).setRotation(BlockRotation.NONE).setIgnoreEntities(true), this.getWorld().getRandom(), Block.NOTIFY_LISTENERS);
     }
 
     static {
@@ -575,11 +574,11 @@ public class TheEyeEntity extends FlyingEntity {
                     this.theEye.setBeamTarget(this.theEye.getTarget().getId());
                 } else if (this.beamTicks >= this.theEye.getWarmupTime()) {
                     float f = 4.0F;
-                    if (this.theEye.world.getDifficulty() == Difficulty.HARD) {
+                    if (this.theEye.getWorld().getDifficulty() == Difficulty.HARD) {
                         f += 1.0F;
                     }
-                    livingEntity.damage(DamageSource.magic(this.theEye, this.theEye), f);
-                    livingEntity.damage(DamageSource.mob(this.theEye), (float) this.theEye.getAttributeValue(EntityAttributes.GENERIC_ATTACK_DAMAGE));
+                    livingEntity.damage(this.theEye.getDamageSources().magic(), f);
+                    livingEntity.damage(this.theEye.getDamageSources().mobAttack(this.theEye), (float) this.theEye.getAttributeValue(EntityAttributes.GENERIC_ATTACK_DAMAGE));
                     this.theEye.setTarget((LivingEntity) null);
                 }
 
@@ -602,7 +601,7 @@ public class TheEyeEntity extends FlyingEntity {
             this.counter++;
             LivingEntity livingEntity = theEyeEntity.getTarget();
             if (livingEntity != null && livingEntity.isAlive() && theEyeEntity.getHealth() < theEyeEntity.getMaxHealth() / 2 && this.counter >= 400) {
-                return theEyeEntity.world.getDifficulty() != Difficulty.PEACEFUL;
+                return theEyeEntity.getWorld().getDifficulty() != Difficulty.PEACEFUL;
             } else {
                 return false;
             }
@@ -617,7 +616,7 @@ public class TheEyeEntity extends FlyingEntity {
                     additions = 1;
                 }
                 for (int i = 0; i < 3 + additions; i++) {
-                    theEyeEntity.world.spawnEntity(new TinyEyeEntity(theEyeEntity.world, theEyeEntity, livingEntity, Direction.Axis.Y));
+                    theEyeEntity.getWorld().spawnEntity(new TinyEyeEntity(theEyeEntity.getWorld(), theEyeEntity, livingEntity, Direction.Axis.Y));
                     theEyeEntity.playSound(SoundEvents.ENTITY_SHULKER_SHOOT, 2.0F, (theEyeEntity.random.nextFloat() - theEyeEntity.random.nextFloat()) * 0.2F + 1.0F);
                 }
                 super.tick();
@@ -731,7 +730,7 @@ public class TheEyeEntity extends FlyingEntity {
             Box box = this.theEyeEntity.getBoundingBox();
             for (int i = 1; i < steps; ++i) {
                 box = box.offset(direction);
-                if (!this.theEyeEntity.world.isSpaceEmpty(this.theEyeEntity, box)) {
+                if (!this.theEyeEntity.getWorld().isSpaceEmpty(this.theEyeEntity, box)) {
                     return false;
                 }
             }
@@ -753,7 +752,7 @@ public class TheEyeEntity extends FlyingEntity {
             LivingEntity livingEntity = theEyeEntity.getTarget();
 
             if (livingEntity != null && livingEntity.isAlive() && theEyeEntity.duplicationTimer <= 0 && this.cooldown >= 600) {
-                List<TheEyeEntity> list = theEyeEntity.world.getEntitiesByClass(TheEyeEntity.class, theEyeEntity.getBoundingBox().expand(120D), EntityPredicates.EXCEPT_CREATIVE_OR_SPECTATOR);
+                List<TheEyeEntity> list = theEyeEntity.getWorld().getEntitiesByClass(TheEyeEntity.class, theEyeEntity.getBoundingBox().expand(120D), EntityPredicates.EXCEPT_CREATIVE_OR_SPECTATOR);
                 if (!list.isEmpty())
                     for (int i = 0; i < list.size(); i++)
                         if (list.get(i).duplicationTimer > 0) {
@@ -772,24 +771,25 @@ public class TheEyeEntity extends FlyingEntity {
                 for (int i = 0; i < 2; i++) {
                     for (int k = 0; k < 10; k++) {
                         BlockPos pos = theEyeEntity.getBlockPos();
-                        pos = pos.add(pos.getX() - livingEntity.getBlockPos().getX() + theEyeEntity.world.random.nextInt(6) * 5, 0,
-                                pos.getZ() - livingEntity.getBlockPos().getZ() + theEyeEntity.world.random.nextInt(6) * 5);
-                        if (theEyeEntity.world.getBlockState(pos).isAir() && SpawnHelper.canSpawn(SpawnRestriction.Location.NO_RESTRICTIONS, world, pos, EntityInit.THE_EYE_ENTITY)) {
-                            TheEyeEntity theEyeEntityDuplicate = (TheEyeEntity) EntityInit.THE_EYE_ENTITY.create(theEyeEntity.world);
-                            theEyeEntityDuplicate.refreshPositionAndAngles(pos, theEyeEntity.world.random.nextFloat() * 360F, 0.0F);
-                            theEyeEntityDuplicate.initialize((ServerWorld) theEyeEntity.world, theEyeEntity.world.getLocalDifficulty(pos), SpawnReason.EVENT, null, null);
+                        pos = pos.add(pos.getX() - livingEntity.getBlockPos().getX() + theEyeEntity.getWorld().getRandom().nextInt(6) * 5, 0,
+                                pos.getZ() - livingEntity.getBlockPos().getZ() + theEyeEntity.getWorld().getRandom().nextInt(6) * 5);
+                        if (theEyeEntity.getWorld().getBlockState(pos).isAir()
+                                && SpawnHelper.canSpawn(SpawnRestriction.Location.NO_RESTRICTIONS, theEyeEntity.getWorld(), pos, EntityInit.THE_EYE_ENTITY)) {
+                            TheEyeEntity theEyeEntityDuplicate = (TheEyeEntity) EntityInit.THE_EYE_ENTITY.create(theEyeEntity.getWorld());
+                            theEyeEntityDuplicate.refreshPositionAndAngles(pos, theEyeEntity.getWorld().getRandom().nextFloat() * 360F, 0.0F);
+                            theEyeEntityDuplicate.initialize((ServerWorld) theEyeEntity.getWorld(), theEyeEntity.getWorld().getLocalDifficulty(pos), SpawnReason.EVENT, null, null);
                             theEyeEntityDuplicate.duplicationTimer = 800;
                             theEyeEntityDuplicate.setAttacker(livingEntity);
                             theEyeEntityDuplicate.getAttributeInstance(EntityAttributes.GENERIC_MAX_HEALTH).setBaseValue(100.0D);
-                            theEyeEntity.world.spawnEntity(theEyeEntityDuplicate);
+                            theEyeEntity.getWorld().spawnEntity(theEyeEntityDuplicate);
                             for (int u = 0; u < 50; u++) {
-                                double d = (double) theEyeEntityDuplicate.getX() - 1.5F + theEyeEntity.world.random.nextFloat() * 3.0F;
-                                double e = (double) ((float) theEyeEntityDuplicate.getRandomBodyY() + theEyeEntity.world.random.nextFloat() * 0.1F);
-                                double f = (double) theEyeEntityDuplicate.getZ() - 1.5F + theEyeEntity.world.random.nextFloat() * 3.0F;
-                                double g = (double) (world.random.nextFloat() * 0.2D);
-                                double h = (double) world.random.nextFloat() * 0.1D;
-                                double l = (double) (world.random.nextFloat() * 0.2D);
-                                ((ServerWorld) world).spawnParticles(ParticleTypes.PORTAL, d, e, f, 4, g, h, l, 1.0D);
+                                double d = (double) theEyeEntityDuplicate.getX() - 1.5F + theEyeEntity.getWorld().getRandom().nextFloat() * 3.0F;
+                                double e = (double) ((float) theEyeEntityDuplicate.getRandomBodyY() + theEyeEntity.getWorld().getRandom().nextFloat() * 0.1F);
+                                double f = (double) theEyeEntityDuplicate.getZ() - 1.5F + theEyeEntity.getWorld().getRandom().nextFloat() * 3.0F;
+                                double g = (double) (theEyeEntity.getWorld().getRandom().nextFloat() * 0.2D);
+                                double h = (double) theEyeEntity.getWorld().getRandom().nextFloat() * 0.1D;
+                                double l = (double) (theEyeEntity.getWorld().getRandom().nextFloat() * 0.2D);
+                                ((ServerWorld) theEyeEntity.getWorld()).spawnParticles(ParticleTypes.PORTAL, d, e, f, 4, g, h, l, 1.0D);
                             }
                             break;
                         }

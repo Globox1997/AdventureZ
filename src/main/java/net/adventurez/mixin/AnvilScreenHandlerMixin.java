@@ -30,17 +30,19 @@ public class AnvilScreenHandlerMixin {
             Map<Enchantment, Integer> l, boolean m, boolean n, Iterator var12, Enchantment p, int q, int r) {
         if (itemStack3.isOf(Items.ENCHANTED_BOOK) && itemStack3.hasNbt() && itemStack3.getNbt().contains("void_drop") && itemStack3.getNbt().getBoolean("void_drop")) {
             enchantmentLevel = r;
-            isVoidShadowDrop = true;
-        } else
-            isVoidShadowDrop = false;
+            this.isVoidShadowDrop = true;
+        } else {
+            this.isVoidShadowDrop = false;
+        }
     }
 
     @ModifyVariable(method = "updateResult", at = @At(value = "INVOKE_ASSIGN", target = "Lnet/minecraft/enchantment/Enchantment;getMaxLevel()I", ordinal = 1), ordinal = 4)
     private int updateResultModifyMixin(int original) {
-        if (isVoidShadowDrop)
+        if (this.isVoidShadowDrop) {
             return enchantmentLevel;
-        else
+        } else {
             return original;
+        }
     }
 
 }

@@ -101,7 +101,7 @@ public class DeerEntity extends AnimalEntity {
 
         @Override
         public boolean canStart() {
-            if (this.deerEntity.world.getClosestPlayer(this.deerEntity, 4.0D) == null) {
+            if (this.deerEntity.getWorld().getClosestPlayer(this.deerEntity, 4.0D) == null) {
                 return false;
             } else {
                 return this.findTarget();

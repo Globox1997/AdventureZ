@@ -40,6 +40,7 @@ import net.minecraft.item.RangedWeaponItem;
 import net.minecraft.nbt.NbtCompound;
 import net.minecraft.particle.ParticleTypes;
 import net.minecraft.predicate.entity.EntityPredicates;
+import net.minecraft.registry.tag.DamageTypeTags;
 import net.minecraft.server.world.ServerWorld;
 import net.minecraft.sound.SoundCategory;
 import net.minecraft.sound.SoundEvent;
@@ -59,7 +60,7 @@ public class SummonerEntity extends SpellCastingEntity {
 
     public SummonerEntity(EntityType<? extends HostileEntity> entityType, World world) {
         super(entityType, world);
-        this.stepHeight = 1.0F;
+        this.setStepHeight(1.0f);
     }
 
     public static DefaultAttributeContainer.Builder createSummonerAttributes() {
@@ -163,23 +164,24 @@ public class SummonerEntity extends SpellCastingEntity {
     @Override
     public boolean damage(DamageSource source, float amount) {
         int chance = 0;
-        if (source.equals(DamageSource.LIGHTNING_BOLT)) {
+        if (source.isIn(DamageTypeTags.IS_LIGHTNING)) {
             return false;
         }
-        if (source.isProjectile()) {
-            chance = world.random.nextInt(2);
+        if (source.isIn(DamageTypeTags.IS_PROJECTILE)) {
+            chance = this.getWorld().getRandom().nextInt(2);
             this.gotShotByABow = true;
         }
         if (chance == 1) {
-            this.world.playSoundFromEntity(null, this, SoundInit.MAGIC_SHIELD_HIT_EVENT, SoundCategory.HOSTILE, 1.0F, 1.0F);
+            this.getWorld().playSoundFromEntity(null, this, SoundInit.MAGIC_SHIELD_HIT_EVENT, SoundCategory.HOSTILE, 1.0F, 1.0F);
             if (source.getSource() != null && source.getSource() instanceof ArrowEntity) {
-                if (!world.isClient) {
+                if (!this.getWorld().isClient()) {
                     source.getSource().discard();
                 }
             }
             return false;
-        } else
+        } else {
             return this.isInvulnerableTo(source) ? false : super.damage(source, amount);
+        }
     }
 
     private class ThunderboltSpellGoal extends SpellCastingEntity.CastSpellGoal {
@@ -216,12 +218,12 @@ public class SummonerEntity extends SpellCastingEntity {
         public void castSpell() {
             LivingEntity attacker = SummonerEntity.this.getAttacker();
             if (attacker != null) {
-                ServerWorld serverWorld = (ServerWorld) attacker.world;
-                double posX = attacker.getX() + world.getRandom().nextInt(3);
+                ServerWorld serverWorld = (ServerWorld) attacker.getWorld();
+                double posX = attacker.getX() + SummonerEntity.this.getWorld().getRandom().nextInt(3);
                 double posY = attacker.getY();
-                double posZ = attacker.getZ() + world.getRandom().nextInt(3);
-                BlockPos pos = new BlockPos(posX, posY, posZ);
-                LightningEntity lightningEntity = (LightningEntity) EntityType.LIGHTNING_BOLT.create(attacker.world);
+                double posZ = attacker.getZ() + SummonerEntity.this.getWorld().getRandom().nextInt(3);
+                BlockPos pos = BlockPos.ofFloored(posX, posY, posZ);
+                LightningEntity lightningEntity = (LightningEntity) EntityType.LIGHTNING_BOLT.create(attacker.getWorld());
                 lightningEntity.refreshPositionAndAngles(pos, 0.0F, 0.0F);
                 serverWorld.spawnEntity(lightningEntity);
             }
@@ -271,13 +273,13 @@ public class SummonerEntity extends SpellCastingEntity {
         @Override
         public void castSpell() {
             for (int counter = 0; counter < 100; counter++) {
-                float randomFloat = world.getRandom().nextFloat() * 6.2831855F;
-                int posX = SummonerEntity.this.getBlockPos().getX() + MathHelper.floor(MathHelper.cos(randomFloat) * 8.0F + world.getRandom().nextInt(12));
-                int posZ = SummonerEntity.this.getBlockPos().getZ() + MathHelper.floor(MathHelper.sin(randomFloat) * 8.0F + world.getRandom().nextInt(12));
-                int posY = world.getTopY(Heightmap.Type.WORLD_SURFACE, posX, posZ);
+                float randomFloat = SummonerEntity.this.getWorld().getRandom().nextFloat() * 6.2831855F;
+                int posX = SummonerEntity.this.getBlockPos().getX() + MathHelper.floor(MathHelper.cos(randomFloat) * 8.0F + SummonerEntity.this.getWorld().getRandom().nextInt(12));
+                int posZ = SummonerEntity.this.getBlockPos().getZ() + MathHelper.floor(MathHelper.sin(randomFloat) * 8.0F + SummonerEntity.this.getWorld().getRandom().nextInt(12));
+                int posY = SummonerEntity.this.getWorld().getTopY(Heightmap.Type.WORLD_SURFACE, posX, posZ);
                 BlockPos teleportPos = new BlockPos(posX, posY, posZ);
-                if (world.isRegionLoaded(teleportPos.getX() - 4, teleportPos.getY() - 4, teleportPos.getZ() - 4, teleportPos.getX() + 4, teleportPos.getY() + 4, teleportPos.getZ() + 4)
-                        && SpawnHelper.canSpawn(SpawnRestriction.Location.ON_GROUND, world, teleportPos, EntityInit.SUMMONER_ENTITY)) {
+                if (SummonerEntity.this.getWorld().isRegionLoaded(teleportPos.getX() - 4, teleportPos.getY() - 4, teleportPos.getZ() - 4, teleportPos.getX() + 4, teleportPos.getY() + 4,
+                        teleportPos.getZ() + 4) && SpawnHelper.canSpawn(SpawnRestriction.Location.ON_GROUND, SummonerEntity.this.getWorld(), teleportPos, EntityInit.SUMMONER_ENTITY)) {
                     SummonerEntity.this.teleport(teleportPos.getX(), teleportPos.getY(), teleportPos.getZ());
                     break;
                 }
@@ -340,8 +342,8 @@ public class SummonerEntity extends SpellCastingEntity {
             dataTracker.set(INVULNERABLE_SHIELD, true);
             SummonerEntity.this.invulnerableMagicTick = 160;
             for (int i = 0; i < 60; ++i) {
-                ((ServerWorld) world).spawnParticles(ParticleTypes.END_ROD, SummonerEntity.this.getParticleX(1.5D), SummonerEntity.this.getRandomBodyY(), SummonerEntity.this.getParticleZ(1.5D), 0,
-                        0.0D, 0.0D, 0.0D, 0.0D);
+                ((ServerWorld) SummonerEntity.this.getWorld()).spawnParticles(ParticleTypes.END_ROD, SummonerEntity.this.getParticleX(1.5D), SummonerEntity.this.getRandomBodyY(),
+                        SummonerEntity.this.getParticleZ(1.5D), 0, 0.0D, 0.0D, 0.0D, 0.0D);
             }
             if (SummonerEntity.this.getTarget() != null) {
                 SummonerEntity.this.getTarget().addStatusEffect(new StatusEffectInstance(StatusEffects.SLOWNESS, 100, 1, false, false));
@@ -373,8 +375,8 @@ public class SummonerEntity extends SpellCastingEntity {
             if (!super.canStart() || tooManySlaves()) {
                 return false;
             } else {
-                int i = SummonerEntity.this.world.getTargets(WitherPuppetEntity.class, this.PUPPET_PREDICATE, SummonerEntity.this, SummonerEntity.this.getBoundingBox().expand(16.0D)).size();
-                return SummonerEntity.this.random.nextInt(8) + 1 > i;
+                int i = SummonerEntity.this.getWorld().getTargets(WitherPuppetEntity.class, this.PUPPET_PREDICATE, SummonerEntity.this, SummonerEntity.this.getBoundingBox().expand(16.0D)).size();
+                return SummonerEntity.this.getRandom().nextInt(8) + 1 > i;
             }
         }
 
@@ -390,27 +392,27 @@ public class SummonerEntity extends SpellCastingEntity {
 
         @Override
         public void castSpell() {
-            ServerWorld serverWorld = (ServerWorld) SummonerEntity.this.world;
+            ServerWorld serverWorld = (ServerWorld) SummonerEntity.this.getWorld();
             int spellCount = 0;
             for (int i = 0; i < 20; ++i) {
                 BlockPos blockPos = SummonerEntity.this.getBlockPos().add(-2 + SummonerEntity.this.random.nextInt(5), SummonerEntity.this.random.nextInt(3),
                         -2 + SummonerEntity.this.random.nextInt(5));
-                if (SpawnHelper.canSpawn(SpawnRestriction.Location.ON_GROUND, world, blockPos, EntityInit.SKELETON_VANGUARD_ENTITY)) {
+                if (SpawnHelper.canSpawn(SpawnRestriction.Location.ON_GROUND, SummonerEntity.this.getWorld(), blockPos, EntityInit.SKELETON_VANGUARD_ENTITY)) {
                     spellCount++;
                     if (SummonerEntity.this.getHealth() <= 40.0F || SummonerEntity.this.getEntityWorld().isDay()) {
                         SkeletonVanguardEntity skeletonVanguardEntity = (SkeletonVanguardEntity) EntityInit.SKELETON_VANGUARD_ENTITY.create(serverWorld);
-                        skeletonVanguardEntity.refreshPositionAndAngles(blockPos, SummonerEntity.this.world.random.nextFloat() * 360F, 0.0F);
+                        skeletonVanguardEntity.refreshPositionAndAngles(blockPos, SummonerEntity.this.getWorld().getRandom().nextFloat() * 360F, 0.0F);
                         skeletonVanguardEntity.initialize(serverWorld, serverWorld.getLocalDifficulty(blockPos), SpawnReason.EVENT, null, null);
                         serverWorld.spawnEntityAndPassengers(skeletonVanguardEntity);
                     } else {
                         ZombieEntity zombieEntity = (ZombieEntity) EntityType.ZOMBIE.create(serverWorld);
-                        zombieEntity.refreshPositionAndAngles(blockPos, SummonerEntity.this.world.random.nextFloat() * 360F, 0.0F);
+                        zombieEntity.refreshPositionAndAngles(blockPos, SummonerEntity.this.getWorld().getRandom().nextFloat() * 360F, 0.0F);
                         zombieEntity.initialize(serverWorld, serverWorld.getLocalDifficulty(blockPos), SpawnReason.EVENT, null, null);
                         serverWorld.spawnEntityAndPassengers(zombieEntity);
-                        int skeletonChance = world.getRandom().nextInt(8);
+                        int skeletonChance = SummonerEntity.this.getWorld().getRandom().nextInt(8);
                         if (skeletonChance == 0) {
                             SkeletonEntity skeletonEntity = (SkeletonEntity) EntityType.SKELETON.create(serverWorld);
-                            skeletonEntity.refreshPositionAndAngles(blockPos, SummonerEntity.this.world.random.nextFloat() * 360F, 0.0F);
+                            skeletonEntity.refreshPositionAndAngles(blockPos, SummonerEntity.this.getWorld().getRandom().nextFloat() * 360F, 0.0F);
                             skeletonEntity.initialize(serverWorld, serverWorld.getLocalDifficulty(blockPos), SpawnReason.EVENT, null, null);
                             if (SummonerEntity.this.gotShotByABow) {
                                 skeletonEntity.equipStack(EquipmentSlot.MAINHAND, new ItemStack(Items.BOW));
@@ -451,7 +453,7 @@ public class SummonerEntity extends SpellCastingEntity {
     }
 
     private boolean tooManySlaves() {
-        List<LivingEntity> list = this.world.getEntitiesByClass(LivingEntity.class, this.getBoundingBox().expand(40D), EntityPredicates.EXCEPT_SPECTATOR);
+        List<LivingEntity> list = this.getWorld().getEntitiesByClass(LivingEntity.class, this.getBoundingBox().expand(40D), EntityPredicates.EXCEPT_SPECTATOR);
         if (!list.isEmpty()) {
             int vanguards = 0;
             int othermobs = 0;
@@ -481,7 +483,6 @@ public class SummonerEntity extends SpellCastingEntity {
         @Override
         public boolean canStart() {
             LivingEntity livingEntity = this.summonerEntity.getTarget();
-
             return livingEntity != null && livingEntity.isAlive() && this.summonerEntity.canTarget(livingEntity) && this.summonerEntity.squaredDistanceTo(livingEntity) < 7.0D && super.canStart();
         }
 

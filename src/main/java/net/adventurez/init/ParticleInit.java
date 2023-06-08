@@ -7,9 +7,10 @@ import net.fabricmc.api.Environment;
 import net.fabricmc.fabric.api.client.particle.v1.FabricSpriteProvider;
 import net.fabricmc.fabric.api.particle.v1.FabricParticleTypes;
 import net.minecraft.particle.DefaultParticleType;
+import net.minecraft.registry.Registries;
+import net.minecraft.registry.Registry;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.math.MathHelper;
-import net.minecraft.util.registry.Registry;
 import net.minecraft.client.particle.SpriteProvider;
 import net.minecraft.client.world.ClientWorld;
 import net.minecraft.client.particle.Particle;
@@ -24,9 +25,9 @@ public class ParticleInit {
     public static final DefaultParticleType SPRINT_PARTICLE = FabricParticleTypes.simple();
 
     public static void init() {
-        Registry.register(Registry.PARTICLE_TYPE, new Identifier("adventurez", "amethyst_shard_particle"), AMETHYST_SHARD_PARTICLE);
-        Registry.register(Registry.PARTICLE_TYPE, new Identifier("adventurez", "void_cloud_particle"), VOID_CLOUD_PARTICLE);
-        Registry.register(Registry.PARTICLE_TYPE, new Identifier("adventurez", "sprint_particle"), SPRINT_PARTICLE);
+        Registry.register(Registries.PARTICLE_TYPE, new Identifier("adventurez", "amethyst_shard_particle"), AMETHYST_SHARD_PARTICLE);
+        Registry.register(Registries.PARTICLE_TYPE, new Identifier("adventurez", "void_cloud_particle"), VOID_CLOUD_PARTICLE);
+        Registry.register(Registries.PARTICLE_TYPE, new Identifier("adventurez", "sprint_particle"), SPRINT_PARTICLE);
     }
 
     @Environment(EnvType.CLIENT)

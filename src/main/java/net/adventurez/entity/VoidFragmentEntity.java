@@ -33,7 +33,7 @@ import net.minecraft.world.Difficulty;
 import net.minecraft.world.LocalDifficulty;
 import net.minecraft.world.ServerWorldAccess;
 import net.minecraft.world.World;
-import net.minecraft.world.explosion.Explosion;
+import net.minecraft.world.World.ExplosionSourceType;
 
 public class VoidFragmentEntity extends FlyingEntity implements Monster {
 
@@ -105,27 +105,27 @@ public class VoidFragmentEntity extends FlyingEntity implements Monster {
 
     @Override
     public void updatePostDeath() {
-        if (this.world.isClient) {
+        if (this.getWorld().isClient()) {
             for (int i = 0; i < 10; ++i) {
                 double d = this.random.nextGaussian() * 0.05D;
                 double e = this.random.nextGaussian() * 0.05D;
                 double f = this.random.nextGaussian() * 0.05D;
-                this.world.addParticle(ParticleTypes.END_ROD, this.getParticleX(1.0D), this.getRandomBodyY(), this.getParticleZ(1.0D), d, e, f);
+                this.getWorld().addParticle(ParticleTypes.END_ROD, this.getParticleX(1.0D), this.getRandomBodyY(), this.getParticleZ(1.0D), d, e, f);
             }
         }
         ++this.deathTick;
-        if (this.deathTick >= 20 && !this.world.isClient()) {
+        if (this.deathTick >= 20 && !this.getWorld().isClient()) {
             this.remove(Entity.RemovalReason.KILLED);
         }
     }
 
     @Override
     public void onDeath(DamageSource source) {
-        if (!this.world.isClient && this.isVoidOrb) {
+        if (!this.getWorld().isClient() && this.isVoidOrb) {
             Box box = new Box(this.getBlockPos());
-            List<VoidShadowEntity> list = world.getEntitiesByClass(VoidShadowEntity.class, box.expand(120D), EntityPredicates.EXCEPT_SPECTATOR);
+            List<VoidShadowEntity> list = this.getWorld().getEntitiesByClass(VoidShadowEntity.class, box.expand(120D), EntityPredicates.EXCEPT_SPECTATOR);
             for (int i = 0; i < list.size(); ++i) {
-                list.get(i).damage(DamageSource.MAGIC, 40F);
+                list.get(i).damage(this.getDamageSources().magic(), 40f);
             }
         }
         super.onDeath(source);
@@ -134,9 +134,9 @@ public class VoidFragmentEntity extends FlyingEntity implements Monster {
     @Override
     public void mobTick() {
         super.mobTick();
-        if (!this.world.isClient && this.world.getClosestPlayer(TargetPredicate.createAttackable().setBaseMaxDistance(0.8D), this) != null) {
+        if (!this.getWorld().isClient() && this.getWorld().getClosestPlayer(TargetPredicate.createAttackable().setBaseMaxDistance(0.8D), this) != null) {
             this.dead = true;
-            this.world.createExplosion(this, this.getX(), this.getY(), this.getZ(), this.isVoidOrb ? 4.0F : 3.0F, Explosion.DestructionType.NONE);
+            this.getWorld().createExplosion(this, this.getX(), this.getY(), this.getZ(), this.isVoidOrb ? 4.0F : 3.0F, ExplosionSourceType.NONE);
             this.discard();
         }
     }
@@ -154,7 +154,7 @@ public class VoidFragmentEntity extends FlyingEntity implements Monster {
 
     @Override
     public void checkDespawn() {
-        if (this.world.getDifficulty() == Difficulty.PEACEFUL) {
+        if (this.getWorld().getDifficulty() == Difficulty.PEACEFUL) {
             this.discard();
         }
     }

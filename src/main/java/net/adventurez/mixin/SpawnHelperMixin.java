@@ -12,10 +12,10 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 import net.adventurez.init.ConfigInit;
 import net.adventurez.init.EntityInit;
 import net.minecraft.entity.SpawnGroup;
+import net.minecraft.registry.entry.RegistryEntry;
 import net.minecraft.server.world.ServerWorld;
 import net.minecraft.util.collection.Pool;
 import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.registry.RegistryEntry;
 import net.minecraft.world.SpawnHelper;
 import net.minecraft.world.biome.Biome;
 import net.minecraft.world.biome.SpawnSettings;
@@ -25,6 +25,7 @@ import net.minecraft.world.gen.structure.NetherFortressStructure;
 
 @Mixin(SpawnHelper.class)
 public class SpawnHelperMixin {
+
     private static final Pool<SpawnSettings.SpawnEntry> ADDED_SPAWNS;
 
     @Inject(method = "getSpawnEntries", at = @At(value = "FIELD", target = "Lnet/minecraft/world/gen/structure/NetherFortressStructure;MONSTER_SPAWNS:Lnet/minecraft/util/collection/Pool;", ordinal = 0), cancellable = true)

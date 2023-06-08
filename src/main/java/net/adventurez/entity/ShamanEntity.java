@@ -46,7 +46,7 @@ public class ShamanEntity extends SpellCastingEntity {
 
     public ShamanEntity(EntityType<? extends HostileEntity> entityType, World world) {
         super(entityType, world);
-        this.stepHeight = 1.0F;
+        this.setStepHeight(1.0f);
     }
 
     public static DefaultAttributeContainer.Builder createShamanAttributes() {
@@ -111,7 +111,7 @@ public class ShamanEntity extends SpellCastingEntity {
     }
 
     private boolean tooManyCompanions() {
-        List<LivingEntity> list = this.world.getEntitiesByClass(LivingEntity.class, this.getBoundingBox().expand(40D), EntityPredicates.EXCEPT_SPECTATOR);
+        List<LivingEntity> list = this.getWorld().getEntitiesByClass(LivingEntity.class, this.getBoundingBox().expand(40D), EntityPredicates.EXCEPT_SPECTATOR);
         if (!list.isEmpty()) {
             int spiders = 0;
             int othermobs = 0;
@@ -154,22 +154,23 @@ public class ShamanEntity extends SpellCastingEntity {
         public boolean canStart() {
             LivingEntity attacker = ShamanEntity.this.getAttacker();
             if (super.canStart() && attacker != null && attacker.getMainHandStack().getItem() instanceof RangedWeaponItem && ShamanEntity.this.squaredDistanceTo(attacker) > 12
-                    && ShamanEntity.this.world.isRaining()) {
+                    && ShamanEntity.this.getWorld().isRaining()) {
                 return true;
-            } else
+            } else {
                 return false;
+            }
         }
 
         @Override
         public void castSpell() {
             LivingEntity attacker = ShamanEntity.this.getAttacker();
             if (attacker != null) {
-                ServerWorld serverWorld = (ServerWorld) attacker.world;
-                double posX = attacker.getX() + world.getRandom().nextInt(3);
+                ServerWorld serverWorld = (ServerWorld) attacker.getWorld();
+                double posX = attacker.getX() + ShamanEntity.this.getWorld().getRandom().nextInt(3);
                 double posY = attacker.getY();
-                double posZ = attacker.getZ() + world.getRandom().nextInt(3);
-                BlockPos pos = new BlockPos(posX, posY, posZ);
-                LightningEntity lightningEntity = (LightningEntity) EntityType.LIGHTNING_BOLT.create(attacker.world);
+                double posZ = attacker.getZ() + ShamanEntity.this.getWorld().getRandom().nextInt(3);
+                BlockPos pos = BlockPos.ofFloored(posX, posY, posZ);
+                LightningEntity lightningEntity = (LightningEntity) EntityType.LIGHTNING_BOLT.create(attacker.getWorld());
                 lightningEntity.refreshPositionAndAngles(pos, 0.0F, 0.0F);
                 serverWorld.spawnEntity(lightningEntity);
             }
@@ -264,33 +265,36 @@ public class ShamanEntity extends SpellCastingEntity {
 
         @Override
         public void castSpell() {
-            ServerWorld serverWorld = (ServerWorld) ShamanEntity.this.world;
+            ServerWorld serverWorld = (ServerWorld) ShamanEntity.this.getWorld();
             int spellCount = 0;
             for (int i = 0; i < 20; ++i) {
-                BlockPos blockPos = ShamanEntity.this.getBlockPos().add(-3 + ShamanEntity.this.random.nextInt(6), ShamanEntity.this.random.nextInt(3), -3 + ShamanEntity.this.random.nextInt(6));
-                if (SpawnHelper.canSpawn(SpawnRestriction.Location.ON_GROUND, world, blockPos, EntityType.ZOMBIE)) {
+                BlockPos blockPos = ShamanEntity.this.getBlockPos().add(-3 + ShamanEntity.this.getRandom().nextInt(6), ShamanEntity.this.getRandom().nextInt(3),
+                        -3 + ShamanEntity.this.getRandom().nextInt(6));
+                if (SpawnHelper.canSpawn(SpawnRestriction.Location.ON_GROUND, ShamanEntity.this.getWorld(), blockPos, EntityType.ZOMBIE)) {
                     spellCount++;
-                    if (ShamanEntity.this.random.nextFloat() < 0.6F) {
+                    if (ShamanEntity.this.getRandom().nextFloat() < 0.6F) {
                         CaveSpiderEntity caveSpiderEntity = (CaveSpiderEntity) EntityType.CAVE_SPIDER.create(serverWorld);
-                        caveSpiderEntity.refreshPositionAndAngles(blockPos, ShamanEntity.this.world.random.nextFloat() * 360F, 0.0F);
+                        caveSpiderEntity.refreshPositionAndAngles(blockPos, ShamanEntity.this.getWorld().getRandom().nextFloat() * 360F, 0.0F);
                         caveSpiderEntity.initialize(serverWorld, serverWorld.getLocalDifficulty(blockPos), SpawnReason.EVENT, null, null);
                         serverWorld.spawnEntityAndPassengers(caveSpiderEntity);
                     } else {
                         MobEntity mobEntity;
-                        int randomInt = ShamanEntity.this.random.nextInt(3);
-                        if (randomInt == 0)
+                        int randomInt = ShamanEntity.this.getRandom().nextInt(3);
+                        if (randomInt == 0) {
                             mobEntity = EntityType.ZOMBIE.create(serverWorld);
-                        else if (randomInt == 1)
+                        } else if (randomInt == 1) {
                             mobEntity = EntityType.SKELETON.create(serverWorld);
-                        else
+                        } else {
                             mobEntity = EntityType.SPIDER.create(serverWorld);
-                        mobEntity.refreshPositionAndAngles(blockPos, ShamanEntity.this.world.random.nextFloat() * 360F, 0.0F);
+                        }
+                        mobEntity.refreshPositionAndAngles(blockPos, ShamanEntity.this.getWorld().getRandom().nextFloat() * 360F, 0.0F);
                         mobEntity.initialize(serverWorld, serverWorld.getLocalDifficulty(blockPos), SpawnReason.EVENT, null, null);
                         serverWorld.spawnEntityAndPassengers(mobEntity);
                     }
                 }
-                if (spellCount >= 3)
+                if (spellCount >= 3) {
                     break;
+                }
             }
 
         }
@@ -331,7 +335,6 @@ public class ShamanEntity extends SpellCastingEntity {
         @Override
         public boolean canStart() {
             LivingEntity livingEntity = this.summonerEntity.getTarget();
-
             return livingEntity != null && livingEntity.isAlive() && this.summonerEntity.canTarget(livingEntity) && this.summonerEntity.squaredDistanceTo(livingEntity) < 7.0D && super.canStart();
         }
 

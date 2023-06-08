@@ -1,5 +1,8 @@
 package net.adventurez.entity.render;
 
+import org.joml.Matrix3f;
+import org.joml.Matrix4f;
+
 import net.adventurez.entity.TheEyeEntity;
 import net.adventurez.entity.model.TheEyeModel;
 import net.adventurez.init.RenderInit;
@@ -13,13 +16,11 @@ import net.minecraft.client.render.VertexConsumerProvider;
 import net.minecraft.client.render.entity.EntityRendererFactory;
 import net.minecraft.client.render.entity.MobEntityRenderer;
 import net.minecraft.client.util.math.MatrixStack;
-import net.minecraft.util.math.Vec3f;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.math.Box;
 import net.minecraft.util.math.MathHelper;
-import net.minecraft.util.math.Matrix3f;
-import net.minecraft.util.math.Matrix4f;
+import net.minecraft.util.math.RotationAxis;
 import net.minecraft.util.math.Vec3d;
 
 @Environment(EnvType.CLIENT)
@@ -74,7 +75,7 @@ public class TheEyeRenderer extends MobEntityRenderer<TheEyeEntity, TheEyeModel<
         LivingEntity livingEntity = theEyeEntity.getBeamTarget();
         if (livingEntity != null && theEyeEntity.isAlive()) {
             float h = 5F;
-            float j = (float) theEyeEntity.world.getTime() + g;
+            float j = (float) theEyeEntity.getWorld().getTime() + g;
             float k = j * 0.5F % 1.0F;
             float l = theEyeEntity.getStandingEyeHeight();
             matrixStack.push();
@@ -86,8 +87,8 @@ public class TheEyeRenderer extends MobEntityRenderer<TheEyeEntity, TheEyeModel<
             vec3d3 = vec3d3.normalize();
             float n = (float) Math.acos(vec3d3.y);
             float o = (float) Math.atan2(vec3d3.z, vec3d3.x);
-            matrixStack.multiply(Vec3f.POSITIVE_Y.getDegreesQuaternion((1.5707964F - o) * 57.295776F));
-            matrixStack.multiply(Vec3f.POSITIVE_X.getDegreesQuaternion(n * 57.295776F));
+            matrixStack.multiply(RotationAxis.POSITIVE_Y.rotationDegrees((1.5707964F - o) * 57.295776F));
+            matrixStack.multiply(RotationAxis.POSITIVE_X.rotationDegrees(n * 57.295776F));
             float q = j * 0.05F * -1.5F;
             float r = h * h;
             int s = 64 + (int) (r * 191.0F);

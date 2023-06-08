@@ -30,6 +30,7 @@ import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.projectile.SmallFireballEntity;
 import net.minecraft.nbt.NbtCompound;
 import net.minecraft.particle.ParticleTypes;
+import net.minecraft.registry.tag.DamageTypeTags;
 import net.minecraft.server.world.ServerWorld;
 import net.minecraft.sound.SoundEvent;
 import net.minecraft.sound.SoundEvents;
@@ -41,7 +42,7 @@ import net.minecraft.world.LocalDifficulty;
 import net.minecraft.world.ServerWorldAccess;
 import net.minecraft.world.SpawnHelper;
 import net.minecraft.world.World;
-import net.minecraft.world.explosion.Explosion;
+import net.minecraft.world.World.ExplosionSourceType;
 import net.minecraft.entity.mob.BlazeEntity;
 import net.minecraft.entity.mob.HostileEntity;
 
@@ -110,16 +111,16 @@ public class BlazeGuardianEntity extends HostileEntity {
         super.readCustomDataFromNbt(tag);
         this.dataTracker.set(SHIELD_NORTH, tag.getBoolean("ShieldNorth"));
         if (tag.getBoolean("ShieldNorth"))
-            world.spawnEntity(shield_north);
+            this.getWorld().spawnEntity(shield_north);
         this.dataTracker.set(SHIELD_EAST, tag.getBoolean("ShieldEast"));
         if (tag.getBoolean("ShieldEast"))
-            world.spawnEntity(shield_east);
+            this.getWorld().spawnEntity(shield_east);
         this.dataTracker.set(SHIELD_SOUTH, tag.getBoolean("ShieldSouth"));
         if (tag.getBoolean("ShieldSouth"))
-            world.spawnEntity(shield_south);
+            this.getWorld().spawnEntity(shield_south);
         this.dataTracker.set(SHIELD_WEST, tag.getBoolean("ShieldWest"));
         if (tag.getBoolean("ShieldWest"))
-            world.spawnEntity(shield_west);
+            this.getWorld().spawnEntity(shield_west);
     }
 
     private void movePart(BlazeGuardianShieldEntity blazeGuardianShieldEntity, double dx, double dy, double dz) {
@@ -158,18 +159,18 @@ public class BlazeGuardianEntity extends HostileEntity {
 
     @Override
     public void tickMovement() {
-        if (!this.onGround && this.getVelocity().y < 0.0D) {
+        if (!this.isOnGround() && this.getVelocity().y < 0.0D) {
             this.setVelocity(this.getVelocity().multiply(1.0D, 0.6D, 1.0D));
         }
 
-        if (this.world.isClient) {
-            if (this.random.nextInt(24) == 0 && !this.isSilent()) {
-                this.world.playSound(this.getX() + 0.5D, this.getY() + 0.5D, this.getZ() + 0.5D, SoundEvents.ENTITY_BLAZE_BURN, this.getSoundCategory(), 1.0F + this.random.nextFloat(),
-                        this.random.nextFloat() * 0.7F + 0.3F, false);
+        if (this.getWorld().isClient()) {
+            if (this.getWorld().getRandom().nextInt(24) == 0 && !this.isSilent()) {
+                this.getWorld().playSound(this.getX() + 0.5D, this.getY() + 0.5D, this.getZ() + 0.5D, SoundEvents.ENTITY_BLAZE_BURN, this.getSoundCategory(),
+                        1.0F + this.getWorld().getRandom().nextFloat(), this.getWorld().getRandom().nextFloat() * 0.7F + 0.3F, false);
             }
 
             for (int i = 0; i < 2; ++i) {
-                this.world.addParticle(ParticleTypes.LARGE_SMOKE, this.getParticleX(0.6D), this.getRandomBodyY(), this.getParticleZ(0.6D), 0.0D, 0.0D, 0.0D);
+                this.getWorld().addParticle(ParticleTypes.LARGE_SMOKE, this.getParticleX(0.6D), this.getRandomBodyY(), this.getParticleZ(0.6D), 0.0D, 0.0D, 0.0D);
             }
         } else {
             double f = (double) this.age / 6.2831853D + (this.bodyYaw / 360D * Math.PI * 2D) - 1.0D;
@@ -192,7 +193,7 @@ public class BlazeGuardianEntity extends HostileEntity {
         --this.eyeOffsetCooldown;
         if (this.eyeOffsetCooldown <= 0) {
             this.eyeOffsetCooldown = 100;
-            this.eyeOffset = 0.5F + (float) this.random.nextGaussian() * 3.0F;
+            this.eyeOffset = 0.5F + (float) this.getWorld().getRandom().nextGaussian() * 3.0F;
         }
 
         LivingEntity livingEntity = this.getTarget();
@@ -227,7 +228,7 @@ public class BlazeGuardianEntity extends HostileEntity {
 
     @Override
     public boolean damage(DamageSource source, float amount) {
-        if (!source.isUnblockable() && this.getHealth() < this.getMaxHealth() / 2F) {
+        if (!source.isIn(DamageTypeTags.BYPASSES_INVULNERABILITY) && this.getHealth() < this.getMaxHealth() / 2F) {
             amount *= 0.5F;
         }
         return this.isInvulnerableTo(source) ? false : super.damage(source, amount);
@@ -235,7 +236,7 @@ public class BlazeGuardianEntity extends HostileEntity {
 
     @Override
     public void onDeath(DamageSource source) {
-        if (!this.world.isClient) {
+        if (!this.getWorld().isClient()) {
             if (!this.shield_north.isRemoved())
                 this.shield_north.discard();
             if (!this.shield_east.isRemoved())
@@ -254,22 +255,22 @@ public class BlazeGuardianEntity extends HostileEntity {
         if (spawnReason.equals(SpawnReason.NATURAL) || spawnReason.equals(SpawnReason.CHUNK_GENERATION)) {
             for (int i = 0; i < serverWorldAccess.getRandom().nextInt(3) + 2; i++) {
                 for (int u = 0; u < 10; u++) {
-                    BlockPos pos = new BlockPos(this.getBlockPos().add(world.random.nextInt(5), world.random.nextInt(5), world.random.nextInt(5)));
+                    BlockPos pos = new BlockPos(this.getBlockPos().add(this.getWorld().getRandom().nextInt(5), this.getWorld().getRandom().nextInt(5), this.getWorld().getRandom().nextInt(5)));
                     if (SpawnHelper.canSpawn(SpawnRestriction.Location.ON_GROUND, serverWorldAccess.toServerWorld(), pos, EntityType.BLAZE)) {
                         BlazeEntity blazeEntity = (BlazeEntity) EntityType.BLAZE.create(serverWorldAccess.toServerWorld());
-                        blazeEntity.initialize(serverWorldAccess, this.world.getLocalDifficulty(pos), SpawnReason.NATURAL, null, null);
-                        blazeEntity.refreshPositionAndAngles(pos, world.random.nextFloat() * 360.0F, 0.0F);
+                        blazeEntity.initialize(serverWorldAccess, this.getWorld().getLocalDifficulty(pos), SpawnReason.NATURAL, null, null);
+                        blazeEntity.refreshPositionAndAngles(pos, this.getWorld().getRandom().nextFloat() * 360.0F, 0.0F);
                         serverWorldAccess.spawnEntity(blazeEntity);
                         break;
                     }
                 }
             }
         }
-        if (this.world instanceof ServerWorld) {
-            world.spawnEntity(shield_north);
-            world.spawnEntity(shield_east);
-            world.spawnEntity(shield_south);
-            world.spawnEntity(shield_west);
+        if (this.getWorld() instanceof ServerWorld) {
+            this.getWorld().spawnEntity(shield_north);
+            this.getWorld().spawnEntity(shield_east);
+            this.getWorld().spawnEntity(shield_south);
+            this.getWorld().spawnEntity(shield_west);
         }
         return super.initialize(serverWorldAccess, difficulty, spawnReason, entityData, entityTag);
     }
@@ -362,13 +363,13 @@ public class BlazeGuardianEntity extends HostileEntity {
                         if (this.fireballsFired > 1) {
                             float h = MathHelper.sqrt(MathHelper.sqrt((float) d)) * 0.7F;
                             if (!this.guardian.isSilent()) {
-                                this.guardian.world.syncWorldEvent((PlayerEntity) null, 1018, this.guardian.getBlockPos(), 0);
+                                this.guardian.getWorld().syncWorldEvent((PlayerEntity) null, 1018, this.guardian.getBlockPos(), 0);
                             }
                             for (int i = 0; i < 1; ++i) {
-                                SmallFireballEntity smallFireballEntity = new SmallFireballEntity(this.guardian.world, this.guardian, e + this.guardian.getRandom().nextGaussian() * (double) h, f,
-                                        g + this.guardian.getRandom().nextGaussian() * (double) h);
+                                SmallFireballEntity smallFireballEntity = new SmallFireballEntity(this.guardian.getWorld(), this.guardian, e + this.guardian.getRandom().nextGaussian() * (double) h,
+                                        f, g + this.guardian.getRandom().nextGaussian() * (double) h);
                                 smallFireballEntity.updatePosition(smallFireballEntity.getX(), this.guardian.getBodyY(0.5D) + 0.5D, smallFireballEntity.getZ());
-                                this.guardian.world.spawnEntity(smallFireballEntity);
+                                this.guardian.getWorld().spawnEntity(smallFireballEntity);
                             }
                         }
                     }
@@ -421,14 +422,14 @@ public class BlazeGuardianEntity extends HostileEntity {
             --this.explosionTicker;
             LivingEntity livingEntity = this.guardian.getTarget();
             if (livingEntity != null) {
-                if (!this.guardian.world.isClient) {
+                if (!this.guardian.getWorld().isClient()) {
                     for (int o = 0; o < 3; o++) {
-                        this.guardian.world.addParticle(ParticleTypes.LAVA, this.guardian.getParticleX(0.7D), this.guardian.getRandomBodyY(), this.guardian.getParticleZ(0.7D), 0.0D, 0.0D, 0.0D);
-                        ((ServerWorld) this.guardian.world).spawnParticles(ParticleTypes.LAVA, this.guardian.getParticleX(0.7D), this.guardian.getRandomBodyY(), this.guardian.getParticleZ(0.7D), 0,
-                                0.0D, 0.0D, 0.0D, 0.01D);
+                        this.guardian.getWorld().addParticle(ParticleTypes.LAVA, this.guardian.getParticleX(0.7D), this.guardian.getRandomBodyY(), this.guardian.getParticleZ(0.7D), 0.0D, 0.0D, 0.0D);
+                        ((ServerWorld) this.guardian.getWorld()).spawnParticles(ParticleTypes.LAVA, this.guardian.getParticleX(0.7D), this.guardian.getRandomBodyY(), this.guardian.getParticleZ(0.7D),
+                                0, 0.0D, 0.0D, 0.0D, 0.01D);
                     }
-                    if (!this.guardian.world.isClient && explosionTicker == 1) {
-                        this.guardian.world.createExplosion(this.guardian, this.guardian.getX(), this.guardian.getY(), this.guardian.getZ(), 6.0F, true, Explosion.DestructionType.NONE);
+                    if (!this.guardian.getWorld().isClient() && explosionTicker == 1) {
+                        this.guardian.getWorld().createExplosion(this.guardian, this.guardian.getX(), this.guardian.getY(), this.guardian.getZ(), 6.0F, true, ExplosionSourceType.MOB);
                     }
                 }
                 super.tick();

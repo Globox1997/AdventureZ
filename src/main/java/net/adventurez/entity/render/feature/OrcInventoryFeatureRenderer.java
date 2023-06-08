@@ -9,10 +9,10 @@ import net.minecraft.client.model.ModelPart;
 import net.minecraft.client.render.VertexConsumerProvider;
 import net.minecraft.client.render.entity.feature.FeatureRenderer;
 import net.minecraft.client.render.entity.feature.FeatureRendererContext;
-import net.minecraft.client.render.model.json.ModelTransformation;
+import net.minecraft.client.render.model.json.ModelTransformationMode;
 import net.minecraft.client.util.math.MatrixStack;
-import net.minecraft.util.math.Vec3f;
-import net.minecraft.util.registry.Registry;
+import net.minecraft.registry.Registries;
+import net.minecraft.util.math.RotationAxis;
 
 @Environment(EnvType.CLIENT)
 public class OrcInventoryFeatureRenderer extends FeatureRenderer<OrcEntity, OrcModel<OrcEntity>> {
@@ -29,10 +29,10 @@ public class OrcInventoryFeatureRenderer extends FeatureRenderer<OrcEntity, OrcM
             matrixStack.push();
             ModelPart modelPart = this.getContextModel().getTorso();
             modelPart.rotate(matrixStack);
-            matrixStack.multiply(Vec3f.POSITIVE_Y.getDegreesQuaternion(90F));
+            matrixStack.multiply(RotationAxis.POSITIVE_Y.rotationDegrees(90F));
             matrixStack.translate(-0.295D, -0.3D, 0.0D);
-            MinecraftClient.getInstance().getEntityRenderDispatcher().getHeldItemRenderer().renderItem(orcEntity, Registry.ITEM.get(itemId).getDefaultStack(),
-                    ModelTransformation.Mode.THIRD_PERSON_RIGHT_HAND, false, matrixStack, vertexConsumerProvider, i);
+            MinecraftClient.getInstance().getEntityRenderDispatcher().getHeldItemRenderer().renderItem(orcEntity, Registries.ITEM.get(itemId).getDefaultStack(),
+                    ModelTransformationMode.THIRD_PERSON_RIGHT_HAND, false, matrixStack, vertexConsumerProvider, i);
             matrixStack.pop();
         }
     }

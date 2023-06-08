@@ -5,13 +5,12 @@
   "compatibilityLevel": "JAVA_17",
   "mixins": [
     "PlayerEntityMixin",
-    "OreBlockMixin",
+    "ExperienceDroppingBlockMixin",
     "PiglinBrainMixin",
     "ServerWorldMixin",
     "ExplosionMixin",
     "SpawnHelperMixin",
     "DragonEggBlockMixin",
-    "BrewingRecipeRegistryMixin",
     "GiveGiftsToHeroTaskMixin",
     "VillagerEntityMixin",
     "ServerPlayNetworkHandlerMixin",
@@ -39,7 +38,6 @@
   "client": [
     "client.ArmorFeatureRendererMixin",
     "client.InGameOverlayRendererMixin",
-    "client.InGameHudMixin",
     "client.ClientPlayerInteractionManagerMixin",
     "client.TexturedRenderLayersMixin",
     "client.IronGolemEntityRendererMixin",

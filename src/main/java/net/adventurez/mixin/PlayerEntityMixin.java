@@ -16,6 +16,7 @@ import net.minecraft.entity.EquipmentSlot;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.ItemStack;
+import net.minecraft.registry.tag.DamageTypeTags;
 import net.minecraft.entity.damage.DamageSource;
 import net.minecraft.world.World;
 
@@ -29,17 +30,17 @@ public abstract class PlayerEntityMixin extends LivingEntity {
     @Inject(method = "damage", at = @At(value = "INVOKE", target = "Lnet/minecraft/entity/player/PlayerEntity;dropShoulderEntities()V", shift = Shift.AFTER), cancellable = true)
     private void damageMixin(DamageSource source, float amount, CallbackInfoReturnable<Boolean> info) {
         if (this.getEquippedStack(EquipmentSlot.CHEST).getItem() == ItemInit.STONE_GOLEM_CHESTPLATE && StoneGolemArmor.fullGolemArmor((PlayerEntity) (Object) this)) {
-            if (this.world.random.nextFloat() <= ConfigInit.CONFIG.stone_golem_armor_dodge_chance)
+            if (this.getWorld().getRandom().nextFloat() <= ConfigInit.CONFIG.stone_golem_armor_dodge_chance) {
                 info.setReturnValue(false);
-            else if (source.isFire() && !StoneGolemArmor.isStoneGolemArmorActive(this.getEquippedStack(EquipmentSlot.CHEST))) {
+            } else if (source.isIn(DamageTypeTags.IS_FIRE) && !StoneGolemArmor.isStoneGolemArmorActive(this.getEquippedStack(EquipmentSlot.CHEST))) {
                 StoneGolemArmor.activateStoneGolemArmor((PlayerEntity) (Object) this, this.getEquippedStack(EquipmentSlot.CHEST));
                 info.setReturnValue(false);
             }
         }
     }
 
-    @Override
     @Environment(EnvType.CLIENT)
+    @Override
     public boolean doesRenderOnFire() {
         ItemStack golemChestplate = this.getEquippedStack(EquipmentSlot.CHEST);
         boolean fireActivated = this.getEquippedStack(EquipmentSlot.CHEST).getItem().equals(ItemInit.STONE_GOLEM_CHESTPLATE) && StoneGolemArmor.isStoneGolemArmorActive(golemChestplate);

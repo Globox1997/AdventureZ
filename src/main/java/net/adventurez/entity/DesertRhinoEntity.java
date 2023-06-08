@@ -46,7 +46,7 @@ public class DesertRhinoEntity extends HostileEntity {
 
     public DesertRhinoEntity(EntityType<? extends HostileEntity> entityType, World world) {
         super(entityType, world);
-        this.stepHeight = 1.0F;
+        this.setStepHeight(1.0f);
         this.experiencePoints = 30;
     }
 
@@ -94,7 +94,7 @@ public class DesertRhinoEntity extends HostileEntity {
     @Override
     public void tick() {
         super.tick();
-        if (!this.world.isClient && sprintedTicker > 0) {
+        if (!this.getWorld().isClient() && sprintedTicker > 0) {
             sprintedTicker--;
         }
 
@@ -107,7 +107,7 @@ public class DesertRhinoEntity extends HostileEntity {
 
     @Override
     public void checkDespawn() {
-        if (this.world.getDifficulty() == Difficulty.PEACEFUL) {
+        if (this.getWorld().getDifficulty() == Difficulty.PEACEFUL) {
             this.discard();
         }
     }
@@ -139,7 +139,7 @@ public class DesertRhinoEntity extends HostileEntity {
 
     @Override
     public boolean tryAttack(Entity target) {
-        this.world.playSound(null, this.getX(), this.getY(), this.getZ(), SoundInit.DESERT_RHINO_ATTACK_EVENT, SoundCategory.HOSTILE, 1.0F, 1.0F);
+        this.getWorld().playSound(null, this.getX(), this.getY(), this.getZ(), SoundInit.DESERT_RHINO_ATTACK_EVENT, SoundCategory.HOSTILE, 1.0F, 1.0F);
         return super.tryAttack(target);
     }
 
@@ -221,7 +221,7 @@ public class DesertRhinoEntity extends HostileEntity {
 
         @Override
         public void stop() {
-            this.cooldown = 100 + world.random.nextInt(300);
+            this.cooldown = 100 + this.desertRhinoEntity.getWorld().getRandom().nextInt(300);
             LivingEntity livingEntity = this.desertRhinoEntity.getTarget();
             if (livingEntity != null)
                 this.attack(livingEntity, this.desertRhinoEntity.squaredDistanceTo(livingEntity.getX(), livingEntity.getY(), livingEntity.getZ()));
@@ -236,15 +236,19 @@ public class DesertRhinoEntity extends HostileEntity {
                 this.desertRhinoEntity.getAttributeInstance(EntityAttributes.GENERIC_ATTACK_KNOCKBACK)
                         .setBaseValue(this.desertRhinoEntity.getAttributeValue(EntityAttributes.GENERIC_ATTACK_KNOCKBACK) + 10.0D);
                 BlockPos attackedPos;
-                if (this.desertRhinoEntity.tryAttack(target))
-                    attackedPos = new BlockPos(target.getX(), target.getY(), target.getZ());
-                else
+                if (this.desertRhinoEntity.tryAttack(target)) {
+                    attackedPos = BlockPos.ofFloored(target.getX(), target.getY(), target.getZ());
+                } else {
                     attackedPos = targetPos;
-                if (!this.desertRhinoEntity.world.getBlockState(attackedPos.down()).isAir())
+                }
+                if (!this.desertRhinoEntity.getWorld().getBlockState(attackedPos.down()).isAir())
                     for (int i = 0; i < 30; i++) {
-                        ((ServerWorld) world).spawnParticles(new BlockStateParticleEffect(ParticleTypes.BLOCK, this.desertRhinoEntity.world.getBlockState(attackedPos.down())),
-                                attackedPos.getX() + world.random.nextDouble() * 2.5D - 1.25D, attackedPos.getY() + world.random.nextDouble() * 0.2D,
-                                attackedPos.getZ() + world.random.nextDouble() * 2.5D - 1.25D, 4, 0.0D, world.random.nextDouble() * 0.15D, 0.D, 1.0D);
+                        ((ServerWorld) this.desertRhinoEntity.getWorld()).spawnParticles(
+                                new BlockStateParticleEffect(ParticleTypes.BLOCK, this.desertRhinoEntity.getWorld().getBlockState(attackedPos.down())),
+                                attackedPos.getX() + this.desertRhinoEntity.getWorld().getRandom().nextDouble() * 2.5D - 1.25D,
+                                attackedPos.getY() + this.desertRhinoEntity.getWorld().getRandom().nextDouble() * 0.2D,
+                                attackedPos.getZ() + this.desertRhinoEntity.getWorld().getRandom().nextDouble() * 2.5D - 1.25D, 4, 0.0D,
+                                this.desertRhinoEntity.getWorld().getRandom().nextDouble() * 0.15D, 0.D, 1.0D);
                     }
                 this.desertRhinoEntity.getAttributeInstance(EntityAttributes.GENERIC_ATTACK_KNOCKBACK)
                         .setBaseValue(this.desertRhinoEntity.getAttributeValue(EntityAttributes.GENERIC_ATTACK_KNOCKBACK) - 10.0D);

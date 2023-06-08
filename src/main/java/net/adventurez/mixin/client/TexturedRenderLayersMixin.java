@@ -1,8 +1,11 @@
 package net.adventurez.mixin.client;
 
+import java.util.function.Consumer;
+
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.injection.Inject;
+import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 import org.spongepowered.asm.mixin.injection.At;
 
@@ -18,15 +21,22 @@ import net.minecraft.client.util.SpriteIdentifier;
 @Mixin(TexturedRenderLayers.class)
 public class TexturedRenderLayersMixin {
 
-    @Inject(method = "getChestTexture", at = @At("HEAD"), cancellable = true)
+    private static final SpriteIdentifier SHADOW = createChestTextureId("shadow_chest_block");
+
+    @Inject(method = "Lnet/minecraft/client/render/TexturedRenderLayers;getChestTextureId(Lnet/minecraft/block/entity/BlockEntity;Lnet/minecraft/block/enums/ChestType;Z)Lnet/minecraft/client/util/SpriteIdentifier;", at = @At("TAIL"), cancellable = true)
     private static void getChestTextureMixin(BlockEntity blockEntity, ChestType type, boolean christmas, CallbackInfoReturnable<SpriteIdentifier> info) {
         if (blockEntity instanceof ShadowChestEntity) {
-            info.setReturnValue(getChestTextureId("shadow_chest_block"));
+            info.setReturnValue(SHADOW);
         }
     }
 
+    @Inject(method = "addDefaultTextures", at = @At("TAIL"))
+    private static void addDefaultTexturesMixin(Consumer<SpriteIdentifier> adder, CallbackInfo info) {
+        adder.accept(SHADOW);
+    }
+
     @Shadow
-    private static SpriteIdentifier getChestTextureId(String variant) {
+    private static SpriteIdentifier createChestTextureId(String variant) {
         return null;
     }
 }

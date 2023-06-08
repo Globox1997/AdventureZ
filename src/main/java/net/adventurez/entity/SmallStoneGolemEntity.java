@@ -27,7 +27,7 @@ public class SmallStoneGolemEntity extends HostileEntity {
 
     public SmallStoneGolemEntity(EntityType<? extends SmallStoneGolemEntity> entityType, World world) {
         super(entityType, world);
-        this.stepHeight = 1.0F;
+        this.setStepHeight(1.0f);
     }
 
     @Override
@@ -83,7 +83,7 @@ public class SmallStoneGolemEntity extends HostileEntity {
 
     @Override
     public boolean canSpawn(WorldView view) {
-        return super.canSpawn(view) && this.world.getBlockState(new BlockPos(this.getX(), this.getY(), this.getZ())).getBlock().canMobSpawnInside();
+        return super.canSpawn(view) && this.getWorld().getBlockState(this.getBlockPos()).getBlock().canMobSpawnInside(this.getWorld().getBlockState(this.getBlockPos()));
     }
 
 }

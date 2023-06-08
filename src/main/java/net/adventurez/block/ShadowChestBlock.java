@@ -83,7 +83,7 @@ public class ShadowChestBlock extends AbstractChestBlock<ShadowChestEntity> impl
     @Override
     public BlockState getPlacementState(ItemPlacementContext ctx) {
         FluidState fluidState = ctx.getWorld().getFluidState(ctx.getBlockPos());
-        return (BlockState) ((BlockState) this.getDefaultState().with(FACING, ctx.getPlayerFacing().getOpposite())).with(WATERLOGGED, fluidState.getFluid() == Fluids.WATER);
+        return (BlockState) ((BlockState) this.getDefaultState().with(FACING, ctx.getHorizontalPlayerFacing().getOpposite())).with(WATERLOGGED, fluidState.getFluid() == Fluids.WATER);
     }
 
     @Override
@@ -110,22 +110,6 @@ public class ShadowChestBlock extends AbstractChestBlock<ShadowChestEntity> impl
     public <T extends BlockEntity> BlockEntityTicker<T> getTicker(World world, BlockState state, BlockEntityType<T> type) {
         return world.isClient ? checkType(type, BlockInit.SHADOW_CHEST_ENTITY, ShadowChestEntity::clientTick) : null;
     }
-
-    // @Override
-    // public void randomDisplayTick(BlockState state, World world, BlockPos pos, Random random) {
-    // for (int i = 0; i < 3; ++i) {
-    // int j = random.nextInt(2) * 2 - 1;
-    // int k = random.nextInt(2) * 2 - 1;
-    // double d = (double) pos.getX() + 0.5D + 0.25D * (double) j;
-    // double e = (double) ((float) pos.getY() + random.nextFloat());
-    // double f = (double) pos.getZ() + 0.5D + 0.25D * (double) k;
-    // double g = (double) (random.nextFloat() * (float) j);
-    // double h = ((double) random.nextFloat() - 0.5D) * 0.125D;
-    // double l = (double) (random.nextFloat() * (float) k);
-    // world.addParticle(ParticleTypes.PORTAL, d, e, f, g, h, l);
-    // }
-
-    // }
 
     @Override
     public void randomDisplayTick(BlockState state, World world, BlockPos pos, Random random) {
@@ -167,7 +151,7 @@ public class ShadowChestBlock extends AbstractChestBlock<ShadowChestEntity> impl
     @Override
     public BlockState getStateForNeighborUpdate(BlockState state, Direction direction, BlockState neighborState, WorldAccess world, BlockPos pos, BlockPos neighborPos) {
         if ((Boolean) state.get(WATERLOGGED)) {
-            world.createAndScheduleFluidTick(pos, Fluids.WATER, Fluids.WATER.getTickRate(world));
+            world.scheduleFluidTick(pos, Fluids.WATER, Fluids.WATER.getTickRate(world));
         }
 
         return super.getStateForNeighborUpdate(state, direction, neighborState, world, pos, neighborPos);

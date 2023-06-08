@@ -21,8 +21,6 @@ import net.minecraft.entity.effect.StatusEffectInstance;
 import net.minecraft.entity.effect.StatusEffects;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.nbt.NbtCompound;
-import net.minecraft.network.Packet;
-import net.minecraft.network.packet.s2c.play.EntitySpawnS2CPacket;
 import net.minecraft.server.world.ServerWorld;
 import net.minecraft.util.math.MathHelper;
 import net.minecraft.world.World;
@@ -74,7 +72,7 @@ public class VoidCloudEntity extends Entity {
     }
 
     public void setRadius(float radius) {
-        if (!this.world.isClient) {
+        if (!this.getWorld().isClient()) {
             this.getDataTracker().set(RADIUS, MathHelper.clamp(radius, 0.0F, 32.0F));
         }
     }
@@ -91,15 +89,16 @@ public class VoidCloudEntity extends Entity {
     public void tick() {
         super.tick();
         float f = this.getRadius();
-        if (this.world.isClient) {
+        if (this.getWorld().isClient()) {
             particleTicker += (float) Math.PI / 128F;
             double angle = 2 * Math.PI * particleTicker;
             for (float i = 1.2F; i >= 0.2F; i -= 0.1F) {
-                this.world.addParticle(ParticleInit.VOID_CLOUD_PARTICLE, (double) this.getX() + this.getRadius() * -(i - 1.2F) * Math.sin(angle + Math.PI * i),
-                        (double) this.getY() + 0.4F + this.world.random.nextFloat() * 0.1F, (double) this.getZ() + this.getRadius() * -(i - 1.2F) * Math.cos(angle + Math.PI * i), 0.0D, 0.0D, 0.0D);
-                this.world.addParticle(ParticleInit.VOID_CLOUD_PARTICLE, (double) this.getX() + this.getRadius() * -(i - 1.2F) * Math.sin(angle + Math.PI * i + Math.PI),
-                        (double) this.getY() + 0.4F + this.world.random.nextFloat() * 0.1F, (double) this.getZ() + this.getRadius() * -(i - 1.2F) * Math.cos(angle + Math.PI * i + Math.PI), 0.0D,
+                this.getWorld().addParticle(ParticleInit.VOID_CLOUD_PARTICLE, (double) this.getX() + this.getRadius() * -(i - 1.2F) * Math.sin(angle + Math.PI * i),
+                        (double) this.getY() + 0.4F + this.getWorld().getRandom().nextFloat() * 0.1F, (double) this.getZ() + this.getRadius() * -(i - 1.2F) * Math.cos(angle + Math.PI * i), 0.0D,
                         0.0D, 0.0D);
+                this.getWorld().addParticle(ParticleInit.VOID_CLOUD_PARTICLE, (double) this.getX() + this.getRadius() * -(i - 1.2F) * Math.sin(angle + Math.PI * i + Math.PI),
+                        (double) this.getY() + 0.4F + this.getWorld().getRandom().nextFloat() * 0.1F, (double) this.getZ() + this.getRadius() * -(i - 1.2F) * Math.cos(angle + Math.PI * i + Math.PI),
+                        0.0D, 0.0D, 0.0D);
             }
         } else {
             if (this.age >= this.waitTime + this.duration) {
@@ -121,7 +120,7 @@ public class VoidCloudEntity extends Entity {
                 this.affectedEntities.entrySet().removeIf((entry) -> {
                     return this.age >= (Integer) entry.getValue();
                 });
-                List<PlayerEntity> list2 = this.world.getNonSpectatingEntities(PlayerEntity.class, this.getBoundingBox());
+                List<PlayerEntity> list2 = this.getWorld().getNonSpectatingEntities(PlayerEntity.class, this.getBoundingBox());
                 if (!list2.isEmpty()) {
                     Iterator<PlayerEntity> var27 = list2.iterator();
 
@@ -171,8 +170,8 @@ public class VoidCloudEntity extends Entity {
 
     @Nullable
     public LivingEntity getOwner() {
-        if (this.owner == null && this.ownerUuid != null && this.world instanceof ServerWorld) {
-            Entity entity = ((ServerWorld) this.world).getEntity(this.ownerUuid);
+        if (this.owner == null && this.ownerUuid != null && this.getWorld() instanceof ServerWorld) {
+            Entity entity = ((ServerWorld) this.getWorld()).getEntity(this.ownerUuid);
             if (entity instanceof LivingEntity) {
                 this.owner = (LivingEntity) entity;
             }
@@ -218,11 +217,6 @@ public class VoidCloudEntity extends Entity {
     @Override
     public PistonBehavior getPistonBehavior() {
         return PistonBehavior.IGNORE;
-    }
-
-    @Override
-    public Packet<?> createSpawnPacket() {
-        return new EntitySpawnS2CPacket(this);
     }
 
     @Override

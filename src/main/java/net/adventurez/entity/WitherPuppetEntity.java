@@ -37,7 +37,7 @@ public class WitherPuppetEntity extends HostileEntity {
 
     public WitherPuppetEntity(EntityType<? extends HostileEntity> entityType, World world) {
         super(entityType, world);
-        this.stepHeight = 1.0F;
+        this.setStepHeight(1.0f);
     }
 
     public static DefaultAttributeContainer.Builder createWitherPuppetAttributes() {
@@ -80,15 +80,15 @@ public class WitherPuppetEntity extends HostileEntity {
         super.tick();
         if (this.alive && --this.lifeTicks <= 0) {
             this.lifeTicks = 20;
-            this.damage(DamageSource.STARVE, 1.0F);
+            this.damage(this.getDamageSources().starve(), 1.0f);
         }
         if (this.owner != null && this.owner.deathTime > 0) {
             this.discard();
             this.playSpawnEffects();
         }
-        if (this.world.isClient) {
+        if (this.getWorld().isClient()) {
             for (int i = 0; i < 2; ++i) {
-                this.world.addParticle(ParticleTypes.SMOKE, this.getParticleX(0.5D), this.getRandomBodyY(), this.getParticleZ(0.5D), 0.0D, 0.0D, 0.0D);
+                this.getWorld().addParticle(ParticleTypes.SMOKE, this.getParticleX(0.5D), this.getRandomBodyY(), this.getParticleZ(0.5D), 0.0D, 0.0D, 0.0D);
             }
         }
 
@@ -139,8 +139,9 @@ public class WitherPuppetEntity extends HostileEntity {
 
     @Override
     public boolean tryAttack(Entity target) {
-        if (!this.world.isClient && target instanceof LivingEntity && world.getRandom().nextInt(5) == 0)
+        if (!this.getWorld().isClient() && target instanceof LivingEntity && this.getWorld().getRandom().nextInt(5) == 0) {
             ((LivingEntity) target).addStatusEffect(new StatusEffectInstance(StatusEffect.byRawId(18), 80, 0, false, false), this);
+        }
         return super.tryAttack(target);
     }
 

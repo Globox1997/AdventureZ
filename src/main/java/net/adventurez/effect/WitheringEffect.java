@@ -7,7 +7,6 @@ import net.minecraft.entity.attribute.AttributeContainer;
 import net.minecraft.entity.attribute.EntityAttributeInstance;
 import net.minecraft.entity.attribute.EntityAttributeModifier;
 import net.minecraft.entity.attribute.EntityAttributes;
-import net.minecraft.entity.damage.DamageSource;
 import net.minecraft.entity.effect.StatusEffect;
 import net.minecraft.entity.effect.StatusEffectCategory;
 
@@ -20,7 +19,7 @@ public class WitheringEffect extends StatusEffect {
 
     @Override
     public void applyUpdateEffect(LivingEntity entity, int amplifier) {
-        entity.damage(DamageSource.WITHER, 0.5F);
+        entity.damage(entity.getDamageSources().wither(), 0.5F);
     }
 
     @Override

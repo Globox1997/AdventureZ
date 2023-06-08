@@ -2,6 +2,8 @@ package net.adventurez.entity.render;
 
 import java.util.Random;
 
+import org.joml.Matrix4f;
+
 import net.adventurez.entity.VoidShadowEntity;
 import net.adventurez.entity.model.VoidShadowModel;
 import net.adventurez.entity.render.feature.VoidShadowBlackFeatureRenderer;
@@ -17,8 +19,7 @@ import net.minecraft.client.render.entity.EntityRendererFactory;
 import net.minecraft.client.render.entity.MobEntityRenderer;
 import net.minecraft.client.util.math.MatrixStack;
 import net.minecraft.util.Identifier;
-import net.minecraft.util.math.Matrix4f;
-import net.minecraft.util.math.Vec3f;
+import net.minecraft.util.math.RotationAxis;
 
 @Environment(EnvType.CLIENT)
 public class VoidShadowRenderer extends MobEntityRenderer<VoidShadowEntity, VoidShadowModel<VoidShadowEntity>> {
@@ -52,12 +53,12 @@ public class VoidShadowRenderer extends MobEntityRenderer<VoidShadowEntity, Void
             VertexConsumer vertexConsumer5 = vertexConsumerProvider.getBuffer(RenderLayer.getLightning());
             matrixStack.translate(0.0D, 5.0D, 0.0D);
             for (int n = 0; (float) n < (l + l * l) / 2.0F * 60.0F; ++n) {
-                matrixStack.multiply(Vec3f.POSITIVE_X.getDegreesQuaternion(random.nextFloat() * 360.0F));
-                matrixStack.multiply(Vec3f.POSITIVE_Y.getDegreesQuaternion(random.nextFloat() * 360.0F));
-                matrixStack.multiply(Vec3f.POSITIVE_Z.getDegreesQuaternion(random.nextFloat() * 360.0F));
-                matrixStack.multiply(Vec3f.POSITIVE_X.getDegreesQuaternion(random.nextFloat() * 360.0F));
-                matrixStack.multiply(Vec3f.POSITIVE_Y.getDegreesQuaternion(random.nextFloat() * 360.0F));
-                matrixStack.multiply(Vec3f.POSITIVE_Z.getDegreesQuaternion(random.nextFloat() * 360.0F + l * 90.0F));
+                matrixStack.multiply(RotationAxis.POSITIVE_X.rotationDegrees(random.nextFloat() * 360.0F));
+                matrixStack.multiply(RotationAxis.POSITIVE_Y.rotationDegrees(random.nextFloat() * 360.0F));
+                matrixStack.multiply(RotationAxis.POSITIVE_Z.rotationDegrees(random.nextFloat() * 360.0F));
+                matrixStack.multiply(RotationAxis.POSITIVE_X.rotationDegrees(random.nextFloat() * 360.0F));
+                matrixStack.multiply(RotationAxis.POSITIVE_Y.rotationDegrees(random.nextFloat() * 360.0F));
+                matrixStack.multiply(RotationAxis.POSITIVE_Z.rotationDegrees(random.nextFloat() * 360.0F + l * 90.0F));
                 float o = random.nextFloat() * 20.0F + 5.0F + m * 10.0F;
                 float p = random.nextFloat() * 2.0F + 1.0F + m * 2.0F;
                 Matrix4f matrix4f = matrixStack.peek().getPositionMatrix();

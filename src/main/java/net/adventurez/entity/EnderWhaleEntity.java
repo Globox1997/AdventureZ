@@ -17,6 +17,7 @@ import net.minecraft.entity.EntityPose;
 import net.minecraft.entity.EntityType;
 import net.minecraft.entity.ItemSteerable;
 import net.minecraft.entity.LivingEntity;
+import net.minecraft.entity.MovementType;
 import net.minecraft.entity.SaddledComponent;
 import net.minecraft.entity.SpawnReason;
 import net.minecraft.entity.ai.TargetPredicate;
@@ -60,10 +61,11 @@ public class EnderWhaleEntity extends FlyingEntity implements ItemSteerable {
         super(entityType, world);
         this.saddledComponent = new SaddledComponent(this.dataTracker, BOOST_TIME, ALWAYS_SADDLED);
         this.moveControl = new EnderWhaleEntity.EnderWhaleMovementControl(this);
+        this.setStepHeight(1.0f);
     }
 
     public static DefaultAttributeContainer.Builder createEnderWhaleAttributes() {
-        return MobEntity.createMobAttributes().add(EntityAttributes.GENERIC_MAX_HEALTH, 60.0D).add(EntityAttributes.GENERIC_MOVEMENT_SPEED, 0.18D).add(EntityAttributes.GENERIC_ATTACK_DAMAGE, 7.0D)
+        return MobEntity.createMobAttributes().add(EntityAttributes.GENERIC_MAX_HEALTH, 60.0D).add(EntityAttributes.GENERIC_MOVEMENT_SPEED, 0.022D).add(EntityAttributes.GENERIC_ATTACK_DAMAGE, 7.0D)
                 .add(EntityAttributes.GENERIC_ATTACK_KNOCKBACK, 1.5D).add(EntityAttributes.GENERIC_KNOCKBACK_RESISTANCE, 2.5D);
     }
 
@@ -110,25 +112,17 @@ public class EnderWhaleEntity extends FlyingEntity implements ItemSteerable {
         return this.getPassengerList().size() < 2;
     }
 
+    @Override
     @Nullable
-    @Override
-    public Entity getPrimaryPassenger() {
-        return this.getFirstPassenger();
+    public LivingEntity getControllingPassenger() {
+        return !this.getPassengerList().isEmpty() && this.getPassengerList().get(0) instanceof PlayerEntity
+                && ((PlayerEntity) this.getPassengerList().get(0)).getMainHandStack().isOf(ItemInit.CHORUS_FRUIT_ON_A_STICK) ? (LivingEntity) this.getPassengerList().get(0) : null;
     }
 
-    private boolean canBeControlledByRider() {
-        Entity entity = this.getPrimaryPassenger();
-        if (!(entity instanceof PlayerEntity)) {
-            return false;
-        } else {
-            PlayerEntity playerEntity = (PlayerEntity) entity;
-            return playerEntity.getMainHandStack().isOf(ItemInit.CHORUS_FRUIT_ON_A_STICK);
-        }
-    }
-
+    // Not used since it is a flying entity which overrides the travel method and doesn't use movementspeed
     @Override
-    public float getSaddledSpeed() {
-        return (float) this.getAttributeValue(EntityAttributes.GENERIC_MOVEMENT_SPEED) * 0.225F;
+    protected float getSaddledSpeed(PlayerEntity controllingPlayer) {
+        return (float) this.getAttributeValue(EntityAttributes.GENERIC_MOVEMENT_SPEED) * this.saddledComponent.getMovementSpeedMultiplier();
     }
 
     @Override
@@ -164,22 +158,22 @@ public class EnderWhaleEntity extends FlyingEntity implements ItemSteerable {
     public ActionResult interactMob(PlayerEntity player, Hand hand) {
         if (!player.shouldCancelInteraction()) {
             if ((player.getStackInHand(hand).isOf(Items.CHORUS_FRUIT) || player.getStackInHand(hand).isOf(Items.POPPED_CHORUS_FRUIT)) && this.getMaxHealth() - this.getHealth() > 0.1F) {
-                if (!this.world.isClient && !player.isCreative()) {
+                if (!this.getWorld().isClient() && !player.isCreative()) {
                     player.getStackInHand(hand).decrement(1);
                     this.heal(4F);
                 }
-                return ActionResult.success(this.world.isClient);
+                return ActionResult.success(this.getWorld().isClient());
             }
             if (!this.hasPassengers()) {
-                if (!this.world.isClient) {
+                if (!this.getWorld().isClient()) {
                     player.startRiding(this);
                 }
-                return ActionResult.success(this.world.isClient);
+                return ActionResult.success(this.getWorld().isClient());
             } else if (((EntityAccessor) this).getPassengerList().size() < 2) {
-                if (!this.world.isClient) {
+                if (!this.getWorld().isClient()) {
                     player.startRiding(this, true);
                 }
-                return ActionResult.success(this.world.isClient);
+                return ActionResult.success(this.getWorld().isClient());
             }
         }
         return ActionResult.PASS;
@@ -205,10 +199,10 @@ public class EnderWhaleEntity extends FlyingEntity implements ItemSteerable {
                 for (int var11 = 0; var11 < var10; ++var11) {
                     int[] js = var9[var11];
                     mutable.set(blockPos.getX() + js[0], blockPos.getY(), blockPos.getZ() + js[1]);
-                    double d = this.world.getDismountHeight(mutable);
+                    double d = this.getWorld().getDismountHeight(mutable);
                     if (Dismounting.canDismountInBlock(d)) {
                         Vec3d vec3d = Vec3d.ofCenter(mutable, d);
-                        if (Dismounting.canPlaceEntityAt(this.world, passenger, box.offset(vec3d))) {
+                        if (Dismounting.canPlaceEntityAt(this.getWorld(), passenger, box.offset(vec3d))) {
                             passenger.setPose(entityPose);
                             return vec3d;
                         }
@@ -220,48 +214,36 @@ public class EnderWhaleEntity extends FlyingEntity implements ItemSteerable {
         }
     }
 
+    // movementInput is somehow affected when ridden otherwise 0,0,0
     @Override
     public void travel(Vec3d movementInput) {
-        Entity firstPassenger = this.getFirstPassenger();
-        if (this.hasPassengers() && this.canBeControlledByRider() && firstPassenger instanceof PlayerEntity) {
-            this.setYaw(firstPassenger.getYaw());
-            this.prevYaw = this.getYaw();
-            this.setPitch(firstPassenger.getPitch() * 0.5F);
-            this.setRotation(this.getYaw(), this.getPitch());
-            this.bodyYaw = this.getYaw();
-            this.headYaw = this.getYaw();
-            this.stepHeight = 1.0F;
-            this.airStrafingSpeed = this.getMovementSpeed() * 0.1F;
-            if (saddledComponent.boosted && saddledComponent.boostedTime++ > saddledComponent.currentBoostTime) {
-                saddledComponent.boosted = false;
-            }
-
+        if (this.getControllingPassenger() != null) {
             if (this.isLogicalSideForUpdatingMovement()) {
-                float f = this.getSaddledSpeed();
-                if (saddledComponent.boosted) {
-                    f += f * 1.12F * MathHelper.sin((float) saddledComponent.boostedTime / (float) saddledComponent.currentBoostTime * 3.1415927F);
-                }
-
-                this.setMovementSpeed(f);
-                this.setMovementInput(new Vec3d(0.0D, (double) -firstPassenger.getPitch() * 0.005F, 1.0D));
-                this.bodyTrackingIncrements = 0;
-            } else {
-                this.updateLimbs(this, false);
-                this.setVelocity(Vec3d.ZERO);
+                this.updateVelocity(this.getMovementSpeed(), movementInput);
+                this.move(MovementType.SELF, this.getVelocity());
+                this.setVelocity(this.getVelocity().multiply(0.91f));
             }
-
-            this.tryCheckBlockCollision();
-
+            this.updateLimbs(false);
         } else {
-            this.stepHeight = 0.5F;
-            this.airStrafingSpeed = 0.02F;
-            this.setMovementInput(movementInput);
+            super.travel(movementInput);
         }
     }
 
+    // movementInput is Vec3d(this.sidewaysSpeed, this.upwardSpeed, this.forwardSpeed) of the whale entity
+    // getControlledMovementInput used in method travelControlled()
+    // which will execute travel() method
     @Override
-    public void setMovementInput(Vec3d movementInput) {
-        super.travel(movementInput);
+    protected Vec3d getControlledMovementInput(PlayerEntity controllingPlayer, Vec3d movementInput) {
+        return new Vec3d(0.0f, controllingPlayer.getPitch() / 180f * -1f, 1.0f);
+    }
+
+    @Override
+    protected void tickControlled(PlayerEntity controllingPlayer, Vec3d movementInput) {
+        super.tickControlled(controllingPlayer, movementInput);
+        this.setRotation(controllingPlayer.getYaw(), controllingPlayer.getPitch() * 0.5f);
+        this.bodyYaw = this.headYaw = this.getYaw();
+        this.prevYaw = this.headYaw;
+        this.saddledComponent.tickBoost();
     }
 
     @Override
@@ -270,15 +252,18 @@ public class EnderWhaleEntity extends FlyingEntity implements ItemSteerable {
     }
 
     @Override
-    public void updatePassengerPosition(Entity passenger) {
-        super.updatePassengerPosition(passenger);
+    protected void updatePassengerPosition(Entity passenger, PositionUpdater positionUpdater) {
+        if (!this.hasPassenger(passenger)) {
+            return;
+        }
         float offSet = 12F;
-        if (passenger.equals(this.getPrimaryPassenger()))
+        if (passenger.equals(this.getFirstPassenger())) {
             offSet = 1F;
+        }
         float f = MathHelper.sin(this.bodyYaw * 0.017453292F) * offSet;
         float g = MathHelper.cos(this.bodyYaw * 0.017453292F) * offSet;
 
-        passenger.setPosition(this.getX() + (double) (0.1F * f), this.getBodyY(0.83F) + passenger.getHeightOffset() + 0.0D, this.getZ() - (double) (0.1F * g));
+        positionUpdater.accept(passenger, this.getX() + (double) (0.1F * f), this.getBodyY(0.83F) + passenger.getHeightOffset() + 0.0D, this.getZ() - (double) (0.1F * g));
     }
 
     @Override
@@ -320,10 +305,9 @@ public class EnderWhaleEntity extends FlyingEntity implements ItemSteerable {
         private boolean willCollide() {
             Box box = this.enderWhaleEntity.getBoundingBox();
             box = box.expand(0.2D);
-            if (this.enderWhaleEntity.world.isSpaceEmpty(this.enderWhaleEntity, box)) {
+            if (this.enderWhaleEntity.getWorld().isSpaceEmpty(this.enderWhaleEntity, box)) {
                 return false;
             }
-
             return true;
         }
     }
@@ -419,7 +403,7 @@ public class EnderWhaleEntity extends FlyingEntity implements ItemSteerable {
                 --this.cooldown;
                 return false;
             } else {
-                this.closestPlayer = this.enderWhaleEntity.world.getClosestPlayer(this.predicate, this.enderWhaleEntity);
+                this.closestPlayer = this.enderWhaleEntity.getWorld().getClosestPlayer(this.predicate, this.enderWhaleEntity);
                 return this.closestPlayer != null;
             }
         }

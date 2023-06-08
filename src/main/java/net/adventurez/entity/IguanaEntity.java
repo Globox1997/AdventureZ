@@ -134,11 +134,11 @@ public class IguanaEntity extends AnimalEntity {
 
         @Override
         public void tick() {
-            if (!this.iguanaEntity.world.isClient && this.hasReached()) {
+            if (!this.iguanaEntity.getWorld().isClient() && this.hasReached()) {
                 if (this.iguanaEntity.getHealth() < this.iguanaEntity.getMaxHealth())
                     this.iguanaEntity.heal(2f);
 
-                this.iguanaEntity.world.breakBlock(targetPos, false);
+                this.iguanaEntity.getWorld().breakBlock(targetPos, false);
                 this.iguanaEntity.setLoveTicks(600);
             }
             super.tick();
@@ -151,8 +151,7 @@ public class IguanaEntity extends AnimalEntity {
 
         @Override
         protected int getInterval(PathAwareEntity mob) {
-            return 60;
-            // return 400 + mob.getRandom().nextInt(600);
+            return 60 + mob.getRandom().nextInt(600);
         }
 
         @Override

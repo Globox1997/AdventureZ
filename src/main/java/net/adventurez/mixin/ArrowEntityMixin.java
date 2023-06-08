@@ -50,15 +50,16 @@ public abstract class ArrowEntityMixin extends PersistentProjectileEntity {
 
     @Inject(method = "asItemStack", at = @At("HEAD"), cancellable = true)
     protected void asItemStackMixin(CallbackInfoReturnable<ItemStack> info) {
-        System.out.println(COLOR.getId());
-        if (this.dataTracker.get(COLOR).equals(14340520))
+        if (this.dataTracker.get(COLOR).equals(14340520)) {
             info.setReturnValue(new ItemStack(ItemInit.IVORY_ARROW));
+        }
     }
 
     @Inject(method = "spawnParticles", at = @At(value = "INVOKE_ASSIGN", target = "Lnet/minecraft/entity/projectile/ArrowEntity;getColor()I"), locals = LocalCapture.CAPTURE_FAILSOFT, cancellable = true)
     private void spawnParticlesMixin(int amount, CallbackInfo info, int i) {
-        if (i == 14340520)
+        if (i == 14340520) {
             info.cancel();
+        }
     }
 
     @Shadow

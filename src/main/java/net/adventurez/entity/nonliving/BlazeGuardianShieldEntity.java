@@ -1,12 +1,11 @@
 package net.adventurez.entity.nonliving;
 
 import net.adventurez.entity.BlazeGuardianEntity;
-import net.adventurez.network.EntitySpawnPacket;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityType;
 import net.minecraft.entity.damage.DamageSource;
 import net.minecraft.nbt.NbtCompound;
-import net.minecraft.network.Packet;
+import net.minecraft.registry.tag.DamageTypeTags;
 import net.minecraft.sound.SoundCategory;
 import net.minecraft.sound.SoundEvents;
 import net.minecraft.world.World;
@@ -23,7 +22,7 @@ public class BlazeGuardianShieldEntity extends Entity {
     }
 
     public BlazeGuardianShieldEntity(EntityType<? extends Entity> entityType, BlazeGuardianEntity owner, String name) {
-        super(entityType, owner.world);
+        super(entityType, owner.getWorld());
         this.owner = owner;
         this.name = name;
     }
@@ -43,7 +42,7 @@ public class BlazeGuardianShieldEntity extends Entity {
     @Override
     public void tick() {
         super.tick();
-        if (!this.world.isClient && (this.owner == null || this.owner.isDead() || this.owner.isRemoved())) {
+        if (!this.getWorld().isClient() && (this.owner == null || this.owner.isDead() || this.owner.isRemoved())) {
             this.discard();
         }
     }
@@ -55,29 +54,27 @@ public class BlazeGuardianShieldEntity extends Entity {
 
     @Override
     public boolean damage(DamageSource source, float amount) {
-        if (source.isProjectile())
+        if (source.isIn(DamageTypeTags.IS_PROJECTILE)) {
             return false;
+        }
         hit++;
-        if (hit > 1 + this.world.random.nextInt(2)) {
-            this.world.playSound(null, this.getBlockPos(), SoundEvents.ITEM_SHIELD_BREAK, SoundCategory.HOSTILE, 1.0F, 1.0F);
+        if (hit > 1 + this.getWorld().getRandom().nextInt(2)) {
+            this.getWorld().playSound(null, this.getBlockPos(), SoundEvents.ITEM_SHIELD_BREAK, SoundCategory.HOSTILE, 1.0F, 1.0F);
             if (this.owner != null) {
                 this.removeShield(this.name, this.owner);
             }
-            if (!this.world.isClient)
+            if (!this.getWorld().isClient()) {
                 this.discard();
-        } else
-            this.world.playSound(null, this.getBlockPos(), SoundEvents.ITEM_SHIELD_BLOCK, SoundCategory.HOSTILE, 1.0F, 1.0F);
+            }
+        } else {
+            this.getWorld().playSound(null, this.getBlockPos(), SoundEvents.ITEM_SHIELD_BLOCK, SoundCategory.HOSTILE, 1.0F, 1.0F);
+        }
         return this.isInvulnerableTo(source);
     }
 
     @Override
     public boolean isPartOf(Entity entity) {
         return this == entity || this.owner == entity;
-    }
-
-    @Override
-    public Packet<?> createSpawnPacket() {
-        return EntitySpawnPacket.createPacket(this);
     }
 
     @Override

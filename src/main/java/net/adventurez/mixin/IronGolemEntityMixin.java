@@ -51,8 +51,9 @@ public abstract class IronGolemEntityMixin extends GolemEntity implements Entity
     @Inject(method = "readCustomDataFromNbt", at = @At(value = "TAIL"))
     private void readCustomDataFromNbtMixin(NbtCompound nbt, CallbackInfo info) {
         this.dataTracker.set(BLACKSTONED, nbt.getBoolean("Blackstoned"));
-        if (nbt.getBoolean("Blackstoned"))
+        if (nbt.getBoolean("Blackstoned")) {
             this.targetSelector.add(3, new ActiveTargetGoal<>(this, CreeperEntity.class, false, true));
+        }
     }
 
     @Inject(method = "interactMob", at = @At(value = "INVOKE_ASSIGN", target = "Lnet/minecraft/entity/player/PlayerEntity;getStackInHand(Lnet/minecraft/util/Hand;)Lnet/minecraft/item/ItemStack;"), cancellable = true, locals = LocalCapture.CAPTURE_FAILSOFT)
@@ -61,17 +62,17 @@ public abstract class IronGolemEntityMixin extends GolemEntity implements Entity
             if (itemStack.getItem() instanceof BlockItem) {
                 if (((BlockItem) itemStack.getItem()).getBlock().getDefaultState().isIn(TagInit.PLATFORM_NETHER_BLOCKS)) {
                     this.heal(10.0F);
-                    info.setReturnValue(ActionResult.success(this.world.isClient));
+                    info.setReturnValue(ActionResult.success(this.getWorld().isClient()));
                 }
             } else if (itemStack.isOf(ItemInit.GILDED_STONE)) {
                 this.heal(this.getMaxHealth() * 0.2F);
-                info.setReturnValue(ActionResult.success(this.world.isClient));
+                info.setReturnValue(ActionResult.success(this.getWorld().isClient()));
             } else if (itemStack.isOf(ItemInit.STONE_GOLEM_HEART)) {
                 this.heal(this.getMaxHealth());
-                info.setReturnValue(ActionResult.success(this.world.isClient));
+                info.setReturnValue(ActionResult.success(this.getWorld().isClient()));
             }
         } else if (itemStack.isOf(ItemInit.STONE_GOLEM_HEART)) {
-            if (!this.world.isClient) {
+            if (!this.getWorld().isClient()) {
                 this.targetSelector.add(3, new ActiveTargetGoal<>(this, CreeperEntity.class, false, true));
                 this.dataTracker.set(BLACKSTONED, true);
                 this.getAttributeInstance(EntityAttributes.GENERIC_MAX_HEALTH).setBaseValue(this.getAttributeBaseValue(EntityAttributes.GENERIC_MAX_HEALTH) + 100.0D);
@@ -80,15 +81,16 @@ public abstract class IronGolemEntityMixin extends GolemEntity implements Entity
                 this.setHealth(this.getMaxHealth());
                 itemStack.decrement(1);
             }
-            this.world.playSound(null, this.getX(), this.getY(), this.getZ(), SoundInit.GOLEM_AWAKENS_EVENT, SoundCategory.NEUTRAL, 1.4F, 1.0F);
-            info.setReturnValue(ActionResult.success(this.world.isClient));
+            this.getWorld().playSound(null, this.getX(), this.getY(), this.getZ(), SoundInit.GOLEM_AWAKENS_EVENT, SoundCategory.NEUTRAL, 1.4F, 1.0F);
+            info.setReturnValue(ActionResult.success(this.getWorld().isClient()));
         }
     }
 
     @Inject(method = "canTarget", at = @At(value = "HEAD"), cancellable = true)
     private void canTargetMixin(EntityType<?> type, CallbackInfoReturnable<Boolean> info) {
-        if (type == EntityType.CREEPER && this.dataTracker.get(BLACKSTONED) == true)
+        if (type == EntityType.CREEPER && this.dataTracker.get(BLACKSTONED) == true) {
             info.setReturnValue(true);
+        }
     }
 
     @Override

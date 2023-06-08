@@ -34,10 +34,10 @@ import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.Items;
 import net.minecraft.nbt.NbtCompound;
 import net.minecraft.recipe.Ingredient;
+import net.minecraft.registry.tag.BlockTags;
 import net.minecraft.server.world.ServerWorld;
 import net.minecraft.sound.SoundEvent;
 import net.minecraft.sound.SoundEvents;
-import net.minecraft.tag.BlockTags;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.intprovider.UniformIntProvider;
 import net.minecraft.util.math.random.Random;
@@ -52,7 +52,7 @@ public class BrownFungusEntity extends PathAwareEntity implements Angerable {
 
     public BrownFungusEntity(EntityType<? extends PathAwareEntity> entityType, World world) {
         super(entityType, world);
-        this.stepHeight = 1.0F;
+        this.setStepHeight(1.0f);
     }
 
     @Override
@@ -106,18 +106,19 @@ public class BrownFungusEntity extends PathAwareEntity implements Angerable {
     @Override
     public void readCustomDataFromNbt(NbtCompound nbt) {
         super.readCustomDataFromNbt(nbt);
-        this.readAngerFromNbt(this.world, nbt);
+        this.readAngerFromNbt(this.getWorld(), nbt);
     }
 
     @Override
     public void tickMovement() {
         super.tickMovement();
-        if (!this.world.isClient) {
-            this.tickAngerLogic((ServerWorld) this.world, true);
-            int randomMushroom = this.world.random.nextInt(20000);
-            if (randomMushroom == 1997 && (world.getBlockState(this.getBlockPos().down()).isOf(Blocks.MYCELIUM) || world.getBlockState(this.getBlockPos().down()).isOf(Blocks.GRASS_BLOCK))
-                    && this.world.getBlockState(this.getBlockPos()).isAir()) {
-                this.world.setBlockState(this.getBlockPos(), Blocks.BROWN_MUSHROOM.getDefaultState());
+        if (!this.getWorld().isClient()) {
+            this.tickAngerLogic((ServerWorld) this.getWorld(), true);
+            int randomMushroom = this.getWorld().getRandom().nextInt(20000);
+            if (randomMushroom == 1997
+                    && (this.getWorld().getBlockState(this.getBlockPos().down()).isOf(Blocks.MYCELIUM) || this.getWorld().getBlockState(this.getBlockPos().down()).isOf(Blocks.GRASS_BLOCK))
+                    && this.getWorld().getBlockState(this.getBlockPos()).isAir()) {
+                this.getWorld().setBlockState(this.getBlockPos(), Blocks.BROWN_MUSHROOM.getDefaultState());
             }
         }
     }
@@ -172,8 +173,8 @@ public class BrownFungusEntity extends PathAwareEntity implements Angerable {
         if (!super.tryAttack(target)) {
             return false;
         } else {
-            if (!this.world.isClient && target instanceof LivingEntity && this.world.random.nextInt(160) > 100) {
-                ((LivingEntity) target).addStatusEffect(new StatusEffectInstance(StatusEffect.byRawId(19), 80 + this.world.random.nextInt(100), 0, false, false), this);
+            if (!this.getWorld().isClient() && target instanceof LivingEntity && this.getWorld().getRandom().nextInt(160) > 100) {
+                ((LivingEntity) target).addStatusEffect(new StatusEffectInstance(StatusEffect.byRawId(19), 80 + this.getWorld().getRandom().nextInt(100), 0, false, false), this);
             }
             return true;
         }

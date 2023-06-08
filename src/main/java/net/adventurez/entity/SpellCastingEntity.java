@@ -43,7 +43,7 @@ public abstract class SpellCastingEntity extends HostileEntity {
     }
 
     public boolean isSpellcasting() {
-        if (this.world.isClient) {
+        if (this.getWorld().isClient()) {
             return (Byte) this.dataTracker.get(SPELL) > 0;
         } else {
             return this.spellTicks > 0;
@@ -56,7 +56,7 @@ public abstract class SpellCastingEntity extends HostileEntity {
     }
 
     protected SpellCastingEntity.Spell getSpell() {
-        return !this.world.isClient ? this.spell : SpellCastingEntity.Spell.byId((Byte) this.dataTracker.get(SPELL));
+        return !this.getWorld().isClient() ? this.spell : SpellCastingEntity.Spell.byId((Byte) this.dataTracker.get(SPELL));
     }
 
     protected void mobTick() {
@@ -69,7 +69,7 @@ public abstract class SpellCastingEntity extends HostileEntity {
 
     public void tick() {
         super.tick();
-        if (this.world.isClient && this.isSpellcasting() && !(this instanceof ShamanEntity)) {
+        if (this.getWorld().isClient() && this.isSpellcasting() && !(this instanceof ShamanEntity)) {
             SpellCastingEntity.Spell spell = this.getSpell();
             double d = spell.particleVelocity[0];
             double e = spell.particleVelocity[1];
@@ -77,7 +77,7 @@ public abstract class SpellCastingEntity extends HostileEntity {
             float g = this.bodyYaw * 0.017453292F + MathHelper.cos((float) this.age * 0.6662F) * 0.25F;
             float h = MathHelper.cos(g);
             float i = MathHelper.sin(g);
-            this.world.addParticle(ParticleTypes.ENTITY_EFFECT, this.getX() + (double) h * 0.92D, this.getY() + 2.32D, this.getZ() + (double) i * 0.92D, d, e, f);
+            this.getWorld().addParticle(ParticleTypes.ENTITY_EFFECT, this.getX() + (double) h * 0.92D, this.getY() + 2.32D, this.getZ() + (double) i * 0.92D, d, e, f);
         }
 
     }

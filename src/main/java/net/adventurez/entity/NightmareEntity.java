@@ -48,13 +48,13 @@ public class NightmareEntity extends SkeletonHorseEntity {
 
     @Override
     public void tickMovement() {
-        if (!this.world.isClient && this.isAlive()) {
+        if (!this.getWorld().isClient() && this.isAlive()) {
             if (this.random.nextInt(700) == 0 && this.deathTime == 0) {
                 this.heal(1.0F);
             }
 
             if (this.eatsGrass()) {
-                if (!this.isEatingGrass() && !this.hasPassengers() && this.random.nextInt(500) == 0 && this.world.getBlockState(this.getBlockPos().down()).isOf(Blocks.SOUL_SAND)) {
+                if (!this.isEatingGrass() && !this.hasPassengers() && this.random.nextInt(500) == 0 && this.getWorld().getBlockState(this.getBlockPos().down()).isOf(Blocks.SOUL_SAND)) {
                     this.setEatingGrass(true);
                 }
 
@@ -66,24 +66,24 @@ public class NightmareEntity extends SkeletonHorseEntity {
 
             this.walkToParent();
         }
-        if (this.world.isClient) {
-            double g = this.random.nextDouble() * 0.75F - 0.375F;
-            double e = this.random.nextDouble() * 0.9F;
-            double f = this.random.nextDouble() * 0.75F - 0.375F;
+        if (this.getWorld().isClient()) {
+            double g = this.getWorld().getRandom().nextDouble() * 0.75F - 0.375F;
+            double e = this.getWorld().getRandom().nextDouble() * 0.9F;
+            double f = this.getWorld().getRandom().nextDouble() * 0.75F - 0.375F;
             if (!this.isBaby()) {
-                double g2 = world.random.nextDouble() * 0.75F - 0.375F;
-                double e2 = world.random.nextDouble() * 0.9F;
-                double f2 = world.random.nextDouble() * 0.75F - 0.375F;
-                this.world.addParticle(ParticleTypes.SOUL_FIRE_FLAME, this.getX() + g, this.getY() + 0.5D + e, this.getZ() + f, 0D, 0D, 0D);
-                this.world.addParticle(ParticleTypes.SOUL_FIRE_FLAME, this.getX() + g2, this.getY() + 0.5D + e2, this.getZ() + f2, 0D, 0D, 0D);
+                double g2 = this.getWorld().getRandom().nextDouble() * 0.75F - 0.375F;
+                double e2 = this.getWorld().getRandom().nextDouble() * 0.9F;
+                double f2 = this.getWorld().getRandom().nextDouble() * 0.75F - 0.375F;
+                this.getWorld().addParticle(ParticleTypes.SOUL_FIRE_FLAME, this.getX() + g, this.getY() + 0.5D + e, this.getZ() + f, 0D, 0D, 0D);
+                this.getWorld().addParticle(ParticleTypes.SOUL_FIRE_FLAME, this.getX() + g2, this.getY() + 0.5D + e2, this.getZ() + f2, 0D, 0D, 0D);
             } else {
-                this.world.addParticle(ParticleTypes.SOUL_FIRE_FLAME, this.getX() + g, this.getY() + 0.5D + e, this.getZ() + f, 0D, 0D, 0D);
+                this.getWorld().addParticle(ParticleTypes.SOUL_FIRE_FLAME, this.getX() + g, this.getY() + 0.5D + e, this.getZ() + f, 0D, 0D, 0D);
             }
         }
-        if (this.touchingWater && !world.isClient) {
+        if (this.touchingWater && !this.getWorld().isClient()) {
             damageWaterTicks++;
             if (damageWaterTicks == 40) {
-                this.damage(DamageSource.FREEZE, 1F);
+                this.damage(this.getDamageSources().freeze(), 1F);
                 damageWaterTicks = 0;
             }
         }
@@ -98,7 +98,7 @@ public class NightmareEntity extends SkeletonHorseEntity {
     @Override
     public void walkToParent() {
         if (this.isBred() && this.isBaby() && !this.isEatingGrass()) {
-            LivingEntity livingEntity = this.world.getClosestPlayer(this, 16D);
+            LivingEntity livingEntity = this.getWorld().getClosestPlayer(this, 16D);
             if (livingEntity != null && this.squaredDistanceTo(livingEntity) > 4.0D) {
                 this.navigation.findPathTo((Entity) livingEntity, 0);
             }
@@ -109,30 +109,26 @@ public class NightmareEntity extends SkeletonHorseEntity {
     @Override
     public ActionResult interactMob(PlayerEntity player, Hand hand) {
         ItemStack itemStack = player.getStackInHand(hand);
-
         if (this.hasPassengers() || this.isBaby()) {
             return super.interactMob(player, hand);
         }
 
         if (!itemStack.isEmpty()) {
-            if (itemStack.isItemEqual(new ItemStack(Items.WITHER_ROSE))) {
+            if (itemStack.isOf(Items.WITHER_ROSE)) {
                 return this.interactHorse(player, itemStack);
             }
-
             ActionResult actionResult = itemStack.useOnEntity(player, this, hand);
             if (actionResult.isAccepted()) {
                 return actionResult;
             }
-
             if (!this.isTame()) {
-                world.playSoundFromEntity(null, this, SoundInit.NIGHTMARE_ANGRY_EVENT, SoundCategory.HOSTILE, 1F, 1F);
-                return ActionResult.success(this.world.isClient);
+                this.getWorld().playSoundFromEntity(null, this, SoundInit.NIGHTMARE_ANGRY_EVENT, SoundCategory.HOSTILE, 1F, 1F);
+                return ActionResult.success(this.getWorld().isClient());
             }
-
         }
 
         this.putPlayerOnBack(player);
-        return ActionResult.success(this.world.isClient);
+        return ActionResult.success(this.getWorld().isClient());
     }
 
     @Override

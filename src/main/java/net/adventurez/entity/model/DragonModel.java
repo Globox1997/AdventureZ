@@ -277,7 +277,7 @@ public class DragonModel<T extends DragonEntity> extends CompositeEntityModel<T>
             this.jaw.pitch = 0.4F;
         }
 
-        float slowlyIncreasingFloat = ((float) Math.floorMod(entity.world.getTime(), 100L) + animationProgress) / 100.0F;
+        float slowlyIncreasingFloat = ((float) Math.floorMod(entity.getWorld().getTime(), 100L) + animationProgress) / 100.0F;
 
         // Between Animation
         if (entity.getDataTracker().get(DragonEntity.CLIENT_START_FLYING)) {
@@ -526,7 +526,7 @@ public class DragonModel<T extends DragonEntity> extends CompositeEntityModel<T>
 
             // Random Yaw Fire
             Float yawPitch = Math.abs(MathHelper.cos(6.2831853071F * slowlyIncreasingFloat) * 0.3F);
-            if (entity.getSize() == 3 && !this.randomYawFire && yawPitch <= 0.01F && entity.world.random.nextInt(16) == 0 && !isFireBreathing) {
+            if (entity.getSize() == 3 && !this.randomYawFire && yawPitch <= 0.01F && entity.getWorld().random.nextInt(16) == 0 && !isFireBreathing) {
                 this.randomYawFire = true;
             }
             if (this.randomYawFire) {
@@ -535,7 +535,7 @@ public class DragonModel<T extends DragonEntity> extends CompositeEntityModel<T>
                 Float pitcher = this.head.pitch + this.neck.pitch + this.neck2.pitch + this.neck3.pitch + this.neck4.pitch;
                 yawler = (yawler / (float) (Math.PI)) * 1.5F;
                 pitcher = pitcher * 3F;
-                entity.world.addParticle(ParticleTypes.FLAME, true, entity.getX() + Math.sin((entity.bodyYaw / 360F) * 2F * Math.PI + (Math.PI) + yawler) * 6D, entity.getY() - pitcher + 1.95D,
+                entity.getWorld().addParticle(ParticleTypes.FLAME, true, entity.getX() + Math.sin((entity.bodyYaw / 360F) * 2F * Math.PI + (Math.PI) + yawler) * 6D, entity.getY() - pitcher + 1.95D,
                         entity.getZ() - Math.cos((entity.bodyYaw / 360F) * 2F * Math.PI + (Math.PI) + yawler) * 6D, 0.0D, 0.0D, 0.0D);
 
                 this.jaw.pitch = yawPitch;

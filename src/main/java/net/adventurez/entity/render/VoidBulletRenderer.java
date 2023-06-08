@@ -14,7 +14,6 @@ import net.minecraft.util.Identifier;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.MathHelper;
 
-@SuppressWarnings("deprecation")
 @Environment(EnvType.CLIENT)
 public class VoidBulletRenderer extends EntityRenderer<VoidBulletEntity> {
     private static final Identifier TEXTURE = new Identifier("adventurez:textures/entity/void_bullet.png");
@@ -26,13 +25,13 @@ public class VoidBulletRenderer extends EntityRenderer<VoidBulletEntity> {
 
     @Override
     public int getBlockLight(VoidBulletEntity voidBulletEntity, BlockPos blockPos) {
-        return voidBulletEntity.world.getLightLevel(blockPos);
+        return voidBulletEntity.getWorld().getLightLevel(blockPos);
     }
 
     @Override
     public void render(VoidBulletEntity voidBulletEntity, float f, float g, MatrixStack matrixStack, VertexConsumerProvider vertexConsumerProvider, int i) {
         matrixStack.push();
-        float h = MathHelper.lerpAngle(voidBulletEntity.prevYaw, voidBulletEntity.getYaw(), g);
+        float h = MathHelper.lerpAngleDegrees(g, voidBulletEntity.prevYaw, voidBulletEntity.getYaw());
         float j = MathHelper.lerp(g, voidBulletEntity.prevPitch, voidBulletEntity.getPitch());
         matrixStack.scale(-1.0F, -1.0F, 1.0F);
         matrixStack.translate(0.0D, -1.55D, 0.0D);

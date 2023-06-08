@@ -61,7 +61,7 @@ public class VoidShadeEntity extends FlyingEntity implements Monster {
 
     @Override
     public void checkDespawn() {
-        if (this.world.getDifficulty() == Difficulty.PEACEFUL) {
+        if (this.getWorld().getDifficulty() == Difficulty.PEACEFUL) {
             this.discard();
         }
     }
@@ -119,10 +119,10 @@ public class VoidShadeEntity extends FlyingEntity implements Monster {
         public void tick() {
             LivingEntity livingEntity = this.voidShadeEntity.getTarget();
             if (livingEntity.distanceTo(this.voidShadeEntity) < 12.0D) {
-                World world = this.voidShadeEntity.world;
+                World world = this.voidShadeEntity.getWorld();
                 ++this.cooldown;
                 if (this.cooldown == 20) {
-                    ((ServerWorld) this.voidShadeEntity.world).playSoundFromEntity(null, this.voidShadeEntity, SoundInit.SHADOW_CAST_EVENT, SoundCategory.HOSTILE, 1.0F, 1.0F);
+                    ((ServerWorld) world).playSoundFromEntity(null, this.voidShadeEntity, SoundInit.SHADOW_CAST_EVENT, SoundCategory.HOSTILE, 1.0F, 1.0F);
                     Vec3d vec3d = this.voidShadeEntity.getRotationVec(1.0F);
                     VoidBulletEntity voidBulletEntity = new VoidBulletEntity(world, this.voidShadeEntity, vec3d.x + world.random.nextFloat() * 0.5F - 0.25F, vec3d.y,
                             vec3d.z + world.random.nextFloat() * 0.5F - 0.25F);
@@ -130,10 +130,12 @@ public class VoidShadeEntity extends FlyingEntity implements Monster {
 
                     this.cooldown = -40;
                 }
-                if (livingEntity.distanceTo(this.voidShadeEntity) < 1.0D)
+                if (livingEntity.distanceTo(this.voidShadeEntity) < 1.0D) {
                     this.voidShadeEntity.tryAttack(livingEntity);
-            } else if (this.cooldown > 0)
+                }
+            } else if (this.cooldown > 0) {
                 --this.cooldown;
+            }
         }
     }
 

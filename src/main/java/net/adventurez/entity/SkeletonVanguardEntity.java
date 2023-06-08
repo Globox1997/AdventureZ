@@ -19,6 +19,7 @@ import net.minecraft.entity.data.TrackedDataHandlerRegistry;
 import net.minecraft.entity.mob.HostileEntity;
 import net.minecraft.entity.mob.MobEntity;
 import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.registry.tag.DamageTypeTags;
 import net.minecraft.sound.SoundCategory;
 import net.minecraft.sound.SoundEvent;
 import net.minecraft.sound.SoundEvents;
@@ -31,7 +32,7 @@ public class SkeletonVanguardEntity extends HostileEntity {
 
     public SkeletonVanguardEntity(EntityType<? extends HostileEntity> entityType, World world) {
         super(entityType, world);
-        this.stepHeight = 1.0F;
+        this.setStepHeight(1.0f);
     }
 
     public static DefaultAttributeContainer.Builder createSkeletonVanguardAttributes() {
@@ -110,19 +111,20 @@ public class SkeletonVanguardEntity extends HostileEntity {
     @Override
     public boolean damage(DamageSource source, float amount) {
         int chance = 0;
-        if (source.isProjectile()) {
-            chance = world.random.nextInt(2);
-        } else if (!source.isUnblockable() && this.getHealth() < this.getMaxHealth() / 2) {
-            chance = world.random.nextInt(5);
+        if (source.isIn(DamageTypeTags.IS_PROJECTILE)) {
+            chance = this.getWorld().getRandom().nextInt(2);
+        } else if (!source.isIn(DamageTypeTags.BYPASSES_INVULNERABILITY) && this.getHealth() < this.getMaxHealth() / 2) {
+            chance = this.getWorld().getRandom().nextInt(5);
         } else {
-            chance = world.random.nextInt(10);
+            chance = this.getWorld().getRandom().nextInt(10);
         }
         if (chance == 1) {
             dataTracker.set(SHIELD_SWING, 0.1F);
-            this.world.playSoundFromEntity(null, this, SoundEvents.ITEM_SHIELD_BLOCK, SoundCategory.HOSTILE, 1.0F, 1.0F);
+            this.getWorld().playSoundFromEntity(null, this, SoundEvents.ITEM_SHIELD_BLOCK, SoundCategory.HOSTILE, 1.0F, 1.0F);
             return false;
-        } else
+        } else {
             return this.isInvulnerableTo(source) ? false : super.damage(source, amount);
+        }
     }
 
 }

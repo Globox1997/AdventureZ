@@ -1,6 +1,6 @@
 package net.adventurez.item.armor;
 
-import net.minecraft.entity.EquipmentSlot;
+import net.minecraft.item.ArmorItem.Type;
 import net.minecraft.item.ArmorMaterial;
 import net.minecraft.item.Items;
 import net.minecraft.recipe.Ingredient;
@@ -8,17 +8,17 @@ import net.minecraft.sound.SoundEvent;
 import net.minecraft.sound.SoundEvents;
 
 public class StoneGolemArmorMaterial implements ArmorMaterial {
-    private static final int[] BASE_DURABILITY = new int[] { 14, 15, 16, 12 };
-    private static final int[] PROTECTION_AMOUNTS = new int[] { 3, 6, 8, 3 };
+    private static final int[] BASE_DURABILITY = new int[] { 12, 16, 15, 14 };
+    private static final int[] PROTECTION_AMOUNTS = new int[] { 3, 8, 6, 3 };
 
     @Override
-    public int getDurability(EquipmentSlot equipmentSlot) {
-        return BASE_DURABILITY[equipmentSlot.getEntitySlotId()] * 40;
+    public int getDurability(Type type) {
+        return BASE_DURABILITY[type.ordinal()] * 40;
     }
 
     @Override
-    public int getProtectionAmount(EquipmentSlot equipmentSlot) {
-        return PROTECTION_AMOUNTS[equipmentSlot.getEntitySlotId()];
+    public int getProtection(Type type) {
+        return PROTECTION_AMOUNTS[type.ordinal()];
     }
 
     @Override

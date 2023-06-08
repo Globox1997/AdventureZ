@@ -79,7 +79,7 @@ public class PiglinFlagBlock extends Block implements BlockEntityProvider {
 
     @Override
     public BlockState getPlacementState(ItemPlacementContext ctx) {
-        return (BlockState) this.getDefaultState().with(FACING, ctx.getPlayerFacing().rotateYClockwise());
+        return (BlockState) this.getDefaultState().with(FACING, ctx.getHorizontalPlayerFacing().rotateYClockwise());
     }
 
     @Override

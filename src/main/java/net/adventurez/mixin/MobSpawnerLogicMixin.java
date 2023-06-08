@@ -19,6 +19,7 @@ import net.minecraft.predicate.entity.EntityPredicates;
 import net.minecraft.server.world.ServerWorld;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Box;
+import net.minecraft.util.math.random.Random;
 import net.minecraft.world.MobSpawnerEntry;
 import net.minecraft.world.MobSpawnerLogic;
 import net.minecraft.world.World;
@@ -33,12 +34,8 @@ public class MobSpawnerLogicMixin {
     private boolean spawnGuardian = false;
 
     @Inject(method = "setEntityId", at = @At("HEAD"))
-    private void setEntityId(EntityType<?> type, CallbackInfo info) {
-        if (type == null) {
-            return;
-        }
-
-        if (type.equals(EntityType.BLAZE)) {
+    private void setEntityId(EntityType<?> type, @Nullable World world, Random random, BlockPos po, CallbackInfo info) {
+        if (type != null && type.equals(EntityType.BLAZE)) {
             this.spawnGuardian = true;
         }
     }

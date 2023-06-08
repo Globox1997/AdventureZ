@@ -3,7 +3,6 @@ package net.adventurez.entity.nonliving;
 import java.util.UUID;
 
 import net.adventurez.init.EntityInit;
-import net.adventurez.network.EntitySpawnPacket;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
 import net.minecraft.entity.Entity;
@@ -11,13 +10,11 @@ import net.minecraft.entity.EntityType;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.SpawnRestriction;
 import net.minecraft.entity.damage.DamageSource;
-import net.minecraft.entity.damage.EntityDamageSource;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.projectile.ArrowEntity;
 import net.minecraft.entity.projectile.ExplosiveProjectileEntity;
 import net.minecraft.entity.projectile.ProjectileUtil;
 import net.minecraft.nbt.NbtCompound;
-import net.minecraft.network.Packet;
 import net.minecraft.server.world.ServerWorld;
 import net.minecraft.sound.SoundCategory;
 import net.minecraft.sound.SoundEvents;
@@ -110,17 +107,17 @@ public class TinyEyeEntity extends ExplosiveProjectileEntity {
 
     private void movingAround() {
         double d = 0.5D;
-        BlockPos blockPos2;
+        BlockPos blockPos;
         if (this.target == null)
-            blockPos2 = this.getBlockPos().down();
+            blockPos = this.getBlockPos().down();
         else {
             d = (double) this.target.getHeight() * 0.5D;
-            blockPos2 = new BlockPos(this.target.getX(), this.target.getY() + d, this.target.getZ());
+            blockPos = BlockPos.ofFloored(this.target.getX(), this.target.getY() + d, this.target.getZ());
         }
 
-        double e = (double) blockPos2.getX() + 0.5D;
-        double f = (double) blockPos2.getY() + d;
-        double g = (double) blockPos2.getZ() + 0.5D;
+        double e = (double) blockPos.getX() + 0.5D;
+        double f = (double) blockPos.getY() + d;
+        double g = (double) blockPos.getZ() + 0.5D;
         double h = e - this.getX();
         double j = f - this.getY();
         double k = g - this.getZ();
@@ -141,16 +138,16 @@ public class TinyEyeEntity extends ExplosiveProjectileEntity {
 
     @Override
     public void checkDespawn() {
-        if (this.world.getDifficulty() == Difficulty.PEACEFUL)
+        if (this.getWorld().getDifficulty() == Difficulty.PEACEFUL)
             this.discard();
     }
 
     @Override
     public void tick() {
         Vec3d vec3d;
-        if (!this.world.isClient) {
+        if (!this.getWorld().isClient()) {
             if (this.target == null && this.targetUuid != null) {
-                this.target = ((ServerWorld) this.world).getEntity(this.targetUuid);
+                this.target = ((ServerWorld) this.getWorld()).getEntity(this.targetUuid);
                 if (this.target == null) {
                     this.targetUuid = null;
                 }
@@ -178,7 +175,7 @@ public class TinyEyeEntity extends ExplosiveProjectileEntity {
         vec3d = this.getVelocity();
         this.updatePosition(this.getX() + vec3d.x, this.getY() + vec3d.y, this.getZ() + vec3d.z);
         ProjectileUtil.setRotationFromVelocity(this, 0.5F);
-        if (this.world.isClient) {
+        if (this.getWorld().isClient()) {
         } else if (this.target != null && !this.target.isRemoved()) {
             if (this.stepCount > 0) {
                 --this.stepCount;
@@ -190,7 +187,7 @@ public class TinyEyeEntity extends ExplosiveProjectileEntity {
             if (this.direction != null) {
                 BlockPos blockPos = this.getBlockPos();
                 Direction.Axis axis = this.direction.getAxis();
-                if (this.world.isTopSolid(blockPos.offset(this.direction), this)) {
+                if (this.getWorld().isTopSolid(blockPos.offset(this.direction), this)) {
                     this.movingAround();
                 } else {
                     BlockPos blockPos2 = this.target.getBlockPos();
@@ -229,35 +226,35 @@ public class TinyEyeEntity extends ExplosiveProjectileEntity {
         super.onEntityHit(entityHitResult);
         Entity entity = this.getOwner();
         Entity hittedEntity = entityHitResult.getEntity();
-        if (!this.world.isClient && entity != null && hittedEntity != entity && !(hittedEntity instanceof TinyEyeEntity) || hittedEntity instanceof ArrowEntity) {
+        if (!this.getWorld().isClient() && entity != null && hittedEntity != entity && !(hittedEntity instanceof TinyEyeEntity) || hittedEntity instanceof ArrowEntity) {
             this.playSound(SoundEvents.ENTITY_ENDER_EYE_DEATH, 1.0F, 1.0F);
             if (hittedEntity instanceof LivingEntity) {
                 this.teleportEntityRandom((LivingEntity) hittedEntity);
-                hittedEntity.damage(createDamageSource(this), 1.0F);
+                hittedEntity.damage(createDamageSource(this), 3.0F);
             }
             this.discard();
         }
 
     }
 
-    public static DamageSource createDamageSource(Entity entity) {
-        return new EntityDamageSource("tinyEye", entity).setProjectile();
+    private DamageSource createDamageSource(Entity entity) {
+        return entity.getDamageSources().create(EntityInit.TINY_EYE, entity);
     }
 
     @SuppressWarnings("deprecation")
     private void teleportEntityRandom(LivingEntity livingEntity) {
         for (int counter = 0; counter < 100; counter++) {
-            float randomFloat = this.world.getRandom().nextFloat() * 6.2831855F;
-            int posX = livingEntity.getBlockPos().getX() + MathHelper.floor(MathHelper.cos(randomFloat) * 9.0F + livingEntity.world.getRandom().nextInt(30));
-            int posZ = livingEntity.getBlockPos().getZ() + MathHelper.floor(MathHelper.sin(randomFloat) * 9.0F + livingEntity.world.getRandom().nextInt(30));
-            int posY = livingEntity.world.getTopY(Heightmap.Type.WORLD_SURFACE, posX, posZ);
+            float randomFloat = this.getWorld().getRandom().nextFloat() * 6.2831855F;
+            int posX = livingEntity.getBlockPos().getX() + MathHelper.floor(MathHelper.cos(randomFloat) * 9.0F + livingEntity.getWorld().getRandom().nextInt(30));
+            int posZ = livingEntity.getBlockPos().getZ() + MathHelper.floor(MathHelper.sin(randomFloat) * 9.0F + livingEntity.getWorld().getRandom().nextInt(30));
+            int posY = livingEntity.getWorld().getTopY(Heightmap.Type.WORLD_SURFACE, posX, posZ);
             BlockPos teleportPos = new BlockPos(posX, posY, posZ);
-            if (livingEntity.world.isRegionLoaded(teleportPos.getX() - 4, teleportPos.getY() - 4, teleportPos.getZ() - 4, teleportPos.getX() + 4, teleportPos.getY() + 4, teleportPos.getZ() + 4)
-                    && SpawnHelper.canSpawn(SpawnRestriction.Location.ON_GROUND, livingEntity.world, teleportPos, EntityType.PLAYER)) {
-                if (!world.isClient) {
+            if (livingEntity.getWorld().isRegionLoaded(teleportPos.getX() - 4, teleportPos.getY() - 4, teleportPos.getZ() - 4, teleportPos.getX() + 4, teleportPos.getY() + 4, teleportPos.getZ() + 4)
+                    && SpawnHelper.canSpawn(SpawnRestriction.Location.ON_GROUND, livingEntity.getWorld(), teleportPos, EntityType.PLAYER)) {
+                if (!this.getWorld().isClient()) {
                     livingEntity.teleport(teleportPos.getX(), teleportPos.getY(), teleportPos.getZ());
                 }
-                livingEntity.world.playSound(null, teleportPos, SoundEvents.ENTITY_ENDERMAN_TELEPORT, SoundCategory.HOSTILE, 1.0F, 1.0F);
+                livingEntity.getWorld().playSound(null, teleportPos, SoundEvents.ENTITY_ENDERMAN_TELEPORT, SoundCategory.HOSTILE, 1.0F, 1.0F);
                 break;
             }
         }
@@ -267,18 +264,13 @@ public class TinyEyeEntity extends ExplosiveProjectileEntity {
     public void onBlockHit(BlockHitResult blockHitResult) {
         super.onBlockHit(blockHitResult);
         this.playSound(SoundEvents.ENTITY_ENDER_EYE_DEATH, 1.0F, 1.0F);
-        if (!this.world.isClient)
+        if (!this.getWorld().isClient())
             this.discard();
     }
 
     @Override
     public void onCollision(HitResult hitResult) {
         super.onCollision(hitResult);
-    }
-
-    @Override
-    public Packet<?> createSpawnPacket() {
-        return EntitySpawnPacket.createPacket(this);
     }
 
 }

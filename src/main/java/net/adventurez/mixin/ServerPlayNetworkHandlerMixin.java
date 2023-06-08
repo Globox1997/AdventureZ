@@ -29,7 +29,7 @@ public class ServerPlayNetworkHandlerMixin {
         }
     }
 
-    @Inject(method = "tick", at = @At(value = "INVOKE", target = "Lnet/minecraft/entity/Entity;getPrimaryPassenger()Lnet/minecraft/entity/Entity;", shift = Shift.AFTER, ordinal = 1))
+    @Inject(method = "tick", at = @At(value = "INVOKE", target = "Lnet/minecraft/entity/Entity;getControllingPassenger()Lnet/minecraft/entity/LivingEntity;", shift = Shift.AFTER, ordinal = 1))
     private void tickMixin(CallbackInfo info) {
         if (vehicleFloatingTicks >= 70 && player.getVehicle() != null && (player.getVehicle() instanceof DragonEntity || player.getVehicle() instanceof EnderWhaleEntity)) {
             vehicleFloatingTicks = 0;

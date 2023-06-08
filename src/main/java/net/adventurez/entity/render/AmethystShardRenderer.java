@@ -14,7 +14,6 @@ import net.minecraft.util.Identifier;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.MathHelper;
 
-@SuppressWarnings("deprecation")
 @Environment(EnvType.CLIENT)
 public class AmethystShardRenderer extends EntityRenderer<AmethystShardEntity> {
     private static final Identifier TEXTURE = new Identifier("adventurez:textures/entity/amethyst_shard.png");
@@ -26,14 +25,13 @@ public class AmethystShardRenderer extends EntityRenderer<AmethystShardEntity> {
 
     @Override
     public int getBlockLight(AmethystShardEntity amethystShardEntity, BlockPos blockPos) {
-        return amethystShardEntity.world.getLightLevel(blockPos);
+        return amethystShardEntity.getWorld().getLightLevel(blockPos);
     }
 
     @Override
     public void render(AmethystShardEntity amethystShardEntity, float f, float g, MatrixStack matrixStack, VertexConsumerProvider vertexConsumerProvider, int i) {
         matrixStack.push();
-        // lerpAngle found at this.dolphin.setPitch(MathHelper.lerpAngle(this.dolphin.getPitch(), 0.0f, 0.2f));
-        float h = MathHelper.lerpAngle(amethystShardEntity.prevYaw, amethystShardEntity.getYaw(), g);
+        float h = MathHelper.lerpAngleDegrees(g, amethystShardEntity.prevYaw, amethystShardEntity.getYaw());
         float j = MathHelper.lerp(g, amethystShardEntity.prevPitch, amethystShardEntity.getPitch());
         matrixStack.scale(-1.0F, -1.0F, 1.0F);
         matrixStack.translate(0.0D, -1.55D, 0.0D);

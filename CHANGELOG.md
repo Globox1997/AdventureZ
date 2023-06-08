@@ -1,7 +1,6 @@
 ### Added:
 - 
 ### Fixed:
-- Fixed netty issues
-- Fixed world generating issue
-### Changed:
 - 
+### Changed:
+- Updated to mc 1.20

@@ -14,7 +14,6 @@ import net.minecraft.util.Identifier;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.MathHelper;
 
-@SuppressWarnings("deprecation")
 @Environment(EnvType.CLIENT)
 public class TinyEyeRenderer extends EntityRenderer<TinyEyeEntity> {
     private static final Identifier TEXTURE = new Identifier("adventurez:textures/entity/the_eye.png");
@@ -26,13 +25,13 @@ public class TinyEyeRenderer extends EntityRenderer<TinyEyeEntity> {
 
     @Override
     public int getBlockLight(TinyEyeEntity tinyEyeEntity, BlockPos blockPos) {
-        return tinyEyeEntity.world.getLightLevel(blockPos);
+        return tinyEyeEntity.getWorld().getLightLevel(blockPos);
     }
 
     @Override
     public void render(TinyEyeEntity tinyEyeEntity, float f, float g, MatrixStack matrixStack, VertexConsumerProvider vertexConsumerProvider, int i) {
         matrixStack.push();
-        float h = MathHelper.lerpAngle(tinyEyeEntity.prevYaw, tinyEyeEntity.getYaw(), g);
+        float h = MathHelper.lerpAngleDegrees(g, tinyEyeEntity.prevYaw, tinyEyeEntity.getYaw());
         matrixStack.scale(-0.5F, -0.5F, 0.5F);
         matrixStack.translate(0.0D, -1.4D, 0.0D);
         this.model.setAngles(tinyEyeEntity, 0.0F, 0.0F, 0.0F, h, 0.0F);
