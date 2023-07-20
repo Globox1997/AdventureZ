@@ -174,7 +174,7 @@ public class RedFungusEntity extends PathAwareEntity implements Angerable {
             return false;
         } else {
             if (!this.getWorld().isClient() && target instanceof LivingEntity && this.getWorld().getRandom().nextInt(160) > 140) {
-                ((LivingEntity) target).addStatusEffect(new StatusEffectInstance(StatusEffect.byRawId(19), 80 + this.getWorld().getRandom().nextInt(160), 0, false, false), this);
+                ((LivingEntity) target).addStatusEffect(new StatusEffectInstance(StatusEffect.byRawId(19), 120 + this.getWorld().getRandom().nextInt(160), 0, false, false), this);
             }
             return true;
         }
