@@ -62,6 +62,7 @@ public class EnderWhaleEntity extends FlyingEntity implements ItemSteerable {
         this.saddledComponent = new SaddledComponent(this.dataTracker, BOOST_TIME, ALWAYS_SADDLED);
         this.moveControl = new EnderWhaleEntity.EnderWhaleMovementControl(this);
         this.setStepHeight(1.0f);
+        this.experiencePoints = 5;
     }
 
     public static DefaultAttributeContainer.Builder createEnderWhaleAttributes() {
