@@ -38,7 +38,7 @@ public class ParticleInit {
         public ShardParticle(ClientWorld clientWorld, double d, double e, double f, double g, double h, double i, SpriteProvider spriteProvider) {
             super(clientWorld, d, e, f, g, h, i);
             this.velocityMultiplier = 0.96F;
-            this.field_28787 = true;
+            this.ascending = true;
             this.spriteProvider = spriteProvider;
             this.scale *= 0.75F;
             this.collidesWithWorld = false;
@@ -208,7 +208,7 @@ public class ParticleInit {
         public SprintParticle(ClientWorld clientWorld, double d, double e, double f, double g, double h, double i, SpriteProvider spriteProvider) {
             super(clientWorld, d, e, f);
             this.velocityMultiplier = 1.0F;
-            this.field_28787 = false;
+            this.ascending = false;
             this.gravityStrength = 0.0F;
             this.spriteProvider = spriteProvider;
             this.collidesWithWorld = false;
