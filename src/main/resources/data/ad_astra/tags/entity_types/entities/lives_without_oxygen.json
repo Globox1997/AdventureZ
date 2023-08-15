@@ -1,0 +1,10 @@
+{
+    "replace": false,
+    "values": [
+        "adventurez:amethyst_golem",
+        "adventurez:small_stone_golem",
+        "adventurez:stone_golem",
+        "adventurez:summoner",
+        "adventurez:wither_puppet"
+    ]
+}
