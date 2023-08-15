@@ -37,6 +37,7 @@ import net.fabricmc.api.Environment;
 
 public class PiglinFlagBlock extends Block implements BlockEntityProvider {
     public static final DirectionProperty FACING;
+    private static final VoxelShape BASE;
     private static final VoxelShape POLE;
     private static final VoxelShape BAR_1;
     private static final VoxelShape BAR_2;
@@ -94,7 +95,7 @@ public class PiglinFlagBlock extends Block implements BlockEntityProvider {
 
     @Override
     public VoxelShape getCollisionShape(BlockState state, BlockView world, BlockPos pos, ShapeContext context) {
-        return this.getShape(state);
+        return BASE;
     }
 
     @Override
@@ -117,8 +118,9 @@ public class PiglinFlagBlock extends Block implements BlockEntityProvider {
             return SOUTH_FLAG;
         } else if (direction == Direction.WEST) {
             return WEST_FLAG;
-        } else
+        } else {
             return NORTH_FLAG;
+        }
     }
 
     @SuppressWarnings("unchecked")
@@ -129,7 +131,8 @@ public class PiglinFlagBlock extends Block implements BlockEntityProvider {
 
     static {
         FACING = HorizontalFacingBlock.FACING;
-        POLE = VoxelShapes.union(createCuboidShape(6D, 0D, 6D, 10D, 11D, 10D), createCuboidShape(7D, 11D, 7D, 9D, 40D, 9D));
+        BASE = createCuboidShape(6D, 0D, 6D, 10D, 11D, 10D);
+        POLE = VoxelShapes.union(BASE, createCuboidShape(7D, 11D, 7D, 9D, 40D, 9D));
         BAR_1 = Block.createCuboidShape(6D, 40D, -8D, 10D, 44D, 10D);
         BAR_2 = Block.createCuboidShape(6D, 40D, 6D, 24D, 44D, 10D);
         BAR_3 = Block.createCuboidShape(6D, 40D, 6D, 10D, 44D, 24D);
