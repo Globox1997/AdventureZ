@@ -96,6 +96,13 @@ public class NightmareEntity extends SkeletonHorseEntity {
     }
 
     @Override
+    public void removeAllPassengers() {
+        if (!this.isAlive() || !this.hasPassengers() || !this.getPassengerList().get(0).isAlive() || !(this.getPassengerList().get(0) instanceof SoulReaperEntity)) {
+            super.removeAllPassengers();
+        }
+    }
+
+    @Override
     public void walkToParent() {
         if (this.isBred() && this.isBaby() && !this.isEatingGrass()) {
             LivingEntity livingEntity = this.getWorld().getClosestPlayer(this, 16D);
