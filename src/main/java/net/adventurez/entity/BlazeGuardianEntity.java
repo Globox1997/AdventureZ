@@ -110,17 +110,21 @@ public class BlazeGuardianEntity extends HostileEntity {
     public void readCustomDataFromNbt(NbtCompound tag) {
         super.readCustomDataFromNbt(tag);
         this.dataTracker.set(SHIELD_NORTH, tag.getBoolean("ShieldNorth"));
-        if (tag.getBoolean("ShieldNorth"))
+        if (tag.getBoolean("ShieldNorth")) {
             this.getWorld().spawnEntity(shield_north);
+        }
         this.dataTracker.set(SHIELD_EAST, tag.getBoolean("ShieldEast"));
-        if (tag.getBoolean("ShieldEast"))
+        if (tag.getBoolean("ShieldEast")) {
             this.getWorld().spawnEntity(shield_east);
+        }
         this.dataTracker.set(SHIELD_SOUTH, tag.getBoolean("ShieldSouth"));
-        if (tag.getBoolean("ShieldSouth"))
+        if (tag.getBoolean("ShieldSouth")) {
             this.getWorld().spawnEntity(shield_south);
+        }
         this.dataTracker.set(SHIELD_WEST, tag.getBoolean("ShieldWest"));
-        if (tag.getBoolean("ShieldWest"))
+        if (tag.getBoolean("ShieldWest")) {
             this.getWorld().spawnEntity(shield_west);
+        }
     }
 
     private void movePart(BlazeGuardianShieldEntity blazeGuardianShieldEntity, double dx, double dy, double dz) {
@@ -237,14 +241,18 @@ public class BlazeGuardianEntity extends HostileEntity {
     @Override
     public void onDeath(DamageSource source) {
         if (!this.getWorld().isClient()) {
-            if (!this.shield_north.isRemoved())
+            if (!this.shield_north.isRemoved()) {
                 this.shield_north.discard();
-            if (!this.shield_east.isRemoved())
+            }
+            if (!this.shield_east.isRemoved()) {
                 this.shield_east.discard();
-            if (!this.shield_south.isRemoved())
+            }
+            if (!this.shield_south.isRemoved()) {
                 this.shield_south.discard();
-            if (!this.shield_west.isRemoved())
+            }
+            if (!this.shield_west.isRemoved()) {
                 this.shield_west.discard();
+            }
         }
         super.onDeath(source);
     }
@@ -266,11 +274,16 @@ public class BlazeGuardianEntity extends HostileEntity {
                 }
             }
         }
+
         if (this.getWorld() instanceof ServerWorld) {
-            this.getWorld().spawnEntity(shield_north);
-            this.getWorld().spawnEntity(shield_east);
-            this.getWorld().spawnEntity(shield_south);
-            this.getWorld().spawnEntity(shield_west);
+            serverWorldAccess.spawnEntity(shield_north);
+            serverWorldAccess.spawnEntity(shield_east);
+            serverWorldAccess.spawnEntity(shield_south);
+            serverWorldAccess.spawnEntity(shield_west);
+            this.dataTracker.set(SHIELD_NORTH, true);
+            this.dataTracker.set(SHIELD_EAST, true);
+            this.dataTracker.set(SHIELD_SOUTH, true);
+            this.dataTracker.set(SHIELD_WEST, true);
         }
         return super.initialize(serverWorldAccess, difficulty, spawnReason, entityData, entityTag);
     }
