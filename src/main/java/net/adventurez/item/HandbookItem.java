@@ -36,8 +36,9 @@ public class HandbookItem extends Item {
 
     @Override
     public void appendTooltip(ItemStack stack, @Nullable World world, List<Text> tooltip, TooltipContext context) {
-        if (!isPatchouliLoaded)
+        if (!isPatchouliLoaded) {
             tooltip.add(Text.translatable("item.adventurez.patchouli_book.tooltip"));
+        }
     }
 
 }
