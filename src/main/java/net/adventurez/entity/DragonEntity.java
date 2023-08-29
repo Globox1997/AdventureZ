@@ -65,6 +65,7 @@ import net.minecraft.network.packet.c2s.play.CustomPayloadC2SPacket;
 import net.minecraft.network.packet.s2c.play.CustomPayloadS2CPacket;
 import net.minecraft.particle.ParticleEffect;
 import net.minecraft.particle.ParticleTypes;
+import net.minecraft.registry.Registries;
 import net.minecraft.registry.tag.FluidTags;
 import net.minecraft.screen.GenericContainerScreenHandler;
 import net.minecraft.screen.SimpleNamedScreenHandlerFactory;
@@ -77,6 +78,7 @@ import net.minecraft.sound.SoundEvents;
 import net.minecraft.util.ActionResult;
 import net.minecraft.util.Arm;
 import net.minecraft.util.Hand;
+import net.minecraft.util.Identifier;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Box;
 import net.minecraft.util.math.Direction;
@@ -794,7 +796,7 @@ public class DragonEntity extends PathAwareEntity implements InventoryChangedLis
                 this.getOwner().sendMessage(this.getDamageTracker().getDeathMessage());
             }
             if (FabricLoader.getInstance().isModLoaded("dragonloot")) {
-                this.dropStack(new ItemStack(net.dragonloot.init.ItemInit.DRAGON_SCALE_ITEM, this.getSize()));
+                this.dropStack(new ItemStack(Registries.ITEM.get(new Identifier("dragonloot", "dragon_scale")), (int) (this.getSize() * this.getWorld().getRandom().nextFloat())));
             }
         }
 
