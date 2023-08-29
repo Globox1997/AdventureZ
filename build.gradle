@@ -42,9 +42,9 @@ dependencies {
 		exclude(group: "net.fabricmc.fabric-api")
 	}
 	// Dragonloot
-	modCompileOnly ('maven.modrinth:dragonloot:1.1.2'){
-		exclude(group: "net.fabricmc.fabric-api")
-	}
+	// modCompileOnly ('maven.modrinth:dragonloot:1.1.4+1.20.1'){
+	// 	exclude(group: "net.fabricmc.fabric-api")
+	// }
 	// Iris
 	modCompileOnly ('maven.modrinth:iris:1.6.2+1.19.2'){
 		exclude(group: "net.fabricmc.fabric-api")
