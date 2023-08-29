@@ -15,7 +15,6 @@ public class KeybindInit {
 
     public static KeyBinding dragonFlyDownKeyBind;
     public static KeyBinding dragonFireBreathBind;
-    public static boolean keyBoolean;
 
     public static void init() {
         // Keybinds
@@ -26,14 +25,13 @@ public class KeybindInit {
         KeyBindingHelper.registerKeyBinding(dragonFireBreathBind);
         // Callback
         ClientTickEvents.END_CLIENT_TICK.register(client -> {
-            if (dragonFlyDownKeyBind.isPressed())
+            if (dragonFlyDownKeyBind.isPressed()) {
                 DragonEntity.flyDragonDown(client.player, dragonFlyDownKeyBind.getBoundKeyTranslationKey());
-            else if (dragonFireBreathBind.wasPressed()) {
-                if (!keyBoolean)
-                    DragonEntity.dragonFireBreath(client.player);
-                keyBoolean = true;
-            } else if (keyBoolean)
-                keyBoolean = false;
+                return;
+            } else if (dragonFireBreathBind.wasPressed()) {
+                DragonEntity.dragonFireBreath(client.player);
+                return;
+            }
         });
     }
 
