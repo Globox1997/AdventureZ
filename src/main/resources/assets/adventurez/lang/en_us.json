@@ -109,6 +109,8 @@
   "item.adventurez.cooked_warthog_meat": "Cooked Warthog Meat",
   "item.adventurez.handbook": "Handbook",
   "item.adventurez.patchouli_book.tooltip": "§cPatchouli mod is missing",
+  "item.adventurez.enchanted_book.tooltip": "§cOver Enchanted is incompatible with AdventureZ",
+  "item.adventurez.enchanted_book.tooltip2": "§cEnchanting feature of this book is disabled",
 
   "item.adventurez.moreinfo.tooltip": "§8Hold §6Shift §8For More Info",
   

@@ -3,6 +3,7 @@
   "minVersion": "0.8",
   "package": "net.adventurez.mixin",
   "compatibilityLevel": "JAVA_17",
+  "plugin": "net.adventurez.mixin.compat.AdventurezMixinPlugin",
   "mixins": [
     "PlayerEntityMixin",
     "ExperienceDroppingBlockMixin",
@@ -29,6 +30,8 @@
     "IronGolemEntityMixin",
     "DesertWellFeatureMixin",
     "AnvilScreenHandlerMixin",
+    "compat.AnvilScreenHandlerCompatMixin",
+    "compat.EnchantedBookItemMixin",
     "accessor.LivingEntityAccessor",
     "accessor.FallingBlockAccessor",
     "accessor.EntityAccessor",
