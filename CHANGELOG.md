@@ -1,7 +1,10 @@
 ### Added:
 - 
 ### Fixed:
-- Fixed spawner crash
+- Fixed blaze guardian shields on summon
+- Fixed FleshZ compat
+- Fixed patchouli book
+- Fixed over enchanted compat
+- 
 ### Changed:
-- Updated to mc 1.20.1
-- Tweaked stuff
+- 
