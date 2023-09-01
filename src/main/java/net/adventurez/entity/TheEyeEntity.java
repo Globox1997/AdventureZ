@@ -42,6 +42,7 @@ import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.nbt.NbtCompound;
 import net.minecraft.particle.ParticleTypes;
 import net.minecraft.predicate.entity.EntityPredicates;
+import net.minecraft.registry.Registries;
 import net.minecraft.registry.tag.DamageTypeTags;
 import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.server.world.ServerWorld;
@@ -65,7 +66,6 @@ import net.minecraft.world.Difficulty;
 import net.minecraft.world.GameRules;
 import net.minecraft.world.SpawnHelper;
 import net.minecraft.world.World;
-import net.voidz.init.BlockInit;
 import net.minecraft.world.Heightmap;
 
 import org.jetbrains.annotations.Nullable;
@@ -485,7 +485,7 @@ public class TheEyeEntity extends FlyingEntity {
                         deathPos = deathPos.down(deathPos.getY() - this.getWorld().getHeight() + 10);
                     this.placeDeathStructure(deathPos);
                     if (this.isVoidZLoaded) {
-                        this.getWorld().setBlockState(deathPos.up(8).north().west(), BlockInit.PORTAL_BLOCK.getDefaultState(), 3);
+                        this.getWorld().setBlockState(deathPos.up(8).north().west(), Registries.BLOCK.get(new Identifier("voidz", "void_portal")).getDefaultState(), 3);
                     } else {
                         this.getWorld().setBlockState(deathPos.up(8).north().west(), Blocks.DRAGON_EGG.getDefaultState(), 3);
                     }
