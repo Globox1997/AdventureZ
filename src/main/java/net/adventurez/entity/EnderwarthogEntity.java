@@ -5,6 +5,7 @@ import java.util.EnumSet;
 import org.jetbrains.annotations.Nullable;
 
 import net.adventurez.init.ConfigInit;
+import net.adventurez.init.EntityInit;
 import net.adventurez.init.ParticleInit;
 import net.adventurez.init.SoundInit;
 import net.minecraft.block.BlockState;
@@ -47,10 +48,12 @@ import net.minecraft.util.hit.HitResult;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.MathHelper;
 import net.minecraft.util.math.Vec3d;
+import net.minecraft.util.math.random.Random;
 import net.minecraft.world.Difficulty;
 import net.minecraft.world.LocalDifficulty;
 import net.minecraft.world.RaycastContext;
 import net.minecraft.world.ServerWorldAccess;
+import net.minecraft.world.SpawnHelper;
 import net.minecraft.world.World;
 
 public class EnderwarthogEntity extends HostileEntity {
@@ -69,6 +72,12 @@ public class EnderwarthogEntity extends HostileEntity {
         return HostileEntity.createHostileAttributes().add(EntityAttributes.GENERIC_MAX_HEALTH, 60.0D).add(EntityAttributes.GENERIC_MOVEMENT_SPEED, 0.26D).add(EntityAttributes.GENERIC_ARMOR, 4.0D)
                 .add(EntityAttributes.GENERIC_KNOCKBACK_RESISTANCE, 0.5D).add(EntityAttributes.GENERIC_ATTACK_DAMAGE, 9.0D).add(EntityAttributes.GENERIC_ATTACK_KNOCKBACK, 5.0D)
                 .add(EntityAttributes.GENERIC_FOLLOW_RANGE, 38.0D);
+    }
+
+    public static boolean canSpawn(EntityType<EnderwarthogEntity> type, ServerWorldAccess world, SpawnReason spawnReason, BlockPos pos, Random random) {
+        BlockState blockState = world.getBlockState(pos);
+        return world.getDifficulty() != Difficulty.PEACEFUL && HostileEntity.isSpawnDark(world, pos, random) && HostileEntity.canMobSpawn(type, world, spawnReason, pos, random)
+                && random.nextInt(6) == 0 && SpawnHelper.isClearForSpawn(world, pos, blockState, blockState.getFluidState(), EntityInit.ENDERWARTHOG_ENTITY);
     }
 
     @Override
