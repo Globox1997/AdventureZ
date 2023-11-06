@@ -27,9 +27,10 @@ public class TagInit {
     public static final TagKey<DamageType> IS_WALL = TagKey.of(RegistryKeys.DAMAGE_TYPE, new Identifier("adventurez", "is_wall"));
 
     public static void init() {
-        if (FabricLoader.getInstance().isModLoaded("rotten"))
+        if (FabricLoader.getInstance().isModLoaded("fleshz")) {
             ResourceManagerHelper.registerBuiltinResourcePack(new Identifier("fleshz_compat"), FabricLoader.getInstance().getModContainer("adventurez").orElseThrow(),
                     ResourcePackActivationType.DEFAULT_ENABLED);
+        }
     }
 
 }
