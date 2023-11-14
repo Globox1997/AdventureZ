@@ -51,7 +51,7 @@ public class GildedStoneItem extends Item {
     @Override
     public TypedActionResult<ItemStack> use(World world, PlayerEntity user, Hand hand) {
         ItemStack itemStack = user.getStackInHand(hand);
-        if (!user.isSneaking()) {
+        if (ConfigInit.CONFIG.allow_gilded_stone_throw && !user.isSneaking()) {
             world.playSound((PlayerEntity) null, user.getX(), user.getY(), user.getZ(), SoundEvents.ENTITY_EGG_THROW, SoundCategory.PLAYERS, 0.5F, 0.4F / (world.random.nextFloat() * 0.4F + 0.8F));
             if (!world.isClient) {
                 GildedStoneEntity gildedStoneEntity = new GildedStoneEntity(world, user.getX(), user.getY() + 1.6D, user.getZ());

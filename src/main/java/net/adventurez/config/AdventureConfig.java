@@ -122,4 +122,6 @@ public class AdventureConfig implements ConfigData {
     public float stone_golem_armor_dodge_chance = 0.2f;
     @ConfigEntry.Category("misc")
     public boolean allow_other_dragon_hatching = false;
+    @ConfigEntry.Category("misc")
+    public boolean allow_gilded_stone_throw = false;
 }

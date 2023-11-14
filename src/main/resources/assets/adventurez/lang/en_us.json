@@ -187,5 +187,6 @@
   "text.autoconfig.adventurez.option.stoned_heart_amplifier": "Stoned Heart Amplifier",
   "text.autoconfig.adventurez.option.allow_other_dragon_hatching": "Allow Other Dragon Hatching",
   "text.autoconfig.adventurez.option.stone_golem_armor_effect_duration": "Stone Golem Armor Effect Duration",
-  "text.autoconfig.adventurez.option.stone_golem_armor_dodge_chance": "Stone Golem Armor Dodge  Chance"
+  "text.autoconfig.adventurez.option.stone_golem_armor_dodge_chance": "Stone Golem Armor Dodge  Chance",
+  "text.autoconfig.adventurez.option.allow_gilded_stone_throw": "Allow Gilded Stone Throw"
 }
