@@ -1,5 +1,5 @@
 ### Added:
-- 
+- Added gilded upgrade smithing template
 ### Fixed:
 - 
 ### Changed:

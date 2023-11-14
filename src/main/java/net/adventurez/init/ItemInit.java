@@ -1,5 +1,7 @@
 package net.adventurez.init;
 
+import java.util.List;
+
 import net.adventurez.item.*;
 import net.adventurez.item.armor.*;
 import net.fabricmc.fabric.api.itemgroup.v1.FabricItemGroup;
@@ -14,6 +16,7 @@ import net.minecraft.item.Item;
 import net.minecraft.item.ItemGroup;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.OnAStickItem;
+import net.minecraft.item.SmithingTemplateItem;
 import net.minecraft.potion.Potions;
 import net.minecraft.recipe.BrewingRecipeRegistry;
 import net.minecraft.registry.Registries;
@@ -21,6 +24,7 @@ import net.minecraft.registry.Registry;
 import net.minecraft.registry.RegistryKey;
 import net.minecraft.registry.RegistryKeys;
 import net.minecraft.text.Text;
+import net.minecraft.util.Formatting;
 import net.minecraft.util.Identifier;
 
 public class ItemInit {
@@ -47,6 +51,13 @@ public class ItemInit {
     public static final Item RHINO_LEATHER = register("rhino_leather", new Item(new Item.Settings()));
     public static final Item WARTHOG_SHELL_PIECE = register("warthog_shell_piece", new Item(new Item.Settings()));
     public static final Item HANDBOOK = register("handbook", new HandbookItem(new Item.Settings()));
+    public static final Item GILDED_UPGRADE_SMITHING_TEMPLATE = register("gilded_upgrade_smithing_template",
+            new SmithingTemplateItem(Text.translatable("item.minecraft.smithing_template.gilded_upgrade.applies_to").formatted(Formatting.BLUE),
+                    Text.translatable("item.minecraft.smithing_template.gilded_upgrade.ingredients").formatted(Formatting.BLUE),
+                    Text.translatable("item.adventurez.gilded_upgrade").formatted(Formatting.GRAY), Text.translatable("item.smithing_template.gilded_upgrade.base_slot_description"),
+                    Text.translatable("item.adventurez.smithing_template.gilded_upgrade.additions_slot_description"), List.of(new Identifier("item/empty_armor_slot_helmet"),
+                            new Identifier("item/empty_armor_slot_chestplate"), new Identifier("item/empty_armor_slot_leggings"), new Identifier("item/empty_armor_slot_boots")),
+                    List.of(new Identifier("adventurez:item/empty_slot_gilded_netherite_fragment"))));
 
     // Food
     public static final Item MAMMOTH_MEAT = register("mammoth_meat", new Item(new Item.Settings().food(new FoodComponent.Builder().hunger(3).saturationModifier(0.3F).meat().build())));
@@ -86,6 +97,10 @@ public class ItemInit {
                 FabricItemGroup.builder().icon(() -> new ItemStack(ItemInit.HANDBOOK)).displayName(Text.translatable("item.adventurez.item_group")).build());
         BrewingRecipeRegistry.registerPotionRecipe(Potions.AWKWARD, ItemInit.ORC_SKIN, Potions.TURTLE_MASTER);
         BrewingRecipeRegistry.registerPotionRecipe(Potions.AWKWARD, ItemInit.ENDER_WHALE_SKIN, Potions.SLOW_FALLING);
+
+        // public static final Item NETHERITE_UPGRADE_SMITHING_TEMPLATE = Items.register("netherite_upgrade_smithing_template", (Item)SmithingTemplateItem.createNetheriteUpgrade());
+        // Registerable.register(RegistryKey.of(RegistryKeys.TRIM_MATERIAL, new Identifier("id")), ArmorTrimMaterial.of(key.getValue().getPath(), ingredient, itemModelIndex,
+        // Text.translatable(Util.createTranslationKey("trim_material", key.getValue())).fillStyle(style), overrideArmorMaterials));
     }
 
 }

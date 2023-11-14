@@ -10,6 +10,6 @@
     "item": "adventurez:stone_golem_chestplate"
   },
   "template": {
-    "item": "minecraft:netherite_upgrade_smithing_template"
+    "item": "adventurez:gilded_upgrade_smithing_template"
   }
 }

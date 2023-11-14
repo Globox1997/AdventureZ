@@ -111,6 +111,12 @@
   "item.adventurez.patchouli_book.tooltip": "§cPatchouli mod is missing",
   "item.adventurez.enchanted_book.tooltip": "§cOver Enchanted is incompatible with AdventureZ",
   "item.adventurez.enchanted_book.tooltip2": "§cEnchanting feature of this book is disabled",
+  "item.adventurez.gilded_upgrade_smithing_template": "Gilded Upgrade Smithing Template",
+  "item.adventurez.smithing_template.gilded_upgrade.additions_slot_description": "Add Gilded Netherite Fragment",
+  "item.minecraft.smithing_template.gilded_upgrade.applies_to": "Netherite Armor",
+  "item.minecraft.smithing_template.gilded_upgrade.ingredients": "Gilded Netherite Fragment",
+  "item.smithing_template.gilded_upgrade.base_slot_description": "Add netherite armor",
+  "item.adventurez.gilded_upgrade": "Gilded Upgrade",
 
   "item.adventurez.moreinfo.tooltip": "§8Hold §6Shift §8For More Info",
   
