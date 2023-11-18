@@ -1,8 +1,5 @@
 package net.adventurez.init;
 
-import net.fabricmc.fabric.api.resource.ResourceManagerHelper;
-import net.fabricmc.fabric.api.resource.ResourcePackActivationType;
-import net.fabricmc.loader.api.FabricLoader;
 import net.minecraft.block.Block;
 import net.minecraft.entity.damage.DamageType;
 import net.minecraft.item.Item;
@@ -27,10 +24,6 @@ public class TagInit {
     public static final TagKey<DamageType> IS_WALL = TagKey.of(RegistryKeys.DAMAGE_TYPE, new Identifier("adventurez", "is_wall"));
 
     public static void init() {
-        if (FabricLoader.getInstance().isModLoaded("fleshz")) {
-            ResourceManagerHelper.registerBuiltinResourcePack(new Identifier("fleshz_compat"), FabricLoader.getInstance().getModContainer("adventurez").orElseThrow(),
-                    ResourcePackActivationType.DEFAULT_ENABLED);
-        }
     }
 
 }
