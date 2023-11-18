@@ -1,7 +1,7 @@
 package net.adventurez;
 
 import net.adventurez.init.KeybindInit;
-import net.adventurez.init.ModelProviderInit;
+import net.adventurez.init.ModelInit;
 import net.adventurez.init.RenderInit;
 import net.adventurez.network.GeneralPacket;
 import net.fabricmc.api.ClientModInitializer;
@@ -12,7 +12,7 @@ public class AdventureClient implements ClientModInitializer {
     public void onInitializeClient() {
         GeneralPacket.init();
         KeybindInit.init();
-        ModelProviderInit.init();
+        ModelInit.init();
         RenderInit.init();
     }
 
