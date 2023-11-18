@@ -97,10 +97,6 @@ public class ItemInit {
                 FabricItemGroup.builder().icon(() -> new ItemStack(ItemInit.HANDBOOK)).displayName(Text.translatable("item.adventurez.item_group")).build());
         BrewingRecipeRegistry.registerPotionRecipe(Potions.AWKWARD, ItemInit.ORC_SKIN, Potions.TURTLE_MASTER);
         BrewingRecipeRegistry.registerPotionRecipe(Potions.AWKWARD, ItemInit.ENDER_WHALE_SKIN, Potions.SLOW_FALLING);
-
-        // public static final Item NETHERITE_UPGRADE_SMITHING_TEMPLATE = Items.register("netherite_upgrade_smithing_template", (Item)SmithingTemplateItem.createNetheriteUpgrade());
-        // Registerable.register(RegistryKey.of(RegistryKeys.TRIM_MATERIAL, new Identifier("id")), ArmorTrimMaterial.of(key.getValue().getPath(), ingredient, itemModelIndex,
-        // Text.translatable(Util.createTranslationKey("trim_material", key.getValue())).fillStyle(style), overrideArmorMaterials));
     }
 
 }
