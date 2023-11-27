@@ -45,8 +45,8 @@ public abstract class ServerWorldMixin extends World {
                 int i = chunkPos.getStartX();
                 int j = chunkPos.getStartZ();
                 BlockPos blockPos = this.getTopPosition(Heightmap.Type.MOTION_BLOCKING, this.getRandomPosInChunk(i, 0, j, 15));
-                if (SpawnHelper.canSpawn(SpawnRestriction.Location.ON_GROUND, chunk.getWorld(), blockPos, EntityInit.SUMMONER_ENTITY)) {
-                    SummonerEntity summonerEntity = (SummonerEntity) EntityInit.SUMMONER_ENTITY.create(this);
+                if (SpawnHelper.canSpawn(SpawnRestriction.Location.ON_GROUND, chunk.getWorld(), blockPos, EntityInit.SUMMONER)) {
+                    SummonerEntity summonerEntity = (SummonerEntity) EntityInit.SUMMONER.create(this);
                     summonerEntity.updatePosition((double) blockPos.getX(), (double) blockPos.getY(), (double) blockPos.getZ());
                     summonerEntity.initialize((ServerWorld) (Object) this, this.getLocalDifficulty(blockPos), SpawnReason.EVENT, null, null);
                     this.spawnEntity(summonerEntity);

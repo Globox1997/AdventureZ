@@ -35,10 +35,10 @@ public class RenderInit {
     public static final boolean isIrisLoaded = FabricLoader.getInstance().isModLoaded("iris");
     public static final boolean isSodiumLoaded = FabricLoader.getInstance().isModLoaded("sodium");
 
-    public static final EntityModelLayer STONE_GOLEM_LAYER = new EntityModelLayer(new Identifier("adventurez:stone_golem_render_layer"), "stone_golem_render_layer");
+    public static final EntityModelLayer BLACKSTONE_GOLEM_LAYER = new EntityModelLayer(new Identifier("adventurez:blackstone_golem_render_layer"), "blackstone_golem_render_layer");
     public static final EntityModelLayer THROWN_ROCK_LAYER = new EntityModelLayer(new Identifier("adventurez:thrown_rock_render_layer"), "thrown_rock_render_layer");
     public static final EntityModelLayer GILDED_STONE_LAYER = new EntityModelLayer(new Identifier("adventurez:gilded_stone_render_layer"), "gilded_stone_render_layer");
-    public static final EntityModelLayer SMALL_STONE_GOLEM_LAYER = new EntityModelLayer(new Identifier("adventurez:small_stome_golem_render_layer"), "small_stome_golem_render_layer");
+    public static final EntityModelLayer MINI_BLACKSTONE_GOLEM_LAYER = new EntityModelLayer(new Identifier("adventurez:mini_blackstone_golem_render_layer"), "mini_blackstone_golem_render_layer");
     public static final EntityModelLayer PIGLIN_BEAST_LAYER = new EntityModelLayer(new Identifier("adventurez:piglin_beast_render_layer"), "piglin_beast_render_layer");
     public static final EntityModelLayer NIGHTMARE_LAYER = new EntityModelLayer(new Identifier("adventurez:nightmare_render_layer"), "nightmare_render_layer");
     public static final EntityModelLayer SOUL_REAPER_LAYER = new EntityModelLayer(new Identifier("adventurez:soul_reaper_render_layer"), "soul_reaper_render_layer");
@@ -70,46 +70,46 @@ public class RenderInit {
 
     public static void init() {
         // Entity Renderer
-        EntityRendererRegistry.register(EntityInit.STONEGOLEM_ENTITY, StoneGolemRenderer::new);
-        EntityRendererRegistry.register(EntityInit.THROWNROCK_ENTITY, ThrownRockRenderer::new);
-        EntityRendererRegistry.register(EntityInit.GILDEDSTONE_ENTITY, GildedStoneRenderer::new);
-        EntityRendererRegistry.register(EntityInit.SMALLSTONEGOLEM_ENTITY, SmallStoneGolemRenderer::new);
-        EntityRendererRegistry.register(EntityInit.PIGLINBEAST_ENTITY, PiglinBeastRenderer::new);
-        EntityRendererRegistry.register(EntityInit.NIGHTMARE_ENTITY, NightmareRenderer::new);
-        EntityRendererRegistry.register(EntityInit.SOULREAPER_ENTITY, SoulReaperRenderer::new);
-        EntityRendererRegistry.register(EntityInit.NECROMANCER_ENTITY, NecromancerRenderer::new);
-        EntityRendererRegistry.register(EntityInit.WITHERPUPPET_ENTITY, WitherPuppetRenderer::new);
-        EntityRendererRegistry.register(EntityInit.SKELETON_VANGUARD_ENTITY, SkeletonVanguardRenderer::new);
-        EntityRendererRegistry.register(EntityInit.SUMMONER_ENTITY, SummonerRenderer::new);
-        EntityRendererRegistry.register(EntityInit.BLAZEGUARDIAN_ENTITY, BlazeGuardianRenderer::new);
-        EntityRendererRegistry.register(EntityInit.THE_EYE_ENTITY, TheEyeRenderer::new);
-        EntityRendererRegistry.register(EntityInit.VOID_SHADOW_ENTITY, VoidShadowRenderer::new);
-        EntityRendererRegistry.register(EntityInit.TINYEYE_ENTITY, TinyEyeRenderer::new);
-        EntityRendererRegistry.register(EntityInit.RED_FUNGUS_ENTITY, RedFungusRenderer::new);
-        EntityRendererRegistry.register(EntityInit.BROWN_FUNGUS_ENTITY, BrownFungusRenderer::new);
-        EntityRendererRegistry.register(EntityInit.ORC_ENTITY, OrcRenderer::new);
-        EntityRendererRegistry.register(EntityInit.DRAGON_ENTITY, DragonRenderer::new);
-        EntityRendererRegistry.register(EntityInit.MAMMOTH_ENTITY, MammothRenderer::new);
-        EntityRendererRegistry.register(EntityInit.VOID_FRAGMENT_ENTITY, VoidFragmentRenderer::new);
-        EntityRendererRegistry.register(EntityInit.VOID_SHADE_ENTITY, VoidShadeRenderer::new);
-        EntityRendererRegistry.register(EntityInit.VOID_BULLET_ENTITY, VoidBulletRenderer::new);
-        EntityRendererRegistry.register(EntityInit.FIRE_BREATH_ENTITY, EmptyEntityRenderer::new);
-        EntityRendererRegistry.register(EntityInit.BLAZEGUARDIAN_SHIELD_ENTITY, EmptyEntityRenderer::new);
-        EntityRendererRegistry.register(EntityInit.ENDER_WHALE_ENTITY, EnderWhaleRenderer::new);
-        EntityRendererRegistry.register(EntityInit.IGUANA_ENTITY, IguanaRenderer::new);
-        EntityRendererRegistry.register(EntityInit.AMETHYST_GOLEM_ENTITY, AmethystGolemRenderer::new);
-        EntityRendererRegistry.register(EntityInit.AMETHYST_SHARD_ENTITY, AmethystShardRenderer::new);
-        EntityRendererRegistry.register(EntityInit.DESERT_RHINO_ENTITY, DesertRhinoRenderer::new);
-        EntityRendererRegistry.register(EntityInit.VOID_CLOUD_ENTITY, EmptyEntityRenderer::new);
-        EntityRendererRegistry.register(EntityInit.SHAMAN_ENTITY, ShamanRenderer::new);
-        EntityRendererRegistry.register(EntityInit.DEER_ENTITY, DeerRenderer::new);
-        EntityRendererRegistry.register(EntityInit.ENDERWARTHOG_ENTITY, EnderwarthogRenderer::new);
+        EntityRendererRegistry.register(EntityInit.BLACKSTONE_GOLEM, BlackstoneGolemRenderer::new);
+        EntityRendererRegistry.register(EntityInit.THROWN_ROCK, ThrownRockRenderer::new);
+        EntityRendererRegistry.register(EntityInit.GILDED_BLACKSTONE_SHARD, GildedStoneRenderer::new);
+        EntityRendererRegistry.register(EntityInit.MINI_BLACKSTONE_GOLEM, MiniBlackstoneGolemRenderer::new);
+        EntityRendererRegistry.register(EntityInit.PIGLIN_BEAST, PiglinBeastRenderer::new);
+        EntityRendererRegistry.register(EntityInit.NIGHTMARE, NightmareRenderer::new);
+        EntityRendererRegistry.register(EntityInit.SOUL_REAPER, SoulReaperRenderer::new);
+        EntityRendererRegistry.register(EntityInit.NECROMANCER, NecromancerRenderer::new);
+        EntityRendererRegistry.register(EntityInit.WITHER_PUPPET, WitherPuppetRenderer::new);
+        EntityRendererRegistry.register(EntityInit.SKELETON_VANGUARD, SkeletonVanguardRenderer::new);
+        EntityRendererRegistry.register(EntityInit.SUMMONER, SummonerRenderer::new);
+        EntityRendererRegistry.register(EntityInit.BLAZE_GUARDIAN, BlazeGuardianRenderer::new);
+        EntityRendererRegistry.register(EntityInit.THE_EYE, TheEyeRenderer::new);
+        EntityRendererRegistry.register(EntityInit.VOID_SHADOW, VoidShadowRenderer::new);
+        EntityRendererRegistry.register(EntityInit.TINY_EYE, TinyEyeRenderer::new);
+        EntityRendererRegistry.register(EntityInit.RED_FUNGUS, RedFungusRenderer::new);
+        EntityRendererRegistry.register(EntityInit.BROWN_FUNGUS, BrownFungusRenderer::new);
+        EntityRendererRegistry.register(EntityInit.ORC, OrcRenderer::new);
+        EntityRendererRegistry.register(EntityInit.DRAGON, DragonRenderer::new);
+        EntityRendererRegistry.register(EntityInit.MAMMOTH, MammothRenderer::new);
+        EntityRendererRegistry.register(EntityInit.VOID_FRAGMENT, VoidFragmentRenderer::new);
+        EntityRendererRegistry.register(EntityInit.VOID_SHADE, VoidShadeRenderer::new);
+        EntityRendererRegistry.register(EntityInit.VOID_BULLET, VoidBulletRenderer::new);
+        EntityRendererRegistry.register(EntityInit.FIRE_BREATH, EmptyEntityRenderer::new);
+        EntityRendererRegistry.register(EntityInit.BLAZE_GUARDIAN_SHIELD, EmptyEntityRenderer::new);
+        EntityRendererRegistry.register(EntityInit.ENDER_WHALE, EnderWhaleRenderer::new);
+        EntityRendererRegistry.register(EntityInit.IGUANA, IguanaRenderer::new);
+        EntityRendererRegistry.register(EntityInit.AMETHYST_GOLEM, AmethystGolemRenderer::new);
+        EntityRendererRegistry.register(EntityInit.AMETHYST_SHARD, AmethystShardRenderer::new);
+        EntityRendererRegistry.register(EntityInit.DESERT_RHINO, DesertRhinoRenderer::new);
+        EntityRendererRegistry.register(EntityInit.VOID_CLOUD, EmptyEntityRenderer::new);
+        EntityRendererRegistry.register(EntityInit.SHAMAN, ShamanRenderer::new);
+        EntityRendererRegistry.register(EntityInit.DEER, DeerRenderer::new);
+        EntityRendererRegistry.register(EntityInit.ENDERWARTHOG, EnderwarthogRenderer::new);
 
         // Entity Layer
-        EntityModelLayerRegistry.registerModelLayer(STONE_GOLEM_LAYER, StoneGolemModel::getTexturedModelData);
+        EntityModelLayerRegistry.registerModelLayer(BLACKSTONE_GOLEM_LAYER, BlackstoneGolemModel::getTexturedModelData);
         EntityModelLayerRegistry.registerModelLayer(THROWN_ROCK_LAYER, RockModel::getTexturedModelData);
         EntityModelLayerRegistry.registerModelLayer(GILDED_STONE_LAYER, GildedStoneModel::getTexturedModelData);
-        EntityModelLayerRegistry.registerModelLayer(SMALL_STONE_GOLEM_LAYER, SmallStoneGolemModel::getTexturedModelData);
+        EntityModelLayerRegistry.registerModelLayer(MINI_BLACKSTONE_GOLEM_LAYER, MiniBlackstoneGolemModel::getTexturedModelData);
         EntityModelLayerRegistry.registerModelLayer(PIGLIN_BEAST_LAYER, PiglinBeastModel::getTexturedModelData);
         EntityModelLayerRegistry.registerModelLayer(SOUL_REAPER_LAYER, SoulReaperModel::getTexturedModelData);
         EntityModelLayerRegistry.registerModelLayer(NECROMANCER_LAYER, NecromancerModel::getTexturedModelData);
@@ -139,10 +139,10 @@ public class RenderInit {
         EntityModelLayerRegistry.registerModelLayer(ENDERWARTHOG_LAYER, EnderwarthogModel::getTexturedModelData);
 
         // Blocks
-        BlockEntityRendererFactories.register(BlockInit.STONE_HOLDER_ENTITY, StoneHolderRenderer::new);
-        BlockRenderLayerMap.INSTANCE.putBlock(BlockInit.STONE_HOLDER_BLOCK, RenderLayer.getCutout());
+        BlockEntityRendererFactories.register(BlockInit.CHISELED_POLISHED_BLACKSTONE_HOLDER_ENTITY, ChiseledPolishedBlackstoneHolderRenderer::new);
+        BlockRenderLayerMap.INSTANCE.putBlock(BlockInit.CHISELED_POLISHED_BLACKSTONE_HOLDER, RenderLayer.getCutout());
         BlockEntityRendererFactories.register(BlockInit.PIGLIN_FLAG_ENTITY, PiglinFlagRenderer::new);
-        BlockRenderLayerMap.INSTANCE.putBlock(BlockInit.PIGLIN_FLAG_BLOCK, RenderLayer.getCutout());
+        BlockRenderLayerMap.INSTANCE.putBlock(BlockInit.PIGLIN_FLAG, RenderLayer.getCutout());
         BlockEntityRendererFactories.register(BlockInit.SHADOW_CHEST_ENTITY, ChestBlockEntityRenderer::new);
 
         // Particles
@@ -154,7 +154,7 @@ public class RenderInit {
             MinecraftClient client = MinecraftClient.getInstance();
             if (!client.options.hudHidden) {
                 ItemStack itemStack = client.player.getEquippedStack(EquipmentSlot.CHEST);
-                if (!itemStack.isEmpty() && itemStack.isOf(ItemInit.STONE_GOLEM_CHESTPLATE)) {
+                if (!itemStack.isEmpty() && itemStack.isOf(ItemInit.GILDED_NETHERITE_CHESTPLATE)) {
                     NbtCompound tag = itemStack.getNbt();
                     if (tag != null && tag.contains("armor_time") && tag.contains("activating_armor")) {
                         if (tag.getBoolean("activating_armor")) {
@@ -162,12 +162,13 @@ public class RenderInit {
                             int scaledHeight = client.getWindow().getScaledHeight();
                             int worldTime = (int) client.player.getWorld().getTime();
                             int savedTagInt = tag.getInt("armor_time");
-                            float effectDuration = ConfigInit.CONFIG.stone_golem_armor_effect_duration;
+                            float effectDuration = ConfigInit.CONFIG.gilded_netherite_armor_effect_duration;
                             drawContext.getMatrices().push();
                             if (savedTagInt + effectDuration > worldTime) {
                                 int multiplier = 2;
-                                if (savedTagInt + Math.max(effectDuration - 100, 0) < worldTime)
+                                if (savedTagInt + Math.max(effectDuration - 100, 0) < worldTime) {
                                     multiplier = 4;
+                                }
 
                                 float pulsating = (float) Math.sin((float) ((worldTime * multiplier) - (savedTagInt - 1)) / 6.2831855F);
                                 drawContext.setShaderColor(1.0F, 1.0F, 1.0F, pulsating + 0.5F);

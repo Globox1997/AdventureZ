@@ -10,7 +10,7 @@ import net.minecraft.nbt.NbtCompound;
 public class ModelInit {
 
     public static void init() {
-        ModelPredicateProviderRegistry.register(ItemInit.STONE_GOLEM_ARM, new Identifier("lavalight"), (stack, world, entity, seed) -> {
+        ModelPredicateProviderRegistry.register(ItemInit.BLACKSTONE_GOLEM_ARM, new Identifier("lavalight"), (stack, world, entity, seed) -> {
             NbtCompound tags = stack.getNbt();
             if (stack.hasNbt() && tags.getBoolean("lavalight")) {
                 return 1F;

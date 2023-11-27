@@ -99,7 +99,7 @@ public class SoulReaperEntity extends HostileEntity implements RangedAttackMob {
         this.bowAttackGoal.setAttackInterval(40);
         this.goalSelector.add(4, this.bowAttackGoal);
         if (spawnReason.equals(SpawnReason.COMMAND) || spawnReason.equals(SpawnReason.NATURAL) || spawnReason.equals(SpawnReason.CHUNK_GENERATION)) {
-            NightmareEntity nightmareEntity = (NightmareEntity) EntityInit.NIGHTMARE_ENTITY.create(this.getWorld());
+            NightmareEntity nightmareEntity = (NightmareEntity) EntityInit.NIGHTMARE.create(this.getWorld());
             nightmareEntity.refreshPositionAndAngles(this.getX(), this.getY(), this.getZ(), this.getYaw(), 0.0F);
             nightmareEntity.initialize(serverWorldAccess, difficulty, spawnReason, (EntityData) null, (NbtCompound) null);
             serverWorldAccess.spawnEntity(nightmareEntity);

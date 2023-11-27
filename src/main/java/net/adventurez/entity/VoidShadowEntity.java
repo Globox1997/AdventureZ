@@ -9,7 +9,7 @@ import com.google.common.collect.Lists;
 import org.jetbrains.annotations.Nullable;
 
 import io.netty.buffer.Unpooled;
-import net.adventurez.block.ShadowChestBlock;
+import net.adventurez.block.ShadowChest;
 import net.adventurez.entity.nonliving.ThrownRockEntity;
 import net.adventurez.entity.nonliving.VoidCloudEntity;
 import net.adventurez.init.EffectInit;
@@ -400,7 +400,7 @@ public class VoidShadowEntity extends FlyingEntity implements Monster {
                 boolean direction = this.getWorld().getRandom().nextInt(2) == 0;
 
                 BlockPos pos = direction ? this.getVoidMiddle().north(3) : this.getVoidMiddle().south(3);
-                BlockState state = net.adventurez.init.BlockInit.SHADOW_CHEST_BLOCK.getDefaultState().with(ShadowChestBlock.FACING, direction ? Direction.SOUTH : Direction.NORTH);
+                BlockState state = net.adventurez.init.BlockInit.SHADOW_CHEST.getDefaultState().with(ShadowChest.FACING, direction ? Direction.SOUTH : Direction.NORTH);
                 this.getWorld().setBlockState(pos, state, 3);
                 state.getBlock().onPlaced(this.getWorld(), pos, state, null, ItemStack.EMPTY);
 
@@ -761,7 +761,7 @@ public class VoidShadowEntity extends FlyingEntity implements Monster {
                             spawnPos = new BlockPos(pos.getX() - 35 + voidShadow.random.nextInt(70), pos.getY(), pos.getZ() - 35 + voidShadow.random.nextInt(70));
                         }
                         if (!this.voidShadow.getWorld().getBlockState(spawnPos.down()).isAir()) {
-                            VoidFragmentEntity voidFragmentEntity = (VoidFragmentEntity) EntityInit.VOID_FRAGMENT_ENTITY.create(voidShadow.getWorld());
+                            VoidFragmentEntity voidFragmentEntity = (VoidFragmentEntity) EntityInit.VOID_FRAGMENT.create(voidShadow.getWorld());
                             voidFragmentEntity.initialize((ServerWorld) voidShadow.getWorld(), voidShadow.getWorld().getLocalDifficulty(pos), SpawnReason.EVENT, null, null);
                             voidFragmentEntity.setVoidOrb(isOrb);
                             voidFragmentEntity.refreshPositionAndAngles(spawnPos, voidShadow.getWorld().getRandom().nextFloat() * 360F, 0.0F);
@@ -939,7 +939,7 @@ public class VoidShadowEntity extends FlyingEntity implements Monster {
                 for (int i = 0; i < (this.voidShadow.isHalfLife ? 24 : 16); i++) {
                     if (!this.voidShadow.getWorld().isClient()) {
                         BlockPos spawnPos = new BlockPos(pos.getX() - 35 + voidShadow.random.nextInt(70), pos.getY(), pos.getZ() - 35 + voidShadow.random.nextInt(70));
-                        VoidShadeEntity voidShadeEntity = (VoidShadeEntity) EntityInit.VOID_SHADE_ENTITY.create(voidShadow.getWorld());
+                        VoidShadeEntity voidShadeEntity = (VoidShadeEntity) EntityInit.VOID_SHADE.create(voidShadow.getWorld());
                         voidShadeEntity.initialize((ServerWorld) voidShadow.getWorld(), voidShadow.getWorld().getLocalDifficulty(pos), SpawnReason.EVENT, null, null);
                         voidShadeEntity.refreshPositionAndAngles(spawnPos, voidShadow.getWorld().getRandom().nextFloat() * 360F, 0.0F);
                         voidShadow.getWorld().spawnEntity(voidShadeEntity);

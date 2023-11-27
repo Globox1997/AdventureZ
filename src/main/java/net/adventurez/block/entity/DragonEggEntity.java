@@ -128,7 +128,7 @@ public class DragonEggEntity extends BlockEntity {
                     }
                     if (this.hatchTick >= 598) {
                         world.breakBlock(this.pos, false);
-                        DragonEntity dragonEntity = (DragonEntity) EntityInit.DRAGON_ENTITY.create(world);
+                        DragonEntity dragonEntity = (DragonEntity) EntityInit.DRAGON.create(world);
                         dragonEntity.refreshPositionAndAngles((double) this.getPos().getX() + 0.5D, (double) this.getPos().getY() + 0.55D, (double) this.getPos().getZ() + 0.5D, 90F, 0.0F);
                         dragonEntity.initialize(((ServerWorld) this.world), this.world.getLocalDifficulty(pos), SpawnReason.STRUCTURE, null, null);
                         dragonEntity.setSize(1);
@@ -151,7 +151,7 @@ public class DragonEggEntity extends BlockEntity {
                 if (overallSummoningTick == 20 && this.isValid(world, pos, state)) {
                     summoningTick++;
                     if (!world.isClient && summoningTick >= 60) {
-                        TheEyeEntity theEyeEntity = (TheEyeEntity) EntityInit.THE_EYE_ENTITY.create(world);
+                        TheEyeEntity theEyeEntity = (TheEyeEntity) EntityInit.THE_EYE.create(world);
                         theEyeEntity.refreshPositionAndAngles((double) this.getPos().getX() + 0.5D, (double) this.getPos().getY() + 0.55D, (double) this.getPos().getZ() + 0.5D, 90F, 0.0F);
                         theEyeEntity.initialize(((ServerWorld) this.world), this.world.getLocalDifficulty(pos), SpawnReason.STRUCTURE, null, null);
                         theEyeEntity.setEyeInvulnerabletime();

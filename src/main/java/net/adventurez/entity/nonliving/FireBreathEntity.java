@@ -32,13 +32,13 @@ public class FireBreathEntity extends ExplosiveProjectileEntity {
 
     @Environment(EnvType.CLIENT)
     public FireBreathEntity(World world, double x, double y, double z, double velocityX, double velocityY, double velocityZ) {
-        this(EntityInit.FIRE_BREATH_ENTITY, world);
+        this(EntityInit.FIRE_BREATH, world);
         this.refreshPositionAndAngles(x, y, z, this.getYaw(), this.getPitch());
         this.setVelocity(velocityX, velocityY, velocityZ);
     }
 
     public FireBreathEntity(World world, LivingEntity owner, double velocityX, double velocityY, double velocityZ) {
-        super(EntityInit.FIRE_BREATH_ENTITY, owner, velocityX, velocityY, velocityZ, world);
+        super(EntityInit.FIRE_BREATH, owner, velocityX, velocityY, velocityZ, world);
         Vec3d newVec3d = this.getVelocity().normalize().add(this.random.nextGaussian() * 0.1D, -this.random.nextDouble() * 0.1D, this.random.nextGaussian() * 0.1D);
         this.setVelocity(newVec3d);
     }
@@ -104,7 +104,7 @@ public class FireBreathEntity extends ExplosiveProjectileEntity {
     }
 
     private DamageSource createDamageSource(Entity entity) {
-        return entity.getDamageSources().create(EntityInit.FIRE_BREATH, entity);
+        return entity.getDamageSources().create(EntityInit.FIRE_BREATH_KEY, entity);
     }
 
     @Override

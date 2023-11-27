@@ -34,8 +34,8 @@ public abstract class PiglinEntityMixin extends AbstractPiglinEntity {
         if (!this.getWorld().isClient() && ConfigInit.CONFIG.piglin_beast_attack_piglin_spawn_chance != 0) {
             if (this.getAttacker() != null && this.getAttacker() instanceof PlayerEntity && this.getWorld().getRegistryKey() == World.NETHER) {
                 int spawnChanceInt = this.getWorld().getRandom().nextInt(ConfigInit.CONFIG.piglin_beast_attack_piglin_spawn_chance) + 1;
-                if (spawnChanceInt == 1 && isEntityNearby(EntityType.PIGLIN, 12D, 2) && !isEntityNearby(EntityInit.PIGLINBEAST_ENTITY, 40D, 1)) {
-                    PiglinBeastEntity beastEntity = (PiglinBeastEntity) EntityInit.PIGLINBEAST_ENTITY.create(this.getWorld());
+                if (spawnChanceInt == 1 && isEntityNearby(EntityType.PIGLIN, 12D, 2) && !isEntityNearby(EntityInit.PIGLIN_BEAST, 40D, 1)) {
+                    PiglinBeastEntity beastEntity = (PiglinBeastEntity) EntityInit.PIGLIN_BEAST.create(this.getWorld());
                     int posYOfPlayer = this.getBlockPos().getY();
                     for (int counter = 0; counter < 100; counter++) {
                         float randomFloat = this.getWorld().getRandom().nextFloat() * 6.2831855F;
@@ -44,7 +44,7 @@ public abstract class PiglinEntityMixin extends AbstractPiglinEntity {
                         int posY = posYOfPlayer - 20 + this.getWorld().getRandom().nextInt(40);
                         BlockPos spawnPos = new BlockPos(posX, posY, posZ);
                         if (this.getWorld().isRegionLoaded(spawnPos.getX() - 4, spawnPos.getY() - 4, spawnPos.getZ() - 4, spawnPos.getX() + 4, spawnPos.getY() + 4, spawnPos.getZ() + 4)
-                                && SpawnHelper.canSpawn(SpawnRestriction.Location.ON_GROUND, this.getWorld(), spawnPos, EntityInit.PIGLINBEAST_ENTITY)) {
+                                && SpawnHelper.canSpawn(SpawnRestriction.Location.ON_GROUND, this.getWorld(), spawnPos, EntityInit.PIGLIN_BEAST)) {
                             beastEntity.refreshPositionAndAngles(spawnPos, this.getWorld().getRandom().nextFloat() * 360.0F, 0.0F);
                             beastEntity.initialize(((ServerWorld) this.getWorld()), this.getWorld().getLocalDifficulty(this.getBlockPos()), SpawnReason.EVENT, null, null);
                             this.getWorld().spawnEntity(beastEntity);

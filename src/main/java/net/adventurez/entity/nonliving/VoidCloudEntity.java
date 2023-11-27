@@ -53,7 +53,7 @@ public class VoidCloudEntity extends Entity {
     }
 
     public VoidCloudEntity(World world, double x, double y, double z) {
-        this(EntityInit.VOID_CLOUD_ENTITY, world);
+        this(EntityInit.VOID_CLOUD, world);
         this.setPosition(x, y, z);
     }
 

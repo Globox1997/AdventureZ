@@ -37,7 +37,7 @@ public class SpawnHelperMixin {
     }
 
     static {
-        ADDED_SPAWNS = Pool.of(new SpawnSettings.SpawnEntry(EntityInit.NECROMANCER_ENTITY, ConfigInit.CONFIG.necromancer_spawn_weight, 1, 1),
-                new SpawnSettings.SpawnEntry(EntityInit.BLAZEGUARDIAN_ENTITY, ConfigInit.CONFIG.blaze_guardian_spawn_weight, 1, 1));
+        ADDED_SPAWNS = Pool.of(new SpawnSettings.SpawnEntry(EntityInit.NECROMANCER, ConfigInit.CONFIG.necromancer_spawn_weight, 1, 1),
+                new SpawnSettings.SpawnEntry(EntityInit.BLAZE_GUARDIAN, ConfigInit.CONFIG.blaze_guardian_spawn_weight, 1, 1));
     }
 }

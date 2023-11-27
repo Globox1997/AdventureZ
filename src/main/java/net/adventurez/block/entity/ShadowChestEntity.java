@@ -65,7 +65,7 @@ public class ShadowChestEntity extends LootableContainerBlockEntity implements L
 
             @Override
             protected void onViewerCountUpdate(World world, BlockPos pos, BlockState state, int oldViewerCount, int newViewerCount) {
-                world.addSyncedBlockEvent(ShadowChestEntity.this.pos, BlockInit.SHADOW_CHEST_BLOCK, 1, newViewerCount);
+                world.addSyncedBlockEvent(ShadowChestEntity.this.pos, BlockInit.SHADOW_CHEST, 1, newViewerCount);
             }
 
             @Override

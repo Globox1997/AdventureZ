@@ -1,13 +1,13 @@
 {
     "replace": false,
     "values": [
-        "adventurez:stone_golem_heart",
-        "adventurez:stone_golem_arm",
+        "adventurez:blackstone_golem_heart",
+        "adventurez:blackstone_golem_arm",
         "adventurez:gilded_netherite_fragment",
         "adventurez:prime_eye",
-        "adventurez:stone_golem_helmet",
-        "adventurez:stone_golem_chestplate",
-        "adventurez:stone_golem_leggings",
-        "adventurez:stone_golem_boots"
+        "adventurez:gilded_netherite_helmet",
+        "adventurez:gilded_netherite_chestplate",
+        "adventurez:gilded_netherite_leggings",
+        "adventurez:gilded_netherite_boots"
     ]
 }

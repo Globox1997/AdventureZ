@@ -1,7 +1,7 @@
 {
     "replace": false,
     "values": [
-        "adventurez:stone_golem",
-        "adventurez:small_stone_golem"
+        "adventurez:blackstone_golem",
+        "adventurez:mini_blackstone_golem"
     ]
 }

@@ -64,14 +64,14 @@ public abstract class IronGolemEntityMixin extends GolemEntity implements Entity
                     this.heal(10.0F);
                     info.setReturnValue(ActionResult.success(this.getWorld().isClient()));
                 }
-            } else if (itemStack.isOf(ItemInit.GILDED_STONE)) {
+            } else if (itemStack.isOf(ItemInit.GILDED_BLACKSTONE_SHARD)) {
                 this.heal(this.getMaxHealth() * 0.2F);
                 info.setReturnValue(ActionResult.success(this.getWorld().isClient()));
-            } else if (itemStack.isOf(ItemInit.STONE_GOLEM_HEART)) {
+            } else if (itemStack.isOf(ItemInit.BLACKSTONE_GOLEM_HEART)) {
                 this.heal(this.getMaxHealth());
                 info.setReturnValue(ActionResult.success(this.getWorld().isClient()));
             }
-        } else if (itemStack.isOf(ItemInit.STONE_GOLEM_HEART)) {
+        } else if (itemStack.isOf(ItemInit.BLACKSTONE_GOLEM_HEART)) {
             if (!this.getWorld().isClient()) {
                 this.targetSelector.add(3, new ActiveTargetGoal<>(this, CreeperEntity.class, false, true));
                 this.dataTracker.set(BLACKSTONED, true);

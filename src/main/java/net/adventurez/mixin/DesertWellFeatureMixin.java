@@ -33,8 +33,8 @@ public class DesertWellFeatureMixin {
                             spawnPos = spawnPos.south(5).east(4);
                         if (i == 3)
                             spawnPos = spawnPos.north(5).east(3);
-                        if (context.getWorld().isAir(spawnPos) && SpawnHelper.canSpawn(SpawnRestriction.Location.ON_GROUND, context.getWorld(), spawnPos, EntityInit.PIGLINBEAST_ENTITY)) {
-                            DesertRhinoEntity desertRhinoEntity = (DesertRhinoEntity) EntityInit.DESERT_RHINO_ENTITY.create(context.getWorld().toServerWorld());
+                        if (context.getWorld().isAir(spawnPos) && SpawnHelper.canSpawn(SpawnRestriction.Location.ON_GROUND, context.getWorld(), spawnPos, EntityInit.DESERT_RHINO)) {
+                            DesertRhinoEntity desertRhinoEntity = (DesertRhinoEntity) EntityInit.DESERT_RHINO.create(context.getWorld().toServerWorld());
                             desertRhinoEntity.refreshPositionAndAngles(spawnPos, context.getRandom().nextFloat() * 360F, 0.0F);
                             context.getWorld().spawnEntity(desertRhinoEntity);
                             break;

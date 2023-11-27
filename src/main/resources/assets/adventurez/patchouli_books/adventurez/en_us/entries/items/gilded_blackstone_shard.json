@@ -1,0 +1,17 @@
+{
+    "name": "Gilded Blackstone Shard",
+    "icon": "adventurez:gilded_blackstone_shard",
+    "category": "adventurez:item_category",
+    "pages": [
+        {
+            "type": "spotlight",
+            "item": "adventurez:gilded_blackstone_shard",
+            "link_recipe": false,
+            "text": "Gilded blackstone shards are findable in Nether Bastions, dropped by Piglin Brute or barter with Piglins to get some of them"
+        },
+        {
+            "type": "empty",
+            "draw_filler": false
+        }
+    ]
+}

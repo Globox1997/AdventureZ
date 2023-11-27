@@ -1,6 +1,6 @@
 package net.adventurez.block.renderer;
 
-import net.adventurez.block.PiglinFlagBlock;
+import net.adventurez.block.PiglinFlag;
 import net.adventurez.block.entity.PiglinFlagEntity;
 import net.adventurez.init.RenderInit;
 import net.fabricmc.api.EnvType;
@@ -59,10 +59,10 @@ public class PiglinFlagRenderer implements BlockEntityRenderer<PiglinFlagEntity>
         matrices.push();
         int lightAbove = WorldRenderer.getLightmapCoordinates(entity.getWorld(), entity.getPos().up());
         // getEntityAlpha works but will always lighten up the flag
-        VertexConsumer vertexConsumer = vertexConsumerProvider.getBuffer(RenderLayer.getEntityCutoutNoCull(new Identifier("adventurez:textures/block/piglin_flag_block.png")));
+        VertexConsumer vertexConsumer = vertexConsumerProvider.getBuffer(RenderLayer.getEntityCutoutNoCull(new Identifier("adventurez:textures/block/piglin_flag.png")));
         BlockState state = entity.getCachedState();
         Direction blockDirection = state.get(HorizontalFacingBlock.FACING);
-        if (state.getBlock() instanceof PiglinFlagBlock) {
+        if (state.getBlock() instanceof PiglinFlag) {
 
             if (blockDirection.equals(Direction.NORTH)) {
                 matrices.translate(1D, 0D, 1D);

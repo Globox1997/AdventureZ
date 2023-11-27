@@ -27,7 +27,7 @@ public class AdventureConfig implements ConfigData {
     @ConfigEntry.Category("spawn_setting")
     @ConfigEntry.Gui.RequiresRestart
     @ConfigEntry.BoundedDiscrete(min = 0, max = 100)
-    public int small_stone_golem_spawn_weight = 5;
+    public int mini_blackstone_golem_spawn_weight = 5;
     @ConfigEntry.Category("spawn_setting")
     @ConfigEntry.BoundedDiscrete(min = 0, max = 100)
     @Comment("Chance for spawning when thunder occurs; 1/Value")
@@ -85,7 +85,7 @@ public class AdventureConfig implements ConfigData {
 
     // Allow settings
     @ConfigEntry.Category("spawn_setting")
-    public boolean allow_stone_golem_summoning = true;
+    public boolean allow_blackstone_golem_summoning = true;
     @ConfigEntry.Category("spawn_setting")
     public boolean allow_the_eye_summoning = true;
     @ConfigEntry.Category("spawn_setting")
@@ -95,9 +95,6 @@ public class AdventureConfig implements ConfigData {
     // Misc settings
     @ConfigEntry.Category("misc")
     public boolean allow_source_stone_tp = true;
-    @ConfigEntry.Category("misc")
-    @ConfigEntry.Gui.RequiresRestart
-    public boolean disable_armor_bonus = false;
     @ConfigEntry.Category("misc")
     public boolean resummoned_ender_dragon_drops_egg = false;
     @ConfigEntry.Category("misc")
@@ -117,11 +114,11 @@ public class AdventureConfig implements ConfigData {
     @ConfigEntry.Category("misc")
     public int stoned_heart_amplifier = 0;
     @ConfigEntry.Category("misc")
-    public int stone_golem_armor_effect_duration = 1200;
+    public int gilded_netherite_armor_effect_duration = 1200;
     @ConfigEntry.Category("misc")
-    public float stone_golem_armor_dodge_chance = 0.2f;
+    public float gilded_netherite_armor_dodge_chance = 0.2f;
     @ConfigEntry.Category("misc")
     public boolean allow_other_dragon_hatching = false;
     @ConfigEntry.Category("misc")
-    public boolean allow_gilded_stone_throw = false;
+    public boolean allow_gilded_blackstone_shard_throw = false;
 }

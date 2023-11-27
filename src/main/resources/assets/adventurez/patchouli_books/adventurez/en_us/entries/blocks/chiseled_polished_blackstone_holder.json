@@ -1,0 +1,19 @@
+{
+    "name": "Chiseled Polished Blackstone Holder",
+    "icon": "adventurez:chiseled_polished_blackstone_holder",
+    "category": "adventurez:block_category",
+    "pages": [
+        {
+            "type": "spotlight",
+            "title": "Chiseled Polished Blackstone Holder",
+            "item": "adventurez:chiseled_polished_blackstone_holder",
+            "link_recipe": true,
+            "text": "Contains the power to hold a Gilded Blackstone Shard. Required to summon the Blackstone Golem."
+        },
+        {
+            "type": "stonecutting",
+            "title": "Stone Cutting",
+            "recipe": "adventurez:chiseled_polished_blackstone_holder"
+        }
+    ]
+}

@@ -30,13 +30,13 @@ public class VoidBulletEntity extends ExplosiveProjectileEntity {
 
     @Environment(EnvType.CLIENT)
     public VoidBulletEntity(World world, double x, double y, double z, double velocityX, double velocityY, double velocityZ) {
-        this(EntityInit.VOID_BULLET_ENTITY, world);
+        this(EntityInit.VOID_BULLET, world);
         this.refreshPositionAndAngles(x, y, z, this.getYaw(), this.getPitch());
         this.setVelocity(velocityX, velocityY, velocityZ);
     }
 
     public VoidBulletEntity(World world, LivingEntity owner, double velocityX, double velocityY, double velocityZ) {
-        super(EntityInit.VOID_BULLET_ENTITY, owner, velocityX, velocityY, velocityZ, world);
+        super(EntityInit.VOID_BULLET, owner, velocityX, velocityY, velocityZ, world);
         this.refreshPositionAndAngles(owner.getX() + velocityX * 1.2D, owner.getY() + owner.getBoundingBox().getYLength() * 0.6D + velocityY * 1.2D, owner.getZ() + velocityZ * 1.2D, -owner.getYaw(),
                 owner.getPitch());
         this.prevPitch = owner.getPitch();
@@ -126,7 +126,7 @@ public class VoidBulletEntity extends ExplosiveProjectileEntity {
     }
 
     private DamageSource createDamageSource(Entity entity) {
-        return entity.getDamageSources().create(EntityInit.VOID_BULLET, entity);
+        return entity.getDamageSources().create(EntityInit.VOID_BULLET_KEY, entity);
     }
 
 }

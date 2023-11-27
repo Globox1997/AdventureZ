@@ -77,7 +77,7 @@ public class EnderwarthogEntity extends HostileEntity {
     public static boolean canSpawn(EntityType<EnderwarthogEntity> type, ServerWorldAccess world, SpawnReason spawnReason, BlockPos pos, Random random) {
         BlockState blockState = world.getBlockState(pos);
         return world.getDifficulty() != Difficulty.PEACEFUL && HostileEntity.isSpawnDark(world, pos, random) && HostileEntity.canMobSpawn(type, world, spawnReason, pos, random)
-                && random.nextInt(6) == 0 && SpawnHelper.isClearForSpawn(world, pos, blockState, blockState.getFluidState(), EntityInit.ENDERWARTHOG_ENTITY);
+                && random.nextInt(6) == 0 && SpawnHelper.isClearForSpawn(world, pos, blockState, blockState.getFluidState(), EntityInit.ENDERWARTHOG);
     }
 
     @Override

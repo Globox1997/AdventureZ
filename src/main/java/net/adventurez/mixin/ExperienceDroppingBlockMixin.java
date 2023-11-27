@@ -35,10 +35,10 @@ public abstract class ExperienceDroppingBlockMixin extends Block {
     public void afterBreak(World world, PlayerEntity player, BlockPos pos, BlockState state, BlockEntity blockEntity, ItemStack tool) {
         if (!world.isClient() && state.isOf(Blocks.NETHER_GOLD_ORE) && ConfigInit.CONFIG.piglin_beast_ore_spawn_chance != 0) {
             if (!player.isCreative() && world.getRegistryKey() == World.NETHER && EnchantmentHelper.getLevel(Enchantments.SILK_TOUCH, player.getMainHandStack()) == 0) {
-                if (world.getEntitiesByType(EntityInit.PIGLINBEAST_ENTITY, player.getBoundingBox().expand(40D), EntityPredicates.EXCEPT_SPECTATOR).isEmpty()) {
+                if (world.getEntitiesByType(EntityInit.PIGLIN_BEAST, player.getBoundingBox().expand(40D), EntityPredicates.EXCEPT_SPECTATOR).isEmpty()) {
                     int spawnChanceInt = world.getRandom().nextInt(ConfigInit.CONFIG.piglin_beast_ore_spawn_chance) + 1;
                     if (spawnChanceInt == 1) {
-                        PiglinBeastEntity beastEntity = EntityInit.PIGLINBEAST_ENTITY.create((World) world);
+                        PiglinBeastEntity beastEntity = EntityInit.PIGLIN_BEAST.create((World) world);
                         int posYOfPlayer = player.getBlockPos().getY();
                         for (int counter = 0; counter < 100; counter++) {
                             float randomFloat = world.getRandom().nextFloat() * 6.2831855F;
@@ -49,7 +49,7 @@ public abstract class ExperienceDroppingBlockMixin extends Block {
                             BlockPos spawnPos = new BlockPos(posX, posY, posZ);
                             // isRegionLoaded foun in Raid class at getRavagerSpawnLocation
                             if (world.isRegionLoaded(spawnPos.getX() - 4, spawnPos.getY() - 4, spawnPos.getZ() - 4, spawnPos.getX() + 4, spawnPos.getY() + 4, spawnPos.getZ() + 4)
-                                    && SpawnHelper.canSpawn(SpawnRestriction.Location.ON_GROUND, world, spawnPos, EntityInit.PIGLINBEAST_ENTITY)) {
+                                    && SpawnHelper.canSpawn(SpawnRestriction.Location.ON_GROUND, world, spawnPos, EntityInit.PIGLIN_BEAST)) {
                                 beastEntity.refreshPositionAndAngles(spawnPos, 0.0F, 0.0F);
                                 beastEntity.initialize(((ServerWorld) world), world.getLocalDifficulty(spawnPos), SpawnReason.EVENT, null, null);
                                 world.spawnEntity(beastEntity);

@@ -1,0 +1,22 @@
+{
+  "parent": "minecraft:recipes/root",
+  "rewards": {
+    "recipes": [
+      "adventurez:blackstone_golem_arm"
+    ]
+  },
+  "criteria": {
+    "got_the_heart": {
+      "trigger": "minecraft:inventory_changed",
+      "conditions": {
+        "items": [
+          {
+            "items": [
+              "adventurez:blackstone_golem_heart"
+            ]
+          }
+        ]
+      }
+    }
+  }
+}

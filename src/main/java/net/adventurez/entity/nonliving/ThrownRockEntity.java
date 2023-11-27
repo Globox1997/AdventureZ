@@ -33,11 +33,11 @@ public class ThrownRockEntity extends ThrownItemEntity {
     }
 
     public ThrownRockEntity(World world, LivingEntity owner) {
-        super(EntityInit.THROWNROCK_ENTITY, owner, world);
+        super(EntityInit.THROWN_ROCK, owner, world);
     }
 
     public ThrownRockEntity(World world, double x, double y, double z) {
-        super(EntityInit.THROWNROCK_ENTITY, x, y, z, world);
+        super(EntityInit.THROWN_ROCK, x, y, z, world);
     }
 
     @Override
@@ -120,7 +120,7 @@ public class ThrownRockEntity extends ThrownItemEntity {
     }
 
     private DamageSource createDamageSource(Entity entity, Entity owner) {
-        return entity.getDamageSources().create(EntityInit.ROCK, entity, owner);
+        return entity.getDamageSources().create(EntityInit.ROCK_KEY, entity, owner);
     }
 
 }

@@ -1,0 +1,1 @@
+give @s adventurez:blackstone_golem_heart

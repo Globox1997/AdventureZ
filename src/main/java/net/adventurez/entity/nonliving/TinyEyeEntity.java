@@ -49,13 +49,13 @@ public class TinyEyeEntity extends ExplosiveProjectileEntity {
 
     @Environment(EnvType.CLIENT)
     public TinyEyeEntity(World world, double x, double y, double z, double velocityX, double velocityY, double velocityZ) {
-        this(EntityInit.TINYEYE_ENTITY, world);
+        this(EntityInit.TINY_EYE, world);
         this.refreshPositionAndAngles(x, y, z, this.getYaw(), this.getPitch());
         this.setVelocity(velocityX, velocityY, velocityZ);
     }
 
     public TinyEyeEntity(World world, LivingEntity owner, Entity target, Direction.Axis axis) {
-        this(EntityInit.TINYEYE_ENTITY, world);
+        this(EntityInit.TINY_EYE, world);
         this.setOwner(owner);
         BlockPos blockPos = owner.getBlockPos();
         double d = (double) blockPos.getX() + 0.5D;
@@ -238,7 +238,7 @@ public class TinyEyeEntity extends ExplosiveProjectileEntity {
     }
 
     private DamageSource createDamageSource(Entity entity) {
-        return entity.getDamageSources().create(EntityInit.TINY_EYE, entity);
+        return entity.getDamageSources().create(EntityInit.TINY_EYE_KEY, entity);
     }
 
     @SuppressWarnings("deprecation")

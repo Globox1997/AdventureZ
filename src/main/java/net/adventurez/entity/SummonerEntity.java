@@ -279,7 +279,7 @@ public class SummonerEntity extends SpellCastingEntity {
                 int posY = SummonerEntity.this.getWorld().getTopY(Heightmap.Type.WORLD_SURFACE, posX, posZ);
                 BlockPos teleportPos = new BlockPos(posX, posY, posZ);
                 if (SummonerEntity.this.getWorld().isRegionLoaded(teleportPos.getX() - 4, teleportPos.getY() - 4, teleportPos.getZ() - 4, teleportPos.getX() + 4, teleportPos.getY() + 4,
-                        teleportPos.getZ() + 4) && SpawnHelper.canSpawn(SpawnRestriction.Location.ON_GROUND, SummonerEntity.this.getWorld(), teleportPos, EntityInit.SUMMONER_ENTITY)) {
+                        teleportPos.getZ() + 4) && SpawnHelper.canSpawn(SpawnRestriction.Location.ON_GROUND, SummonerEntity.this.getWorld(), teleportPos, EntityInit.SUMMONER)) {
                     SummonerEntity.this.teleport(teleportPos.getX(), teleportPos.getY(), teleportPos.getZ());
                     break;
                 }
@@ -397,10 +397,10 @@ public class SummonerEntity extends SpellCastingEntity {
             for (int i = 0; i < 20; ++i) {
                 BlockPos blockPos = SummonerEntity.this.getBlockPos().add(-2 + SummonerEntity.this.random.nextInt(5), SummonerEntity.this.random.nextInt(3),
                         -2 + SummonerEntity.this.random.nextInt(5));
-                if (SpawnHelper.canSpawn(SpawnRestriction.Location.ON_GROUND, SummonerEntity.this.getWorld(), blockPos, EntityInit.SKELETON_VANGUARD_ENTITY)) {
+                if (SpawnHelper.canSpawn(SpawnRestriction.Location.ON_GROUND, SummonerEntity.this.getWorld(), blockPos, EntityInit.SKELETON_VANGUARD)) {
                     spellCount++;
                     if (SummonerEntity.this.getHealth() <= 40.0F || SummonerEntity.this.getEntityWorld().isDay()) {
-                        SkeletonVanguardEntity skeletonVanguardEntity = (SkeletonVanguardEntity) EntityInit.SKELETON_VANGUARD_ENTITY.create(serverWorld);
+                        SkeletonVanguardEntity skeletonVanguardEntity = (SkeletonVanguardEntity) EntityInit.SKELETON_VANGUARD.create(serverWorld);
                         skeletonVanguardEntity.refreshPositionAndAngles(blockPos, SummonerEntity.this.getWorld().getRandom().nextFloat() * 360F, 0.0F);
                         skeletonVanguardEntity.initialize(serverWorld, serverWorld.getLocalDifficulty(blockPos), SpawnReason.EVENT, null, null);
                         serverWorld.spawnEntityAndPassengers(skeletonVanguardEntity);
@@ -459,7 +459,7 @@ public class SummonerEntity extends SpellCastingEntity {
             int othermobs = 0;
             for (int i = 0; i < list.size(); i++) {
                 LivingEntity entity = (LivingEntity) list.get(i);
-                if (entity.getType() == EntityInit.SKELETON_VANGUARD_ENTITY) {
+                if (entity.getType() == EntityInit.SKELETON_VANGUARD) {
                     vanguards++;
                 } else if (entity.getType() == EntityType.ZOMBIE || entity.getType() == EntityType.SKELETON) {
                     othermobs++;

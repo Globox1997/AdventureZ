@@ -2,8 +2,8 @@
     "replace": false,
     "values": [
         "adventurez:amethyst_golem",
-        "adventurez:small_stone_golem",
-        "adventurez:stone_golem",
+        "adventurez:mini_blackstone_golem",
+        "adventurez:blackstone_golem",
         "adventurez:summoner",
         "adventurez:wither_puppet"
     ]

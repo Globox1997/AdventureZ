@@ -62,7 +62,7 @@ public class MammothEntity extends AnimalEntity implements Angerable {
 
     @Override
     public PassiveEntity createChild(ServerWorld world, PassiveEntity entity) {
-        return (PassiveEntity) EntityInit.MAMMOTH_ENTITY.create(world);
+        return (PassiveEntity) EntityInit.MAMMOTH.create(world);
     }
 
     @Override

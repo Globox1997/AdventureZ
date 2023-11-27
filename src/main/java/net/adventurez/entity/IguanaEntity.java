@@ -95,7 +95,7 @@ public class IguanaEntity extends AnimalEntity {
 
     @Override
     public IguanaEntity createChild(ServerWorld serverWorld, PassiveEntity passiveEntity) {
-        return (IguanaEntity) EntityInit.IGUANA_ENTITY.create(serverWorld);
+        return (IguanaEntity) EntityInit.IGUANA.create(serverWorld);
     }
 
     @Override

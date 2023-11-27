@@ -54,7 +54,7 @@ public class MobSpawnerLogicMixin {
     private void serverTick(ServerWorld world, BlockPos pos, CallbackInfo info) {
         if (this.spawnDelay == 2 && ConfigInit.CONFIG.allow_guardian_spawner_spawn) {
             if (this.spawnGuardian) {
-                BlazeGuardianEntity blazeGuardianEntity = (BlazeGuardianEntity) EntityInit.BLAZEGUARDIAN_ENTITY.create(world.toServerWorld());
+                BlazeGuardianEntity blazeGuardianEntity = (BlazeGuardianEntity) EntityInit.BLAZE_GUARDIAN.create(world.toServerWorld());
                 blazeGuardianEntity.initialize(world.toServerWorld(), world.getLocalDifficulty(pos), SpawnReason.STRUCTURE, null, null);
                 int randomCheck = world.random.nextInt(3);
                 blazeGuardianEntity.refreshPositionAndAngles(pos.north(world.random.nextInt(3) - 1).east(randomCheck - 1 == 0 ? -1 : randomCheck), world.random.nextFloat() * 360F, 0.0F);

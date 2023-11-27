@@ -2,7 +2,7 @@
     "parent": "minecraft:nether/netherite_armor",
     "display": {
         "icon": {
-            "item": "adventurez:stone_golem_chestplate",
+            "item": "adventurez:gilded_netherite_chestplate",
             "nbt": "{Damage:0}"
         },
         "title": {
@@ -26,22 +26,22 @@
                 "items": [
                     {
                         "items": [
-                            "adventurez:stone_golem_helmet"
+                            "adventurez:gilded_netherite_helmet"
                         ]
                     },
                     {
                         "items": [
-                            "adventurez:stone_golem_chestplate"
+                            "adventurez:gilded_netherite_chestplate"
                         ]
                     },
                     {
                         "items": [
-                            "adventurez:stone_golem_leggings"
+                            "adventurez:gilded_netherite_leggings"
                         ]
                     },
                     {
                         "items": [
-                            "adventurez:stone_golem_boots"
+                            "adventurez:gilded_netherite_boots"
                         ]
                     }
                 ]

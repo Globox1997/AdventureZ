@@ -218,7 +218,7 @@ public class TheEyeEntity extends FlyingEntity {
                         int posY = livingEntity.getWorld().getTopY(Heightmap.Type.WORLD_SURFACE, posX, posZ) + 10 + livingEntity.getWorld().getRandom().nextInt(12);
                         BlockPos teleportPos = new BlockPos(posX, posY, posZ);
                         if (livingEntity.getWorld().isRegionLoaded(teleportPos.getX() - 4, teleportPos.getY() - 4, teleportPos.getZ() - 4, teleportPos.getX() + 4, teleportPos.getY() + 4,
-                                teleportPos.getZ() + 4) && SpawnHelper.canSpawn(SpawnRestriction.Location.ON_GROUND, livingEntity.getWorld(), teleportPos, EntityInit.THE_EYE_ENTITY)) {
+                                teleportPos.getZ() + 4) && SpawnHelper.canSpawn(SpawnRestriction.Location.ON_GROUND, livingEntity.getWorld(), teleportPos, EntityInit.THE_EYE)) {
                             this.lookControl.lookAt(teleportPos.getX(), teleportPos.getY(), teleportPos.getZ());
                             if (!this.getWorld().isClient()) {
                                 livingEntity.teleport(teleportPos.getX(), teleportPos.getY(), teleportPos.getZ());
@@ -773,9 +773,8 @@ public class TheEyeEntity extends FlyingEntity {
                         BlockPos pos = theEyeEntity.getBlockPos();
                         pos = pos.add(pos.getX() - livingEntity.getBlockPos().getX() + theEyeEntity.getWorld().getRandom().nextInt(6) * 5, 0,
                                 pos.getZ() - livingEntity.getBlockPos().getZ() + theEyeEntity.getWorld().getRandom().nextInt(6) * 5);
-                        if (theEyeEntity.getWorld().getBlockState(pos).isAir()
-                                && SpawnHelper.canSpawn(SpawnRestriction.Location.NO_RESTRICTIONS, theEyeEntity.getWorld(), pos, EntityInit.THE_EYE_ENTITY)) {
-                            TheEyeEntity theEyeEntityDuplicate = (TheEyeEntity) EntityInit.THE_EYE_ENTITY.create(theEyeEntity.getWorld());
+                        if (theEyeEntity.getWorld().getBlockState(pos).isAir() && SpawnHelper.canSpawn(SpawnRestriction.Location.NO_RESTRICTIONS, theEyeEntity.getWorld(), pos, EntityInit.THE_EYE)) {
+                            TheEyeEntity theEyeEntityDuplicate = (TheEyeEntity) EntityInit.THE_EYE.create(theEyeEntity.getWorld());
                             theEyeEntityDuplicate.refreshPositionAndAngles(pos, theEyeEntity.getWorld().getRandom().nextFloat() * 360F, 0.0F);
                             theEyeEntityDuplicate.initialize((ServerWorld) theEyeEntity.getWorld(), theEyeEntity.getWorld().getLocalDifficulty(pos), SpawnReason.EVENT, null, null);
                             theEyeEntityDuplicate.duplicationTimer = 800;

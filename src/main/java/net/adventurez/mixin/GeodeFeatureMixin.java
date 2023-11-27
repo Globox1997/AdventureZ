@@ -24,7 +24,7 @@ public class GeodeFeatureMixin {
                 int spawnChanceInt = context.getRandom().nextInt(amethystSpawnChance) + 1;
                 BlockPos spawnPos = context.getOrigin().south(4).east(4);
                 if (spawnChanceInt == 1 && (context.getWorld().isAir(spawnPos) || context.getWorld().isAir(spawnPos.up()))) {
-                    AmethystGolemEntity amethystGolemEntity = (AmethystGolemEntity) EntityInit.AMETHYST_GOLEM_ENTITY.create(context.getWorld().toServerWorld());
+                    AmethystGolemEntity amethystGolemEntity = (AmethystGolemEntity) EntityInit.AMETHYST_GOLEM.create(context.getWorld().toServerWorld());
                     amethystGolemEntity.getDataTracker().set(AmethystGolemEntity.DEEPSLATE_VARIANT, spawnPos.getY() <= 0);
                     if (!context.getWorld().isAir(spawnPos)) {
                         spawnPos = spawnPos.up();

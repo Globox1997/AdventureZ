@@ -1,6 +1,6 @@
 {
     "name": "Gilded Armor",
-    "icon": "adventurez:stone_golem_chestplate",
+    "icon": "adventurez:gilded_netherite_chestplate",
     "category": "adventurez:item_category",
     "pages": [
         {
@@ -11,14 +11,14 @@
         {
             "type": "smithing",
             "title": "Smithing",
-            "recipe": "adventurez:stone_golem_helmet",
-            "recipe2": "adventurez:stone_golem_chestplate"
+            "recipe": "adventurez:gilded_netherite_helmet",
+            "recipe2": "adventurez:gilded_netherite_chestplate"
         },
         {
             "type": "smithing",
             "title": "Smithing",
-            "recipe": "adventurez:stone_golem_leggings",
-            "recipe2": "adventurez:stone_golem_boots"
+            "recipe": "adventurez:gilded_netherite_leggings",
+            "recipe2": "adventurez:gilded_netherite_boots"
         },
         {
             "type": "empty",

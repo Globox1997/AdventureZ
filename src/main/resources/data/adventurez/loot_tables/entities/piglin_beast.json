@@ -36,7 +36,7 @@
         },
         {
           "type": "minecraft:item",
-          "name": "adventurez:piglin_flag_block"
+          "name": "adventurez:piglin_flag"
         }
       ],
       "conditions": [

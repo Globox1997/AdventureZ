@@ -1,1 +1,0 @@
-give @s adventurez:stone_golem_heart

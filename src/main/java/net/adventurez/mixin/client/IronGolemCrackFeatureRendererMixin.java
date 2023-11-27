@@ -26,10 +26,11 @@ public class IronGolemCrackFeatureRendererMixin {
     @ModifyVariable(method = "render", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/render/entity/feature/IronGolemCrackFeatureRenderer;getContextModel()Lnet/minecraft/client/render/entity/model/EntityModel;"), ordinal = 0)
     private Identifier renderMixin(Identifier original, MatrixStack matrixStack, VertexConsumerProvider vertexConsumerProvider, int i, IronGolemEntity ironGolemEntity, float f, float g, float h,
             float j, float k, float l) {
-        if (ironGolemEntity.getDataTracker().get(((EntityAccess) ironGolemEntity).getTrackedDataBoolean()))
+        if (ironGolemEntity.getDataTracker().get(((EntityAccess) ironGolemEntity).getTrackedDataBoolean())) {
             return BLACKSTONED_CRACKINESS_TO_TEXTURE.get(ironGolemEntity.getCrack());
-        else
+        } else {
             return original;
+        }
     }
 
     static {

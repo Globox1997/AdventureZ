@@ -55,10 +55,10 @@ public class BlazeGuardianEntity extends HostileEntity {
     public static final TrackedData<Boolean> SHIELD_SOUTH;
     public static final TrackedData<Boolean> SHIELD_WEST;
     private boolean isTryingToShockwave = false;
-    private final BlazeGuardianShieldEntity shield_north = new BlazeGuardianShieldEntity(EntityInit.BLAZEGUARDIAN_SHIELD_ENTITY, this, "shield_north");
-    private final BlazeGuardianShieldEntity shield_east = new BlazeGuardianShieldEntity(EntityInit.BLAZEGUARDIAN_SHIELD_ENTITY, this, "shield_east");
-    private final BlazeGuardianShieldEntity shield_south = new BlazeGuardianShieldEntity(EntityInit.BLAZEGUARDIAN_SHIELD_ENTITY, this, "shield_south");
-    private final BlazeGuardianShieldEntity shield_west = new BlazeGuardianShieldEntity(EntityInit.BLAZEGUARDIAN_SHIELD_ENTITY, this, "shield_west");
+    private final BlazeGuardianShieldEntity shield_north = new BlazeGuardianShieldEntity(EntityInit.BLAZE_GUARDIAN_SHIELD, this, "shield_north");
+    private final BlazeGuardianShieldEntity shield_east = new BlazeGuardianShieldEntity(EntityInit.BLAZE_GUARDIAN_SHIELD, this, "shield_east");
+    private final BlazeGuardianShieldEntity shield_south = new BlazeGuardianShieldEntity(EntityInit.BLAZE_GUARDIAN_SHIELD, this, "shield_south");
+    private final BlazeGuardianShieldEntity shield_west = new BlazeGuardianShieldEntity(EntityInit.BLAZE_GUARDIAN_SHIELD, this, "shield_west");
 
     public BlazeGuardianEntity(EntityType<? extends HostileEntity> entityType, World world) {
         super(entityType, world);

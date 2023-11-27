@@ -166,7 +166,7 @@ public class NightmareEntity extends SkeletonHorseEntity {
     @Override
     @Nullable
     public PassiveEntity createChild(ServerWorld serverWorld, PassiveEntity passiveEntity) {
-        return (PassiveEntity) EntityInit.NIGHTMARE_ENTITY.create(serverWorld);
+        return (PassiveEntity) EntityInit.NIGHTMARE.create(serverWorld);
     }
 
     static {

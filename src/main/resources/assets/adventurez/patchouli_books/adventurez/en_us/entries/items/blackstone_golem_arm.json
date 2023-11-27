@@ -1,0 +1,17 @@
+{
+    "name": "Golem Arm",
+    "icon": "adventurez:blackblackstone_golem_arm",
+    "category": "adventurez:item_category",
+    "pages": [
+        {
+            "type": "spotlight",
+            "item": "adventurez:blackstone_golem_arm",
+            "link_recipe": true,
+            "text": "Blackstone's Arm is a weapon crafted with the Heart of the Blackstone Golem and unlocks the ability to throw rocks at your enemies. Charge it by holding right click until it glows red and throw a rock by releasing the button"
+        },
+        {
+            "type": "crafting",
+            "recipe": "adventurez:blackstone_golem_arm"
+        }
+    ]
+}

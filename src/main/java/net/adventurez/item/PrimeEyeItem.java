@@ -40,9 +40,9 @@ public class PrimeEyeItem extends Item {
         ItemStack itemStack = user.getStackInHand(hand);
         if (itemStack.getDamage() <= itemStack.getMaxDamage() - 1) {
             world.playSound((PlayerEntity) null, user.getX(), user.getY(), user.getZ(), SoundEvents.ENTITY_ENDER_PEARL_THROW, SoundCategory.NEUTRAL, 0.5F,
-                    0.4F / (world.random.nextFloat() * 0.4F + 0.8F));
+                    0.4F / (world.getRandom().nextFloat() * 0.4F + 0.8F));
             user.getItemCooldownManager().set(this, 20);
-            if (!world.isClient) {
+            if (!world.isClient()) {
                 EnderPearlEntity enderPearlEntity = new EnderPearlEntity(world, user);
                 enderPearlEntity.setItem(itemStack);
                 enderPearlEntity.setVelocity(user, user.getPitch(), user.getYaw(), 0.0F, 1.5F, 1.0F);

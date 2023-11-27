@@ -25,7 +25,7 @@ public class AmethystShardEntity extends ThrownEntity {
     }
 
     public AmethystShardEntity(LivingEntity owner, World world) {
-        super(EntityInit.AMETHYST_SHARD_ENTITY, owner, world);
+        super(EntityInit.AMETHYST_SHARD, owner, world);
         Vec3d vec3d = owner.getRotationVec(1.0F);
         this.updatePosition(this.getX() + vec3d.x, this.getY() - owner.getHeight() * 0.3D, this.getZ() + vec3d.z);
     }
@@ -76,7 +76,7 @@ public class AmethystShardEntity extends ThrownEntity {
     }
 
     private DamageSource createDamageSource(Entity entity) {
-        return entity.getDamageSources().create(EntityInit.AMETHYST_SHARD, entity);
+        return entity.getDamageSources().create(EntityInit.AMETHYST_SHARD_KEY, entity);
     }
 
     @Override

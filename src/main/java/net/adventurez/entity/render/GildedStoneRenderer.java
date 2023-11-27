@@ -1,7 +1,7 @@
 package net.adventurez.entity.render;
 
 import net.adventurez.entity.model.GildedStoneModel;
-import net.adventurez.entity.nonliving.GildedStoneEntity;
+import net.adventurez.entity.nonliving.GildedBlackstoneShardEntity;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
 import net.minecraft.client.render.OverlayTexture;
@@ -15,7 +15,7 @@ import net.minecraft.util.Identifier;
 import net.minecraft.util.math.BlockPos;
 
 @Environment(EnvType.CLIENT)
-public class GildedStoneRenderer extends EntityRenderer<GildedStoneEntity> {
+public class GildedStoneRenderer extends EntityRenderer<GildedBlackstoneShardEntity> {
     private static final Identifier TEXTURE = new Identifier("adventurez:textures/item/gilded_stone.png");
     private final GildedStoneModel model = new GildedStoneModel(GildedStoneModel.getTexturedModelData().createModel());
 
@@ -24,12 +24,12 @@ public class GildedStoneRenderer extends EntityRenderer<GildedStoneEntity> {
     }
 
     @Override
-    public int getBlockLight(GildedStoneEntity gildedStoneEntity, BlockPos blockPos) {
+    public int getBlockLight(GildedBlackstoneShardEntity gildedStoneEntity, BlockPos blockPos) {
         return 15;
     }
 
     @Override
-    public void render(GildedStoneEntity gildedStoneEntity, float f, float g, MatrixStack matrixStack, VertexConsumerProvider vertexConsumerProvider, int i) {
+    public void render(GildedBlackstoneShardEntity gildedStoneEntity, float f, float g, MatrixStack matrixStack, VertexConsumerProvider vertexConsumerProvider, int i) {
 
         matrixStack.push();
         VertexConsumer vertexConsumer = vertexConsumerProvider.getBuffer(this.model.getLayer(this.getTexture(gildedStoneEntity)));
@@ -42,7 +42,7 @@ public class GildedStoneRenderer extends EntityRenderer<GildedStoneEntity> {
     }
 
     @Override
-    public Identifier getTexture(GildedStoneEntity gildedStoneEntity) {
+    public Identifier getTexture(GildedBlackstoneShardEntity gildedStoneEntity) {
         return TEXTURE;
     }
 }

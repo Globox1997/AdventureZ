@@ -78,7 +78,7 @@ public class DeerEntity extends AnimalEntity {
 
     @Override
     public DeerEntity createChild(ServerWorld serverWorld, PassiveEntity passiveEntity) {
-        return EntityInit.DEER_ENTITY.create(serverWorld);
+        return EntityInit.DEER.create(serverWorld);
     }
 
     @Override

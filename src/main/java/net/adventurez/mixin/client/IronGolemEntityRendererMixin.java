@@ -20,7 +20,8 @@ public class IronGolemEntityRendererMixin {
 
     @Inject(method = "getTexture", at = @At("HEAD"), cancellable = true)
     private void getTextureMixin(IronGolemEntity ironGolemEntity, CallbackInfoReturnable<Identifier> info) {
-        if (ironGolemEntity.getDataTracker().get(((EntityAccess) ironGolemEntity).getTrackedDataBoolean()))
+        if (ironGolemEntity.getDataTracker().get(((EntityAccess) ironGolemEntity).getTrackedDataBoolean())) {
             info.setReturnValue(BLACKSTONED_TEXTURE);
+        }
     }
 }

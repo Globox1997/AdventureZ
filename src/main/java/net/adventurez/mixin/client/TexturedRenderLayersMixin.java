@@ -21,7 +21,7 @@ import net.minecraft.client.util.SpriteIdentifier;
 @Mixin(TexturedRenderLayers.class)
 public class TexturedRenderLayersMixin {
 
-    private static final SpriteIdentifier SHADOW = createChestTextureId("shadow_chest_block");
+    private static final SpriteIdentifier SHADOW = createChestTextureId("shadow_chest");
 
     @Inject(method = "Lnet/minecraft/client/render/TexturedRenderLayers;getChestTextureId(Lnet/minecraft/block/entity/BlockEntity;Lnet/minecraft/block/enums/ChestType;Z)Lnet/minecraft/client/util/SpriteIdentifier;", at = @At("TAIL"), cancellable = true)
     private static void getChestTextureMixin(BlockEntity blockEntity, ChestType type, boolean christmas, CallbackInfoReturnable<SpriteIdentifier> info) {

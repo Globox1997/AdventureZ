@@ -33,16 +33,16 @@ public class ItemInit {
     public static final RegistryKey<ItemGroup> ADVENTUREZ_ITEM_GROUP = RegistryKey.of(RegistryKeys.ITEM_GROUP, new Identifier("adventurez", "item_group"));
 
     // Items
-    public static final Item GILDED_STONE = register("gilded_stone", new GildedStoneItem(new Item.Settings(), () -> EntityInit.GILDEDSTONE_ENTITY));
-    public static final Item STONE_GOLEM_HEART = register("stone_golem_heart", new StoneGolemHeartItem(new Item.Settings()));
-    public static final Item STONE_GOLEM_ARM = register("stone_golem_arm", new StoneGolemArm(new Item.Settings().maxDamage(2506)));
-    public static final Item GILDED_NETHERITE_FRAGMENT = register("gilded_netherite_fragment", new GildedNetheriteFragmentItem(new Item.Settings().fireproof()));
+    public static final Item GILDED_BLACKSTONE_SHARD = register("gilded_blackstone_shard", new GildedBlackstoneShard(new Item.Settings().fireproof(), () -> EntityInit.GILDED_BLACKSTONE_SHARD));
+    public static final Item BLACKSTONE_GOLEM_HEART = register("blackstone_golem_heart", new BlackstoneGolemHeart(new Item.Settings().fireproof()));
+    public static final Item BLACKSTONE_GOLEM_ARM = register("blackstone_golem_arm", new BlackstoneGolemArm(new Item.Settings().maxDamage(2506).fireproof()));
+    public static final Item GILDED_NETHERITE_FRAGMENT = register("gilded_netherite_fragment", new GildedNetheriteFragment(new Item.Settings().fireproof()));
     public static final Item PRIME_EYE = register("prime_eye", new PrimeEyeItem(new Item.Settings().maxDamage(64)));
     public static final Item ORC_SKIN = register("orc_skin", new Item(new Item.Settings()));
     public static final Item DRAGON_SADDLE = register("dragon_saddle", new Item(new Item.Settings().maxCount(1)));
-    public static final Item SOURCE_STONE = register("source_stone", new SourceStoneItem(new Item.Settings().maxCount(1)));
-    public static final Item CHORUS_FRUIT_ON_A_STICK = register("chorus_fruit_on_a_stick", new OnAStickItem<>((new Item.Settings()).maxDamage(100), EntityInit.ENDER_WHALE_ENTITY, 1));
-    public static final Item ENDER_FLUTE = register("ender_flute", new EnderFluteItem(new Item.Settings().maxDamage(32)));
+    public static final Item SOURCE_STONE = register("source_stone", new SourceStone(new Item.Settings().maxCount(1)));
+    public static final Item CHORUS_FRUIT_ON_A_STICK = register("chorus_fruit_on_a_stick", new OnAStickItem<>((new Item.Settings()).maxDamage(100), EntityInit.ENDER_WHALE, 1));
+    public static final Item ENDER_FLUTE = register("ender_flute", new EnderFlute(new Item.Settings().maxDamage(32)));
     public static final Item IGUANA_HIDE = register("iguana_hide", new Item(new Item.Settings()));
     public static final Item MAMMOTH_LEATHER = register("mammoth_fur", new Item(new Item.Settings()));
     public static final Item ENDER_WHALE_SKIN = register("ender_whale_skin", new Item(new Item.Settings()));
@@ -50,7 +50,7 @@ public class ItemInit {
     public static final Item MAMMOTH_TUSK = register("mammoth_tusk", new Item(new Item.Settings()));
     public static final Item RHINO_LEATHER = register("rhino_leather", new Item(new Item.Settings()));
     public static final Item WARTHOG_SHELL_PIECE = register("warthog_shell_piece", new Item(new Item.Settings()));
-    public static final Item HANDBOOK = register("handbook", new HandbookItem(new Item.Settings()));
+    public static final Item HANDBOOK = register("handbook", new Handbook(new Item.Settings().maxCount(1)));
     public static final Item GILDED_UPGRADE_SMITHING_TEMPLATE = register("gilded_upgrade_smithing_template",
             new SmithingTemplateItem(Text.translatable("item.minecraft.smithing_template.gilded_upgrade.applies_to").formatted(Formatting.BLUE),
                     Text.translatable("item.minecraft.smithing_template.gilded_upgrade.ingredients").formatted(Formatting.BLUE),
@@ -77,11 +77,11 @@ public class ItemInit {
     public static final Item COOKED_WARTHOG_MEAT = register("cooked_warthog_meat", new Item(
             new Item.Settings().food(new FoodComponent.Builder().hunger(6).saturationModifier(0.8F).statusEffect(new StatusEffectInstance(StatusEffects.SPEED, 600, 0), 1.0F).meat().build())));
     // Armor
-    public static final ArmorMaterial STONE_GOLEM_ARMOR_MATERIAL = new StoneGolemArmorMaterial();
-    public static final Item STONE_GOLEM_HELMET = register("stone_golem_helmet", new StoneGolemArmor(STONE_GOLEM_ARMOR_MATERIAL, ArmorItem.Type.HELMET));
-    public static final Item STONE_GOLEM_CHESTPLATE = register("stone_golem_chestplate", new StoneGolemArmor(STONE_GOLEM_ARMOR_MATERIAL, ArmorItem.Type.CHESTPLATE));
-    public static final Item STONE_GOLEM_LEGGINGS = register("stone_golem_leggings", new StoneGolemArmor(STONE_GOLEM_ARMOR_MATERIAL, ArmorItem.Type.LEGGINGS));
-    public static final Item STONE_GOLEM_BOOTS = register("stone_golem_boots", new StoneGolemArmor(STONE_GOLEM_ARMOR_MATERIAL, ArmorItem.Type.BOOTS));
+    public static final ArmorMaterial GILDED_NETHERITE_ARMOR_MATERIAL = new GildedNetheriteArmorMaterial();
+    public static final Item GILDED_NETHERITE_HELMET = register("gilded_netherite_helmet", new GildedNetheriteArmor(GILDED_NETHERITE_ARMOR_MATERIAL, ArmorItem.Type.HELMET));
+    public static final Item GILDED_NETHERITE_CHESTPLATE = register("gilded_netherite_chestplate", new GildedNetheriteArmor(GILDED_NETHERITE_ARMOR_MATERIAL, ArmorItem.Type.CHESTPLATE));
+    public static final Item GILDED_NETHERITE_LEGGINGS = register("gilded_netherite_leggings", new GildedNetheriteArmor(GILDED_NETHERITE_ARMOR_MATERIAL, ArmorItem.Type.LEGGINGS));
+    public static final Item GILDED_NETHERITE_BOOTS = register("gilded_netherite_boots", new GildedNetheriteArmor(GILDED_NETHERITE_ARMOR_MATERIAL, ArmorItem.Type.BOOTS));
 
     private static Item register(String id, Item item) {
         return register(new Identifier("adventurez", id), item);
