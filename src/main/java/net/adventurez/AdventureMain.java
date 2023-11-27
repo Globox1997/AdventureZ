@@ -1,7 +1,7 @@
 package net.adventurez;
 
 import net.adventurez.init.*;
-import net.adventurez.network.KeybindPacket;
+import net.adventurez.network.AdventureServerPacket;
 import net.fabricmc.api.ModInitializer;
 
 public class AdventureMain implements ModInitializer {
@@ -13,7 +13,7 @@ public class AdventureMain implements ModInitializer {
         EffectInit.init();
         EntityInit.init();
         ItemInit.init();
-        KeybindPacket.init();
+        AdventureServerPacket.init();
         LootInit.init();
         ParticleInit.init();
         SoundInit.init();

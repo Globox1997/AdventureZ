@@ -18,8 +18,7 @@ import net.adventurez.init.ItemInit;
 import net.adventurez.init.SoundInit;
 import net.adventurez.init.TagInit;
 import net.adventurez.mixin.accessor.LivingEntityAccessor;
-import net.adventurez.network.GeneralPacket;
-import net.adventurez.network.KeybindPacket;
+import net.adventurez.network.AdventureServerPacket;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
 import net.fabricmc.loader.api.FabricLoader;
@@ -306,7 +305,8 @@ public class DragonEntity extends PathAwareEntity implements InventoryChangedLis
                 if (shouldFlyUp && !this.isFlying && this.startFlyingTimer < 10) {
                     if (this.isTouchingWater() && this.getFluidHeight(FluidTags.WATER) > 0.5D) {
                         if (!this.getWorld().isClient() && this.getFirstPassenger() instanceof ServerPlayerEntity) {
-                            CustomPayloadS2CPacket packet = new CustomPayloadS2CPacket(GeneralPacket.VELOCITY_PACKET, new PacketByteBuf(Unpooled.buffer().writeInt(this.getId()).writeFloat(0.05F)));
+                            CustomPayloadS2CPacket packet = new CustomPayloadS2CPacket(AdventureServerPacket.VELOCITY_PACKET,
+                                    new PacketByteBuf(Unpooled.buffer().writeInt(this.getId()).writeFloat(0.05F)));
                             ((ServerPlayerEntity) this.getFirstPassenger()).networkHandler.sendPacket(packet);
                         }
                     } else {
@@ -1109,7 +1109,7 @@ public class DragonEntity extends PathAwareEntity implements InventoryChangedLis
                 // Call on Server
                 PacketByteBuf buf = new PacketByteBuf(Unpooled.buffer());
                 buf.writeInt(player.getVehicle().getId());
-                CustomPayloadC2SPacket packet = new CustomPayloadC2SPacket(KeybindPacket.FIRE_BREATH_PACKET, buf);
+                CustomPayloadC2SPacket packet = new CustomPayloadC2SPacket(AdventureServerPacket.FIRE_BREATH_PACKET, buf);
                 MinecraftClient.getInstance().getNetworkHandler().sendPacket(packet);
                 // Call on client
                 ((DragonEntity) player.getVehicle()).fireBreathActive = true;

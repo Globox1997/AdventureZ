@@ -16,7 +16,7 @@ import net.adventurez.init.EffectInit;
 import net.adventurez.init.EntityInit;
 import net.adventurez.init.SoundInit;
 import net.adventurez.init.TagInit;
-import net.adventurez.network.GeneralPacket;
+import net.adventurez.network.AdventureServerPacket;
 import net.fabricmc.loader.api.FabricLoader;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityData;
@@ -856,7 +856,7 @@ public class VoidShadowEntity extends FlyingEntity implements Monster {
                 if (this.voidShadow.getHealth() < this.voidShadow.getMaxHealth() / 10 && !playerList.isEmpty()) {
                     for (int i = 0; i < playerList.size(); i++) {
                         if (playerList.get(i) instanceof ServerPlayerEntity) {
-                            CustomPayloadS2CPacket packet = new CustomPayloadS2CPacket(GeneralPacket.VELOCITY_PACKET,
+                            CustomPayloadS2CPacket packet = new CustomPayloadS2CPacket(AdventureServerPacket.VELOCITY_PACKET,
                                     new PacketByteBuf(Unpooled.buffer().writeInt(playerList.get(i).getId()).writeFloat(this.voidShadow.random.nextFloat() * 2F)));
                             ((ServerPlayerEntity) playerList.get(i)).networkHandler.sendPacket(packet);
                         }
