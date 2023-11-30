@@ -53,6 +53,7 @@ public class BrownFungusEntity extends PathAwareEntity implements Angerable {
     public BrownFungusEntity(EntityType<? extends PathAwareEntity> entityType, World world) {
         super(entityType, world);
         this.setStepHeight(1.0f);
+        this.experiencePoints = 2;
     }
 
     @Override

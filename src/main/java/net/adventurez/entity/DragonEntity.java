@@ -129,6 +129,7 @@ public class DragonEntity extends PathAwareEntity implements InventoryChangedLis
         this.setStepHeight(1.0f);
         this.onChestedStatusChanged();
         this.reinitDimensions();
+        this.experiencePoints = 10;
     }
 
     public static DefaultAttributeContainer.Builder createDragonAttributes() {

@@ -38,6 +38,7 @@ public class WitherPuppetEntity extends HostileEntity {
     public WitherPuppetEntity(EntityType<? extends HostileEntity> entityType, World world) {
         super(entityType, world);
         this.setStepHeight(1.0f);
+        this.experiencePoints = 0;
     }
 
     public static DefaultAttributeContainer.Builder createWitherPuppetAttributes() {

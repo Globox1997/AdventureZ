@@ -33,6 +33,7 @@ public class VoidShadeEntity extends FlyingEntity implements Monster {
     public VoidShadeEntity(EntityType<? extends FlyingEntity> entityType, World world) {
         super(entityType, world);
         this.moveControl = new VoidShadeEntity.VoidShadeMoveControl(this);
+        this.experiencePoints = 0;
     }
 
     public static DefaultAttributeContainer.Builder createVoidShadeAttributes() {
