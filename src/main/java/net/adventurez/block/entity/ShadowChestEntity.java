@@ -54,13 +54,13 @@ public class ShadowChestEntity extends LootableContainerBlockEntity implements L
             @Override
             protected void onContainerOpen(World world, BlockPos pos, BlockState state) {
                 world.playSound((PlayerEntity) null, (double) pos.getX() + 0.5D, (double) pos.getY() + 0.5D, (double) pos.getZ() + 0.5D, SoundInit.OPEN_SHADOW_CHEST_EVENT, SoundCategory.BLOCKS, 0.5F,
-                        world.random.nextFloat() * 0.1F + 0.9F);
+                        world.getRandom().nextFloat() * 0.1F + 0.9F);
             }
 
             @Override
             protected void onContainerClose(World world, BlockPos pos, BlockState state) {
                 world.playSound((PlayerEntity) null, (double) pos.getX() + 0.5D, (double) pos.getY() + 0.5D, (double) pos.getZ() + 0.5D, SoundInit.CLOSE_SHADOW_CHEST_EVENT, SoundCategory.BLOCKS,
-                        0.5F, world.random.nextFloat() * 0.1F + 0.9F);
+                        0.5F, world.getRandom().nextFloat() * 0.1F + 0.9F);
             }
 
             @Override
@@ -84,14 +84,14 @@ public class ShadowChestEntity extends LootableContainerBlockEntity implements L
         blockEntity.lidAnimator.step();
         if (((ChestLidAnimatorAccessor) blockEntity.lidAnimator).getOpen()) {
             for (int i = 0; i < 3; ++i) {
-                int j = world.random.nextInt(2) * 2 - 1;
-                int k = world.random.nextInt(2) * 2 - 1;
+                int j = world.getRandom().nextInt(2) * 2 - 1;
+                int k = world.getRandom().nextInt(2) * 2 - 1;
                 double d = (double) pos.getX() + 0.5D + 0.25D * (double) j;
-                double e = (double) ((float) pos.getY() + world.random.nextFloat());
+                double e = (double) ((float) pos.getY() + world.getRandom().nextFloat());
                 double f = (double) pos.getZ() + 0.5D + 0.25D * (double) k;
-                double g = (double) (world.random.nextFloat() * (float) j * 0.1D);
-                double h = (double) world.random.nextFloat() * 0.4D;
-                double l = (double) (world.random.nextFloat() * (float) k * 0.1D);
+                double g = (double) world.getRandom().nextFloat() * (float) j * 0.1D;
+                double h = (double) world.getRandom().nextFloat() * 0.4D;
+                double l = (double) world.getRandom().nextFloat() * (float) k * 0.1D;
                 world.addParticle(ParticleTypes.END_ROD, d, e, f, g, h, l);
             }
         }
@@ -139,14 +139,14 @@ public class ShadowChestEntity extends LootableContainerBlockEntity implements L
             this.stateManager.closeContainer(player, this.getWorld(), this.getPos(), this.getCachedState());
         }
         if (this.isEmpty()) {
-            this.world.breakBlock(pos, true);
+            this.getWorld().breakBlock(pos, true);
         }
 
     }
 
     @Override
     public boolean canPlayerUse(PlayerEntity player) {
-        if (this.world.getBlockEntity(this.pos) != this) {
+        if (this.getWorld().getBlockEntity(this.pos) != this) {
             return false;
         } else {
             return !(player.squaredDistanceTo((double) this.pos.getX() + 0.5D, (double) this.pos.getY() + 0.5D, (double) this.pos.getZ() + 0.5D) > 64.0D);

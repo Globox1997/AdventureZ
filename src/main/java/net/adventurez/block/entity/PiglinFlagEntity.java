@@ -50,33 +50,35 @@ public class PiglinFlagEntity extends BlockEntity {
     }
 
     private void sendUpdate() {
-        if (this.world != null) {
-            BlockState state = this.world.getBlockState(this.pos);
-            (this.world).updateListeners(this.pos, state, state, 3);
+        if (this.getWorld() != null) {
+            BlockState state = this.getWorld().getBlockState(this.getPos());
+            this.getWorld().updateListeners(this.getPos(), state, state, 3);
         }
     }
 
     private void update() {
-        if (this.flagWave < 2400) {
-            this.flagWave++;
-        }
-        if (this.flagWave >= 2400 && this.world.getClosestPlayer((double) this.getPos().getX(), (double) this.getPos().getY(), (double) this.getPos().getZ(), 3D, null) != null) {
-            this.getPiglins();
-            this.markDirty();
-            if (this.world.isClient) {
-                for (int i = 0; i < 20; i++) {
-                    double d = (double) this.pos.getX() + (double) this.world.random.nextFloat();
-                    double e = (double) this.pos.getY() + (double) this.world.random.nextFloat() * 2.0F;
-                    double f = (double) this.pos.getZ() + (double) this.world.random.nextFloat();
-                    this.world.addParticle(ParticleTypes.HAPPY_VILLAGER, d, e, f, 0.0D, 1.0D, 0.0D);
-                }
+        if (this.getWorld().getTime() % 20 == 0) {
+            if (this.flagWave < 120) {
+                this.flagWave++;
             }
-            this.flagWave = 0;
+            if (this.flagWave >= 120 && this.getWorld().getClosestPlayer((double) this.getPos().getX(), (double) this.getPos().getY(), (double) this.getPos().getZ(), 3D, null) != null) {
+                this.getPiglins();
+                this.markDirty();
+                if (this.getWorld().isClient()) {
+                    for (int i = 0; i < 20; i++) {
+                        double d = (double) this.getPos().getX() + (double) this.getWorld().getRandom().nextFloat();
+                        double e = (double) this.getPos().getY() + (double) this.getWorld().getRandom().nextFloat() * 2.0F;
+                        double f = (double) this.getPos().getZ() + (double) this.getWorld().getRandom().nextFloat();
+                        this.getWorld().addParticle(ParticleTypes.HAPPY_VILLAGER, d, e, f, 0.0D, 1.0D, 0.0D);
+                    }
+                }
+                this.flagWave = 0;
+            }
         }
     }
 
     public void getPiglins() {
-        List<LivingEntity> list = this.world.getEntitiesByClass(LivingEntity.class, new Box(pos).expand(40D), EntityPredicates.EXCEPT_SPECTATOR);
+        List<LivingEntity> list = this.getWorld().getEntitiesByClass(LivingEntity.class, new Box(this.getPos()).expand(40D), EntityPredicates.EXCEPT_SPECTATOR);
         for (int i = 0; i < list.size(); ++i) {
             LivingEntity entity = (LivingEntity) list.get(i);
             if (entity.getType() == EntityType.PIGLIN) {

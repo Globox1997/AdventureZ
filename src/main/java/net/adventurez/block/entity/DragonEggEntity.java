@@ -60,9 +60,9 @@ public class DragonEggEntity extends BlockEntity {
     }
 
     private void sendUpdate() {
-        if (this.world != null) {
-            BlockState state = this.world.getBlockState(this.pos);
-            (this.world).updateListeners(this.pos, state, state, 3);
+        if (this.getWorld() != null) {
+            BlockState state = this.getWorld().getBlockState(this.pos);
+            (this.getWorld()).updateListeners(this.pos, state, state, 3);
         }
     }
 
@@ -97,8 +97,9 @@ public class DragonEggEntity extends BlockEntity {
         }
         if (stoneCounter3 == 34) {
             return true;
-        } else
+        } else {
             return false;
+        }
     }
 
     private void tick() {
@@ -107,32 +108,32 @@ public class DragonEggEntity extends BlockEntity {
     }
 
     private void updateDragonHatching() {
-        if (ConfigInit.CONFIG.allow_dragon_hatching && !this.world.isClient) {
+        if (ConfigInit.CONFIG.allow_dragon_hatching && !this.getWorld().isClient()) {
             overallHatchingTick++;
             if (overallHatchingTick == 20) {
                 if (!this.isHatchAble) {
-                    if (((ServerWorld) this.world).getEnderDragonFight() != null && !((ServerWorld) this.world).getEnderDragonFight().hasPreviouslyKilled())
+                    if (((ServerWorld) this.getWorld()).getEnderDragonFight() != null && !((ServerWorld) this.getWorld()).getEnderDragonFight().hasPreviouslyKilled())
                         return;
-                    PlayerEntity playerEntity = world.getClosestPlayer(this.getPos().getX() + 0.5D, this.getPos().getY(), this.getPos().getZ() + 0.5D, 2.5D, true);
+                    PlayerEntity playerEntity = this.getWorld().getClosestPlayer(this.getPos().getX() + 0.5D, this.getPos().getY(), this.getPos().getZ() + 0.5D, 2.5D, true);
                     if (playerEntity != null && playerEntity.hasStatusEffect(EffectInit.FAME))
                         enableEggHatching();
                 } else {
                     this.hatchTick++;
                     if (this.hatchTick % 60 == 0) {
                         for (int i = 0; i < 20; i++) {
-                            double d = (double) pos.getX() + (double) world.random.nextFloat();
-                            double e = (double) pos.getY() + (double) world.random.nextFloat();
-                            double f = (double) pos.getZ() + (double) world.random.nextFloat();
-                            ((ServerWorld) this.world).spawnParticles(ParticleTypes.HAPPY_VILLAGER, d, e, f, 0, 0.0D, 0.0D, 0.0D, 0.01D);
+                            double d = (double) pos.getX() + (double) this.getWorld().getRandom().nextFloat();
+                            double e = (double) pos.getY() + (double) this.getWorld().getRandom().nextFloat();
+                            double f = (double) pos.getZ() + (double) this.getWorld().getRandom().nextFloat();
+                            ((ServerWorld) this.getWorld()).spawnParticles(ParticleTypes.HAPPY_VILLAGER, d, e, f, 0, 0.0D, 0.0D, 0.0D, 0.01D);
                         }
                     }
                     if (this.hatchTick >= 598) {
-                        world.breakBlock(this.pos, false);
-                        DragonEntity dragonEntity = (DragonEntity) EntityInit.DRAGON.create(world);
+                        this.getWorld().breakBlock(this.pos, false);
+                        DragonEntity dragonEntity = (DragonEntity) EntityInit.DRAGON.create(this.getWorld());
                         dragonEntity.refreshPositionAndAngles((double) this.getPos().getX() + 0.5D, (double) this.getPos().getY() + 0.55D, (double) this.getPos().getZ() + 0.5D, 90F, 0.0F);
-                        dragonEntity.initialize(((ServerWorld) this.world), this.world.getLocalDifficulty(pos), SpawnReason.STRUCTURE, null, null);
+                        dragonEntity.initialize(((ServerWorld) this.getWorld()), this.getWorld().getLocalDifficulty(pos), SpawnReason.STRUCTURE, null, null);
                         dragonEntity.setSize(1);
-                        world.spawnEntity(dragonEntity);
+                        this.getWorld().spawnEntity(dragonEntity);
                     }
                 }
 
@@ -145,24 +146,24 @@ public class DragonEggEntity extends BlockEntity {
 
     private void updateTheEyeSummoning() {
         if (ConfigInit.CONFIG.allow_the_eye_summoning) {
-            if (this.world.getBlockState(pos.down()).equals(Blocks.CRYING_OBSIDIAN.getDefaultState()) && this.world.getRegistryKey() == World.END) {
+            if (this.getWorld().getBlockState(pos.down()).equals(Blocks.CRYING_OBSIDIAN.getDefaultState()) && this.getWorld().getRegistryKey() == World.END) {
                 overallSummoningTick++;
                 BlockState state = this.getCachedState();
-                if (overallSummoningTick == 20 && this.isValid(world, pos, state)) {
+                if (overallSummoningTick == 20 && this.isValid(this.getWorld(), pos, state)) {
                     summoningTick++;
-                    if (!world.isClient && summoningTick >= 60) {
-                        TheEyeEntity theEyeEntity = (TheEyeEntity) EntityInit.THE_EYE.create(world);
+                    if (!this.getWorld().isClient() && summoningTick >= 60) {
+                        TheEyeEntity theEyeEntity = (TheEyeEntity) EntityInit.THE_EYE.create(this.getWorld());
                         theEyeEntity.refreshPositionAndAngles((double) this.getPos().getX() + 0.5D, (double) this.getPos().getY() + 0.55D, (double) this.getPos().getZ() + 0.5D, 90F, 0.0F);
-                        theEyeEntity.initialize(((ServerWorld) this.world), this.world.getLocalDifficulty(pos), SpawnReason.STRUCTURE, null, null);
+                        theEyeEntity.initialize(((ServerWorld) this.getWorld()), this.getWorld().getLocalDifficulty(pos), SpawnReason.STRUCTURE, null, null);
                         theEyeEntity.setEyeInvulnerabletime();
-                        world.spawnEntity(theEyeEntity);
-                        this.world.breakBlock(pos, false);
+                        this.getWorld().spawnEntity(theEyeEntity);
+                        this.getWorld().breakBlock(pos, false);
                     }
                 }
                 if (overallSummoningTick >= 20) {
                     overallSummoningTick = 0;
                 }
-                if (world.isClient && summoningTick != 0) {
+                if (this.getWorld().isClient() && summoningTick != 0) {
                     if (summoningTick % 10 == 0) {
                         this.dragonAltartParticle(1);
                     }
