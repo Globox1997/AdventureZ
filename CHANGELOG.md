@@ -3,4 +3,4 @@
 ### Fixed:
 - 
 ### Changed:
-- Renamed things
+- Updated VoidZ dependency

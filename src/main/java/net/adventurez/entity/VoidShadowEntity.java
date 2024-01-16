@@ -65,7 +65,7 @@ import net.minecraft.world.Difficulty;
 import net.minecraft.world.LocalDifficulty;
 import net.minecraft.world.ServerWorldAccess;
 import net.minecraft.world.World;
-import net.voidz.block.VoidBlock;
+import net.voidz.block.VoidStoneBlock;
 import net.voidz.block.entity.PortalBlockEntity;
 import net.voidz.init.BlockInit;
 import net.voidz.init.DimensionInit;
@@ -218,7 +218,7 @@ public class VoidShadowEntity extends FlyingEntity implements Monster {
     public EntityData initialize(ServerWorldAccess world, LocalDifficulty difficulty, SpawnReason spawnReason, @Nullable EntityData entityData, @Nullable NbtCompound entityTag) {
         if (!this.hasVoidMiddleCoordinates() && FabricLoader.getInstance().isModLoaded("voidz")) {
             // For test purpose, use spawn egg on portal block
-            if (world.getBlockState(this.getBlockPos().down()).getBlock() == BlockInit.PORTAL_BLOCK) {
+            if (world.getBlockState(this.getBlockPos().down()).getBlock() == BlockInit.PORTAL) {
                 this.setVoidMiddle(this.getBlockPos().getX(), this.getBlockPos().getY(), this.getBlockPos().getZ());
             }
         }
@@ -328,7 +328,7 @@ public class VoidShadowEntity extends FlyingEntity implements Monster {
         if (!this.getWorld().isClient()) {
             if (!this.blockPosList.isEmpty()) {
                 for (int u = 0; u < this.blockPosList.size(); ++u) {
-                    this.getWorld().setBlockState(this.blockPosList.get(u), BlockInit.VOID_BLOCK.getDefaultState());
+                    this.getWorld().setBlockState(this.blockPosList.get(u), BlockInit.VOID_STONE.getDefaultState());
                     this.getWorld().playSound(null, this.blockPosList.get(u), SoundEvents.BLOCK_STONE_PLACE, SoundCategory.BLOCKS, 1F, 1F);
                 }
             }
@@ -404,8 +404,8 @@ public class VoidShadowEntity extends FlyingEntity implements Monster {
                 this.getWorld().setBlockState(pos, state, 3);
                 state.getBlock().onPlaced(this.getWorld(), pos, state, null, ItemStack.EMPTY);
 
-                PortalBlockEntity portalBlockEntity = (PortalBlockEntity) this.getWorld().getBlockEntity(this.getVoidMiddle().down());
-                if (portalBlockEntity != null) {
+                if (this.getWorld().getBlockEntity(this.getVoidMiddle().down()) != null
+                        && this.getWorld().getBlockEntity(this.getVoidMiddle().down()) instanceof PortalBlockEntity portalBlockEntity) {
                     portalBlockEntity.bossTime = (int) this.getWorld().getLevelProperties().getTime();
                 }
             } else {
@@ -667,7 +667,7 @@ public class VoidShadowEntity extends FlyingEntity implements Monster {
                     }
                 }
                 for (int u = 0; u < this.voidShadow.blockPosList.size(); ++u) {
-                    this.voidShadow.getWorld().setBlockState(this.voidShadow.blockPosList.get(u), BlockInit.VOID_BLOCK.getDefaultState().with(VoidBlock.ACTIVATED, true));
+                    this.voidShadow.getWorld().setBlockState(this.voidShadow.blockPosList.get(u), BlockInit.VOID_STONE.getDefaultState().with(VoidStoneBlock.ACTIVATED, true));
                 }
 
             }
@@ -700,7 +700,7 @@ public class VoidShadowEntity extends FlyingEntity implements Monster {
         public void stop() {
             canStartTicker++;
             for (int u = 0; u < this.voidShadow.blockPosList.size(); ++u) {
-                this.voidShadow.getWorld().setBlockState(this.voidShadow.blockPosList.get(u), BlockInit.VOID_BLOCK.getDefaultState());
+                this.voidShadow.getWorld().setBlockState(this.voidShadow.blockPosList.get(u), BlockInit.VOID_STONE.getDefaultState());
                 this.voidShadow.getWorld().playSound(null, this.voidShadow.blockPosList.get(u), SoundEvents.BLOCK_STONE_PLACE, SoundCategory.BLOCKS, 1F, 1F);
             }
             if (!this.voidShadow.blockPosList.isEmpty()) {
@@ -848,7 +848,7 @@ public class VoidShadowEntity extends FlyingEntity implements Monster {
                     }
                 }
                 for (int u = 0; u < this.voidShadow.blockPosList.size(); ++u) {
-                    this.voidShadow.getWorld().setBlockState(this.voidShadow.blockPosList.get(u), BlockInit.INFESTED_VOID_BLOCK.getDefaultState());
+                    this.voidShadow.getWorld().setBlockState(this.voidShadow.blockPosList.get(u), BlockInit.INFESTED_VOID.getDefaultState());
                 }
                 ((ServerWorld) this.voidShadow.getWorld()).playSoundFromEntity(null, this.voidShadow, SoundInit.SHADOW_CAST_EVENT, SoundCategory.HOSTILE, 20.0F, 1.0F);
             }
@@ -892,7 +892,7 @@ public class VoidShadowEntity extends FlyingEntity implements Monster {
             ((ServerWorld) this.voidShadow.getWorld()).playSoundFromEntity(null, this.voidShadow, SoundInit.SHADOW_CAST_EVENT, SoundCategory.HOSTILE, 20.0F, 1.0F);
             insanityStartTicker = 0;
             for (int u = 0; u < this.voidShadow.blockPosList.size(); ++u) {
-                this.voidShadow.getWorld().setBlockState(this.voidShadow.blockPosList.get(u), BlockInit.VOID_BLOCK.getDefaultState());
+                this.voidShadow.getWorld().setBlockState(this.voidShadow.blockPosList.get(u), BlockInit.VOID_STONE.getDefaultState());
             }
             if (!this.playerList.isEmpty()) {
                 this.playerList.clear();
