@@ -1,6 +1,6 @@
 ### Added:
 - 
 ### Fixed:
-- Fixed piglin flag render light
+- Fixed gilded smithing upgrade loot table
 ### Changed:
 - 

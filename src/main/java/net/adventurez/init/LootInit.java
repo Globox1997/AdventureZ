@@ -26,11 +26,12 @@ public class LootInit {
             if (addedLootTable(id)) {
                 LootPool pool = LootPool.builder().with(ItemEntry.builder(ItemInit.GILDED_BLACKSTONE_SHARD).build()).rolls(BinomialLootNumberProvider.create(1, 0.01F)).build();
                 supplier.pool(pool);
+                if (LootTables.BASTION_TREASURE_CHEST.equals(id)) {
+                    pool = LootPool.builder().with(ItemEntry.builder(ItemInit.GILDED_UPGRADE_SMITHING_TEMPLATE).build()).rolls(BinomialLootNumberProvider.create(1, 0.5F)).build();
+                    supplier.pool(pool);
+                }
             } else if ("minecraft:entities/piglin_brute".equals(id.toString())) {
                 LootPool pool = LootPool.builder().with(ItemEntry.builder(ItemInit.GILDED_BLACKSTONE_SHARD).build()).rolls(BinomialLootNumberProvider.create(1, 0.1F)).build();
-                supplier.pool(pool);
-            } else if (LootTables.BASTION_TREASURE_CHEST.equals(id)) {
-                LootPool pool = LootPool.builder().with(ItemEntry.builder(ItemInit.GILDED_UPGRADE_SMITHING_TEMPLATE).build()).rolls(BinomialLootNumberProvider.create(1, 0.5F)).build();
                 supplier.pool(pool);
             }
         });
