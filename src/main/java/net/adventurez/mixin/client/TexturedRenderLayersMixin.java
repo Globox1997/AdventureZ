@@ -1,11 +1,8 @@
 package net.adventurez.mixin.client;
 
-import java.util.function.Consumer;
-
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.injection.Inject;
-import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 import org.spongepowered.asm.mixin.injection.At;
 
@@ -28,11 +25,6 @@ public class TexturedRenderLayersMixin {
         if (blockEntity instanceof ShadowChestEntity) {
             info.setReturnValue(SHADOW);
         }
-    }
-
-    @Inject(method = "addDefaultTextures", at = @At("TAIL"))
-    private static void addDefaultTexturesMixin(Consumer<SpriteIdentifier> adder, CallbackInfo info) {
-        adder.accept(SHADOW);
     }
 
     @Shadow

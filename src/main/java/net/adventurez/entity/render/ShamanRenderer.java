@@ -11,7 +11,7 @@ import net.minecraft.util.Identifier;
 
 @Environment(EnvType.CLIENT)
 public class ShamanRenderer extends MobEntityRenderer<ShamanEntity, ShamanModel<ShamanEntity>> {
-    private static final Identifier TEXTURE = new Identifier("adventurez:textures/entity/shaman.png");
+    private static final Identifier TEXTURE = Identifier.of("adventurez:textures/entity/shaman.png");
 
     public ShamanRenderer(EntityRendererFactory.Context context) {
         super(context, new ShamanModel<>(context.getPart(RenderInit.SHAMAN_LAYER)), 0.6F);

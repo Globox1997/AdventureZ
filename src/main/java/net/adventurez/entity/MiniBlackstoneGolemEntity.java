@@ -2,7 +2,6 @@ package net.adventurez.entity;
 
 import net.adventurez.init.SoundInit;
 import net.minecraft.block.BlockState;
-import net.minecraft.entity.EntityGroup;
 import net.minecraft.entity.EntityType;
 import net.minecraft.entity.SpawnReason;
 import net.minecraft.entity.ai.goal.ActiveTargetGoal;
@@ -27,7 +26,6 @@ public class MiniBlackstoneGolemEntity extends HostileEntity {
 
     public MiniBlackstoneGolemEntity(EntityType<? extends MiniBlackstoneGolemEntity> entityType, World world) {
         super(entityType, world);
-        this.setStepHeight(1.0f);
     }
 
     @Override
@@ -69,11 +67,6 @@ public class MiniBlackstoneGolemEntity extends HostileEntity {
     @Override
     protected void playStepSound(BlockPos pos, BlockState state) {
         this.playSound(SoundInit.SMALL_GOLEM_WALK_EVENT, 0.15F, 1.0F);
-    }
-
-    @Override
-    public EntityGroup getGroup() {
-        return EntityGroup.DEFAULT;
     }
 
     @Override

@@ -17,10 +17,9 @@ import net.minecraft.world.World;
 public class NetherPortalBlockMixin {
 
     public ActionResult onUse(BlockState state, World world, BlockPos pos, PlayerEntity player, Hand hand, BlockHitResult hit) {
-        if (player.hasVehicle() && player.getVehicle() instanceof DragonEntity && player.canUsePortals() && ConfigInit.CONFIG.allow_ender_dragon_nether_portal) {
-            DragonEntity dragonEntity = (DragonEntity) player.getVehicle();
+        if (player.hasVehicle() && player.getVehicle() instanceof DragonEntity dragonEntity && player.canUsePortals(true) && ConfigInit.CONFIG.allow_ender_dragon_nether_portal) {
             player.stopRiding();
-            dragonEntity.setInNetherPortal(pos);
+            dragonEntity.portalManager.setInPortal(true);
             return ActionResult.SUCCESS;
         }
         return ActionResult.PASS;

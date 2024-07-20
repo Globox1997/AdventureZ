@@ -2,8 +2,6 @@ package net.adventurez.entity;
 
 import org.jetbrains.annotations.Nullable;
 
-import io.netty.buffer.Unpooled;
-
 import java.util.Optional;
 import java.util.UUID;
 
@@ -18,16 +16,18 @@ import net.adventurez.init.ItemInit;
 import net.adventurez.init.SoundInit;
 import net.adventurez.init.TagInit;
 import net.adventurez.mixin.accessor.LivingEntityAccessor;
-import net.adventurez.network.AdventureServerPacket;
+import net.adventurez.network.packet.DragonFireBreathPacket;
+import net.adventurez.network.packet.VelocityPacket;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
+import net.fabricmc.fabric.api.client.networking.v1.ClientPlayNetworking;
+import net.fabricmc.fabric.api.networking.v1.ServerPlayNetworking;
 import net.fabricmc.loader.api.FabricLoader;
 import net.minecraft.block.BlockState;
 import net.minecraft.block.Blocks;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.network.ClientPlayerEntity;
 import net.minecraft.client.util.InputUtil;
-import net.minecraft.enchantment.EnchantmentHelper;
 import net.minecraft.entity.Dismounting;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityData;
@@ -48,6 +48,7 @@ import net.minecraft.entity.damage.DamageSource;
 import net.minecraft.entity.data.DataTracker;
 import net.minecraft.entity.data.TrackedData;
 import net.minecraft.entity.data.TrackedDataHandlerRegistry;
+import net.minecraft.entity.data.DataTracker.Builder;
 import net.minecraft.entity.mob.MobEntity;
 import net.minecraft.entity.mob.PathAwareEntity;
 import net.minecraft.entity.player.PlayerEntity;
@@ -59,9 +60,6 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.item.Items;
 import net.minecraft.nbt.NbtCompound;
 import net.minecraft.nbt.NbtList;
-import net.minecraft.network.PacketByteBuf;
-import net.minecraft.network.packet.c2s.play.CustomPayloadC2SPacket;
-import net.minecraft.network.packet.s2c.play.CustomPayloadS2CPacket;
 import net.minecraft.particle.ParticleEffect;
 import net.minecraft.particle.ParticleTypes;
 import net.minecraft.registry.Registries;
@@ -83,7 +81,6 @@ import net.minecraft.util.math.Box;
 import net.minecraft.util.math.Direction;
 import net.minecraft.util.math.MathHelper;
 import net.minecraft.util.math.Vec3d;
-import net.minecraft.world.EntityView;
 import net.minecraft.world.GameRules;
 import net.minecraft.world.LocalDifficulty;
 import net.minecraft.world.ServerWorldAccess;
@@ -124,9 +121,9 @@ public class DragonEntity extends PathAwareEntity implements InventoryChangedLis
     private int startFlyingTime = 0;
     private int fluidTicker = 0;
 
+    @SuppressWarnings("deprecation")
     public DragonEntity(EntityType<? extends PathAwareEntity> entityType, World world) {
         super(entityType, world);
-        this.setStepHeight(1.0f);
         this.onChestedStatusChanged();
         this.reinitDimensions();
         this.experiencePoints = 10;
@@ -150,22 +147,22 @@ public class DragonEntity extends PathAwareEntity implements InventoryChangedLis
     }
 
     @Override
-    protected void initDataTracker() {
-        super.initDataTracker();
-        this.dataTracker.startTracking(TAMEABLE_FLAGS, (byte) 0);
-        this.dataTracker.startTracking(OWNER_UUID, Optional.empty());
-        this.dataTracker.startTracking(IS_FLYING, false);
-        this.dataTracker.startTracking(CLIENT_END_FLYING, false);
-        this.dataTracker.startTracking(IS_START_FLYING, false);
-        this.dataTracker.startTracking(CLIENT_START_FLYING, false);
-        this.dataTracker.startTracking(HAS_SADDLE, false);
-        this.dataTracker.startTracking(HAS_CHEST, false);
-        this.dataTracker.startTracking(OTHER_EARS, false);
-        this.dataTracker.startTracking(OTHER_TAIL, false);
-        this.dataTracker.startTracking(OTHER_EYES, false);
-        this.dataTracker.startTracking(DRAGON_SIZE, 1);
-        this.dataTracker.startTracking(FIRE_BREATH, false);
-        this.dataTracker.startTracking(RED_DRAGON, false);
+    protected void initDataTracker(Builder builder) {
+        super.initDataTracker(builder);
+        builder.add(TAMEABLE_FLAGS, (byte) 0);
+        builder.add(OWNER_UUID, Optional.empty());
+        builder.add(IS_FLYING, false);
+        builder.add(CLIENT_END_FLYING, false);
+        builder.add(IS_START_FLYING, false);
+        builder.add(CLIENT_START_FLYING, false);
+        builder.add(HAS_SADDLE, false);
+        builder.add(HAS_CHEST, false);
+        builder.add(OTHER_EARS, false);
+        builder.add(OTHER_TAIL, false);
+        builder.add(OTHER_EYES, false);
+        builder.add(DRAGON_SIZE, 1);
+        builder.add(FIRE_BREATH, false);
+        builder.add(RED_DRAGON, false);
     }
 
     @Override
@@ -185,7 +182,7 @@ public class DragonEntity extends PathAwareEntity implements InventoryChangedLis
                 if (!itemStack.isEmpty()) {
                     NbtCompound compoundTag = new NbtCompound();
                     compoundTag.putByte("Slot", (byte) i);
-                    itemStack.writeNbt(compoundTag);
+                    compoundTag.put("OrcItem", this.inventory.getStack(0).encode(this.getRegistryManager()));
                     listTag.add(compoundTag);
                 }
             }
@@ -233,7 +230,7 @@ public class DragonEntity extends PathAwareEntity implements InventoryChangedLis
                 NbtCompound compoundTag = listTag.getCompound(i);
                 int j = compoundTag.getByte("Slot") & 255;
                 if (j >= 0 && j < this.inventory.size()) {
-                    this.inventory.setStack(j, ItemStack.fromNbt(compoundTag));
+                    this.inventory.setStack(j, ItemStack.fromNbt(this.getRegistryManager(), compoundTag).get());
                 }
             }
         }
@@ -306,9 +303,7 @@ public class DragonEntity extends PathAwareEntity implements InventoryChangedLis
                 if (shouldFlyUp && !this.isFlying && this.startFlyingTimer < 10) {
                     if (this.isTouchingWater() && this.getFluidHeight(FluidTags.WATER) > 0.5D) {
                         if (!this.getWorld().isClient() && this.getFirstPassenger() instanceof ServerPlayerEntity) {
-                            CustomPayloadS2CPacket packet = new CustomPayloadS2CPacket(AdventureServerPacket.VELOCITY_PACKET,
-                                    new PacketByteBuf(Unpooled.buffer().writeInt(this.getId()).writeFloat(0.05F)));
-                            ((ServerPlayerEntity) this.getFirstPassenger()).networkHandler.sendPacket(packet);
+                            ServerPlayNetworking.send((ServerPlayerEntity) this.getFirstPassenger(), new VelocityPacket(this.getId(), 0.05F));
                         }
                     } else {
                         this.startFlyingTimer++;
@@ -494,9 +489,9 @@ public class DragonEntity extends PathAwareEntity implements InventoryChangedLis
                     Vec3d vec3d = this.getRotationVector(prevPitch, headYaw);
                     Vec3d otherVec3d = this.getRotationVector(prevPitch, bodyYaw);
                     vec3d = vec3d.add(otherVec3d);
-                    FireBreathEntity fireBreathEntity = new FireBreathEntity(this.getWorld(), this, vec3d.x, vec3d.y, vec3d.z);
+                    FireBreathEntity fireBreathEntity = new FireBreathEntity(this.getWorld(), this, vec3d);
                     fireBreathEntity.refreshPositionAndAngles(this.getX() + vec3d.x * 3D,
-                            this.getY() + this.getBoundingBox().getYLength() * 0.65D + (this.getPitch() > 0F ? -this.getPitch() / 40F : -this.getPitch() / 80F), this.getZ() + vec3d.z * 3D,
+                            this.getY() + this.getBoundingBox().getLengthY() * 0.65D + (this.getPitch() > 0F ? -this.getPitch() / 40F : -this.getPitch() / 80F), this.getZ() + vec3d.z * 3D,
                             this.getYaw(), this.getPitch());
 
                     this.getWorld().spawnEntity(fireBreathEntity);
@@ -693,7 +688,7 @@ public class DragonEntity extends PathAwareEntity implements InventoryChangedLis
     }
 
     @Override
-    public boolean canBeLeashedBy(PlayerEntity player) {
+    public boolean canBeLeashed() {
         return !this.isLeashed();
     }
 
@@ -797,7 +792,7 @@ public class DragonEntity extends PathAwareEntity implements InventoryChangedLis
                 this.getOwner().sendMessage(this.getDamageTracker().getDeathMessage());
             }
             if (FabricLoader.getInstance().isModLoaded("dragonloot")) {
-                this.dropStack(new ItemStack(Registries.ITEM.get(new Identifier("dragonloot", "dragon_scale")), (int) (this.getSize() * this.getWorld().getRandom().nextFloat())));
+                this.dropStack(new ItemStack(Registries.ITEM.get(Identifier.of("dragonloot", "dragon_scale")), (int) (this.getSize() * this.getWorld().getRandom().nextFloat())));
             }
         }
 
@@ -919,7 +914,7 @@ public class DragonEntity extends PathAwareEntity implements InventoryChangedLis
         if (this.inventory != null) {
             for (int i = 0; i < this.inventory.size(); ++i) {
                 ItemStack itemStack = this.inventory.getStack(i);
-                if (!itemStack.isEmpty() && !EnchantmentHelper.hasVanishingCurse(itemStack)) {
+                if (!itemStack.isEmpty()) {
                     this.dropStack(itemStack);
                 }
             }
@@ -952,7 +947,7 @@ public class DragonEntity extends PathAwareEntity implements InventoryChangedLis
 
     @Nullable
     @Override
-    public EntityData initialize(ServerWorldAccess world, LocalDifficulty difficulty, SpawnReason spawnReason, @Nullable EntityData entityData, @Nullable NbtCompound entityTag) {
+    public EntityData initialize(ServerWorldAccess world, LocalDifficulty difficulty, SpawnReason spawnReason, @Nullable EntityData entityData) {
         this.getDataTracker().set(OTHER_EARS, world.getRandom().nextBoolean());
         this.getDataTracker().set(OTHER_TAIL, world.getRandom().nextBoolean());
         this.getDataTracker().set(OTHER_EYES, world.getRandom().nextBoolean());
@@ -963,12 +958,12 @@ public class DragonEntity extends PathAwareEntity implements InventoryChangedLis
         } else {
             this.setSize(1);
         }
-        return super.initialize(world, difficulty, spawnReason, entityData, entityTag);
+        return super.initialize(world, difficulty, spawnReason, entityData);
     }
 
     @Override
-    public EntityDimensions getDimensions(EntityPose pose) {
-        return super.getDimensions(pose).scaled((float) this.getSize() / 3.0F);
+    protected EntityDimensions getBaseDimensions(EntityPose pose) {
+        return super.getBaseDimensions(pose).scaled((float) this.getSize() / 3.0F);
     }
 
     public int getSize() {
@@ -1013,24 +1008,22 @@ public class DragonEntity extends PathAwareEntity implements InventoryChangedLis
         return 1.6F - ((float) 0.2F * this.getSize());
     }
 
-    @Override
-    protected float getActiveEyeHeight(EntityPose pose, EntityDimensions dimensions) {
-        if (this.getSize() == 1) {
-            return 0.80F * dimensions.height;
-        }
-        return 0.85F * dimensions.height;
-    }
+    // @Override
+    // protected float getActiveEyeHeight(EntityPose pose, EntityDimensions dimensions) {
+    // if (this.getSize() == 1) {
+    // return 0.80F * dimensions.height;
+    // }
+    // return 0.85F * dimensions.height;
+    // }
 
-    @Override
-    public double getMountedHeightOffset() {
-        double flySubtraction = 0.92D;
-        if (this.isFlying) {
-
-            flySubtraction = 0.9D;
-        }
-        return (double) this.getSize() * 0.794 * flySubtraction;
-
-    }
+    // @Override
+    // public double getMountedHeightOffset() {
+    // double flySubtraction = 0.92D;
+    // if (this.isFlying) {
+    // flySubtraction = 0.9D;
+    // }
+    // return (double) this.getSize() * 0.794 * flySubtraction;
+    // }
 
     @Override
     protected void updatePassengerPosition(Entity passenger, PositionUpdater positionUpdater) {
@@ -1052,15 +1045,11 @@ public class DragonEntity extends PathAwareEntity implements InventoryChangedLis
                 float f = MathHelper.sin(this.bodyYaw * 0.017453292F) * offSet;
                 float g = MathHelper.cos(this.bodyYaw * 0.017453292F) * offSet;
 
-                passenger.setPosition(this.getX() + (double) (0.1F * f), this.getBodyY(0.66F) + passenger.getHeightOffset(), this.getZ() - (double) (0.1F * g));
+                passenger.setPosition(this.getX() + (double) (0.1F * f), this.getBodyY(0.66F), this.getZ() - (double) (0.1F * g));
+                // passenger.setPosition(this.getX() + (double) (0.1F * f), this.getBodyY(0.66F) + passenger.getHeightOffset(), this.getZ() - (double) (0.1F * g));
             }
         }
 
-    }
-
-    @Override
-    public double getHeightOffset() {
-        return 0.0D;
     }
 
     @Override
@@ -1072,11 +1061,6 @@ public class DragonEntity extends PathAwareEntity implements InventoryChangedLis
             this.setSitting(false);
         }
         return this.isInvulnerableTo(source) ? false : super.damage(source, amount);
-    }
-
-    @Override
-    public EntityView method_48926() {
-        return this.getWorld();
     }
 
     static {
@@ -1104,15 +1088,9 @@ public class DragonEntity extends PathAwareEntity implements InventoryChangedLis
 
     @Environment(EnvType.CLIENT)
     public static void dragonFireBreath(ClientPlayerEntity player) {
-        if (player.getVehicle() != null && player.getVehicle() instanceof DragonEntity && player.getVehicle().isAlive()) {
-            DragonEntity dragonEntity = (DragonEntity) player.getVehicle();
+        if (player.getVehicle() != null && player.getVehicle() instanceof DragonEntity dragonEntity && player.getVehicle().isAlive()) {
             if (dragonEntity.getDataTracker().get(DragonEntity.DRAGON_SIZE) >= 3) {
-                // Call on Server
-                PacketByteBuf buf = new PacketByteBuf(Unpooled.buffer());
-                buf.writeInt(player.getVehicle().getId());
-                CustomPayloadC2SPacket packet = new CustomPayloadC2SPacket(AdventureServerPacket.FIRE_BREATH_PACKET, buf);
-                MinecraftClient.getInstance().getNetworkHandler().sendPacket(packet);
-                // Call on client
+                ClientPlayNetworking.send(new DragonFireBreathPacket());
                 ((DragonEntity) player.getVehicle()).fireBreathActive = true;
             }
         }

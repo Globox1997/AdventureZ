@@ -1,0 +1,11 @@
+{
+    "type": "minecraft:smoking",
+    "ingredient": {
+        "item": "adventurez:warthog_meat"
+    },
+    "result": {
+        "id": "adventurez:cooked_warthog_meat"
+    },
+    "experience": 0.35,
+    "cookingtime": 100
+}

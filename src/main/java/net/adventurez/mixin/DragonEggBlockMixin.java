@@ -17,7 +17,6 @@ import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.Items;
 import net.minecraft.particle.ParticleTypes;
 import net.minecraft.util.ActionResult;
-import net.minecraft.util.Hand;
 import net.minecraft.util.hit.BlockHitResult;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
@@ -29,10 +28,10 @@ import net.minecraft.block.entity.BlockEntity;
 public class DragonEggBlockMixin implements BlockEntityProvider {
 
     @Inject(method = "onUse", at = @At("HEAD"), cancellable = true)
-    private void onUseMixin(BlockState state, World world, BlockPos pos, PlayerEntity player, Hand hand, BlockHitResult hit, CallbackInfoReturnable<ActionResult> info) {
-        if (ConfigInit.CONFIG.allow_other_dragon_hatching && player.getStackInHand(hand).isOf(Items.DRAGON_BREATH) && player.getEquippedStack(EquipmentSlot.HEAD).isOf(Items.DRAGON_HEAD)) {
+    private void onUseMixin(BlockState state, World world, BlockPos pos, PlayerEntity player, BlockHitResult hit, CallbackInfoReturnable<ActionResult> info) {
+        if (ConfigInit.CONFIG.allow_other_dragon_hatching && player.getMainHandStack().isOf(Items.DRAGON_BREATH) && player.getEquippedStack(EquipmentSlot.HEAD).isOf(Items.DRAGON_HEAD)) {
             if (!world.isClient) {
-                player.getStackInHand(hand).decrement(1);
+                player.getMainHandStack().decrement(1);
                 if (state.hasBlockEntity()) {
                     ((DragonEggEntity) world.getBlockEntity(pos)).enableEggHatching();
                 }

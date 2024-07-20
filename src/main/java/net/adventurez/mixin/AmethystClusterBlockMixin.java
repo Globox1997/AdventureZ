@@ -22,14 +22,16 @@ public abstract class AmethystClusterBlockMixin extends AmethystBlock {
     }
 
     @Override
-    public void onBreak(World world, BlockPos pos, BlockState state, PlayerEntity player) {
-        super.onBreak(world, pos, state, player);
-        if (!world.isClient) {
+    public BlockState onBreak(World world, BlockPos pos, BlockState state, PlayerEntity player) {
+        if (!world.isClient()) {
             List<AmethystGolemEntity> list = world.getEntitiesByClass(AmethystGolemEntity.class, new Box(pos).expand(16.0D), EntityPredicates.EXCEPT_SPECTATOR);
-            if (!list.isEmpty())
-                for (int i = 0; i < list.size(); i++)
+            if (!list.isEmpty()) {
+                for (int i = 0; i < list.size(); i++) {
                     list.get(i).amethystGolemRageMode();
+                }
+            }
         }
+        return super.onBreak(world, pos, state, player);
     }
 
 }

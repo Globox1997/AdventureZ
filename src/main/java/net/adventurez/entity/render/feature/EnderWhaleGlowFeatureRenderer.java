@@ -16,7 +16,7 @@ import net.minecraft.util.Identifier;
 
 @Environment(EnvType.CLIENT)
 public class EnderWhaleGlowFeatureRenderer extends FeatureRenderer<EnderWhaleEntity, EnderWhaleModel<EnderWhaleEntity>> {
-    private static final RenderLayer GLOW_LAYER = ExtraRenderLayer.getGlowing(new Identifier("adventurez:textures/entity/feature/ender_whale_glow_feature.png"));
+    private static final RenderLayer GLOW_LAYER = ExtraRenderLayer.getGlowing(Identifier.of("adventurez:textures/entity/feature/ender_whale_glow_feature.png"));
 
     public EnderWhaleGlowFeatureRenderer(FeatureRendererContext<EnderWhaleEntity, EnderWhaleModel<EnderWhaleEntity>> featureRendererContext) {
         super(featureRendererContext);
@@ -25,7 +25,7 @@ public class EnderWhaleGlowFeatureRenderer extends FeatureRenderer<EnderWhaleEnt
     @Override
     public void render(MatrixStack matrixStack, VertexConsumerProvider vertexConsumerProvider, int i, EnderWhaleEntity enderWhaleEntity, float f, float g, float h, float j, float k, float l) {
         VertexConsumer vertexConsumer = vertexConsumerProvider.getBuffer(GLOW_LAYER);
-        this.getContextModel().render(matrixStack, vertexConsumer, 15728640, OverlayTexture.DEFAULT_UV, 1.0F, 1.0F, 1.0F, 1.0F);
+        this.getContextModel().render(matrixStack, vertexConsumer, 15728640, OverlayTexture.DEFAULT_UV);
     }
 
 }

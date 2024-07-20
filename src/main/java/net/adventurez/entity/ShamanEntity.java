@@ -33,12 +33,12 @@ import net.minecraft.entity.mob.ZombieEntity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.RangedWeaponItem;
 import net.minecraft.predicate.entity.EntityPredicates;
+import net.minecraft.registry.entry.RegistryEntry;
 import net.minecraft.server.world.ServerWorld;
 import net.minecraft.sound.SoundEvent;
 import net.minecraft.sound.SoundEvents;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.random.Random;
-import net.minecraft.world.SpawnHelper;
 import net.minecraft.world.World;
 import net.minecraft.world.ServerWorldAccess;
 
@@ -46,7 +46,6 @@ public class ShamanEntity extends SpellCastingEntity {
 
     public ShamanEntity(EntityType<? extends HostileEntity> entityType, World world) {
         super(entityType, world);
-        this.setStepHeight(1.0f);
     }
 
     public static DefaultAttributeContainer.Builder createShamanAttributes() {
@@ -219,12 +218,13 @@ public class ShamanEntity extends SpellCastingEntity {
         public void castSpell() {
             LivingEntity livingEntity = ShamanEntity.this.getTarget();
             if (livingEntity != null) {
-                StatusEffect statusEffect;
-                if (ShamanEntity.this.random.nextFloat() <= 0.5F)
+                RegistryEntry<StatusEffect> statusEffect;
+                if (ShamanEntity.this.getRandom().nextFloat() <= 0.5F) {
                     statusEffect = StatusEffects.WEAKNESS;
-                else
+                } else {
                     statusEffect = StatusEffects.POISON;
-                livingEntity.addStatusEffect(new StatusEffectInstance(statusEffect, 120 + ShamanEntity.this.random.nextInt(80), 1, false, false, true));
+                }
+                livingEntity.addStatusEffect(new StatusEffectInstance(statusEffect, 120 + ShamanEntity.this.getRandom().nextInt(80), 1, false, false, true));
             }
 
         }
@@ -270,12 +270,12 @@ public class ShamanEntity extends SpellCastingEntity {
             for (int i = 0; i < 20; ++i) {
                 BlockPos blockPos = ShamanEntity.this.getBlockPos().add(-3 + ShamanEntity.this.getRandom().nextInt(6), ShamanEntity.this.getRandom().nextInt(3),
                         -3 + ShamanEntity.this.getRandom().nextInt(6));
-                if (SpawnHelper.canSpawn(SpawnRestriction.Location.ON_GROUND, ShamanEntity.this.getWorld(), blockPos, EntityType.ZOMBIE)) {
+                if (SpawnRestriction.canSpawn(EntityType.ZOMBIE, serverWorld, SpawnReason.EVENT, blockPos, serverWorld.getRandom())) {
                     spellCount++;
                     if (ShamanEntity.this.getRandom().nextFloat() < 0.6F) {
-                        CaveSpiderEntity caveSpiderEntity = (CaveSpiderEntity) EntityType.CAVE_SPIDER.create(serverWorld);
-                        caveSpiderEntity.refreshPositionAndAngles(blockPos, ShamanEntity.this.getWorld().getRandom().nextFloat() * 360F, 0.0F);
-                        caveSpiderEntity.initialize(serverWorld, serverWorld.getLocalDifficulty(blockPos), SpawnReason.EVENT, null, null);
+                        CaveSpiderEntity caveSpiderEntity = EntityType.CAVE_SPIDER.create(serverWorld);
+                        caveSpiderEntity.refreshPositionAndAngles(blockPos, serverWorld.getRandom().nextFloat() * 360F, 0.0F);
+                        caveSpiderEntity.initialize(serverWorld, serverWorld.getLocalDifficulty(blockPos), SpawnReason.EVENT, null);
                         serverWorld.spawnEntityAndPassengers(caveSpiderEntity);
                     } else {
                         MobEntity mobEntity;
@@ -287,8 +287,8 @@ public class ShamanEntity extends SpellCastingEntity {
                         } else {
                             mobEntity = EntityType.SPIDER.create(serverWorld);
                         }
-                        mobEntity.refreshPositionAndAngles(blockPos, ShamanEntity.this.getWorld().getRandom().nextFloat() * 360F, 0.0F);
-                        mobEntity.initialize(serverWorld, serverWorld.getLocalDifficulty(blockPos), SpawnReason.EVENT, null, null);
+                        mobEntity.refreshPositionAndAngles(blockPos, serverWorld.getRandom().nextFloat() * 360F, 0.0F);
+                        mobEntity.initialize(serverWorld, serverWorld.getLocalDifficulty(blockPos), SpawnReason.EVENT, null);
                         serverWorld.spawnEntityAndPassengers(mobEntity);
                     }
                 }
@@ -350,11 +350,6 @@ public class ShamanEntity extends SpellCastingEntity {
             } else {
                 return !(livingEntity instanceof PlayerEntity) || !livingEntity.isSpectator() && !((PlayerEntity) livingEntity).isCreative();
             }
-        }
-
-        @Override
-        public double getSquaredMaxAttackDistance(LivingEntity entity) {
-            return (double) (this.mob.getWidth() * 2.3F * this.mob.getWidth() * 2.3F + entity.getWidth());
         }
 
     }

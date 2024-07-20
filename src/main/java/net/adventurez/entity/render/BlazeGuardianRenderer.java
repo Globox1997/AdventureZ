@@ -12,7 +12,7 @@ import net.minecraft.util.Identifier;
 
 @Environment(EnvType.CLIENT)
 public class BlazeGuardianRenderer extends MobEntityRenderer<BlazeGuardianEntity, BlazeGuardianModel<BlazeGuardianEntity>> {
-    private static final Identifier TEXTURE = new Identifier("adventurez:textures/entity/blaze_guardian.png");
+    private static final Identifier TEXTURE = Identifier.of("adventurez:textures/entity/blaze_guardian.png");
 
     public BlazeGuardianRenderer(EntityRendererFactory.Context context) {
         super(context, new BlazeGuardianModel<>(context.getPart(RenderInit.BLAZE_GUARDIAN_LAYER)), 0.7F);

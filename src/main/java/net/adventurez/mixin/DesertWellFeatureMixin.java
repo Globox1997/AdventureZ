@@ -8,18 +8,18 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 import net.adventurez.entity.DesertRhinoEntity;
 import net.adventurez.init.ConfigInit;
 import net.adventurez.init.EntityInit;
+import net.minecraft.entity.SpawnReason;
 import net.minecraft.entity.SpawnRestriction;
 import net.minecraft.util.math.BlockPos;
-import net.minecraft.world.SpawnHelper;
+import net.minecraft.world.gen.feature.DefaultFeatureConfig;
 import net.minecraft.world.gen.feature.DesertWellFeature;
-import net.minecraft.world.gen.feature.GeodeFeatureConfig;
 import net.minecraft.world.gen.feature.util.FeatureContext;
 
 @Mixin(DesertWellFeature.class)
 public class DesertWellFeatureMixin {
 
     @Inject(method = "generate", at = @At(value = "RETURN"))
-    private void generateMixin(FeatureContext<GeodeFeatureConfig> context, CallbackInfoReturnable<Boolean> info) {
+    private void generateMixin(FeatureContext<DefaultFeatureConfig> context, CallbackInfoReturnable<Boolean> info) {
         if (info.getReturnValue()) {
             int rhinoSpawnChance = ConfigInit.CONFIG.desert_rhino_well_spawn_chance;
             if (!context.getWorld().isClient() && rhinoSpawnChance != 0) {
@@ -27,14 +27,18 @@ public class DesertWellFeatureMixin {
                 BlockPos spawnPos = context.getOrigin().south(3).west();
                 if (spawnChanceInt == 1) {
                     for (int i = 0; i < 4; i++) {
-                        if (i == 1)
+                        if (i == 1) {
                             spawnPos = spawnPos.east(9);
-                        if (i == 2)
+                        }
+                        if (i == 2) {
                             spawnPos = spawnPos.south(5).east(4);
-                        if (i == 3)
+                        }
+                        if (i == 3) {
                             spawnPos = spawnPos.north(5).east(3);
-                        if (context.getWorld().isAir(spawnPos) && SpawnHelper.canSpawn(SpawnRestriction.Location.ON_GROUND, context.getWorld(), spawnPos, EntityInit.DESERT_RHINO)) {
-                            DesertRhinoEntity desertRhinoEntity = (DesertRhinoEntity) EntityInit.DESERT_RHINO.create(context.getWorld().toServerWorld());
+                        }
+                        if (context.getWorld().isAir(spawnPos)
+                                && SpawnRestriction.canSpawn(EntityInit.DESERT_RHINO, context.getWorld(), SpawnReason.CHUNK_GENERATION, spawnPos, context.getRandom())) {
+                            DesertRhinoEntity desertRhinoEntity = EntityInit.DESERT_RHINO.create(context.getWorld().toServerWorld());
                             desertRhinoEntity.refreshPositionAndAngles(spawnPos, context.getRandom().nextFloat() * 360F, 0.0F);
                             context.getWorld().spawnEntity(desertRhinoEntity);
                             break;

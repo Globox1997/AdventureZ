@@ -2,7 +2,6 @@ package net.adventurez.entity;
 
 import java.util.Iterator;
 import java.util.List;
-import java.util.UUID;
 import java.util.function.Predicate;
 
 import net.adventurez.entity.nonliving.ThrownRockEntity;
@@ -13,8 +12,8 @@ import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockState;
+import net.minecraft.block.Blocks;
 import net.minecraft.entity.Entity;
-import net.minecraft.entity.EntityGroup;
 import net.minecraft.entity.EntityType;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.ai.goal.ActiveTargetGoal;
@@ -35,20 +34,23 @@ import net.minecraft.entity.damage.DamageSource;
 import net.minecraft.entity.data.DataTracker;
 import net.minecraft.entity.data.TrackedData;
 import net.minecraft.entity.data.TrackedDataHandlerRegistry;
+import net.minecraft.entity.data.DataTracker.Builder;
 import net.minecraft.entity.mob.HostileEntity;
 import net.minecraft.entity.mob.MobEntity;
 import net.minecraft.entity.passive.IronGolemEntity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.nbt.NbtCompound;
+import net.minecraft.particle.EntityEffectParticleEffect;
 import net.minecraft.particle.ParticleTypes;
+import net.minecraft.registry.tag.BlockTags;
 import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.sound.SoundEvent;
 import net.minecraft.text.Text;
+import net.minecraft.util.Identifier;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Box;
 import net.minecraft.util.math.MathHelper;
 import net.minecraft.util.math.Vec3d;
-import net.minecraft.world.BlockView;
 import net.minecraft.world.Difficulty;
 import net.minecraft.world.GameRules;
 import net.minecraft.world.World;
@@ -61,7 +63,7 @@ public class BlackstoneGolemEntity extends HostileEntity {
     public static final TrackedData<Integer> INVULNERABLE_TIMER;
     public static final TrackedData<Integer> LAVA_TEXTURE;
     public static final TrackedData<Boolean> HALF_LIFE_CHANGE;
-    private static final UUID WALKING_SPEED_INCREASE_ID;
+    private static final Identifier WALKING_SPEED_INCREASE_ID;
     private static final EntityAttributeModifier WALKING_SPEED_INCREASE;
     private static final Predicate<Entity> NOT_STONEGOLEM = (entity) -> {
         return entity.isAlive() && !(entity instanceof BlackstoneGolemEntity);
@@ -78,9 +80,8 @@ public class BlackstoneGolemEntity extends HostileEntity {
 
     public BlackstoneGolemEntity(EntityType<? extends BlackstoneGolemEntity> entityType, World world) {
         super(entityType, world);
-        this.setStepHeight(1.0f);
         this.experiencePoints = 200;
-        this.bossBar = (ServerBossBar) (new ServerBossBar(this.getDisplayName(), BossBar.Color.RED, BossBar.Style.PROGRESS));
+        this.bossBar = new ServerBossBar(this.getDisplayName(), BossBar.Color.RED, BossBar.Style.PROGRESS);
     }
 
     public static DefaultAttributeContainer.Builder createStoneGolemAttributes() {
@@ -144,13 +145,13 @@ public class BlackstoneGolemEntity extends HostileEntity {
     }
 
     @Override
-    public void initDataTracker() {
-        super.initDataTracker();
-        dataTracker.startTracking(THROW_COOLDOWN, 0);
-        dataTracker.startTracking(INVULNERABLE, true);
-        dataTracker.startTracking(LAVA_TEXTURE, 400);
-        dataTracker.startTracking(HALF_LIFE_CHANGE, false);
-        this.dataTracker.startTracking(INVULNERABLE_TIMER, 0);
+    protected void initDataTracker(Builder builder) {
+        super.initDataTracker(builder);
+        builder.add(THROW_COOLDOWN, 0);
+        builder.add(INVULNERABLE, true);
+        builder.add(LAVA_TEXTURE, 400);
+        builder.add(HALF_LIFE_CHANGE, false);
+        builder.add(INVULNERABLE_TIMER, 0);
     }
 
     @Override
@@ -282,14 +283,17 @@ public class BlackstoneGolemEntity extends HostileEntity {
         }
     }
 
+    private boolean isOnSoulSpeedBlock() {
+        return this.getWorld().getBlockState(this.getVelocityAffectingPos()).isIn(BlockTags.SOUL_SPEED_BLOCKS);
+    }
+
     private void spawnStunnedParticles() {
         if (this.random.nextInt(6) == 0) {
             double d = this.getX() - (double) this.getWidth() * Math.sin((double) (this.bodyYaw * 0.017453292F)) + (this.random.nextDouble() * 0.6D - 0.3D);
             double e = this.getY() + (double) this.getHeight() - 0.3D;
             double f = this.getZ() + (double) this.getWidth() * Math.cos((double) (this.bodyYaw * 0.017453292F)) + (this.random.nextDouble() * 0.6D - 0.3D);
-            this.getWorld().addParticle(ParticleTypes.ENTITY_EFFECT, d, e, f, 0.4980392156862745D, 0.5137254901960784D, 0.5725490196078431D);
+            this.getWorld().addParticle(EntityEffectParticleEffect.create(ParticleTypes.ENTITY_EFFECT, 0.49803922F, 0.5137255F, 0.57254905F), d, e, f, 0.0, 0.0, 0.0);
         }
-
     }
 
     @Override
@@ -431,13 +435,8 @@ public class BlackstoneGolemEntity extends HostileEntity {
     }
 
     @Override
-    public boolean canUsePortals() {
-        return false;
-    }
-
-    @Override
-    public EntityGroup getGroup() {
-        return EntityGroup.DEFAULT;
+    public boolean canUsePortals(boolean allowVehicles) {
+        return super.canUsePortals(allowVehicles);
     }
 
     @Override
@@ -529,19 +528,29 @@ public class BlackstoneGolemEntity extends HostileEntity {
         super.onDeath(source);
     }
 
-    static class PathNodeMaker extends LandPathNodeMaker {
+    private static class PathNodeMaker extends LandPathNodeMaker {
         private PathNodeMaker() {
         }
 
-        @Override
-        protected PathNodeType adjustNodeType(BlockView world, BlockPos pos, PathNodeType type) {
-            return type == PathNodeType.LAVA ? PathNodeType.OPEN : super.adjustNodeType(world, pos, type);
-        }
+        // @Override
+        // protected PathNodeType adjustNodeType(BlockView world, BlockPos pos, PathNodeType type) {
+        // return type == PathNodeType.LAVA ? PathNodeType.OPEN : super.adjustNodeType(world, pos, type);
+        // }
     }
 
-    static class Navigation extends MobNavigation {
+    private static class Navigation extends MobNavigation {
         public Navigation(MobEntity mobEntity, World world) {
             super(mobEntity, world);
+        }
+
+        @Override
+        protected boolean canWalkOnPath(PathNodeType pathType) {
+            return pathType != PathNodeType.LAVA && pathType != PathNodeType.DAMAGE_FIRE && pathType != PathNodeType.DANGER_FIRE ? super.canWalkOnPath(pathType) : true;
+        }
+
+        @Override
+        public boolean isValidPosition(BlockPos pos) {
+            return this.world.getBlockState(pos).isOf(Blocks.LAVA) || super.isValidPosition(pos);
         }
 
         @Override
@@ -551,16 +560,11 @@ public class BlackstoneGolemEntity extends HostileEntity {
         }
     }
 
-    class AttackGoal extends MeleeAttackGoal {
+    private class AttackGoal extends MeleeAttackGoal {
         public AttackGoal() {
             super(BlackstoneGolemEntity.this, 1.0D, true);
         }
 
-        @Override
-        public double getSquaredMaxAttackDistance(LivingEntity entity) {
-            float f = BlackstoneGolemEntity.this.getWidth() - 0.1F;
-            return (double) (f * f * 1.5F + entity.getWidth());
-        }
     }
 
     static {
@@ -569,7 +573,7 @@ public class BlackstoneGolemEntity extends HostileEntity {
         INVULNERABLE_TIMER = DataTracker.registerData(BlackstoneGolemEntity.class, TrackedDataHandlerRegistry.INTEGER);
         LAVA_TEXTURE = DataTracker.registerData(BlackstoneGolemEntity.class, TrackedDataHandlerRegistry.INTEGER);
         HALF_LIFE_CHANGE = DataTracker.registerData(BlackstoneGolemEntity.class, TrackedDataHandlerRegistry.BOOLEAN);
-        WALKING_SPEED_INCREASE_ID = UUID.fromString("766bfa64-11f3-11ea-8d71-362b9e155667");
-        WALKING_SPEED_INCREASE = new EntityAttributeModifier(WALKING_SPEED_INCREASE_ID, "LavaAndSoulSpeed", 0.5D, EntityAttributeModifier.Operation.MULTIPLY_BASE);
+        WALKING_SPEED_INCREASE_ID = Identifier.of("adventurez:walking_speed_increase");
+        WALKING_SPEED_INCREASE = new EntityAttributeModifier(WALKING_SPEED_INCREASE_ID, 0.5D, EntityAttributeModifier.Operation.ADD_MULTIPLIED_BASE);
     }
 }

@@ -4,19 +4,20 @@ import java.util.List;
 
 import net.adventurez.entity.nonliving.ThrownRockEntity;
 import net.adventurez.init.ConfigInit;
+import net.adventurez.init.ItemInit;
 import net.adventurez.init.SoundInit;
 import net.minecraft.client.MinecraftClient;
-import net.minecraft.client.item.TooltipContext;
 import net.minecraft.client.util.InputUtil;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EquipmentSlot;
 import net.minecraft.entity.LivingEntity;
-import net.minecraft.entity.effect.StatusEffect;
 import net.minecraft.entity.effect.StatusEffectInstance;
+import net.minecraft.entity.effect.StatusEffects;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.Items;
+import net.minecraft.item.tooltip.TooltipType;
 import net.minecraft.sound.SoundCategory;
 import net.minecraft.text.Text;
 import net.minecraft.util.Hand;
@@ -24,7 +25,6 @@ import net.minecraft.util.TypedActionResult;
 import net.minecraft.util.UseAction;
 import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.World;
-import net.minecraft.nbt.NbtCompound;
 
 public class BlackstoneGolemArm extends Item {
 
@@ -33,8 +33,8 @@ public class BlackstoneGolemArm extends Item {
     }
 
     @Override
-    public void appendTooltip(ItemStack itemStack, World world, List<Text> tooltip, TooltipContext tooltipContext) {
-        super.appendTooltip(itemStack, world, tooltip, tooltipContext);
+    public void appendTooltip(ItemStack stack, TooltipContext context, List<Text> tooltip, TooltipType type) {
+        super.appendTooltip(stack, context, tooltip, type);
         if (ConfigInit.CONFIG.allow_extra_tooltips) {
             tooltip.add(Text.translatable("item.adventurez.moreinfo.tooltip"));
             if (InputUtil.isKeyPressed(MinecraftClient.getInstance().getWindow().getHandle(), 340)) {
@@ -46,16 +46,13 @@ public class BlackstoneGolemArm extends Item {
 
     @Override
     public void onStoppedUsing(ItemStack stack, World world, LivingEntity user, int remainingUseTicks) {
-        NbtCompound tags = stack.getNbt();
-        if (user instanceof PlayerEntity) {
-            PlayerEntity playerEntity = (PlayerEntity) user;
-            int stoneCounter;
-            stoneCounter = this.getMaxUseTime(stack) - remainingUseTicks;
+        if (user instanceof PlayerEntity playerEntity) {
+            int stoneCounter = this.getMaxUseTime(stack, user) - remainingUseTicks;
             if (stoneCounter >= 30) {
-                tags.putBoolean("lavalight", false);
+                stack.set(ItemInit.LAVA_LIGHT, false);
                 if (!world.isClient()) {
                     float strength = getStoneStrength(stoneCounter);
-                    stack.damage(1, playerEntity, (p) -> p.sendToolBreakStatus(p.getActiveHand()));
+                    stack.damage(1, playerEntity, LivingEntity.getSlotForHand(user.getActiveHand()));
                     ThrownRockEntity thrownRockEntity = new ThrownRockEntity(world, playerEntity);
                     thrownRockEntity.setVelocity(playerEntity, playerEntity.getPitch(), playerEntity.getYaw(), 0.0F, strength * 1.2F, 1.0F);
                     world.spawnEntity(thrownRockEntity);
@@ -79,20 +76,20 @@ public class BlackstoneGolemArm extends Item {
     @Override
     public void inventoryTick(ItemStack stack, World world, Entity entity, int slot, boolean selected) {
         PlayerEntity player = (PlayerEntity) entity;
-        NbtCompound tags = stack.getNbt();
-        StatusEffectInstance slowness = new StatusEffectInstance(StatusEffect.byRawId(2), 9, 0, false, false, false);
+        StatusEffectInstance slowness = new StatusEffectInstance(StatusEffects.SLOWNESS, 9, 0, false, false, false);
         if (selected && !world.isClient()) {
             player.addStatusEffect(slowness);
         }
 
-        if (world.isClient() && tags != null) {
+        if (world.isClient()) {
             if (player.getItemUseTimeLeft() < 71970 && player.getItemUseTimeLeft() != 0
                     && player.getEquippedStack(player.getActiveHand() == Hand.MAIN_HAND ? EquipmentSlot.MAINHAND : EquipmentSlot.OFFHAND) == stack) {
-                tags.putBoolean("lavalight", true);
+                stack.set(ItemInit.LAVA_LIGHT, true);
             }
 
-            if (tags.getBoolean("lavalight") && player.getEquippedStack(player.getActiveHand() == Hand.MAIN_HAND ? EquipmentSlot.MAINHAND : EquipmentSlot.OFFHAND) != stack) {
-                tags.putBoolean("lavalight", false);
+            if (stack.get(ItemInit.LAVA_LIGHT) != null && stack.get(ItemInit.LAVA_LIGHT)
+                    && player.getEquippedStack(player.getActiveHand() == Hand.MAIN_HAND ? EquipmentSlot.MAINHAND : EquipmentSlot.OFFHAND) != stack) {
+                stack.set(ItemInit.LAVA_LIGHT, false);
             }
         }
     }
@@ -103,7 +100,7 @@ public class BlackstoneGolemArm extends Item {
     }
 
     @Override
-    public int getMaxUseTime(ItemStack stack) {
+    public int getMaxUseTime(ItemStack stack, LivingEntity user) {
         return 72000;
     }
 
@@ -117,7 +114,7 @@ public class BlackstoneGolemArm extends Item {
         Vec3d vec3d_1 = attacker.getRotationVec(1.0F);
         double x_vector = vec3d_1.x / 2D;
         double z_vector = vec3d_1.z / 2D;
-        stack.damage(1, attacker, (p) -> p.sendToolBreakStatus(p.getActiveHand()));
+        stack.damage(1, attacker, LivingEntity.getSlotForHand(attacker.getActiveHand()));
         target.addVelocity(x_vector, 0.45D, z_vector);
         return true;
     }

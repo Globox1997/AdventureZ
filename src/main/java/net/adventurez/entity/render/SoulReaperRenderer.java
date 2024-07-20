@@ -13,7 +13,7 @@ import net.minecraft.util.Identifier;
 
 @Environment(EnvType.CLIENT)
 public class SoulReaperRenderer extends BipedEntityRenderer<SoulReaperEntity, SoulReaperModel<SoulReaperEntity>> {
-    private static final Identifier TEXTURE = new Identifier("adventurez:textures/entity/soul_reaper.png");
+    private static final Identifier TEXTURE = Identifier.of("adventurez:textures/entity/soul_reaper.png");
 
     public SoulReaperRenderer(EntityRendererFactory.Context context) {
         super(context, new SoulReaperModel<>(context.getPart(RenderInit.SOUL_REAPER_LAYER)), 0.5F);

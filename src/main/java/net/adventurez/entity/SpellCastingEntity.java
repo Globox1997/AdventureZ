@@ -10,8 +10,10 @@ import net.minecraft.entity.ai.goal.Goal;
 import net.minecraft.entity.data.DataTracker;
 import net.minecraft.entity.data.TrackedData;
 import net.minecraft.entity.data.TrackedDataHandlerRegistry;
+import net.minecraft.entity.data.DataTracker.Builder;
 import net.minecraft.entity.mob.HostileEntity;
 import net.minecraft.nbt.NbtCompound;
+import net.minecraft.particle.EntityEffectParticleEffect;
 import net.minecraft.particle.ParticleTypes;
 import net.minecraft.sound.SoundEvent;
 import net.minecraft.util.math.MathHelper;
@@ -27,9 +29,10 @@ public abstract class SpellCastingEntity extends HostileEntity {
     protected int spellTicks;
     private SpellCastingEntity.Spell spell;
 
-    protected void initDataTracker() {
-        super.initDataTracker();
-        this.dataTracker.startTracking(SPELL, (byte) 0);
+    @Override
+    protected void initDataTracker(Builder builder) {
+        super.initDataTracker(builder);
+        builder.add(SPELL, (byte) 0);
     }
 
     public void readCustomDataFromNbt(NbtCompound tag) {
@@ -71,13 +74,14 @@ public abstract class SpellCastingEntity extends HostileEntity {
         super.tick();
         if (this.getWorld().isClient() && this.isSpellcasting() && !(this instanceof ShamanEntity)) {
             SpellCastingEntity.Spell spell = this.getSpell();
-            double d = spell.particleVelocity[0];
-            double e = spell.particleVelocity[1];
-            double f = spell.particleVelocity[2];
+            float d = (float) spell.particleVelocity[0];
+            float e = (float) spell.particleVelocity[1];
+            float f = (float) spell.particleVelocity[2];
             float g = this.bodyYaw * 0.017453292F + MathHelper.cos((float) this.age * 0.6662F) * 0.25F;
             float h = MathHelper.cos(g);
             float i = MathHelper.sin(g);
-            this.getWorld().addParticle(ParticleTypes.ENTITY_EFFECT, this.getX() + (double) h * 0.92D, this.getY() + 2.32D, this.getZ() + (double) i * 0.92D, d, e, f);
+            this.getWorld().addParticle(EntityEffectParticleEffect.create(ParticleTypes.ENTITY_EFFECT, d, e, f), (float) this.getX() + (float) h * 0.92f, this.getY() + 2.32f,
+                    this.getZ() + (float) i * 0.92f, 0.0, 0.0, 0.0);
         }
 
     }

@@ -6,7 +6,6 @@ import net.adventurez.entity.nonliving.ThrownRockEntity;
 import net.adventurez.entity.nonliving.VoidBulletEntity;
 import net.adventurez.init.SoundInit;
 import net.minecraft.entity.Entity;
-import net.minecraft.entity.EntityGroup;
 import net.minecraft.entity.EntityType;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.ai.control.MoveControl;
@@ -78,17 +77,12 @@ public class VoidShadeEntity extends FlyingEntity implements Monster {
     }
 
     @Override
-    public EntityGroup getGroup() {
-        return EntityGroup.UNDEAD;
-    }
-
-    @Override
     public boolean canStartRiding(Entity entity) {
         return false;
     }
 
     @Override
-    public boolean canUsePortals() {
+    public boolean canUsePortals(boolean allowVehicles) {
         return false;
     }
 
@@ -125,8 +119,8 @@ public class VoidShadeEntity extends FlyingEntity implements Monster {
                 if (this.cooldown == 20) {
                     ((ServerWorld) world).playSoundFromEntity(null, this.voidShadeEntity, SoundInit.SHADOW_CAST_EVENT, SoundCategory.HOSTILE, 1.0F, 1.0F);
                     Vec3d vec3d = this.voidShadeEntity.getRotationVec(1.0F);
-                    VoidBulletEntity voidBulletEntity = new VoidBulletEntity(world, this.voidShadeEntity, vec3d.x + world.random.nextFloat() * 0.5F - 0.25F, vec3d.y,
-                            vec3d.z + world.random.nextFloat() * 0.5F - 0.25F);
+                    vec3d.add(world.random.nextFloat() * 0.5F - 0.25F, 0, world.random.nextFloat() * 0.5F - 0.25F);
+                    VoidBulletEntity voidBulletEntity = new VoidBulletEntity(this.voidShadeEntity, vec3d, world);
                     world.spawnEntity(voidBulletEntity);
 
                     this.cooldown = -40;

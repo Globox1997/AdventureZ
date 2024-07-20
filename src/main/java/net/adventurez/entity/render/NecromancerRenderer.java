@@ -11,7 +11,7 @@ import net.minecraft.util.Identifier;
 
 @Environment(EnvType.CLIENT)
 public class NecromancerRenderer extends MobEntityRenderer<NecromancerEntity, NecromancerModel<NecromancerEntity>> {
-    private static final Identifier TEXTURE = new Identifier("adventurez:textures/entity/necromancer.png");
+    private static final Identifier TEXTURE = Identifier.of("adventurez:textures/entity/necromancer.png");
 
     public NecromancerRenderer(EntityRendererFactory.Context context) {
         super(context, new NecromancerModel<>(context.getPart(RenderInit.NECROMANCER_LAYER)), 0.7F);

@@ -8,8 +8,10 @@ import net.fabricmc.api.Environment;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityType;
 import net.minecraft.entity.LivingEntity;
+import net.minecraft.entity.SpawnReason;
 import net.minecraft.entity.SpawnRestriction;
 import net.minecraft.entity.damage.DamageSource;
+import net.minecraft.entity.data.DataTracker.Builder;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.projectile.ArrowEntity;
 import net.minecraft.entity.projectile.ExplosiveProjectileEntity;
@@ -26,7 +28,6 @@ import net.minecraft.util.math.Direction;
 import net.minecraft.util.math.MathHelper;
 import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.Difficulty;
-import net.minecraft.world.SpawnHelper;
 import net.minecraft.world.World;
 import net.minecraft.world.Heightmap;
 import org.jetbrains.annotations.Nullable;
@@ -102,7 +103,7 @@ public class TinyEyeEntity extends ExplosiveProjectileEntity {
     }
 
     @Override
-    protected void initDataTracker() {
+    protected void initDataTracker(Builder builder) {
     }
 
     private void movingAround() {
@@ -243,19 +244,22 @@ public class TinyEyeEntity extends ExplosiveProjectileEntity {
 
     @SuppressWarnings("deprecation")
     private void teleportEntityRandom(LivingEntity livingEntity) {
-        for (int counter = 0; counter < 100; counter++) {
-            float randomFloat = this.getWorld().getRandom().nextFloat() * 6.2831855F;
-            int posX = livingEntity.getBlockPos().getX() + MathHelper.floor(MathHelper.cos(randomFloat) * 9.0F + livingEntity.getWorld().getRandom().nextInt(30));
-            int posZ = livingEntity.getBlockPos().getZ() + MathHelper.floor(MathHelper.sin(randomFloat) * 9.0F + livingEntity.getWorld().getRandom().nextInt(30));
-            int posY = livingEntity.getWorld().getTopY(Heightmap.Type.WORLD_SURFACE, posX, posZ);
-            BlockPos teleportPos = new BlockPos(posX, posY, posZ);
-            if (livingEntity.getWorld().isRegionLoaded(teleportPos.getX() - 4, teleportPos.getY() - 4, teleportPos.getZ() - 4, teleportPos.getX() + 4, teleportPos.getY() + 4, teleportPos.getZ() + 4)
-                    && SpawnHelper.canSpawn(SpawnRestriction.Location.ON_GROUND, livingEntity.getWorld(), teleportPos, EntityType.PLAYER)) {
-                if (!this.getWorld().isClient()) {
-                    livingEntity.teleport(teleportPos.getX(), teleportPos.getY(), teleportPos.getZ());
+        if (!livingEntity.getWorld().isClient() && livingEntity.getWorld() instanceof ServerWorld serverWorld) {
+            for (int counter = 0; counter < 100; counter++) {
+                float randomFloat = this.getWorld().getRandom().nextFloat() * 6.2831855F;
+                int posX = livingEntity.getBlockPos().getX() + MathHelper.floor(MathHelper.cos(randomFloat) * 9.0F + serverWorld.getRandom().nextInt(30));
+                int posZ = livingEntity.getBlockPos().getZ() + MathHelper.floor(MathHelper.sin(randomFloat) * 9.0F + serverWorld.getRandom().nextInt(30));
+                int posY = serverWorld.getTopY(Heightmap.Type.WORLD_SURFACE, posX, posZ);
+                BlockPos teleportPos = new BlockPos(posX, posY, posZ);
+                if (serverWorld.isRegionLoaded(teleportPos.getX() - 4, teleportPos.getY() - 4, teleportPos.getZ() - 4, teleportPos.getX() + 4, teleportPos.getY() + 4, teleportPos.getZ() + 4)
+                        && SpawnRestriction.canSpawn(EntityType.PLAYER, serverWorld, SpawnReason.EVENT, teleportPos, serverWorld.getRandom())) {
+                    if (!this.getWorld().isClient()) {
+                        livingEntity.teleport(teleportPos.getX(), teleportPos.getY(), teleportPos.getZ(), false);
+                    }
+
+                    serverWorld.playSound(null, posX, posY, posZ, SoundEvents.ENTITY_ENDERMAN_TELEPORT, SoundCategory.HOSTILE, 1.0f, 1.0f, serverWorld.getRandom().nextLong());
+                    break;
                 }
-                livingEntity.getWorld().playSound(null, teleportPos, SoundEvents.ENTITY_ENDERMAN_TELEPORT, SoundCategory.HOSTILE, 1.0F, 1.0F);
-                break;
             }
         }
     }

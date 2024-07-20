@@ -48,7 +48,7 @@ public class DeerEntity extends AnimalEntity {
         this.goalSelector.add(0, new SwimGoal(this));
         this.goalSelector.add(1, new EscapeDangerGoal(this, 2.0D));
         this.goalSelector.add(2, new AnimalMateGoal(this, 1.0D));
-        this.goalSelector.add(3, new TemptGoal(this, 1.22D, Ingredient.ofItems(Items.GRASS, Items.TALL_GRASS, Items.FERN), true));
+        this.goalSelector.add(3, new TemptGoal(this, 1.22D, Ingredient.ofItems(Items.SHORT_GRASS, Items.TALL_GRASS, Items.FERN), true));
         this.goalSelector.add(4, new FollowParentGoal(this, 1.25D));
         this.goalSelector.add(5, new EscapePlayerGoal(this, 2.0D));
         this.goalSelector.add(6, new WanderAroundFarGoal(this, 1.0D));
@@ -83,7 +83,7 @@ public class DeerEntity extends AnimalEntity {
 
     @Override
     public boolean isBreedingItem(ItemStack stack) {
-        return stack.isOf(Items.GRASS) || stack.isOf(Items.FERN) || stack.isOf(Items.TALL_GRASS);
+        return stack.isOf(Items.SHORT_GRASS) || stack.isOf(Items.FERN) || stack.isOf(Items.TALL_GRASS);
     }
 
     private class EscapePlayerGoal extends Goal {

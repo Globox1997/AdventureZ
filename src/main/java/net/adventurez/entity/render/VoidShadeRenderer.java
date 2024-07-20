@@ -12,7 +12,7 @@ import net.minecraft.util.Identifier;
 
 @Environment(EnvType.CLIENT)
 public class VoidShadeRenderer extends MobEntityRenderer<VoidShadeEntity, VoidShadeModel<VoidShadeEntity>> {
-    private static final Identifier TEXTURE = new Identifier("adventurez:textures/entity/void_shade.png");
+    private static final Identifier TEXTURE = Identifier.of("adventurez:textures/entity/void_shade.png");
 
     public VoidShadeRenderer(EntityRendererFactory.Context context) {
         super(context, new VoidShadeModel<>(context.getPart(RenderInit.VOID_SHADE_LAYER)), 0.5F);

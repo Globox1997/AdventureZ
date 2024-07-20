@@ -1,7 +1,6 @@
 package net.adventurez.mixin.compat;
 
 import java.util.Iterator;
-import java.util.Map;
 
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Unique;
@@ -11,10 +10,13 @@ import org.spongepowered.asm.mixin.injection.ModifyVariable;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import org.spongepowered.asm.mixin.injection.callback.LocalCapture;
 
-import net.minecraft.enchantment.Enchantment;
+import it.unimi.dsi.fastutil.objects.Object2IntMap;
+import net.adventurez.init.ItemInit;
+import net.minecraft.component.type.ItemEnchantmentsComponent;
 import net.minecraft.entity.player.PlayerInventory;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.Items;
+import net.minecraft.registry.entry.RegistryEntry;
 import net.minecraft.screen.AnvilScreenHandler;
 import net.minecraft.screen.ForgingScreenHandler;
 import net.minecraft.screen.ScreenHandlerContext;
@@ -34,9 +36,9 @@ public abstract class AnvilScreenHandlerCompatMixin extends ForgingScreenHandler
 
     @SuppressWarnings("rawtypes")
     @Inject(method = "updateResult", at = @At(value = "INVOKE_ASSIGN", target = "Lnet/minecraft/enchantment/Enchantment;getMaxLevel()I", ordinal = 0), locals = LocalCapture.CAPTURE_FAILSOFT)
-    private void updateResultMixin(CallbackInfo info, ItemStack itemStack, int i, int j, int k, ItemStack itemStack2, ItemStack itemStack3, Map<Enchantment, Integer> map, boolean bl,
-            Map<Enchantment, Integer> l, boolean m, boolean n, Iterator var12, Enchantment p, int q, int r) {
-        if (itemStack3.isOf(Items.ENCHANTED_BOOK) && itemStack3.hasNbt() && itemStack3.getNbt().contains("void_drop") && itemStack3.getNbt().getBoolean("void_drop")) {
+    private void updateResultMixin(CallbackInfo info, ItemStack itemStack, int i, long l, int j, ItemStack itemStack2, ItemStack itemStack3, ItemEnchantmentsComponent.Builder builder, boolean bl,
+            ItemEnchantmentsComponent itemEnchantmentsComponent, boolean bl2, boolean bl3, Iterator var13, Object2IntMap.Entry entry, RegistryEntry registryEntry, int q, int r) {
+        if (itemStack3.isOf(Items.ENCHANTED_BOOK) && itemStack3.get(ItemInit.VOID_DROP) != null && itemStack3.get(ItemInit.VOID_DROP)) {
             enchantmentLevel = r;
             this.isVoidShadowDrop = true;
         } else {
@@ -44,7 +46,7 @@ public abstract class AnvilScreenHandlerCompatMixin extends ForgingScreenHandler
         }
     }
 
-    @ModifyVariable(method = "updateResult", at = @At(value = "INVOKE_ASSIGN", target = "Lnet/minecraft/enchantment/Enchantment;getMaxLevel()I", ordinal = 1), ordinal = 4)
+    @ModifyVariable(method = "updateResult", at = @At(value = "INVOKE_ASSIGN", target = "Lnet/minecraft/enchantment/Enchantment;getMaxLevel()I", ordinal = 1), ordinal = 3)
     private int updateResultModifyMixin(int original) {
         if (this.isVoidShadowDrop) {
             return enchantmentLevel;

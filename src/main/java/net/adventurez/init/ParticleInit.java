@@ -6,13 +6,13 @@ import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
 import net.fabricmc.fabric.api.client.particle.v1.FabricSpriteProvider;
 import net.fabricmc.fabric.api.particle.v1.FabricParticleTypes;
-import net.minecraft.particle.DefaultParticleType;
 import net.minecraft.registry.Registries;
 import net.minecraft.registry.Registry;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.math.MathHelper;
 import net.minecraft.client.particle.SpriteProvider;
 import net.minecraft.client.world.ClientWorld;
+import net.minecraft.particle.SimpleParticleType;
 import net.minecraft.client.particle.Particle;
 import net.minecraft.client.particle.ParticleFactory;
 import net.minecraft.client.particle.ParticleTextureSheet;
@@ -20,14 +20,14 @@ import net.minecraft.client.particle.SpriteBillboardParticle;
 
 public class ParticleInit {
 
-    public static final DefaultParticleType AMETHYST_SHARD_PARTICLE = FabricParticleTypes.simple();
-    public static final DefaultParticleType VOID_CLOUD_PARTICLE = FabricParticleTypes.simple();
-    public static final DefaultParticleType SPRINT_PARTICLE = FabricParticleTypes.simple();
+    public static final SimpleParticleType AMETHYST_SHARD_PARTICLE = FabricParticleTypes.simple();
+    public static final SimpleParticleType VOID_CLOUD_PARTICLE = FabricParticleTypes.simple();
+    public static final SimpleParticleType SPRINT_PARTICLE = FabricParticleTypes.simple();
 
     public static void init() {
-        Registry.register(Registries.PARTICLE_TYPE, new Identifier("adventurez", "amethyst_shard_particle"), AMETHYST_SHARD_PARTICLE);
-        Registry.register(Registries.PARTICLE_TYPE, new Identifier("adventurez", "void_cloud_particle"), VOID_CLOUD_PARTICLE);
-        Registry.register(Registries.PARTICLE_TYPE, new Identifier("adventurez", "sprint_particle"), SPRINT_PARTICLE);
+        Registry.register(Registries.PARTICLE_TYPE, Identifier.of("adventurez", "amethyst_shard_particle"), AMETHYST_SHARD_PARTICLE);
+        Registry.register(Registries.PARTICLE_TYPE, Identifier.of("adventurez", "void_cloud_particle"), VOID_CLOUD_PARTICLE);
+        Registry.register(Registries.PARTICLE_TYPE, Identifier.of("adventurez", "sprint_particle"), SPRINT_PARTICLE);
     }
 
     @Environment(EnvType.CLIENT)
@@ -72,7 +72,7 @@ public class ParticleInit {
         }
 
         @Environment(EnvType.CLIENT)
-        public static class ShardFactory implements ParticleFactory<DefaultParticleType> {
+        public static class ShardFactory implements ParticleFactory<SimpleParticleType> {
             private final SpriteProvider spriteProvider;
 
             public ShardFactory(FabricSpriteProvider sprites) {
@@ -80,7 +80,7 @@ public class ParticleInit {
             }
 
             @Override
-            public Particle createParticle(DefaultParticleType defaultParticleType, ClientWorld clientWorld, double d, double e, double f, double g, double h, double i) {
+            public Particle createParticle(SimpleParticleType defaultParticleType, ClientWorld clientWorld, double d, double e, double f, double g, double h, double i) {
                 ShardParticle shardParticle = new ShardParticle(clientWorld, d, e, f, 0.5D - ShardParticle.RANDOM.nextDouble(), h, 0.5D - ShardParticle.RANDOM.nextDouble(), this.spriteProvider);
                 int rand = clientWorld.random.nextInt(4);
                 if (rand == 0)
@@ -184,7 +184,7 @@ public class ParticleInit {
         }
 
         @Environment(EnvType.CLIENT)
-        public static class CloudFactory implements ParticleFactory<DefaultParticleType> {
+        public static class CloudFactory implements ParticleFactory<SimpleParticleType> {
             private final SpriteProvider spriteProvider;
 
             public CloudFactory(SpriteProvider spriteProvider) {
@@ -192,7 +192,7 @@ public class ParticleInit {
             }
 
             @Override
-            public Particle createParticle(DefaultParticleType defaultParticleType, ClientWorld clientWorld, double d, double e, double f, double g, double h, double i) {
+            public Particle createParticle(SimpleParticleType defaultParticleType, ClientWorld clientWorld, double d, double e, double f, double g, double h, double i) {
                 VoidCloudParticle portalParticle = new VoidCloudParticle(clientWorld, d, e, f, g, h, i);
                 portalParticle.setSprite(this.spriteProvider);
                 return portalParticle;
@@ -227,7 +227,7 @@ public class ParticleInit {
         }
 
         @Environment(EnvType.CLIENT)
-        public static class SprintFactory implements ParticleFactory<DefaultParticleType> {
+        public static class SprintFactory implements ParticleFactory<SimpleParticleType> {
             private final SpriteProvider spriteProvider;
 
             public SprintFactory(FabricSpriteProvider sprites) {
@@ -235,7 +235,7 @@ public class ParticleInit {
             }
 
             @Override
-            public Particle createParticle(DefaultParticleType defaultParticleType, ClientWorld clientWorld, double d, double e, double f, double g, double h, double i) {
+            public Particle createParticle(SimpleParticleType defaultParticleType, ClientWorld clientWorld, double d, double e, double f, double g, double h, double i) {
                 SprintParticle sprintParticle = new SprintParticle(clientWorld, d, e, f, g, h, i, this.spriteProvider);
                 sprintParticle.velocityX = -g * 1.5D;
                 sprintParticle.velocityZ = -i * 1.5D;

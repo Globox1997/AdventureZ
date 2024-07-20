@@ -14,7 +14,7 @@ import net.minecraft.util.Identifier;
 
 @Environment(EnvType.CLIENT)
 public class BlackstoneGolemRenderer extends MobEntityRenderer<BlackstoneGolemEntity, BlackstoneGolemModel<BlackstoneGolemEntity>> {
-    private static final Identifier TEXTURE = new Identifier("adventurez:textures/entity/blackstone_golem.png");
+    private static final Identifier TEXTURE = Identifier.of("adventurez:textures/entity/blackstone_golem.png");
 
     public BlackstoneGolemRenderer(EntityRendererFactory.Context context) {
         super(context, new BlackstoneGolemModel<>(context.getPart(RenderInit.BLACKSTONE_GOLEM_LAYER)), 1.7F);

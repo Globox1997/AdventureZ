@@ -1,0 +1,10 @@
+{
+  "type": "minecraft:stonecutting",
+  "ingredient": {
+    "item": "minecraft:chiseled_polished_blackstone"
+  },
+  "result": {
+    "id": "adventurez:chiseled_polished_blackstone_holder"
+  },
+  "count": 1
+}

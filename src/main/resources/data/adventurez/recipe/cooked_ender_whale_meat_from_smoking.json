@@ -1,0 +1,11 @@
+{
+  "type": "minecraft:smoking",
+  "ingredient": {
+    "item": "adventurez:ender_whale_meat"
+  },
+  "result": {
+    "id": "adventurez:cooked_ender_whale_meat"
+  },
+  "experience": 0.35,
+  "cookingtime": 100
+}

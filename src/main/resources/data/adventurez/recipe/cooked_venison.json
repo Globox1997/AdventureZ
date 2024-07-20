@@ -1,0 +1,11 @@
+{
+    "type": "minecraft:smelting",
+    "ingredient": {
+        "item": "adventurez:raw_venison"
+    },
+    "result": {
+        "id": "adventurez:cooked_venison"
+    },
+    "experience": 0.35,
+    "cookingtime": 200
+}

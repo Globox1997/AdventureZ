@@ -18,6 +18,7 @@ import net.minecraft.sound.SoundCategory;
 import net.minecraft.sound.SoundEvents;
 import net.minecraft.util.hit.BlockHitResult;
 import net.minecraft.util.hit.EntityHitResult;
+import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.World;
 
 public class VoidBulletEntity extends ExplosiveProjectileEntity {
@@ -35,14 +36,13 @@ public class VoidBulletEntity extends ExplosiveProjectileEntity {
         this.setVelocity(velocityX, velocityY, velocityZ);
     }
 
-    public VoidBulletEntity(World world, LivingEntity owner, double velocityX, double velocityY, double velocityZ) {
-        super(EntityInit.VOID_BULLET, owner, velocityX, velocityY, velocityZ, world);
-        this.refreshPositionAndAngles(owner.getX() + velocityX * 1.2D, owner.getY() + owner.getBoundingBox().getYLength() * 0.6D + velocityY * 1.2D, owner.getZ() + velocityZ * 1.2D, -owner.getYaw(),
-                owner.getPitch());
+    public VoidBulletEntity(LivingEntity owner, Vec3d velocity, World world) {
+        super(EntityInit.VOID_BULLET, owner, velocity, world);
+        this.refreshPositionAndAngles(owner.getX() + velocity.getX() * 1.2D, owner.getY() + owner.getBoundingBox().getLengthY() * 0.6D + velocity.getY() * 1.2D, owner.getZ() + velocity.getZ() * 1.2D,
+                -owner.getYaw(), owner.getPitch());
         this.prevPitch = owner.getPitch();
         this.setYaw(-owner.getYaw());
-        this.powerX *= 3.6D;
-        this.powerZ *= 3.6D;
+        this.accelerationPower = 0.32D;
     }
 
     @Override
@@ -121,6 +121,7 @@ public class VoidBulletEntity extends ExplosiveProjectileEntity {
                 double l = (double) (this.getWorld().getRandom().nextFloat() * 0.1D);
                 ((ServerWorld) this.getWorld()).spawnParticles(ParticleTypes.SMOKE, d, e, f, 3, g, h, l, 0.1D);
             }
+            this.playSound(SoundEvents.ENTITY_ENDER_EYE_DEATH, 1.0F, 1.0F);
             this.discard();
         }
     }

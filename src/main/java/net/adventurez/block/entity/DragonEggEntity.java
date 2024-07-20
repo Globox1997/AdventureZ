@@ -14,6 +14,7 @@ import net.minecraft.entity.SpawnReason;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.nbt.NbtCompound;
 import net.minecraft.particle.ParticleTypes;
+import net.minecraft.registry.RegistryWrapper.WrapperLookup;
 import net.minecraft.server.world.ServerWorld;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
@@ -30,16 +31,16 @@ public class DragonEggEntity extends BlockEntity {
     }
 
     @Override
-    public void readNbt(NbtCompound nbt) {
-        super.readNbt(nbt);
+    protected void readNbt(NbtCompound nbt, WrapperLookup registryLookup) {
+        super.readNbt(nbt, registryLookup);
         hatchTick = nbt.getInt("Hatch_Tick");
         isHatchAble = nbt.getBoolean("Hatch_Able");
         summoningTick = nbt.getInt("Summoning_Tick");
     }
 
     @Override
-    public void writeNbt(NbtCompound nbt) {
-        super.writeNbt(nbt);
+    protected void writeNbt(NbtCompound nbt, WrapperLookup registryLookup) {
+        super.writeNbt(nbt, registryLookup);
         nbt.putBoolean("Hatch_Able", isHatchAble);
         nbt.putInt("Hatch_Tick", hatchTick);
         nbt.putInt("Summoning_Tick", summoningTick);
@@ -129,9 +130,9 @@ public class DragonEggEntity extends BlockEntity {
                     }
                     if (this.hatchTick >= 598) {
                         this.getWorld().breakBlock(this.pos, false);
-                        DragonEntity dragonEntity = (DragonEntity) EntityInit.DRAGON.create(this.getWorld());
+                        DragonEntity dragonEntity = EntityInit.DRAGON.create(this.getWorld());
                         dragonEntity.refreshPositionAndAngles((double) this.getPos().getX() + 0.5D, (double) this.getPos().getY() + 0.55D, (double) this.getPos().getZ() + 0.5D, 90F, 0.0F);
-                        dragonEntity.initialize(((ServerWorld) this.getWorld()), this.getWorld().getLocalDifficulty(pos), SpawnReason.STRUCTURE, null, null);
+                        dragonEntity.initialize(((ServerWorld) this.getWorld()), this.getWorld().getLocalDifficulty(pos), SpawnReason.STRUCTURE, null);
                         dragonEntity.setSize(1);
                         this.getWorld().spawnEntity(dragonEntity);
                     }
@@ -154,7 +155,7 @@ public class DragonEggEntity extends BlockEntity {
                     if (!this.getWorld().isClient() && summoningTick >= 60) {
                         TheEyeEntity theEyeEntity = (TheEyeEntity) EntityInit.THE_EYE.create(this.getWorld());
                         theEyeEntity.refreshPositionAndAngles((double) this.getPos().getX() + 0.5D, (double) this.getPos().getY() + 0.55D, (double) this.getPos().getZ() + 0.5D, 90F, 0.0F);
-                        theEyeEntity.initialize(((ServerWorld) this.getWorld()), this.getWorld().getLocalDifficulty(pos), SpawnReason.STRUCTURE, null, null);
+                        theEyeEntity.initialize(((ServerWorld) this.getWorld()), this.getWorld().getLocalDifficulty(pos), SpawnReason.STRUCTURE, null);
                         theEyeEntity.setEyeInvulnerabletime();
                         this.getWorld().spawnEntity(theEyeEntity);
                         this.getWorld().breakBlock(pos, false);

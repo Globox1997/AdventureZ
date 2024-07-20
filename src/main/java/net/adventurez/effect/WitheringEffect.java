@@ -1,7 +1,5 @@
 package net.adventurez.effect;
 
-import java.util.UUID;
-
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.attribute.AttributeContainer;
 import net.minecraft.entity.attribute.EntityAttributeInstance;
@@ -9,17 +7,20 @@ import net.minecraft.entity.attribute.EntityAttributeModifier;
 import net.minecraft.entity.attribute.EntityAttributes;
 import net.minecraft.entity.effect.StatusEffect;
 import net.minecraft.entity.effect.StatusEffectCategory;
+import net.minecraft.util.Identifier;
 
 public class WitheringEffect extends StatusEffect {
-    private static final UUID WITHERING = UUID.fromString("7a10abbd-01cb-4a42-b125-f1e67b35df03");
+
+    private static final EntityAttributeModifier WITHERING = new EntityAttributeModifier(Identifier.of("adventurez:withering"), -0.15D, EntityAttributeModifier.Operation.ADD_MULTIPLIED_TOTAL);
 
     public WitheringEffect(StatusEffectCategory type, int color) {
         super(type, color);
     }
 
     @Override
-    public void applyUpdateEffect(LivingEntity entity, int amplifier) {
+    public boolean applyUpdateEffect(LivingEntity entity, int amplifier) {
         entity.damage(entity.getDamageSources().wither(), 0.5F);
+        return true;
     }
 
     @Override
@@ -28,20 +29,20 @@ public class WitheringEffect extends StatusEffect {
     }
 
     @Override
-    public void onApplied(LivingEntity entity, AttributeContainer attributes, int amplifier) {
-        EntityAttributeInstance entityAttributeInstance = attributes.getCustomInstance((EntityAttributes.GENERIC_MOVEMENT_SPEED));
+    public void onApplied(AttributeContainer attributeContainer, int amplifier) {
+        super.onApplied(attributeContainer, amplifier);
+        EntityAttributeInstance entityAttributeInstance = attributeContainer.getCustomInstance((EntityAttributes.GENERIC_MOVEMENT_SPEED));
         if (entityAttributeInstance != null) {
-            EntityAttributeModifier entityAttributeModifier = new EntityAttributeModifier(this.getTranslationKey(), -0.15D, EntityAttributeModifier.Operation.MULTIPLY_TOTAL);
-            entityAttributeInstance.removeModifier(entityAttributeModifier);
-            entityAttributeInstance.addPersistentModifier(new EntityAttributeModifier(WITHERING, this.getTranslationKey() + " " + entityAttributeModifier.getValue(),
-                    this.adjustModifierAmount(amplifier, entityAttributeModifier), entityAttributeModifier.getOperation()));
+            entityAttributeInstance.removeModifier(WITHERING);
+            entityAttributeInstance.addPersistentModifier(WITHERING);
         }
 
     }
 
     @Override
-    public void onRemoved(LivingEntity entity, AttributeContainer attributes, int amplifier) {
-        EntityAttributeInstance entityAttributeInstance = attributes.getCustomInstance(EntityAttributes.GENERIC_MOVEMENT_SPEED);
+    public void onRemoved(AttributeContainer attributeContainer) {
+        super.onRemoved(attributeContainer);
+        EntityAttributeInstance entityAttributeInstance = attributeContainer.getCustomInstance(EntityAttributes.GENERIC_MOVEMENT_SPEED);
         if (entityAttributeInstance != null) {
             entityAttributeInstance.removeModifier(WITHERING);
         }

@@ -6,11 +6,11 @@ import net.adventurez.entity.DragonEntity;
 import net.minecraft.block.BlockState;
 import net.minecraft.block.BlockWithEntity;
 import net.minecraft.block.EndPortalBlock;
+import net.minecraft.block.Portal;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.registry.RegistryKey;
 import net.minecraft.server.world.ServerWorld;
 import net.minecraft.util.ActionResult;
-import net.minecraft.util.Hand;
 import net.minecraft.util.hit.BlockHitResult;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
@@ -23,9 +23,8 @@ public abstract class EndPortalBlockMixin extends BlockWithEntity {
     }
 
     @Override
-    public ActionResult onUse(BlockState state, World world, BlockPos pos, PlayerEntity player, Hand hand, BlockHitResult hit) {
-        if (player.hasVehicle() && player.getVehicle() instanceof DragonEntity && player.canUsePortals()) {
-            DragonEntity dragonEntity = (DragonEntity) player.getVehicle();
+    public ActionResult onUse(BlockState state, World world, BlockPos pos, PlayerEntity player, BlockHitResult hit) {
+        if (player.hasVehicle() && player.getVehicle() instanceof DragonEntity dragonEntity && player.canUsePortals(true)) {
             player.stopRiding();
             if (world instanceof ServerWorld) {
                 RegistryKey<World> registryKey = world.getRegistryKey() == World.END ? World.OVERWORLD : World.END;
@@ -33,7 +32,7 @@ public abstract class EndPortalBlockMixin extends BlockWithEntity {
                 if (serverWorld == null) {
                     return ActionResult.PASS;
                 }
-                dragonEntity.moveToWorld(serverWorld);
+                dragonEntity.tryUsePortal((Portal) (Object) this, pos);
             }
             return ActionResult.SUCCESS;
         }

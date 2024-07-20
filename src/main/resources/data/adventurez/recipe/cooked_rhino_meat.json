@@ -1,0 +1,11 @@
+{
+    "type": "minecraft:smelting",
+    "ingredient": {
+        "item": "adventurez:rhino_meat"
+    },
+    "result": {
+        "id": "adventurez:cooked_rhino_meat"
+    },
+    "experience": 0.35,
+    "cookingtime": 200
+}

@@ -22,6 +22,7 @@ import net.minecraft.entity.damage.DamageSource;
 import net.minecraft.entity.data.DataTracker;
 import net.minecraft.entity.data.TrackedData;
 import net.minecraft.entity.data.TrackedDataHandlerRegistry;
+import net.minecraft.entity.data.DataTracker.Builder;
 import net.minecraft.entity.mob.HostileEntity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.nbt.NbtCompound;
@@ -45,7 +46,7 @@ public class AmethystGolemEntity extends HostileEntity {
 
     public AmethystGolemEntity(EntityType<? extends HostileEntity> entityType, World world) {
         super(entityType, world);
-        this.setStepHeight(1.0f);
+
     }
 
     public static DefaultAttributeContainer.Builder createAmethystGolemAttributes() {
@@ -69,10 +70,10 @@ public class AmethystGolemEntity extends HostileEntity {
     }
 
     @Override
-    protected void initDataTracker() {
-        super.initDataTracker();
-        this.dataTracker.startTracking(BACK_CRYSTALS, 4);
-        this.dataTracker.startTracking(DEEPSLATE_VARIANT, false);
+    protected void initDataTracker(Builder builder) {
+        super.initDataTracker(builder);
+        builder.add(BACK_CRYSTALS, 4);
+        builder.add(DEEPSLATE_VARIANT, false);
     }
 
     @Override
@@ -108,12 +109,13 @@ public class AmethystGolemEntity extends HostileEntity {
     }
 
     @Override
-    public EntityData initialize(ServerWorldAccess world, LocalDifficulty difficulty, SpawnReason spawnReason, @Nullable EntityData entityData, @Nullable NbtCompound entityTag) {
+    public EntityData initialize(ServerWorldAccess world, LocalDifficulty difficulty, SpawnReason spawnReason, @Nullable EntityData entityData) {
         int random = this.getRandom().nextInt(5);
         this.dataTracker.set(BACK_CRYSTALS, random);
-        if (random > 0)
+        if (random > 0) {
             this.getAttributeInstance(EntityAttributes.GENERIC_MAX_HEALTH).setBaseValue(this.getAttributeBaseValue(EntityAttributes.GENERIC_MAX_HEALTH) + random * 10.0D);
-        return super.initialize(world, difficulty, spawnReason, (EntityData) entityData, entityTag);
+        }
+        return super.initialize(world, difficulty, spawnReason, entityData);
     }
 
     @Override

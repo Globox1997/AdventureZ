@@ -16,7 +16,7 @@ import net.minecraft.util.Identifier;
 @Mixin(IronGolemEntityRenderer.class)
 public class IronGolemEntityRendererMixin {
 
-    private static final Identifier BLACKSTONED_TEXTURE = new Identifier("adventurez:textures/entity/blackstone_golem.png");
+    private static final Identifier BLACKSTONED_TEXTURE = Identifier.of("adventurez:textures/entity/blackstone_golem.png");
 
     @Inject(method = "getTexture", at = @At("HEAD"), cancellable = true)
     private void getTextureMixin(IronGolemEntity ironGolemEntity, CallbackInfoReturnable<Identifier> info) {

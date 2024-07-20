@@ -29,7 +29,7 @@ import net.minecraft.util.math.RotationAxis;
 @Environment(EnvType.CLIENT)
 public class PiglinFlagRenderer implements BlockEntityRenderer<PiglinFlagEntity> {
 
-    private static final Identifier TEXTURE = new Identifier("adventurez", "textures/block/piglin_flag.png");
+    private static final Identifier TEXTURE = Identifier.of("adventurez", "textures/block/piglin_flag.png");
     private final ModelPart flag;
     private final ModelPart holder;
 
@@ -79,7 +79,7 @@ public class PiglinFlagRenderer implements BlockEntityRenderer<PiglinFlagEntity>
         long worldTime = entity.getWorld().getTime();
         float goodFloat = ((float) Math.floorMod((long) (blockPos.getX() * 7 + blockPos.getY() * 9 + blockPos.getZ() * 13) + worldTime, 100L) + tickDelta) / 100.0F;
         flag.roll = MathHelper.cos(6.2831855F * goodFloat) / 4;
-        holder.render(matrices, vertexConsumer, light, overlay, 1.0F, 1.0F, 1.0F, 1.0F);
+        holder.render(matrices, vertexConsumer, light, overlay);
         matrices.pop();
     }
 }

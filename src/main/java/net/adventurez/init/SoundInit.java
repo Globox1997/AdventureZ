@@ -119,7 +119,7 @@ public class SoundInit {
     public static SoundEvent CLOSE_SHADOW_CHEST_EVENT = register("adventurez:close_shadow_chest");
 
     private static SoundEvent register(String id) {
-        return Registry.register(Registries.SOUND_EVENT, id, SoundEvent.of(new Identifier(id)));
+        return Registry.register(Registries.SOUND_EVENT, id, SoundEvent.of(Identifier.of(id)));
     }
 
     public static void init() {

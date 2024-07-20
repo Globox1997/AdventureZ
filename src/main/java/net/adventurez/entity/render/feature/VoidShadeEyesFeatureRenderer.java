@@ -16,7 +16,7 @@ import net.minecraft.util.Identifier;
 
 @Environment(EnvType.CLIENT)
 public class VoidShadeEyesFeatureRenderer extends FeatureRenderer<VoidShadeEntity, VoidShadeModel<VoidShadeEntity>> {
-    private static final RenderLayer EYE_LAYER = ExtraRenderLayer.getGlowing(new Identifier("adventurez:textures/entity/feature/void_shade_eyes_feature.png"));
+    private static final RenderLayer EYE_LAYER = ExtraRenderLayer.getGlowing(Identifier.of("adventurez:textures/entity/feature/void_shade_eyes_feature.png"));
 
     public VoidShadeEyesFeatureRenderer(FeatureRendererContext<VoidShadeEntity, VoidShadeModel<VoidShadeEntity>> featureRendererContext) {
         super(featureRendererContext);
@@ -25,7 +25,7 @@ public class VoidShadeEyesFeatureRenderer extends FeatureRenderer<VoidShadeEntit
     @Override
     public void render(MatrixStack matrixStack, VertexConsumerProvider vertexConsumerProvider, int i, VoidShadeEntity voidShadeEntity, float f, float g, float h, float j, float k, float l) {
         VertexConsumer vertexConsumer = vertexConsumerProvider.getBuffer(EYE_LAYER);
-        this.getContextModel().render(matrixStack, vertexConsumer, 15728640, OverlayTexture.DEFAULT_UV, 1.0F, 1.0F, 1.0F, 1.0F);
+        this.getContextModel().render(matrixStack, vertexConsumer, 15728640, OverlayTexture.DEFAULT_UV);
     }
 
 }

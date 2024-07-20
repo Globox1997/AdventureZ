@@ -1,7 +1,5 @@
 package net.adventurez.entity;
 
-import java.util.UUID;
-
 import org.jetbrains.annotations.Nullable;
 
 import net.adventurez.init.EntityInit;
@@ -20,12 +18,14 @@ import net.minecraft.sound.SoundCategory;
 import net.minecraft.sound.SoundEvent;
 import net.minecraft.util.ActionResult;
 import net.minecraft.util.Hand;
+import net.minecraft.util.Identifier;
 import net.minecraft.entity.mob.SkeletonHorseEntity;
 import net.minecraft.entity.passive.PassiveEntity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.Items;
 import net.minecraft.particle.ParticleTypes;
+import net.minecraft.registry.tag.BlockTags;
 import net.minecraft.server.world.ServerWorld;
 import net.minecraft.world.World;
 import net.minecraft.block.Blocks;
@@ -33,7 +33,7 @@ import net.minecraft.block.Blocks;
 public class NightmareEntity extends SkeletonHorseEntity {
     private int eatingGrassTicks;
     private int damageWaterTicks;
-    private static final UUID WALKING_SPEED_INCREASE_ID;
+    private static final Identifier WALKING_SPEED_INCREASE_ID;
     private static final EntityAttributeModifier WALKING_SPEED_INCREASE;
 
     public NightmareEntity(EntityType<? extends SkeletonHorseEntity> entityType, World world) {
@@ -87,12 +87,17 @@ public class NightmareEntity extends SkeletonHorseEntity {
                 damageWaterTicks = 0;
             }
         }
+
         if (this.isOnSoulSpeedBlock() && !this.getAttributes().hasModifierForAttribute(EntityAttributes.GENERIC_MOVEMENT_SPEED, WALKING_SPEED_INCREASE_ID)) {
             this.getAttributeInstance(EntityAttributes.GENERIC_MOVEMENT_SPEED).addTemporaryModifier(WALKING_SPEED_INCREASE);
         } else if (!this.isOnSoulSpeedBlock() && this.getAttributes().hasModifierForAttribute(EntityAttributes.GENERIC_MOVEMENT_SPEED, WALKING_SPEED_INCREASE_ID)) {
             this.getAttributeInstance(EntityAttributes.GENERIC_MOVEMENT_SPEED).removeModifier(WALKING_SPEED_INCREASE_ID);
         }
         super.tickMovement();
+    }
+
+    private boolean isOnSoulSpeedBlock() {
+        return this.getWorld().getBlockState(this.getVelocityAffectingPos()).isIn(BlockTags.SOUL_SPEED_BLOCKS);
     }
 
     @Override
@@ -166,12 +171,12 @@ public class NightmareEntity extends SkeletonHorseEntity {
     @Override
     @Nullable
     public PassiveEntity createChild(ServerWorld serverWorld, PassiveEntity passiveEntity) {
-        return (PassiveEntity) EntityInit.NIGHTMARE.create(serverWorld);
+        return EntityInit.NIGHTMARE.create(serverWorld);
     }
 
     static {
-        WALKING_SPEED_INCREASE_ID = UUID.fromString("020E0DFB-87AE-8274-9556-928370E291A0");
-        WALKING_SPEED_INCREASE = new EntityAttributeModifier(WALKING_SPEED_INCREASE_ID, "LavaAndSoulSpeed", 0.5D, EntityAttributeModifier.Operation.MULTIPLY_BASE);
+        WALKING_SPEED_INCREASE_ID = Identifier.of("adventurez:walking_speed");
+        WALKING_SPEED_INCREASE = new EntityAttributeModifier(WALKING_SPEED_INCREASE_ID, 0.5D, EntityAttributeModifier.Operation.ADD_MULTIPLIED_BASE);
     }
 
 }

@@ -15,7 +15,6 @@ import net.minecraft.entity.ai.goal.WanderAroundGoal;
 import net.minecraft.entity.attribute.DefaultAttributeContainer;
 import net.minecraft.entity.attribute.EntityAttributes;
 import net.minecraft.entity.damage.DamageSource;
-import net.minecraft.entity.effect.StatusEffect;
 import net.minecraft.entity.effect.StatusEffectInstance;
 import net.minecraft.entity.effect.StatusEffects;
 import net.minecraft.entity.mob.HostileEntity;
@@ -37,7 +36,6 @@ public class WitherPuppetEntity extends HostileEntity {
 
     public WitherPuppetEntity(EntityType<? extends HostileEntity> entityType, World world) {
         super(entityType, world);
-        this.setStepHeight(1.0f);
         this.experiencePoints = 0;
     }
 
@@ -134,14 +132,14 @@ public class WitherPuppetEntity extends HostileEntity {
     }
 
     @Override
-    public boolean canUsePortals() {
+    public boolean canUsePortals(boolean allowVehicles) {
         return false;
     }
 
     @Override
     public boolean tryAttack(Entity target) {
-        if (!this.getWorld().isClient() && target instanceof LivingEntity && this.getWorld().getRandom().nextInt(5) == 0) {
-            ((LivingEntity) target).addStatusEffect(new StatusEffectInstance(StatusEffect.byRawId(18), 80, 0, false, false), this);
+        if (!this.getWorld().isClient() && target instanceof LivingEntity livingEntity && this.getWorld().getRandom().nextInt(5) == 0) {
+            livingEntity.addStatusEffect(new StatusEffectInstance(StatusEffects.WEAKNESS, 80, 0, false, false), this);
         }
         return super.tryAttack(target);
     }

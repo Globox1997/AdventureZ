@@ -16,7 +16,6 @@
     "VillagerEntityMixin",
     "ServerPlayNetworkHandlerMixin",
     "EnderDragonFightMixin",
-    "PlayerManagerMixin",
     "NetherPortalBlockMixin",
     "EndPortalBlockMixin",
     "EnderPearlEntityMixin",
@@ -35,7 +34,8 @@
     "accessor.LivingEntityAccessor",
     "accessor.FallingBlockAccessor",
     "accessor.EntityAccessor",
-    "accessor.ChestLidAnimatorAccessor"
+    "accessor.ChestLidAnimatorAccessor",
+    "accessor.ProjectileEntityAccessor"
   ],
   "client": [
     "client.ArmorFeatureRendererMixin",

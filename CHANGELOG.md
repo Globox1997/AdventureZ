@@ -1,6 +1,6 @@
 ### Added:
 - 
 ### Fixed:
-- Fixed stone golem upgrade texture
-### Changed:
 - 
+### Changed:
+- Updated to mc 1.21

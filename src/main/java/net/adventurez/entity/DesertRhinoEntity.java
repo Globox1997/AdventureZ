@@ -46,7 +46,6 @@ public class DesertRhinoEntity extends HostileEntity {
 
     public DesertRhinoEntity(EntityType<? extends HostileEntity> entityType, World world) {
         super(entityType, world);
-        this.setStepHeight(1.0f);
         this.experiencePoints = 30;
     }
 
@@ -87,11 +86,6 @@ public class DesertRhinoEntity extends HostileEntity {
     }
 
     @Override
-    public void initDataTracker() {
-        super.initDataTracker();
-    }
-
-    @Override
     public void tick() {
         super.tick();
         if (!this.getWorld().isClient() && sprintedTicker > 0) {
@@ -113,7 +107,7 @@ public class DesertRhinoEntity extends HostileEntity {
     }
 
     @Override
-    public boolean canUsePortals() {
+    public boolean canUsePortals(boolean allowVehicles) {
         return false;
     }
 
@@ -159,10 +153,10 @@ public class DesertRhinoEntity extends HostileEntity {
                 return super.canStart();
         }
 
-        @Override
-        protected double getSquaredMaxAttackDistance(LivingEntity entity) {
-            return (double) (this.mob.getWidth() * 1.6F * this.mob.getWidth() * 1.6F + entity.getWidth());
-        }
+        // @Override
+        // protected double getSquaredMaxAttackDistance(LivingEntity entity) {
+        //     return (double) (this.mob.getWidth() * 1.6F * this.mob.getWidth() * 1.6F + entity.getWidth());
+        // }
     }
 
     private class SprintAttackGoal extends Goal {

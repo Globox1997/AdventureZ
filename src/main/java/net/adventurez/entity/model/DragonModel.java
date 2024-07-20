@@ -526,7 +526,7 @@ public class DragonModel<T extends DragonEntity> extends CompositeEntityModel<T>
 
             // Random Yaw Fire
             Float yawPitch = Math.abs(MathHelper.cos(6.2831853071F * slowlyIncreasingFloat) * 0.3F);
-            if (entity.getSize() == 3 && !this.randomYawFire && yawPitch <= 0.01F && entity.getWorld().random.nextInt(16) == 0 && !isFireBreathing) {
+            if (entity.getSize() == 3 && !this.randomYawFire && yawPitch <= 0.01F && entity.getWorld().getRandom().nextInt(16) == 0 && !isFireBreathing) {
                 this.randomYawFire = true;
             }
             if (this.randomYawFire) {

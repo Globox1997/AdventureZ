@@ -11,7 +11,7 @@ import net.minecraft.util.Identifier;
 
 @Environment(EnvType.CLIENT)
 public class DesertRhinoRenderer extends MobEntityRenderer<DesertRhinoEntity, DesertRhinoModel<DesertRhinoEntity>> {
-    private static final Identifier TEXTURE = new Identifier("adventurez:textures/entity/desert_rhino.png");
+    private static final Identifier TEXTURE = Identifier.of("adventurez:textures/entity/desert_rhino.png");
 
     public DesertRhinoRenderer(EntityRendererFactory.Context context) {
         super(context, new DesertRhinoModel<>(context.getPart(RenderInit.DESERT_RHINO_LAYER)), 1.5F);

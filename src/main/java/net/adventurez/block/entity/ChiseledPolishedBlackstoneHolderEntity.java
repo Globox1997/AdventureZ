@@ -23,6 +23,7 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NbtCompound;
 import net.minecraft.network.packet.s2c.play.BlockEntityUpdateS2CPacket;
 import net.minecraft.particle.ParticleTypes;
+import net.minecraft.registry.RegistryWrapper.WrapperLookup;
 import net.minecraft.server.world.ServerWorld;
 import net.minecraft.sound.SoundCategory;
 import net.minecraft.sound.SoundEvents;
@@ -44,19 +45,19 @@ public class ChiseledPolishedBlackstoneHolderEntity extends BlockEntity implemen
     }
 
     @Override
-    public void readNbt(NbtCompound nbt) {
-        super.readNbt(nbt);
+    protected void readNbt(NbtCompound nbt, WrapperLookup registryLookup) {
+        super.readNbt(nbt, registryLookup);
         inventory.clear();
-        Inventories.readNbt(nbt, inventory);
+        Inventories.readNbt(nbt, inventory, registryLookup);
         buildGolemCounter = nbt.getInt("buildcounter");
         tickCounter = nbt.getInt("tickcounter");
         startBuildingGolem = nbt.getBoolean("startbuilding");
     }
 
     @Override
-    public void writeNbt(NbtCompound nbt) {
-        super.writeNbt(nbt);
-        Inventories.writeNbt(nbt, inventory);
+    protected void writeNbt(NbtCompound nbt, WrapperLookup registryLookup) {
+        super.writeNbt(nbt, registryLookup);
+        Inventories.writeNbt(nbt, inventory, registryLookup);
         nbt.putInt("buildcounter", buildGolemCounter);
         nbt.putInt("tickcounter", tickCounter);
         nbt.putBoolean("startbuilding", startBuildingGolem);
@@ -236,7 +237,7 @@ public class ChiseledPolishedBlackstoneHolderEntity extends BlockEntity implemen
                 BlackstoneGolemEntity stoneGolemEntity = (BlackstoneGolemEntity) EntityInit.BLACKSTONE_GOLEM.create(world);
                 BlockPos spawnPos = new BlockPos(this.getPos().getX(), this.getPos().getY() + 1, this.getPos().getZ() - 5);
                 stoneGolemEntity.refreshPositionAndAngles(spawnPos, 0.0F, 0.0F);
-                stoneGolemEntity.initialize(((ServerWorld) this.getWorld()), this.getWorld().getLocalDifficulty(this.getPos()), SpawnReason.STRUCTURE, null, null);
+                stoneGolemEntity.initialize(((ServerWorld) this.getWorld()), this.getWorld().getLocalDifficulty(this.getPos()), SpawnReason.STRUCTURE, null);
                 stoneGolemEntity.sendtoEntity();
                 this.getWorld().spawnEntity(stoneGolemEntity);
                 this.getWorld().playSound(null, this.getPos(), SoundInit.GOLEM_SPAWN_EVENT, SoundCategory.HOSTILE, 1F, 1F);
@@ -361,7 +362,8 @@ public class ChiseledPolishedBlackstoneHolderEntity extends BlockEntity implemen
     }
 
     @Override
-    public NbtCompound toInitialChunkDataNbt() {
-        return this.createNbt();
+    public NbtCompound toInitialChunkDataNbt(WrapperLookup registryLookup) {
+        return this.createNbt(registryLookup);
     }
+
 }

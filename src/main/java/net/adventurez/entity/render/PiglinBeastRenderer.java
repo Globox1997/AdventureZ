@@ -12,7 +12,7 @@ import net.minecraft.util.Identifier;
 
 @Environment(EnvType.CLIENT)
 public class PiglinBeastRenderer extends MobEntityRenderer<PiglinBeastEntity, PiglinBeastModel<PiglinBeastEntity>> {
-    private static final Identifier TEXTURE = new Identifier("adventurez:textures/entity/piglin_beast.png");
+    private static final Identifier TEXTURE = Identifier.of("adventurez:textures/entity/piglin_beast.png");
 
     public PiglinBeastRenderer(EntityRendererFactory.Context context) {
         super(context, new PiglinBeastModel<>(context.getPart(RenderInit.PIGLIN_BEAST_LAYER)), 1F);

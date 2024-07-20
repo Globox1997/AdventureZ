@@ -25,6 +25,7 @@ import net.minecraft.entity.damage.DamageSource;
 import net.minecraft.entity.data.DataTracker;
 import net.minecraft.entity.data.TrackedData;
 import net.minecraft.entity.data.TrackedDataHandlerRegistry;
+import net.minecraft.entity.data.DataTracker.Builder;
 import net.minecraft.entity.mob.Angerable;
 import net.minecraft.entity.mob.MobEntity;
 import net.minecraft.entity.passive.AnimalEntity;
@@ -67,7 +68,7 @@ public class MammothEntity extends AnimalEntity implements Angerable {
 
     @Override
     public boolean isBreedingItem(ItemStack stack) {
-        return stack.getItem() == Items.GRASS || stack.getItem() == Items.FERN || stack.getItem() == Items.TALL_GRASS;
+        return stack.getItem() == Items.SHORT_GRASS || stack.getItem() == Items.FERN || stack.getItem() == Items.TALL_GRASS;
     }
 
     @Override
@@ -143,9 +144,9 @@ public class MammothEntity extends AnimalEntity implements Angerable {
     }
 
     @Override
-    protected void initDataTracker() {
-        super.initDataTracker();
-        this.dataTracker.startTracking(ATTACK_TICKS, this.attackTicksLeft);
+    protected void initDataTracker(Builder builder) {
+        super.initDataTracker(builder);
+        builder.add(ATTACK_TICKS, this.attackTicksLeft);
     }
 
     @Override
@@ -167,11 +168,11 @@ public class MammothEntity extends AnimalEntity implements Angerable {
     }
 
     @Override
-    public EntityData initialize(ServerWorldAccess world, LocalDifficulty difficulty, SpawnReason spawnReason, @Nullable EntityData entityData, @Nullable NbtCompound entityTag) {
+    public EntityData initialize(ServerWorldAccess world, LocalDifficulty difficulty, SpawnReason spawnReason, @Nullable EntityData entityData) {
         if (entityData == null) {
             entityData = new PassiveEntity.PassiveData(1.0F);
         }
-        return super.initialize(world, difficulty, spawnReason, (EntityData) entityData, entityTag);
+        return super.initialize(world, difficulty, spawnReason, entityData);
     }
 
     static {
@@ -182,21 +183,6 @@ public class MammothEntity extends AnimalEntity implements Angerable {
     private class AttackGoal extends MeleeAttackGoal {
         public AttackGoal() {
             super(MammothEntity.this, 1.15D, true);
-        }
-
-        @Override
-        public void attack(LivingEntity target, double squaredDistance) {
-            double d = this.getSquaredMaxAttackDistance(target);
-            if (squaredDistance <= d && this.isCooledDown()) {
-                this.resetCooldown();
-                this.mob.tryAttack(target);
-            }
-
-        }
-
-        @Override
-        public double getSquaredMaxAttackDistance(LivingEntity entity) {
-            return (double) (4.5F + entity.getWidth());
         }
     }
 

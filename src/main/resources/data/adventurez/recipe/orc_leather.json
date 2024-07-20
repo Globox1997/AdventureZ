@@ -1,0 +1,14 @@
+{
+    "type": "minecraft:crafting_shaped",
+    "pattern": [
+        "dd"
+    ],
+    "key": {
+        "d": {
+            "item": "adventurez:orc_skin"
+        }
+    },
+    "result": {
+        "id": "minecraft:leather"
+    }
+}

@@ -16,8 +16,8 @@ import net.minecraft.util.math.BlockPos;
 
 @Environment(EnvType.CLIENT)
 public class ThrownRockRenderer extends EntityRenderer<ThrownRockEntity> {
-    private static final Identifier GOLEM_TEXTURE = new Identifier("adventurez:textures/entity/thrown_golem_rock.png");
-    private static final Identifier VOID_TEXTURE = new Identifier("adventurez:textures/entity/thrown_void_rock.png");
+    private static final Identifier GOLEM_TEXTURE = Identifier.of("adventurez:textures/entity/thrown_golem_rock.png");
+    private static final Identifier VOID_TEXTURE = Identifier.of("adventurez:textures/entity/thrown_void_rock.png");
     private final RockModel model = new RockModel(RockModel.getTexturedModelData().createModel());
 
     public ThrownRockRenderer(EntityRendererFactory.Context context) {
@@ -34,7 +34,7 @@ public class ThrownRockRenderer extends EntityRenderer<ThrownRockEntity> {
 
         matrixStack.push();
         VertexConsumer vertexConsumer = vertexConsumerProvider.getBuffer(this.model.getLayer(this.getTexture(thrownRockEntity)));
-        model.render(matrixStack, vertexConsumer, i, OverlayTexture.DEFAULT_UV, 1.0F, 1.0F, 1.0F, 1.0F);
+        model.render(matrixStack, vertexConsumer, i, OverlayTexture.DEFAULT_UV);
         matrixStack.scale(1.5F, 1.5F, 1.5F);
         matrixStack.pop();
         super.render(thrownRockEntity, f, g, matrixStack, vertexConsumerProvider, i);

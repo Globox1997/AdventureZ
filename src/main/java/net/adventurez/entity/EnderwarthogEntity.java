@@ -30,6 +30,7 @@ import net.minecraft.entity.damage.DamageSource;
 import net.minecraft.entity.data.DataTracker;
 import net.minecraft.entity.data.TrackedData;
 import net.minecraft.entity.data.TrackedDataHandlerRegistry;
+import net.minecraft.entity.data.DataTracker.Builder;
 import net.minecraft.entity.mob.EndermanEntity;
 import net.minecraft.entity.mob.EndermiteEntity;
 import net.minecraft.entity.mob.HostileEntity;
@@ -64,7 +65,6 @@ public class EnderwarthogEntity extends HostileEntity {
 
     public EnderwarthogEntity(EntityType<? extends HostileEntity> entityType, World world) {
         super(entityType, world);
-        this.setStepHeight(1.0f);
         this.experiencePoints = 10;
     }
 
@@ -112,10 +112,10 @@ public class EnderwarthogEntity extends HostileEntity {
     }
 
     @Override
-    public void initDataTracker() {
-        super.initDataTracker();
-        this.dataTracker.startTracking(RARE_VARIANT, false);
-        this.dataTracker.startTracking(BITE_ATTACK, false);
+    protected void initDataTracker(Builder builder) {
+        super.initDataTracker(builder);
+        builder.add(RARE_VARIANT, false);
+        builder.add(BITE_ATTACK, false);
     }
 
     @Override
@@ -125,13 +125,6 @@ public class EnderwarthogEntity extends HostileEntity {
             sprintedTicker--;
         }
 
-    }
-
-    @Override
-    public void checkDespawn() {
-        if (this.getWorld().getDifficulty() == Difficulty.PEACEFUL) {
-            this.discard();
-        }
     }
 
     @Override
@@ -163,8 +156,8 @@ public class EnderwarthogEntity extends HostileEntity {
 
     @Override
     @Nullable
-    public EntityData initialize(ServerWorldAccess serverWorldAccess, LocalDifficulty difficulty, SpawnReason spawnReason, @Nullable EntityData entityData, @Nullable NbtCompound entityTag) {
-        entityData = super.initialize(serverWorldAccess, difficulty, spawnReason, entityData, entityTag);
+    public EntityData initialize(ServerWorldAccess serverWorldAccess, LocalDifficulty difficulty, SpawnReason spawnReason, @Nullable EntityData entityData) {
+        entityData = super.initialize(serverWorldAccess, difficulty, spawnReason, entityData);
         if (spawnReason.equals(SpawnReason.COMMAND))
             this.dataTracker.set(RARE_VARIANT, true);
         if ((spawnReason.equals(SpawnReason.NATURAL) || spawnReason.equals(SpawnReason.CHUNK_GENERATION)) && this.getWorld().getRandom().nextFloat() <= ConfigInit.CONFIG.warthog_rare_chance) {
@@ -197,20 +190,13 @@ public class EnderwarthogEntity extends HostileEntity {
         }
 
         @Override
-        protected double getSquaredMaxAttackDistance(LivingEntity entity) {
-            return (double) (this.mob.getWidth() * 1.6F * this.mob.getWidth() * 1.5F + entity.getWidth());
-        }
-
-        @Override
-        protected void attack(LivingEntity target, double squaredDistance) {
-            double d = this.getSquaredMaxAttackDistance(target);
-            if (squaredDistance <= d && this.cooldown <= 0) {
+        protected void attack(LivingEntity target) {
+            if (canAttack(target) && this.cooldown <= 0) {
                 this.enderwarthogEntity.dataTracker.set(BITE_ATTACK, true);
                 this.resetCooldown();
                 this.mob.swingHand(Hand.MAIN_HAND);
                 this.mob.tryAttack(target);
             }
-
         }
 
         @Override

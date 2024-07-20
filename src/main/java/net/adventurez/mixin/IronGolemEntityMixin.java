@@ -39,8 +39,8 @@ public abstract class IronGolemEntityMixin extends GolemEntity implements Entity
     }
 
     @Inject(method = "initDataTracker", at = @At(value = "TAIL"))
-    protected void initDataTrackerMixin(CallbackInfo info) {
-        this.dataTracker.startTracking(BLACKSTONED, false);
+    protected void initDataTrackerMixin(DataTracker.Builder builder, CallbackInfo info) {
+        builder.add(BLACKSTONED, false);
     }
 
     @Inject(method = "writeCustomDataToNbt", at = @At(value = "TAIL"))
@@ -59,8 +59,8 @@ public abstract class IronGolemEntityMixin extends GolemEntity implements Entity
     @Inject(method = "interactMob", at = @At(value = "INVOKE_ASSIGN", target = "Lnet/minecraft/entity/player/PlayerEntity;getStackInHand(Lnet/minecraft/util/Hand;)Lnet/minecraft/item/ItemStack;"), cancellable = true, locals = LocalCapture.CAPTURE_FAILSOFT)
     protected void interactMobMixin(PlayerEntity player, Hand hand, CallbackInfoReturnable<ActionResult> info, ItemStack itemStack) {
         if (this.dataTracker.get(BLACKSTONED)) {
-            if (itemStack.getItem() instanceof BlockItem) {
-                if (((BlockItem) itemStack.getItem()).getBlock().getDefaultState().isIn(TagInit.PLATFORM_NETHER_BLOCKS)) {
+            if (itemStack.getItem() instanceof BlockItem blockItem) {
+                if (blockItem.getBlock().getDefaultState().isIn(TagInit.PLATFORM_NETHER_BLOCKS)) {
                     this.heal(10.0F);
                     info.setReturnValue(ActionResult.success(this.getWorld().isClient()));
                 }

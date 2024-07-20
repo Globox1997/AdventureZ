@@ -6,12 +6,13 @@ import net.adventurez.entity.nonliving.VoidBulletEntity;
 import net.adventurez.init.ConfigInit;
 import net.adventurez.init.SoundInit;
 import net.minecraft.client.MinecraftClient;
-import net.minecraft.client.item.TooltipContext;
 import net.minecraft.client.util.InputUtil;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
+import net.minecraft.item.tooltip.TooltipType;
+import net.minecraft.server.world.ServerWorld;
 import net.minecraft.sound.SoundCategory;
 import net.minecraft.sound.SoundEvents;
 import net.minecraft.text.Text;
@@ -23,6 +24,7 @@ import net.minecraft.util.hit.HitResult;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Direction;
 import net.minecraft.util.math.Vec3d;
+import net.minecraft.world.TeleportTarget;
 import net.minecraft.world.World;
 
 public class SourceStone extends Item {
@@ -32,8 +34,8 @@ public class SourceStone extends Item {
     }
 
     @Override
-    public void appendTooltip(ItemStack itemStack, World world, List<Text> tooltip, TooltipContext tooltipContext) {
-        super.appendTooltip(itemStack, world, tooltip, tooltipContext);
+    public void appendTooltip(ItemStack stack, TooltipContext context, List<Text> tooltip, TooltipType type) {
+        super.appendTooltip(stack, context, tooltip, type);
         if (ConfigInit.CONFIG.allow_extra_tooltips) {
             tooltip.add(Text.translatable("item.adventurez.moreinfo.tooltip"));
             if (InputUtil.isKeyPressed(MinecraftClient.getInstance().getWindow().getHandle(), 340)) {
@@ -45,23 +47,22 @@ public class SourceStone extends Item {
 
     @Override
     public void onStoppedUsing(ItemStack stack, World world, LivingEntity user, int remainingUseTicks) {
-        if (user instanceof PlayerEntity) {
-            PlayerEntity playerEntity = (PlayerEntity) user;
+        if (user instanceof PlayerEntity playerEntity) {
             if (!world.isClient()) {
                 if (ConfigInit.CONFIG.allow_source_stone_tp && playerEntity.isSneaking()) {
                     HitResult hitResult = playerEntity.raycast(8D, 1.0F, false);
                     if (hitResult != null) {
                         if (hitResult.getType() == HitResult.Type.BLOCK) {
                             BlockHitResult blockHitResult = (BlockHitResult) hitResult;
-                            tryTeleport(world, blockHitResult.getBlockPos(), blockHitResult.getSide(), playerEntity);
+                            tryTeleport((ServerWorld) world, blockHitResult.getBlockPos(), blockHitResult.getSide(), playerEntity);
                         } else if (hitResult.getType() == HitResult.Type.ENTITY) {
                             EntityHitResult entityHitResult = (EntityHitResult) hitResult;
-                            tryTeleport(world, entityHitResult.getEntity().getBlockPos(), entityHitResult.getEntity().getHorizontalFacing(), playerEntity);
+                            tryTeleport((ServerWorld) world, entityHitResult.getEntity().getBlockPos(), entityHitResult.getEntity().getHorizontalFacing(), playerEntity);
                         }
                     }
                 } else {
                     Vec3d vec3d = playerEntity.getRotationVec(1.0F);
-                    VoidBulletEntity voidBulletEntity = new VoidBulletEntity(world, playerEntity, vec3d.x, vec3d.y, vec3d.z);
+                    VoidBulletEntity voidBulletEntity = new VoidBulletEntity(playerEntity, vec3d, world);
                     world.spawnEntity(voidBulletEntity);
                     world.playSoundFromEntity((PlayerEntity) null, voidBulletEntity, SoundInit.SHADOW_CAST_EVENT, SoundCategory.PLAYERS, 1.0F, 1.0F);
                 }
@@ -70,13 +71,15 @@ public class SourceStone extends Item {
         }
     }
 
-    private void tryTeleport(World world, BlockPos blockPos, Direction direction, PlayerEntity playerEntity) {
+    private void tryTeleport(ServerWorld world, BlockPos blockPos, Direction direction, PlayerEntity playerEntity) {
         if (!world.getBlockState(blockPos).isAir()) {
             for (int i = 2; i < 6; i++) {
                 BlockPos newBlockPos = new BlockPos(blockPos).offset(direction.getOpposite(), i);
                 BlockPos upperBlockPos = newBlockPos.up();
                 if (!world.getBlockState(newBlockPos).isSolidBlock(world, newBlockPos) && !world.getBlockState(upperBlockPos).isSolidBlock(world, upperBlockPos)) {
-                    playerEntity.teleport(newBlockPos.getX(), newBlockPos.getY(), newBlockPos.getZ());
+                    playerEntity
+                            .teleportTo(new TeleportTarget(world, newBlockPos.toBottomCenterPos(), playerEntity.getVelocity(), playerEntity.getYaw(), playerEntity.getPitch(), TeleportTarget.NO_OP));
+
                     world.playSoundFromEntity((PlayerEntity) null, playerEntity, SoundEvents.ENTITY_ENDERMAN_TELEPORT, SoundCategory.PLAYERS, 1.0F, 1.0F);
                     break;
                 }

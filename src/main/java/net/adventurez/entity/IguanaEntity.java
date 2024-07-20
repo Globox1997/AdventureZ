@@ -21,6 +21,7 @@ import net.minecraft.entity.damage.DamageSource;
 import net.minecraft.entity.data.DataTracker;
 import net.minecraft.entity.data.TrackedData;
 import net.minecraft.entity.data.TrackedDataHandlerRegistry;
+import net.minecraft.entity.data.DataTracker.Builder;
 import net.minecraft.entity.mob.MobEntity;
 import net.minecraft.entity.mob.PathAwareEntity;
 import net.minecraft.entity.passive.AnimalEntity;
@@ -68,9 +69,9 @@ public class IguanaEntity extends AnimalEntity {
     }
 
     @Override
-    protected void initDataTracker() {
-        super.initDataTracker();
-        this.dataTracker.startTracking(OPEN_MOUTH, false);
+    protected void initDataTracker(Builder builder) {
+        super.initDataTracker(builder);
+        builder.add(OPEN_MOUTH, false);
     }
 
     @Override
@@ -95,7 +96,7 @@ public class IguanaEntity extends AnimalEntity {
 
     @Override
     public IguanaEntity createChild(ServerWorld serverWorld, PassiveEntity passiveEntity) {
-        return (IguanaEntity) EntityInit.IGUANA.create(serverWorld);
+        return EntityInit.IGUANA.create(serverWorld);
     }
 
     @Override

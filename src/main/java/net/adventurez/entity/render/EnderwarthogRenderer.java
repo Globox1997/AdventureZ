@@ -12,7 +12,7 @@ import net.minecraft.util.Identifier;
 
 @Environment(EnvType.CLIENT)
 public class EnderwarthogRenderer extends MobEntityRenderer<EnderwarthogEntity, EnderwarthogModel<EnderwarthogEntity>> {
-    private static final Identifier TEXTURE = new Identifier("adventurez:textures/entity/enderwarthog.png");
+    private static final Identifier TEXTURE = Identifier.of("adventurez:textures/entity/enderwarthog.png");
 
     public EnderwarthogRenderer(EntityRendererFactory.Context context) {
         super(context, new EnderwarthogModel<>(context.getPart(RenderInit.ENDERWARTHOG_LAYER)), 1.5F);

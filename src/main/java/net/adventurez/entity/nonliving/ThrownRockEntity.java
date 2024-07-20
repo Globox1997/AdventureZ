@@ -15,7 +15,6 @@ import net.minecraft.entity.effect.StatusEffectInstance;
 import net.minecraft.entity.effect.StatusEffects;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.Item;
-import net.minecraft.item.ItemStack;
 import net.minecraft.item.Items;
 import net.minecraft.particle.BlockStateParticleEffect;
 import net.minecraft.particle.ParticleEffect;
@@ -70,10 +69,10 @@ public class ThrownRockEntity extends ThrownItemEntity {
         BlockState state = this.getLandingBlockState();
         if (this.getWorld().isClient()) {
             for (int i = 0; i < 32; ++i)
-                this.getWorld().addParticle(new BlockStateParticleEffect(ParticleTypes.BLOCK, state), this.getX() + this.getWorld().random.nextDouble() * 0.35D - 0.175D, this.getY(),
-                        this.getZ() + this.getWorld().random.nextDouble() * 0.35D - 0.175D, 0.0D, 0.1D, 0.0D);
+                this.getWorld().addParticle(new BlockStateParticleEffect(ParticleTypes.BLOCK, state), this.getX() + this.getWorld().getRandom().nextDouble() * 0.35D - 0.175D, this.getY(),
+                        this.getZ() + this.getWorld().getRandom().nextDouble() * 0.35D - 0.175D, 0.0D, 0.1D, 0.0D);
         } else {
-            if (this.getOwner() instanceof PlayerEntity && ((PlayerEntity) this.getOwner()).hasStatusEffect(EffectInit.BLACKSTONED_HEART)) {
+            if (this.getOwner() instanceof PlayerEntity playerEntity && playerEntity.hasStatusEffect(EffectInit.BLACKSTONED_HEART)) {
                 this.getWorld().createExplosion(this, this.getX(), this.getEyeY(), this.getZ(), 1.5F, false, World.ExplosionSourceType.MOB);
             }
             this.getWorld().playSound(null, this.getBlockPos(), SoundInit.ROCK_IMPACT_EVENT, SoundCategory.BLOCKS, 0.7F, 1F);
@@ -83,11 +82,12 @@ public class ThrownRockEntity extends ThrownItemEntity {
     }
 
     // Causes crash if not overridden, maybe due to getStack client?
-    @Override
-    public ItemStack getStack() {
-        ItemStack itemStack = this.getItem();
-        return itemStack.isEmpty() ? new ItemStack(this.getDefaultItem()) : itemStack;
-    }
+    // @Override
+    // public ItemStack getStack() {
+    // // super.getStack()
+    // ItemStack itemStack = this.getStack();
+    // return itemStack.isEmpty() ? new ItemStack(this.getDefaultItem()) : itemStack;
+    // }
 
     @Override
     protected void onEntityHit(EntityHitResult entityHitResult) {
@@ -96,15 +96,14 @@ public class ThrownRockEntity extends ThrownItemEntity {
             Entity entity = entityHitResult.getEntity();
             Entity owner = this.getOwner();
             DamageSource damageSource = createDamageSource(this, owner == null ? this : owner);
-            if (owner instanceof LivingEntity) {
+            if (owner instanceof LivingEntity livingEntity) {
                 if (entity.damage(damageSource, 16F)) {
-                    if (entity instanceof LivingEntity) {
-                        this.applyDamageEffects((LivingEntity) entity, entity);
+                    if (entity instanceof LivingEntity livingEntity2) {
+                        livingEntity.onAttacking(livingEntity2);
                     }
                 }
             }
-            if (entity instanceof LivingEntity) {
-                LivingEntity livingEntity = (LivingEntity) entity;
+            if (entity instanceof LivingEntity livingEntity) {
                 int slownessAddition = 400;
 
                 if (this.getStack().getItem() == this.getDefaultItem()) {

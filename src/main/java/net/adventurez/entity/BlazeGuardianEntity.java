@@ -26,6 +26,7 @@ import net.minecraft.entity.damage.DamageSource;
 import net.minecraft.entity.data.DataTracker;
 import net.minecraft.entity.data.TrackedData;
 import net.minecraft.entity.data.TrackedDataHandlerRegistry;
+import net.minecraft.entity.data.DataTracker.Builder;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.projectile.SmallFireballEntity;
 import net.minecraft.nbt.NbtCompound;
@@ -40,7 +41,6 @@ import net.minecraft.util.math.Vec3d;
 import net.minecraft.util.math.random.Random;
 import net.minecraft.world.LocalDifficulty;
 import net.minecraft.world.ServerWorldAccess;
-import net.minecraft.world.SpawnHelper;
 import net.minecraft.world.World;
 import net.minecraft.world.World.ExplosionSourceType;
 import net.minecraft.entity.mob.BlazeEntity;
@@ -88,13 +88,13 @@ public class BlazeGuardianEntity extends HostileEntity {
     }
 
     @Override
-    public void initDataTracker() {
-        super.initDataTracker();
-        this.dataTracker.startTracking(GUARDIAN_FLAGS, (byte) 0);
-        this.dataTracker.startTracking(SHIELD_NORTH, true);
-        this.dataTracker.startTracking(SHIELD_EAST, true);
-        this.dataTracker.startTracking(SHIELD_SOUTH, true);
-        this.dataTracker.startTracking(SHIELD_WEST, true);
+    protected void initDataTracker(Builder builder) {
+        super.initDataTracker(builder);
+        builder.add(GUARDIAN_FLAGS, (byte) 0);
+        builder.add(SHIELD_NORTH, true);
+        builder.add(SHIELD_EAST, true);
+        builder.add(SHIELD_SOUTH, true);
+        builder.add(SHIELD_WEST, true);
     }
 
     @Override
@@ -259,14 +259,14 @@ public class BlazeGuardianEntity extends HostileEntity {
 
     @Nullable
     @Override
-    public EntityData initialize(ServerWorldAccess serverWorldAccess, LocalDifficulty difficulty, SpawnReason spawnReason, @Nullable EntityData entityData, @Nullable NbtCompound entityTag) {
+    public EntityData initialize(ServerWorldAccess serverWorldAccess, LocalDifficulty difficulty, SpawnReason spawnReason, @Nullable EntityData entityData) {
         if (spawnReason.equals(SpawnReason.NATURAL) || spawnReason.equals(SpawnReason.CHUNK_GENERATION)) {
             for (int i = 0; i < serverWorldAccess.getRandom().nextInt(3) + 2; i++) {
                 for (int u = 0; u < 10; u++) {
                     BlockPos pos = new BlockPos(this.getBlockPos().add(this.getWorld().getRandom().nextInt(5), this.getWorld().getRandom().nextInt(5), this.getWorld().getRandom().nextInt(5)));
-                    if (SpawnHelper.canSpawn(SpawnRestriction.Location.ON_GROUND, serverWorldAccess.toServerWorld(), pos, EntityType.BLAZE)) {
-                        BlazeEntity blazeEntity = (BlazeEntity) EntityType.BLAZE.create(serverWorldAccess.toServerWorld());
-                        blazeEntity.initialize(serverWorldAccess, this.getWorld().getLocalDifficulty(pos), SpawnReason.NATURAL, null, null);
+                    if (SpawnRestriction.canSpawn(EntityType.BLAZE, serverWorldAccess, SpawnReason.NATURAL, pos, serverWorldAccess.getRandom())) {
+                        BlazeEntity blazeEntity = EntityType.BLAZE.create(serverWorldAccess.toServerWorld());
+                        blazeEntity.initialize(serverWorldAccess, this.getWorld().getLocalDifficulty(pos), SpawnReason.NATURAL, null);
                         blazeEntity.refreshPositionAndAngles(pos, this.getWorld().getRandom().nextFloat() * 360.0F, 0.0F);
                         serverWorldAccess.spawnEntity(blazeEntity);
                         break;
@@ -285,7 +285,7 @@ public class BlazeGuardianEntity extends HostileEntity {
             this.dataTracker.set(SHIELD_SOUTH, true);
             this.dataTracker.set(SHIELD_WEST, true);
         }
-        return super.initialize(serverWorldAccess, difficulty, spawnReason, entityData, entityTag);
+        return super.initialize(serverWorldAccess, difficulty, spawnReason, entityData);
     }
 
     public static boolean canSpawn(EntityType<BlazeGuardianEntity> type, ServerWorldAccess world, SpawnReason spawnReason, BlockPos pos, Random random) {
@@ -373,8 +373,8 @@ public class BlazeGuardianEntity extends HostileEntity {
                                 this.guardian.getWorld().syncWorldEvent((PlayerEntity) null, 1018, this.guardian.getBlockPos(), 0);
                             }
                             for (int i = 0; i < 1; ++i) {
-                                SmallFireballEntity smallFireballEntity = new SmallFireballEntity(this.guardian.getWorld(), this.guardian, e + this.guardian.getRandom().nextGaussian() * (double) h,
-                                        f, g + this.guardian.getRandom().nextGaussian() * (double) h);
+                                Vec3d vec3d = new Vec3d(this.guardian.getRandom().nextTriangular(e, 2.297 * h), f, this.guardian.getRandom().nextTriangular(g, 2.297 * h));
+                                SmallFireballEntity smallFireballEntity = new SmallFireballEntity(this.guardian.getWorld(), this.guardian, vec3d.normalize());
                                 smallFireballEntity.updatePosition(smallFireballEntity.getX(), this.guardian.getBodyY(0.5D) + 0.5D, smallFireballEntity.getZ());
                                 this.guardian.getWorld().spawnEntity(smallFireballEntity);
                             }

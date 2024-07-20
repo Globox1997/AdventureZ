@@ -1,8 +1,7 @@
 package net.adventurez.init;
 
 import net.fabricmc.fabric.api.itemgroup.v1.ItemGroupEvents;
-import net.fabricmc.fabric.api.object.builder.v1.block.FabricBlockSettings;
-import net.fabricmc.fabric.api.object.builder.v1.block.entity.FabricBlockEntityTypeBuilder;
+import net.minecraft.block.AbstractBlock;
 import net.minecraft.block.Block;
 import net.minecraft.block.Blocks;
 import net.minecraft.block.entity.BlockEntityType;
@@ -15,9 +14,9 @@ import net.adventurez.block.*;
 import net.adventurez.block.entity.*;
 
 public class BlockInit {
-    public static final Block CHISELED_POLISHED_BLACKSTONE_HOLDER = register("chiseled_polished_blackstone_holder", new ChiseledPolishedBlackstoneHolder(FabricBlockSettings.copy(Blocks.STONE)));
-    public static final Block PIGLIN_FLAG = register("piglin_flag", new PiglinFlag(FabricBlockSettings.copy(Blocks.SPRUCE_PLANKS)));
-    public static final Block SHADOW_CHEST = register("shadow_chest", new ShadowChest(FabricBlockSettings.create().requiresTool().strength(100F, 1000.0F).luminance((state) -> {
+    public static final Block CHISELED_POLISHED_BLACKSTONE_HOLDER = register("chiseled_polished_blackstone_holder", new ChiseledPolishedBlackstoneHolder(AbstractBlock.Settings.copy(Blocks.STONE)));
+    public static final Block PIGLIN_FLAG = register("piglin_flag", new PiglinFlag(AbstractBlock.Settings.copy(Blocks.SPRUCE_PLANKS)));
+    public static final Block SHADOW_CHEST = register("shadow_chest", new ShadowChest(AbstractBlock.Settings.create().requiresTool().strength(100F, 1000.0F).luminance((state) -> {
         return 8;
     })));
 
@@ -27,7 +26,7 @@ public class BlockInit {
     public static BlockEntityType<ShadowChestEntity> SHADOW_CHEST_ENTITY;
 
     private static Block register(String id, Block block) {
-        return register(new Identifier("adventurez", id), block);
+        return register(Identifier.of("adventurez", id), block);
     }
 
     private static Block register(Identifier id, Block block) {
@@ -40,9 +39,9 @@ public class BlockInit {
     public static void init() {
         // Entities
         CHISELED_POLISHED_BLACKSTONE_HOLDER_ENTITY = Registry.register(Registries.BLOCK_ENTITY_TYPE, "adventurez:chiseled_polished_blackstone_holder_entity",
-                FabricBlockEntityTypeBuilder.create(ChiseledPolishedBlackstoneHolderEntity::new, CHISELED_POLISHED_BLACKSTONE_HOLDER).build(null));
-        PIGLIN_FLAG_ENTITY = Registry.register(Registries.BLOCK_ENTITY_TYPE, "adventurez:piglin_flag_entity", FabricBlockEntityTypeBuilder.create(PiglinFlagEntity::new, PIGLIN_FLAG).build(null));
-        DRAGON_EGG_ENTITY = Registry.register(Registries.BLOCK_ENTITY_TYPE, "adventurez:dragon_egg_entity", FabricBlockEntityTypeBuilder.create(DragonEggEntity::new, Blocks.DRAGON_EGG).build(null));
-        SHADOW_CHEST_ENTITY = Registry.register(Registries.BLOCK_ENTITY_TYPE, "adventurez:shadow_chest_entity", FabricBlockEntityTypeBuilder.create(ShadowChestEntity::new, SHADOW_CHEST).build(null));
+                BlockEntityType.Builder.create(ChiseledPolishedBlackstoneHolderEntity::new, CHISELED_POLISHED_BLACKSTONE_HOLDER).build(null));
+        PIGLIN_FLAG_ENTITY = Registry.register(Registries.BLOCK_ENTITY_TYPE, "adventurez:piglin_flag_entity", BlockEntityType.Builder.create(PiglinFlagEntity::new, PIGLIN_FLAG).build(null));
+        DRAGON_EGG_ENTITY = Registry.register(Registries.BLOCK_ENTITY_TYPE, "adventurez:dragon_egg_entity", BlockEntityType.Builder.create(DragonEggEntity::new, Blocks.DRAGON_EGG).build(null));
+        SHADOW_CHEST_ENTITY = Registry.register(Registries.BLOCK_ENTITY_TYPE, "adventurez:shadow_chest_entity", BlockEntityType.Builder.create(ShadowChestEntity::new, SHADOW_CHEST).build(null));
     }
 }

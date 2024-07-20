@@ -1,10 +1,9 @@
 package net.adventurez.block.entity;
 
 import java.util.List;
-import java.util.stream.Collectors;
+import java.util.Optional;
 
 import net.adventurez.init.BlockInit;
-import net.adventurez.init.ConfigInit;
 import net.adventurez.init.ItemInit;
 import net.adventurez.init.SoundInit;
 import net.adventurez.mixin.accessor.ChestLidAnimatorAccessor;
@@ -15,12 +14,11 @@ import net.minecraft.block.entity.LidOpenable;
 import net.minecraft.block.entity.LootableContainerBlockEntity;
 import net.minecraft.block.entity.ViewerCountManager;
 import net.minecraft.enchantment.Enchantment;
-import net.minecraft.enchantment.EnchantmentLevelEntry;
+import net.minecraft.enchantment.EnchantmentHelper;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.player.PlayerInventory;
 import net.minecraft.inventory.Inventories;
 import net.minecraft.inventory.Inventory;
-import net.minecraft.item.EnchantedBookItem;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.Items;
 import net.minecraft.loot.LootTables;
@@ -29,7 +27,12 @@ import net.minecraft.loot.context.LootContextParameters;
 import net.minecraft.loot.context.LootContextTypes;
 import net.minecraft.nbt.NbtCompound;
 import net.minecraft.particle.ParticleTypes;
+import net.minecraft.registry.DynamicRegistryManager;
 import net.minecraft.registry.Registries;
+import net.minecraft.registry.RegistryKeys;
+import net.minecraft.registry.RegistryWrapper.WrapperLookup;
+import net.minecraft.registry.entry.RegistryEntryList;
+import net.minecraft.registry.tag.EnchantmentTags;
 import net.minecraft.screen.GenericContainerScreenHandler;
 import net.minecraft.screen.ScreenHandler;
 import net.minecraft.server.world.ServerWorld;
@@ -98,21 +101,16 @@ public class ShadowChestEntity extends LootableContainerBlockEntity implements L
     }
 
     @Override
-    public void writeNbt(NbtCompound nbt) {
-        super.writeNbt(nbt);
-        if (!this.serializeLootTable(nbt)) {
-            Inventories.writeNbt(nbt, this.inventory);
-        }
+    protected void writeNbt(NbtCompound nbt, WrapperLookup registryLookup) {
+        super.writeNbt(nbt, registryLookup);
+        Inventories.writeNbt(nbt, this.inventory, registryLookup);
     }
 
     @Override
-    public void readNbt(NbtCompound nbt) {
-        super.readNbt(nbt);
+    protected void readNbt(NbtCompound nbt, WrapperLookup registryLookup) {
+        super.readNbt(nbt, registryLookup);
         this.inventory = DefaultedList.ofSize(this.size(), ItemStack.EMPTY);
-        if (!this.deserializeLootTable(nbt)) {
-            Inventories.readNbt(nbt, this.inventory);
-        }
-
+        Inventories.readNbt(nbt, this.inventory, registryLookup);
     }
 
     @Override
@@ -181,23 +179,23 @@ public class ShadowChestEntity extends LootableContainerBlockEntity implements L
     }
 
     @Override
-    protected DefaultedList<ItemStack> getInvStackList() {
+    protected DefaultedList<ItemStack> getHeldStacks() {
         return this.inventory;
     }
 
     @Override
-    protected void setInvStackList(DefaultedList<ItemStack> list) {
-        this.inventory = list;
+    protected void setHeldStacks(DefaultedList<ItemStack> inventory) {
+        this.inventory = inventory;
     }
 
     public void setRandomLoot() {
         if (!this.getWorld().isClient()) {
-            List<ItemStack> tableList = this.getWorld().getServer().getLootManager().getLootTable(LootTables.END_CITY_TREASURE_CHEST)
+            List<ItemStack> tableList = this.getWorld().getServer().getReloadableRegistries().getLootTable(LootTables.END_CITY_TREASURE_CHEST)
                     .generateLoot(new LootContextParameterSet.Builder((ServerWorld) this.getWorld()).add(LootContextParameters.ORIGIN, Vec3d.ofCenter(this.pos)).build(LootContextTypes.CHEST));
 
             for (int i = 0; i < 27; i++) {
                 if (i == 20 && this.getWorld().getRandom().nextFloat() < 0.2F && FabricLoader.getInstance().isModLoaded("medievalweapons")) {
-                    this.inventory.set(i, new ItemStack(Registries.ITEM.get(new Identifier("medievalweapons", "thalleous_sword"))));
+                    this.inventory.set(i, new ItemStack(Registries.ITEM.get(Identifier.of("medievalweapons", "thalleous_sword"))));
                     continue;
                 }
                 if (i == 13)
@@ -217,13 +215,9 @@ public class ShadowChestEntity extends LootableContainerBlockEntity implements L
                         break;
                     case 6:
                         ItemStack stack = new ItemStack(Items.ENCHANTED_BOOK);
-                        List<Enchantment> list = Registries.ENCHANTMENT.stream().filter(Enchantment::isAvailableForRandomSelection).collect(Collectors.toList());
-                        Enchantment enchantment = list.get(this.getWorld().getRandom().nextInt(list.size()));
-                        EnchantedBookItem.addEnchantment(stack,
-                                new EnchantmentLevelEntry(enchantment, ConfigInit.CONFIG.allow_special_enchant_loot ? enchantment.getMaxLevel() + 1 : enchantment.getMaxLevel()));
-                        NbtCompound nbt = stack.getNbt();
-                        nbt.putBoolean("void_drop", true);
-                        stack.setNbt(nbt);
+                        DynamicRegistryManager dynamicRegistryManager = this.getWorld().getRegistryManager();
+                        Optional<RegistryEntryList.Named<Enchantment>> optional = dynamicRegistryManager.get(RegistryKeys.ENCHANTMENT).getEntryList(EnchantmentTags.TREASURE);
+                        stack = EnchantmentHelper.enchant(this.getWorld().getRandom(), stack, 30, dynamicRegistryManager, optional);
                         this.inventory.set(i, stack);
                         break;
                     case 7:

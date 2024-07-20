@@ -15,8 +15,8 @@ import net.minecraft.util.Identifier;
 
 @Environment(EnvType.CLIENT)
 public class DragonRenderer extends MobEntityRenderer<DragonEntity, DragonModel<DragonEntity>> {
-    private static final Identifier TEXTURE = new Identifier("adventurez:textures/entity/dragon.png");
-    private static final Identifier RED_DRAGON_TEXTURE = new Identifier("adventurez:textures/entity/red_dragon.png");
+    private static final Identifier TEXTURE = Identifier.of("adventurez:textures/entity/dragon.png");
+    private static final Identifier RED_DRAGON_TEXTURE = Identifier.of("adventurez:textures/entity/red_dragon.png");
 
     public DragonRenderer(EntityRendererFactory.Context context) {
         super(context, new DragonModel<>(context.getPart(RenderInit.DRAGON_LAYER)), 0.4F);

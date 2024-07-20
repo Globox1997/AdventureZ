@@ -1,7 +1,6 @@
 package net.adventurez.entity;
 
 import net.minecraft.block.BlockState;
-import net.minecraft.entity.EntityGroup;
 import net.minecraft.entity.EntityType;
 import net.minecraft.entity.ai.goal.ActiveTargetGoal;
 import net.minecraft.entity.ai.goal.LookAtEntityGoal;
@@ -16,6 +15,7 @@ import net.minecraft.entity.damage.DamageSource;
 import net.minecraft.entity.data.DataTracker;
 import net.minecraft.entity.data.TrackedData;
 import net.minecraft.entity.data.TrackedDataHandlerRegistry;
+import net.minecraft.entity.data.DataTracker.Builder;
 import net.minecraft.entity.mob.HostileEntity;
 import net.minecraft.entity.mob.MobEntity;
 import net.minecraft.entity.player.PlayerEntity;
@@ -32,7 +32,6 @@ public class SkeletonVanguardEntity extends HostileEntity {
 
     public SkeletonVanguardEntity(EntityType<? extends HostileEntity> entityType, World world) {
         super(entityType, world);
-        this.setStepHeight(1.0f);
     }
 
     public static DefaultAttributeContainer.Builder createSkeletonVanguardAttributes() {
@@ -63,14 +62,9 @@ public class SkeletonVanguardEntity extends HostileEntity {
     }
 
     @Override
-    public void initDataTracker() {
-        super.initDataTracker();
-        dataTracker.startTracking(SHIELD_SWING, 0.0F);
-    }
-
-    @Override
-    public EntityGroup getGroup() {
-        return EntityGroup.UNDEAD;
+    protected void initDataTracker(Builder builder) {
+        super.initDataTracker(builder);
+        builder.add(SHIELD_SWING, 0.0F);
     }
 
     @Override
@@ -79,7 +73,7 @@ public class SkeletonVanguardEntity extends HostileEntity {
     }
 
     @Override
-    public boolean canUsePortals() {
+    public boolean canUsePortals(boolean allowVehicles) {
         return false;
     }
 

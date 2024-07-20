@@ -24,6 +24,7 @@ import net.minecraft.entity.damage.DamageSource;
 import net.minecraft.entity.data.DataTracker;
 import net.minecraft.entity.data.TrackedData;
 import net.minecraft.entity.data.TrackedDataHandlerRegistry;
+import net.minecraft.entity.data.DataTracker.Builder;
 import net.minecraft.entity.mob.AbstractPiglinEntity;
 import net.minecraft.entity.mob.HostileEntity;
 import net.minecraft.entity.mob.MobEntity;
@@ -49,7 +50,6 @@ public class PiglinBeastEntity extends HostileEntity {
 
     public PiglinBeastEntity(EntityType<? extends HostileEntity> entityType, World world) {
         super(entityType, world);
-        this.setStepHeight(1.0f);
         this.experiencePoints = 30;
         this.setPathfindingPenalty(PathNodeType.LAVA, 8.0F);
     }
@@ -114,10 +114,10 @@ public class PiglinBeastEntity extends HostileEntity {
     }
 
     @Override
-    public void initDataTracker() {
-        super.initDataTracker();
-        dataTracker.startTracking(ATTACK_TICK_VISUAL, 0F);
-        dataTracker.startTracking(LEAD_ARM, 0F);
+    protected void initDataTracker(Builder builder) {
+        super.initDataTracker(builder);
+        builder.add(ATTACK_TICK_VISUAL, 0F);
+        builder.add(LEAD_ARM, 0F);
     }
 
     @Override
@@ -139,7 +139,7 @@ public class PiglinBeastEntity extends HostileEntity {
     }
 
     @Override
-    public boolean canUsePortals() {
+    public boolean canUsePortals(boolean allowVehicles) {
         return false;
     }
 
@@ -164,20 +164,14 @@ public class PiglinBeastEntity extends HostileEntity {
     }
 
     private class AttackGoal extends MeleeAttackGoal {
+
         public AttackGoal() {
             super(PiglinBeastEntity.this, 1.0D, true);
         }
 
         @Override
-        public double getSquaredMaxAttackDistance(LivingEntity entity) {
-            float f = PiglinBeastEntity.this.getWidth();
-            return (double) (f * f * 1.3D + entity.getWidth());
-        }
-
-        @Override
-        protected void attack(LivingEntity target, double squaredDistance) {
-            double number = this.getSquaredMaxAttackDistance(target);
-            if (squaredDistance <= number && attackTick <= 0F) {
+        protected void attack(LivingEntity target) {
+            if (canAttack(target) && attackTick <= 0F) {
                 this.mob.getWorld().playSoundFromEntity(null, PiglinBeastEntity.this, SoundInit.PIGLINBEAST_CLUBSWING_EVENT, SoundCategory.HOSTILE, 1.0F, 1.0F);
                 this.resetCooldown();
                 this.mob.tryAttack(target);

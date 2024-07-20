@@ -22,7 +22,6 @@ import net.minecraft.util.math.ChunkPos;
 import net.minecraft.util.profiler.Profiler;
 import net.minecraft.world.Heightmap;
 import net.minecraft.world.MutableWorldProperties;
-import net.minecraft.world.SpawnHelper;
 import net.minecraft.world.World;
 import net.minecraft.world.chunk.WorldChunk;
 import net.minecraft.world.dimension.DimensionType;
@@ -44,11 +43,12 @@ public abstract class ServerWorldMixin extends World {
                 ChunkPos chunkPos = chunk.getPos();
                 int i = chunkPos.getStartX();
                 int j = chunkPos.getStartZ();
+
                 BlockPos blockPos = this.getTopPosition(Heightmap.Type.MOTION_BLOCKING, this.getRandomPosInChunk(i, 0, j, 15));
-                if (SpawnHelper.canSpawn(SpawnRestriction.Location.ON_GROUND, chunk.getWorld(), blockPos, EntityInit.SUMMONER)) {
-                    SummonerEntity summonerEntity = (SummonerEntity) EntityInit.SUMMONER.create(this);
+                if (SpawnRestriction.canSpawn(EntityInit.SUMMONER, (ServerWorld) (Object) this, SpawnReason.EVENT, blockPos, this.getRandom())) {
+                    SummonerEntity summonerEntity = EntityInit.SUMMONER.create(this);
                     summonerEntity.updatePosition((double) blockPos.getX(), (double) blockPos.getY(), (double) blockPos.getZ());
-                    summonerEntity.initialize((ServerWorld) (Object) this, this.getLocalDifficulty(blockPos), SpawnReason.EVENT, null, null);
+                    summonerEntity.initialize((ServerWorld) (Object) this, this.getLocalDifficulty(blockPos), SpawnReason.EVENT, null);
                     this.spawnEntity(summonerEntity);
                     summonerEntity.playSpawnEffects();
                 }

@@ -15,6 +15,7 @@ import net.minecraft.entity.EntityPose;
 import net.minecraft.entity.EntityType;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.data.DataTracker;
+import net.minecraft.entity.data.DataTracker.Builder;
 import net.minecraft.entity.data.TrackedData;
 import net.minecraft.entity.data.TrackedDataHandlerRegistry;
 import net.minecraft.entity.effect.StatusEffectInstance;
@@ -58,8 +59,8 @@ public class VoidCloudEntity extends Entity {
     }
 
     @Override
-    protected void initDataTracker() {
-        this.getDataTracker().startTracking(RADIUS, 0.5F);
+    protected void initDataTracker(Builder builder) {
+        builder.add(RADIUS, 0.5F);
     }
 
     @Override

@@ -16,7 +16,7 @@ import net.minecraft.util.Identifier;
 
 @Environment(EnvType.CLIENT)
 public class BlackstoneGolemBlueLavaFeatureRenderer extends FeatureRenderer<BlackstoneGolemEntity, BlackstoneGolemModel<BlackstoneGolemEntity>> {
-    private static final RenderLayer BLUE_LAVA_LAYER = ExtraRenderLayer.getGlowing(new Identifier("adventurez:textures/entity/feature/blue_lava_feature_golem.png"));
+    private static final RenderLayer BLUE_LAVA_LAYER = ExtraRenderLayer.getGlowing(Identifier.of("adventurez:textures/entity/feature/blue_lava_feature_golem.png"));
 
     public BlackstoneGolemBlueLavaFeatureRenderer(FeatureRendererContext<BlackstoneGolemEntity, BlackstoneGolemModel<BlackstoneGolemEntity>> featureRendererContext) {
         super(featureRendererContext);
@@ -26,7 +26,7 @@ public class BlackstoneGolemBlueLavaFeatureRenderer extends FeatureRenderer<Blac
     public void render(MatrixStack matrixStack, VertexConsumerProvider vertexConsumerProvider, int i, BlackstoneGolemEntity stoneGolemEntity, float f, float g, float h, float j, float k, float l) {
         if (stoneGolemEntity.getDataTracker().get(BlackstoneGolemEntity.HALF_LIFE_CHANGE)) {
             VertexConsumer vertexConsumer = vertexConsumerProvider.getBuffer(BLUE_LAVA_LAYER);
-            this.getContextModel().render(matrixStack, vertexConsumer, 15728640, OverlayTexture.DEFAULT_UV, 1.0F, 1.0F, 1.0F, 1.0F);
+            this.getContextModel().render(matrixStack, vertexConsumer, 15728640, OverlayTexture.DEFAULT_UV);
         }
     }
 

@@ -7,17 +7,20 @@ import net.minecraft.entity.effect.StatusEffect;
 import net.minecraft.entity.effect.StatusEffectCategory;
 import net.minecraft.registry.Registries;
 import net.minecraft.registry.Registry;
+import net.minecraft.registry.entry.RegistryEntry;
 import net.minecraft.util.Identifier;
 
 public class EffectInit {
-    public final static StatusEffect WITHERING = new WitheringEffect(StatusEffectCategory.HARMFUL, 657930);
-    public final static StatusEffect FAME = new FameEffect(StatusEffectCategory.BENEFICIAL, 9442354);
-    public final static StatusEffect BLACKSTONED_HEART = new BlackstonedHeartEffect(StatusEffectCategory.BENEFICIAL, 3481390);
+
+    public final static RegistryEntry<StatusEffect> WITHERING = register("adventurez:withering", new WitheringEffect(StatusEffectCategory.HARMFUL, 657930));
+    public final static RegistryEntry<StatusEffect> FAME = register("adventurez:fame", new FameEffect(StatusEffectCategory.BENEFICIAL, 9442354));
+    public final static RegistryEntry<StatusEffect> BLACKSTONED_HEART = register("adventurez:blackstoned_heart", new BlackstonedHeartEffect(StatusEffectCategory.BENEFICIAL, 3481390));
 
     public static void init() {
-        Registry.register(Registries.STATUS_EFFECT, new Identifier("adventurez", "withering"), WITHERING);
-        Registry.register(Registries.STATUS_EFFECT, new Identifier("adventurez", "fame"), FAME);
-        Registry.register(Registries.STATUS_EFFECT, new Identifier("adventurez", "blackstoned_heart"), BLACKSTONED_HEART);
+    }
+
+    private static RegistryEntry<StatusEffect> register(String id, StatusEffect statusEffect) {
+        return Registry.registerReference(Registries.STATUS_EFFECT, Identifier.of(id), statusEffect);
     }
 
 }

@@ -12,7 +12,7 @@ import net.minecraft.util.Identifier;
 
 @Environment(EnvType.CLIENT)
 public class BrownFungusRenderer extends MobEntityRenderer<BrownFungusEntity, BrownFungusModel<BrownFungusEntity>> {
-    private static final Identifier TEXTURE = new Identifier("adventurez:textures/entity/brown_fungus.png");
+    private static final Identifier TEXTURE = Identifier.of("adventurez:textures/entity/brown_fungus.png");
 
     public BrownFungusRenderer(EntityRendererFactory.Context context) {
         super(context, new BrownFungusModel<>(context.getPart(RenderInit.BROWN_FUNGUS_LAYER)), 0.4F);

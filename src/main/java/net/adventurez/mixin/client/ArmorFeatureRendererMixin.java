@@ -9,7 +9,7 @@ import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
 import net.adventurez.init.ItemInit;
-import net.adventurez.item.armor.GildedNetheriteArmor;
+import net.adventurez.item.GildedNetheriteArmor;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
 import net.minecraft.client.render.OverlayTexture;
@@ -38,15 +38,16 @@ public abstract class ArmorFeatureRendererMixin<T extends LivingEntity, M extend
 
     private boolean gildedNetheriteArmorOnFire = false;
 
-    private static final Identifier GILDED_NETHERITE_ARMOR = new Identifier("minecraft:textures/models/armor/gilded_netherite_layer_1_overlay.png");
-    private static final Identifier GILDED_NETHERITE_HELMET = new Identifier("minecraft:textures/models/armor/gilded_netherite_layer_1_overlay_helmet.png");
+    private static final Identifier GILDED_NETHERITE_ARMOR = Identifier.of("adventurez:textures/models/armor/gilded_netherite_layer_1_overlay.png");
+    private static final Identifier GILDED_NETHERITE_HELMET = Identifier.of("adventurez:textures/models/armor/gilded_netherite_layer_1_overlay_helmet.png");
 
     public ArmorFeatureRendererMixin(FeatureRendererContext<T, M> context) {
         super(context);
     }
 
     @Inject(method = "render", at = @At("HEAD"))
-    private void renderMixin(MatrixStack matrixStack, VertexConsumerProvider vertexConsumerProvider, int i, T livingEntity, float f, float g, float h, float j, float k, float l, CallbackInfo info) {
+    private void renderMixin(MatrixStack matrixStack, VertexConsumerProvider vertexConsumerProvider, int light, T livingEntity, float f, float g, float h, float j, float k, float l,
+            CallbackInfo info) {
         ItemStack golemChestplate = livingEntity.getEquippedStack(EquipmentSlot.CHEST);
         if (golemChestplate.isOf(ItemInit.GILDED_NETHERITE_CHESTPLATE) && GildedNetheriteArmor.isStoneGolemArmorActive(golemChestplate)) {
             gildedNetheriteArmorOnFire = true;
@@ -56,29 +57,29 @@ public abstract class ArmorFeatureRendererMixin<T extends LivingEntity, M extend
     }
 
     @Inject(method = "render", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/render/entity/feature/ArmorFeatureRenderer;renderArmor(Lnet/minecraft/client/util/math/MatrixStack;Lnet/minecraft/client/render/VertexConsumerProvider;Lnet/minecraft/entity/LivingEntity;Lnet/minecraft/entity/EquipmentSlot;ILnet/minecraft/client/render/entity/model/BipedEntityModel;)V", ordinal = 3))
-    private void renderGlowingArmorOneMixin(MatrixStack matrixStack, VertexConsumerProvider vertexConsumerProvider, int i, T livingEntity, float f, float g, float h, float j, float k, float l,
+    private void renderGlowingArmorOneMixin(MatrixStack matrixStack, VertexConsumerProvider vertexConsumerProvider, int light, T livingEntity, float f, float g, float h, float j, float k, float l,
             CallbackInfo info) {
         if (gildedNetheriteArmorOnFire) {
-            VertexConsumer vertexConsumer = ItemRenderer.getArmorGlintConsumer(vertexConsumerProvider, RenderLayer.getArmorCutoutNoCull(GILDED_NETHERITE_ARMOR), false, false);
-            outerModel.render(matrixStack, vertexConsumer, 220, OverlayTexture.DEFAULT_UV, 1.0F, 1.0F, 1.0F, 1.0F);
+            VertexConsumer vertexConsumer = ItemRenderer.getArmorGlintConsumer(vertexConsumerProvider, RenderLayer.getArmorCutoutNoCull(GILDED_NETHERITE_ARMOR), false);
+            outerModel.render(matrixStack, vertexConsumer, 220, OverlayTexture.DEFAULT_UV);
         }
     }
 
     @Inject(method = "render", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/render/entity/feature/ArmorFeatureRenderer;renderArmor(Lnet/minecraft/client/util/math/MatrixStack;Lnet/minecraft/client/render/VertexConsumerProvider;Lnet/minecraft/entity/LivingEntity;Lnet/minecraft/entity/EquipmentSlot;ILnet/minecraft/client/render/entity/model/BipedEntityModel;)V", ordinal = 2))
-    private void renderGlowingArmorTwoMixin(MatrixStack matrixStack, VertexConsumerProvider vertexConsumerProvider, int i, T livingEntity, float f, float g, float h, float j, float k, float l,
+    private void renderGlowingArmorTwoMixin(MatrixStack matrixStack, VertexConsumerProvider vertexConsumerProvider, int light, T livingEntity, float f, float g, float h, float j, float k, float l,
             CallbackInfo info) {
         if (gildedNetheriteArmorOnFire) {
-            VertexConsumer vertexConsumer = ItemRenderer.getArmorGlintConsumer(vertexConsumerProvider, RenderLayer.getArmorCutoutNoCull(GILDED_NETHERITE_ARMOR), false, false);
-            outerModel.render(matrixStack, vertexConsumer, 220, OverlayTexture.DEFAULT_UV, 1.0F, 1.0F, 1.0F, 1.0F);
+            VertexConsumer vertexConsumer = ItemRenderer.getArmorGlintConsumer(vertexConsumerProvider, RenderLayer.getArmorCutoutNoCull(GILDED_NETHERITE_ARMOR), false);
+            outerModel.render(matrixStack, vertexConsumer, 220, OverlayTexture.DEFAULT_UV);
         }
     }
 
     @Inject(method = "render", at = @At("TAIL"))
-    private void renderGlowingHelmetMixin(MatrixStack matrixStack, VertexConsumerProvider vertexConsumerProvider, int i, T livingEntity, float f, float g, float h, float j, float k, float l,
+    private void renderGlowingHelmetMixin(MatrixStack matrixStack, VertexConsumerProvider vertexConsumerProvider, int light, T livingEntity, float f, float g, float h, float j, float k, float l,
             CallbackInfo info) {
         if (gildedNetheriteArmorOnFire) {
-            VertexConsumer vertexConsumer = ItemRenderer.getArmorGlintConsumer(vertexConsumerProvider, RenderLayer.getArmorCutoutNoCull(GILDED_NETHERITE_HELMET), false, false);
-            outerModel.render(matrixStack, vertexConsumer, 220, OverlayTexture.DEFAULT_UV, 1.0F, 1.0F, 1.0F, 1.0F);
+            VertexConsumer vertexConsumer = ItemRenderer.getArmorGlintConsumer(vertexConsumerProvider, RenderLayer.getArmorCutoutNoCull(GILDED_NETHERITE_HELMET), false);
+            outerModel.render(matrixStack, vertexConsumer, 220, OverlayTexture.DEFAULT_UV);
         }
     }
 

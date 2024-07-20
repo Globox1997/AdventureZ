@@ -1,24 +1,28 @@
 package net.adventurez.init;
 
 import java.util.List;
+import java.util.function.UnaryOperator;
+
+import com.mojang.serialization.Codec;
 
 import net.adventurez.item.*;
-import net.adventurez.item.armor.*;
+import net.adventurez.item.component.GildedActivationComponent;
 import net.fabricmc.fabric.api.itemgroup.v1.FabricItemGroup;
 import net.fabricmc.fabric.api.itemgroup.v1.ItemGroupEvents;
+import net.fabricmc.fabric.api.registry.FabricBrewingRecipeRegistryBuilder;
+import net.minecraft.component.ComponentType;
+import net.minecraft.component.type.FoodComponent;
 import net.minecraft.entity.effect.StatusEffectInstance;
 import net.minecraft.entity.effect.StatusEffects;
 import net.minecraft.item.ArmorItem;
-import net.minecraft.item.ArmorMaterial;
 import net.minecraft.item.ArrowItem;
-import net.minecraft.item.FoodComponent;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemGroup;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.OnAStickItem;
 import net.minecraft.item.SmithingTemplateItem;
+import net.minecraft.network.codec.PacketCodecs;
 import net.minecraft.potion.Potions;
-import net.minecraft.recipe.BrewingRecipeRegistry;
 import net.minecraft.registry.Registries;
 import net.minecraft.registry.Registry;
 import net.minecraft.registry.RegistryKey;
@@ -30,7 +34,13 @@ import net.minecraft.util.Identifier;
 public class ItemInit {
 
     // Item Group
-    public static final RegistryKey<ItemGroup> ADVENTUREZ_ITEM_GROUP = RegistryKey.of(RegistryKeys.ITEM_GROUP, new Identifier("adventurez", "item_group"));
+    public static final RegistryKey<ItemGroup> ADVENTUREZ_ITEM_GROUP = RegistryKey.of(RegistryKeys.ITEM_GROUP, Identifier.of("adventurez", "item_group"));
+
+    // Components
+    public static final ComponentType<Boolean> VOID_DROP = registerComponent("void_drop", builder -> builder.codec(Codec.BOOL).packetCodec(PacketCodecs.BOOL));
+    public static final ComponentType<Boolean> LAVA_LIGHT = registerComponent("lava_light", builder -> builder.codec(Codec.BOOL).packetCodec(PacketCodecs.BOOL));
+    public static final ComponentType<GildedActivationComponent> GILDED_DATA = registerComponent("gilded_data",
+            builder -> builder.codec(GildedActivationComponent.CODEC).packetCodec(GildedActivationComponent.PACKET_CODEC));
 
     // Items
     public static final Item GILDED_BLACKSTONE_SHARD = register("gilded_blackstone_shard", new GildedBlackstoneShard(new Item.Settings().fireproof(), () -> EntityInit.GILDED_BLACKSTONE_SHARD));
@@ -55,36 +65,39 @@ public class ItemInit {
             new SmithingTemplateItem(Text.translatable("item.minecraft.smithing_template.gilded_upgrade.applies_to").formatted(Formatting.BLUE),
                     Text.translatable("item.minecraft.smithing_template.gilded_upgrade.ingredients").formatted(Formatting.BLUE),
                     Text.translatable("item.adventurez.gilded_upgrade").formatted(Formatting.GRAY), Text.translatable("item.smithing_template.gilded_upgrade.base_slot_description"),
-                    Text.translatable("item.adventurez.smithing_template.gilded_upgrade.additions_slot_description"), List.of(new Identifier("item/empty_armor_slot_helmet"),
-                            new Identifier("item/empty_armor_slot_chestplate"), new Identifier("item/empty_armor_slot_leggings"), new Identifier("item/empty_armor_slot_boots")),
-                    List.of(new Identifier("adventurez:item/empty_slot_gilded_netherite_fragment"))));
+                    Text.translatable("item.adventurez.smithing_template.gilded_upgrade.additions_slot_description"), List.of(Identifier.of("item/empty_armor_slot_helmet"),
+                            Identifier.of("item/empty_armor_slot_chestplate"), Identifier.of("item/empty_armor_slot_leggings"), Identifier.of("item/empty_armor_slot_boots")),
+                    List.of(Identifier.of("adventurez:item/empty_slot_gilded_netherite_fragment"))));
 
     // Food
-    public static final Item MAMMOTH_MEAT = register("mammoth_meat", new Item(new Item.Settings().food(new FoodComponent.Builder().hunger(3).saturationModifier(0.3F).meat().build())));
-    public static final Item COOKED_MAMMOTH_MEAT = register("cooked_mammoth_meat", new Item(new Item.Settings().food(new FoodComponent.Builder().hunger(8).saturationModifier(0.8F).meat().build())));
-    public static final Item IGUANA_MEAT = register("iguana_meat", new Item(
-            new Item.Settings().food(new FoodComponent.Builder().hunger(2).saturationModifier(0.3F).statusEffect(new StatusEffectInstance(StatusEffects.HUNGER, 600, 0), 0.3F).meat().build())));
-    public static final Item COOKED_IGUANA_MEAT = register("cooked_iguana_meat", new Item(new Item.Settings().food(new FoodComponent.Builder().hunger(6).saturationModifier(0.6F).meat().build())));
+    public static final Item MAMMOTH_MEAT = register("mammoth_meat", new Item(new Item.Settings().food(new FoodComponent.Builder().nutrition(3).saturationModifier(0.3F).build())));
+    public static final Item COOKED_MAMMOTH_MEAT = register("cooked_mammoth_meat", new Item(new Item.Settings().food(new FoodComponent.Builder().nutrition(8).saturationModifier(0.8F).build())));
+    public static final Item IGUANA_MEAT = register("iguana_meat",
+            new Item(new Item.Settings().food(new FoodComponent.Builder().nutrition(2).saturationModifier(0.3F).statusEffect(new StatusEffectInstance(StatusEffects.HUNGER, 600, 0), 0.3F).build())));
+    public static final Item COOKED_IGUANA_MEAT = register("cooked_iguana_meat", new Item(new Item.Settings().food(new FoodComponent.Builder().nutrition(6).saturationModifier(0.6F).build())));
     public static final Item ENDER_WHALE_MEAT = register("ender_whale_meat", new Item(
-            new Item.Settings().food(new FoodComponent.Builder().hunger(3).saturationModifier(0.3F).statusEffect(new StatusEffectInstance(StatusEffects.BLINDNESS, 100, 0), 0.5F).meat().build())));
+            new Item.Settings().food(new FoodComponent.Builder().nutrition(3).saturationModifier(0.3F).statusEffect(new StatusEffectInstance(StatusEffects.BLINDNESS, 100, 0), 0.5F).build())));
     public static final Item COOKED_ENDER_WHALE_MEAT = register("cooked_ender_whale_meat", new Item(
-            new Item.Settings().food(new FoodComponent.Builder().hunger(8).saturationModifier(0.9F).statusEffect(new StatusEffectInstance(StatusEffects.SLOW_FALLING, 600, 0), 1.0F).meat().build())));
-    public static final Item RHINO_MEAT = register("rhino_meat", new Item(new Item.Settings().food(new FoodComponent.Builder().hunger(3).saturationModifier(0.3F).meat().build())));
-    public static final Item COOKED_RHINO_MEAT = register("cooked_rhino_meat", new Item(new Item.Settings().food(new FoodComponent.Builder().hunger(8).saturationModifier(0.8F).meat().build())));
-    public static final Item RAW_VENISON = register("raw_venison", new Item(new Item.Settings().food(new FoodComponent.Builder().hunger(3).saturationModifier(0.3F).meat().build())));
-    public static final Item COOKED_VENISON = register("cooked_venison", new Item(new Item.Settings().food(new FoodComponent.Builder().hunger(6).saturationModifier(0.8F).meat().build())));
-    public static final Item WARTHOG_MEAT = register("warthog_meat", new Item(new Item.Settings().food(new FoodComponent.Builder().hunger(3).saturationModifier(0.3F).meat().build())));
-    public static final Item COOKED_WARTHOG_MEAT = register("cooked_warthog_meat", new Item(
-            new Item.Settings().food(new FoodComponent.Builder().hunger(6).saturationModifier(0.8F).statusEffect(new StatusEffectInstance(StatusEffects.SPEED, 600, 0), 1.0F).meat().build())));
+            new Item.Settings().food(new FoodComponent.Builder().nutrition(8).saturationModifier(0.9F).statusEffect(new StatusEffectInstance(StatusEffects.SLOW_FALLING, 600, 0), 1.0F).build())));
+    public static final Item RHINO_MEAT = register("rhino_meat", new Item(new Item.Settings().food(new FoodComponent.Builder().nutrition(3).saturationModifier(0.3F).build())));
+    public static final Item COOKED_RHINO_MEAT = register("cooked_rhino_meat", new Item(new Item.Settings().food(new FoodComponent.Builder().nutrition(8).saturationModifier(0.8F).build())));
+    public static final Item RAW_VENISON = register("raw_venison", new Item(new Item.Settings().food(new FoodComponent.Builder().nutrition(3).saturationModifier(0.3F).build())));
+    public static final Item COOKED_VENISON = register("cooked_venison", new Item(new Item.Settings().food(new FoodComponent.Builder().nutrition(6).saturationModifier(0.8F).build())));
+    public static final Item WARTHOG_MEAT = register("warthog_meat", new Item(new Item.Settings().food(new FoodComponent.Builder().nutrition(3).saturationModifier(0.3F).build())));
+    public static final Item COOKED_WARTHOG_MEAT = register("cooked_warthog_meat",
+            new Item(new Item.Settings().food(new FoodComponent.Builder().nutrition(6).saturationModifier(0.8F).statusEffect(new StatusEffectInstance(StatusEffects.SPEED, 600, 0), 1.0F).build())));
     // Armor
-    public static final ArmorMaterial GILDED_NETHERITE_ARMOR_MATERIAL = new GildedNetheriteArmorMaterial();
-    public static final Item GILDED_NETHERITE_HELMET = register("gilded_netherite_helmet", new GildedNetheriteArmor(GILDED_NETHERITE_ARMOR_MATERIAL, ArmorItem.Type.HELMET));
-    public static final Item GILDED_NETHERITE_CHESTPLATE = register("gilded_netherite_chestplate", new GildedNetheriteArmor(GILDED_NETHERITE_ARMOR_MATERIAL, ArmorItem.Type.CHESTPLATE));
-    public static final Item GILDED_NETHERITE_LEGGINGS = register("gilded_netherite_leggings", new GildedNetheriteArmor(GILDED_NETHERITE_ARMOR_MATERIAL, ArmorItem.Type.LEGGINGS));
-    public static final Item GILDED_NETHERITE_BOOTS = register("gilded_netherite_boots", new GildedNetheriteArmor(GILDED_NETHERITE_ARMOR_MATERIAL, ArmorItem.Type.BOOTS));
+    public static final Item GILDED_NETHERITE_HELMET = register("gilded_netherite_helmet",
+            new GildedNetheriteArmor(AdventureArmorMaterials.GILDED_NETHERITE, ArmorItem.Type.HELMET, new Item.Settings().maxDamage(ArmorItem.Type.HELMET.getMaxDamage(37)).fireproof()));
+    public static final Item GILDED_NETHERITE_CHESTPLATE = register("gilded_netherite_chestplate",
+            new GildedNetheriteArmor(AdventureArmorMaterials.GILDED_NETHERITE, ArmorItem.Type.CHESTPLATE, new Item.Settings().maxDamage(ArmorItem.Type.CHESTPLATE.getMaxDamage(37)).fireproof()));
+    public static final Item GILDED_NETHERITE_LEGGINGS = register("gilded_netherite_leggings",
+            new GildedNetheriteArmor(AdventureArmorMaterials.GILDED_NETHERITE, ArmorItem.Type.LEGGINGS, new Item.Settings().maxDamage(ArmorItem.Type.LEGGINGS.getMaxDamage(37)).fireproof()));
+    public static final Item GILDED_NETHERITE_BOOTS = register("gilded_netherite_boots",
+            new GildedNetheriteArmor(AdventureArmorMaterials.GILDED_NETHERITE, ArmorItem.Type.BOOTS, new Item.Settings().maxDamage(ArmorItem.Type.BOOTS.getMaxDamage(37)).fireproof()));
 
     private static Item register(String id, Item item) {
-        return register(new Identifier("adventurez", id), item);
+        return register(Identifier.of("adventurez", id), item);
     }
 
     private static Item register(Identifier id, Item item) {
@@ -92,11 +105,18 @@ public class ItemInit {
         return Registry.register(Registries.ITEM, id, item);
     }
 
+    private static <T> ComponentType<T> registerComponent(String id, UnaryOperator<ComponentType.Builder<T>> builderOperator) {
+        return Registry.register(Registries.DATA_COMPONENT_TYPE, id, builderOperator.apply(ComponentType.builder()).build());
+    }
+
     public static void init() {
         Registry.register(Registries.ITEM_GROUP, ADVENTUREZ_ITEM_GROUP,
                 FabricItemGroup.builder().icon(() -> new ItemStack(ItemInit.HANDBOOK)).displayName(Text.translatable("item.adventurez.item_group")).build());
-        BrewingRecipeRegistry.registerPotionRecipe(Potions.AWKWARD, ItemInit.ORC_SKIN, Potions.TURTLE_MASTER);
-        BrewingRecipeRegistry.registerPotionRecipe(Potions.AWKWARD, ItemInit.ENDER_WHALE_SKIN, Potions.SLOW_FALLING);
+
+        FabricBrewingRecipeRegistryBuilder.BUILD.register((builder) -> {
+            builder.registerPotionRecipe(Potions.AWKWARD, ItemInit.ORC_SKIN, Potions.TURTLE_MASTER);
+            builder.registerPotionRecipe(Potions.AWKWARD, ItemInit.ENDER_WHALE_SKIN, Potions.SLOW_FALLING);
+        });
     }
 
 }

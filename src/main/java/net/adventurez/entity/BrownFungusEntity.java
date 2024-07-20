@@ -8,8 +8,6 @@ import net.adventurez.init.SoundInit;
 import net.minecraft.block.BlockState;
 import net.minecraft.block.Blocks;
 import net.minecraft.entity.Entity;
-import net.minecraft.entity.EntityDimensions;
-import net.minecraft.entity.EntityPose;
 import net.minecraft.entity.EntityType;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.SpawnReason;
@@ -25,8 +23,8 @@ import net.minecraft.entity.ai.goal.WanderAroundFarGoal;
 import net.minecraft.entity.attribute.DefaultAttributeContainer;
 import net.minecraft.entity.attribute.EntityAttributes;
 import net.minecraft.entity.damage.DamageSource;
-import net.minecraft.entity.effect.StatusEffect;
 import net.minecraft.entity.effect.StatusEffectInstance;
+import net.minecraft.entity.effect.StatusEffects;
 import net.minecraft.entity.mob.Angerable;
 import net.minecraft.entity.mob.MobEntity;
 import net.minecraft.entity.mob.PathAwareEntity;
@@ -52,7 +50,6 @@ public class BrownFungusEntity extends PathAwareEntity implements Angerable {
 
     public BrownFungusEntity(EntityType<? extends PathAwareEntity> entityType, World world) {
         super(entityType, world);
-        this.setStepHeight(1.0f);
         this.experiencePoints = 2;
     }
 
@@ -160,11 +157,6 @@ public class BrownFungusEntity extends PathAwareEntity implements Angerable {
     }
 
     @Override
-    public float getActiveEyeHeight(EntityPose pose, EntityDimensions dimensions) {
-        return dimensions.height * 0.6F;
-    }
-
-    @Override
     public int getLimitPerChunk() {
         return 4;
     }
@@ -175,7 +167,7 @@ public class BrownFungusEntity extends PathAwareEntity implements Angerable {
             return false;
         } else {
             if (!this.getWorld().isClient() && target instanceof LivingEntity && this.getWorld().getRandom().nextInt(160) > 100) {
-                ((LivingEntity) target).addStatusEffect(new StatusEffectInstance(StatusEffect.byRawId(19), 80 + this.getWorld().getRandom().nextInt(100), 0, false, false), this);
+                ((LivingEntity) target).addStatusEffect(new StatusEffectInstance(StatusEffects.POISON, 80 + this.getWorld().getRandom().nextInt(100), 0, false, false), this);
             }
             return true;
         }

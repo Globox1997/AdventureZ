@@ -22,51 +22,50 @@ import net.minecraft.client.render.entity.EmptyEntityRenderer;
 import net.minecraft.client.render.entity.model.EntityModelLayer;
 import net.minecraft.entity.EquipmentSlot;
 import net.minecraft.item.ItemStack;
-import net.minecraft.nbt.NbtCompound;
 import net.minecraft.util.Identifier;
 
 @Environment(EnvType.CLIENT)
 public class RenderInit {
 
-    private static final Identifier WITHERED_TEXTURE = new Identifier("adventurez:textures/misc/withered.png");
-    private static final Identifier ACTIVE_ARMOR_TEXTURE = new Identifier("adventurez:textures/misc/active_armor.png");
+    private static final Identifier WITHERED_TEXTURE = Identifier.of("adventurez:textures/misc/withered.png");
+    private static final Identifier ACTIVE_ARMOR_TEXTURE = Identifier.of("adventurez:textures/misc/active_armor.png");
 
     public static final boolean isCanvasLoaded = FabricLoader.getInstance().isModLoaded("canvas");
     public static final boolean isIrisLoaded = FabricLoader.getInstance().isModLoaded("iris");
     public static final boolean isSodiumLoaded = FabricLoader.getInstance().isModLoaded("sodium");
 
-    public static final EntityModelLayer BLACKSTONE_GOLEM_LAYER = new EntityModelLayer(new Identifier("adventurez:blackstone_golem_render_layer"), "blackstone_golem_render_layer");
-    public static final EntityModelLayer THROWN_ROCK_LAYER = new EntityModelLayer(new Identifier("adventurez:thrown_rock_render_layer"), "thrown_rock_render_layer");
-    public static final EntityModelLayer GILDED_STONE_LAYER = new EntityModelLayer(new Identifier("adventurez:gilded_stone_render_layer"), "gilded_stone_render_layer");
-    public static final EntityModelLayer MINI_BLACKSTONE_GOLEM_LAYER = new EntityModelLayer(new Identifier("adventurez:mini_blackstone_golem_render_layer"), "mini_blackstone_golem_render_layer");
-    public static final EntityModelLayer PIGLIN_BEAST_LAYER = new EntityModelLayer(new Identifier("adventurez:piglin_beast_render_layer"), "piglin_beast_render_layer");
-    public static final EntityModelLayer NIGHTMARE_LAYER = new EntityModelLayer(new Identifier("adventurez:nightmare_render_layer"), "nightmare_render_layer");
-    public static final EntityModelLayer SOUL_REAPER_LAYER = new EntityModelLayer(new Identifier("adventurez:soul_reaper_render_layer"), "soul_reaper_render_layer");
-    public static final EntityModelLayer NECROMANCER_LAYER = new EntityModelLayer(new Identifier("adventurez:necromancer_render_layer"), "necromancer_render_layer");
-    public static final EntityModelLayer WITHER_PUPPET_LAYER = new EntityModelLayer(new Identifier("adventurez:wither_puppet_render_layer"), "wither_puppet_render_layer");
-    public static final EntityModelLayer SKELETON_VANGUARD_LAYER = new EntityModelLayer(new Identifier("adventurez:skeleton_vanguard_render_layer"), "skeleton_vanguard_render_layer");
-    public static final EntityModelLayer SUMMONER_LAYER = new EntityModelLayer(new Identifier("adventurez:summoner_render_layer"), "summoner_render_layer");
-    public static final EntityModelLayer BLAZE_GUARDIAN_LAYER = new EntityModelLayer(new Identifier("adventurez:blaze_guardian_render_layer"), "blaze_guardian_render_layer");
-    public static final EntityModelLayer THE_EYE_LAYER = new EntityModelLayer(new Identifier("adventurez:the_eye_render_layer"), "the_eye_render_layer");
-    public static final EntityModelLayer VOID_SHADOW_LAYER = new EntityModelLayer(new Identifier("adventurez:void_shadow_render_layer"), "void_shadow_render_layer");
-    public static final EntityModelLayer TINY_EYE_LAYER = new EntityModelLayer(new Identifier("adventurez:tiny_eye_render_layer"), "tiny_eye_render_layer");
-    public static final EntityModelLayer RED_FUNGUS_LAYER = new EntityModelLayer(new Identifier("adventurez:red_fungus_render_layer"), "red_fungus_render_layer");
-    public static final EntityModelLayer BROWN_FUNGUS_LAYER = new EntityModelLayer(new Identifier("adventurez:brown_fungus_render_layer"), "brown_fungus_render_layer");
-    public static final EntityModelLayer ORC_LAYER = new EntityModelLayer(new Identifier("adventurez:orc_render_layer"), "orc_render_layer");
-    public static final EntityModelLayer DRAGON_LAYER = new EntityModelLayer(new Identifier("adventurez:dragon_render_layer"), "dragon_render_layer");
-    public static final EntityModelLayer MAMMOTH_LAYER = new EntityModelLayer(new Identifier("adventurez:mammoth_render_layer"), "mammoth_render_layer");
-    public static final EntityModelLayer VOID_FRAGMENT_LAYER = new EntityModelLayer(new Identifier("adventurez:void_fragment_render_layer"), "void_fragment_render_layer");
-    public static final EntityModelLayer VOID_SHADE_LAYER = new EntityModelLayer(new Identifier("adventurez:void_shade_render_layer"), "void_shade_render_layer");
-    public static final EntityModelLayer VOID_BULLET_LAYER = new EntityModelLayer(new Identifier("adventurez:void_bullet_render_layer"), "void_bullet_render_layer");
-    public static final EntityModelLayer PIGLIN_FLAG_LAYER = new EntityModelLayer(new Identifier("adventurez:piglin_flag_render_layer"), "piglin_flag_render_layer");
-    public static final EntityModelLayer ENDER_WHALE_LAYER = new EntityModelLayer(new Identifier("adventurez:ender_whale_render_layer"), "ender_whale_render_layer");
-    public static final EntityModelLayer IGUANA_LAYER = new EntityModelLayer(new Identifier("adventurez:iguana_render_layer"), "iguana_render_layer");
-    public static final EntityModelLayer AMETHYST_GOLEM_LAYER = new EntityModelLayer(new Identifier("adventurez:amethyst_golem_render_layer"), "amethyst_golem_render_layer");
-    public static final EntityModelLayer AMETHYST_SHARD_LAYER = new EntityModelLayer(new Identifier("adventurez:amethyst_shard_render_layer"), "amethyst_shard_render_layer");
-    public static final EntityModelLayer DESERT_RHINO_LAYER = new EntityModelLayer(new Identifier("adventurez:desert_rhino_render_layer"), "desert_rhino_render_layer");
-    public static final EntityModelLayer SHAMAN_LAYER = new EntityModelLayer(new Identifier("adventurez:shaman_render_layer"), "shaman_render_layer");
-    public static final EntityModelLayer DEER_LAYER = new EntityModelLayer(new Identifier("adventurez:deer_render_layer"), "deer_render_layer");
-    public static final EntityModelLayer ENDERWARTHOG_LAYER = new EntityModelLayer(new Identifier("adventurez:enderwarthog_render_layer"), "enderwarthog_render_layer");
+    public static final EntityModelLayer BLACKSTONE_GOLEM_LAYER = new EntityModelLayer(Identifier.of("adventurez:blackstone_golem_render_layer"), "blackstone_golem_render_layer");
+    public static final EntityModelLayer THROWN_ROCK_LAYER = new EntityModelLayer(Identifier.of("adventurez:thrown_rock_render_layer"), "thrown_rock_render_layer");
+    public static final EntityModelLayer GILDED_STONE_LAYER = new EntityModelLayer(Identifier.of("adventurez:gilded_stone_render_layer"), "gilded_stone_render_layer");
+    public static final EntityModelLayer MINI_BLACKSTONE_GOLEM_LAYER = new EntityModelLayer(Identifier.of("adventurez:mini_blackstone_golem_render_layer"), "mini_blackstone_golem_render_layer");
+    public static final EntityModelLayer PIGLIN_BEAST_LAYER = new EntityModelLayer(Identifier.of("adventurez:piglin_beast_render_layer"), "piglin_beast_render_layer");
+    public static final EntityModelLayer NIGHTMARE_LAYER = new EntityModelLayer(Identifier.of("adventurez:nightmare_render_layer"), "nightmare_render_layer");
+    public static final EntityModelLayer SOUL_REAPER_LAYER = new EntityModelLayer(Identifier.of("adventurez:soul_reaper_render_layer"), "soul_reaper_render_layer");
+    public static final EntityModelLayer NECROMANCER_LAYER = new EntityModelLayer(Identifier.of("adventurez:necromancer_render_layer"), "necromancer_render_layer");
+    public static final EntityModelLayer WITHER_PUPPET_LAYER = new EntityModelLayer(Identifier.of("adventurez:wither_puppet_render_layer"), "wither_puppet_render_layer");
+    public static final EntityModelLayer SKELETON_VANGUARD_LAYER = new EntityModelLayer(Identifier.of("adventurez:skeleton_vanguard_render_layer"), "skeleton_vanguard_render_layer");
+    public static final EntityModelLayer SUMMONER_LAYER = new EntityModelLayer(Identifier.of("adventurez:summoner_render_layer"), "summoner_render_layer");
+    public static final EntityModelLayer BLAZE_GUARDIAN_LAYER = new EntityModelLayer(Identifier.of("adventurez:blaze_guardian_render_layer"), "blaze_guardian_render_layer");
+    public static final EntityModelLayer THE_EYE_LAYER = new EntityModelLayer(Identifier.of("adventurez:the_eye_render_layer"), "the_eye_render_layer");
+    public static final EntityModelLayer VOID_SHADOW_LAYER = new EntityModelLayer(Identifier.of("adventurez:void_shadow_render_layer"), "void_shadow_render_layer");
+    public static final EntityModelLayer TINY_EYE_LAYER = new EntityModelLayer(Identifier.of("adventurez:tiny_eye_render_layer"), "tiny_eye_render_layer");
+    public static final EntityModelLayer RED_FUNGUS_LAYER = new EntityModelLayer(Identifier.of("adventurez:red_fungus_render_layer"), "red_fungus_render_layer");
+    public static final EntityModelLayer BROWN_FUNGUS_LAYER = new EntityModelLayer(Identifier.of("adventurez:brown_fungus_render_layer"), "brown_fungus_render_layer");
+    public static final EntityModelLayer ORC_LAYER = new EntityModelLayer(Identifier.of("adventurez:orc_render_layer"), "orc_render_layer");
+    public static final EntityModelLayer DRAGON_LAYER = new EntityModelLayer(Identifier.of("adventurez:dragon_render_layer"), "dragon_render_layer");
+    public static final EntityModelLayer MAMMOTH_LAYER = new EntityModelLayer(Identifier.of("adventurez:mammoth_render_layer"), "mammoth_render_layer");
+    public static final EntityModelLayer VOID_FRAGMENT_LAYER = new EntityModelLayer(Identifier.of("adventurez:void_fragment_render_layer"), "void_fragment_render_layer");
+    public static final EntityModelLayer VOID_SHADE_LAYER = new EntityModelLayer(Identifier.of("adventurez:void_shade_render_layer"), "void_shade_render_layer");
+    public static final EntityModelLayer VOID_BULLET_LAYER = new EntityModelLayer(Identifier.of("adventurez:void_bullet_render_layer"), "void_bullet_render_layer");
+    public static final EntityModelLayer PIGLIN_FLAG_LAYER = new EntityModelLayer(Identifier.of("adventurez:piglin_flag_render_layer"), "piglin_flag_render_layer");
+    public static final EntityModelLayer ENDER_WHALE_LAYER = new EntityModelLayer(Identifier.of("adventurez:ender_whale_render_layer"), "ender_whale_render_layer");
+    public static final EntityModelLayer IGUANA_LAYER = new EntityModelLayer(Identifier.of("adventurez:iguana_render_layer"), "iguana_render_layer");
+    public static final EntityModelLayer AMETHYST_GOLEM_LAYER = new EntityModelLayer(Identifier.of("adventurez:amethyst_golem_render_layer"), "amethyst_golem_render_layer");
+    public static final EntityModelLayer AMETHYST_SHARD_LAYER = new EntityModelLayer(Identifier.of("adventurez:amethyst_shard_render_layer"), "amethyst_shard_render_layer");
+    public static final EntityModelLayer DESERT_RHINO_LAYER = new EntityModelLayer(Identifier.of("adventurez:desert_rhino_render_layer"), "desert_rhino_render_layer");
+    public static final EntityModelLayer SHAMAN_LAYER = new EntityModelLayer(Identifier.of("adventurez:shaman_render_layer"), "shaman_render_layer");
+    public static final EntityModelLayer DEER_LAYER = new EntityModelLayer(Identifier.of("adventurez:deer_render_layer"), "deer_render_layer");
+    public static final EntityModelLayer ENDERWARTHOG_LAYER = new EntityModelLayer(Identifier.of("adventurez:enderwarthog_render_layer"), "enderwarthog_render_layer");
 
     public static void init() {
         // Entity Renderer
@@ -155,32 +154,29 @@ public class RenderInit {
             if (!client.options.hudHidden) {
                 ItemStack itemStack = client.player.getEquippedStack(EquipmentSlot.CHEST);
                 if (!itemStack.isEmpty() && itemStack.isOf(ItemInit.GILDED_NETHERITE_CHESTPLATE)) {
-                    NbtCompound tag = itemStack.getNbt();
-                    if (tag != null && tag.contains("armor_time") && tag.contains("activating_armor")) {
-                        if (tag.getBoolean("activating_armor")) {
-                            int scaledWidth = client.getWindow().getScaledWidth();
-                            int scaledHeight = client.getWindow().getScaledHeight();
-                            int worldTime = (int) client.player.getWorld().getTime();
-                            int savedTagInt = tag.getInt("armor_time");
-                            float effectDuration = ConfigInit.CONFIG.gilded_netherite_armor_effect_duration;
-                            drawContext.getMatrices().push();
-                            if (savedTagInt + effectDuration > worldTime) {
-                                int multiplier = 2;
-                                if (savedTagInt + Math.max(effectDuration - 100, 0) < worldTime) {
-                                    multiplier = 4;
-                                }
-
-                                float pulsating = (float) Math.sin((float) ((worldTime * multiplier) - (savedTagInt - 1)) / 6.2831855F);
-                                drawContext.setShaderColor(1.0F, 1.0F, 1.0F, pulsating + 0.5F);
-                                drawContext.drawTexture(ACTIVE_ARMOR_TEXTURE, (scaledWidth / 2) - 5, scaledHeight - 49, 10, 10, 0, 0, 16, 16, 16, 16);
-                            } else {
-                                float fading = (1F - (((float) (worldTime - (savedTagInt + (effectDuration - 1f))) / effectDuration) - 0.4F));
-                                drawContext.setShaderColor(1.0F, 0.65F, 0.65F, fading);
-                                drawContext.drawTexture(ACTIVE_ARMOR_TEXTURE, (scaledWidth / 2) - 5, scaledHeight - 49, 10, 10, 0, 0, 16, 16, 16, 16);
+                    if (itemStack.get(ItemInit.GILDED_DATA) != null && itemStack.get(ItemInit.GILDED_DATA).activated()) {
+                        int scaledWidth = client.getWindow().getScaledWidth();
+                        int scaledHeight = client.getWindow().getScaledHeight();
+                        int worldTime = (int) client.player.getWorld().getTime();
+                        int savedTagInt = itemStack.get(ItemInit.GILDED_DATA).time();
+                        float effectDuration = ConfigInit.CONFIG.gilded_netherite_armor_effect_duration;
+                        drawContext.getMatrices().push();
+                        if (savedTagInt + effectDuration > worldTime) {
+                            int multiplier = 2;
+                            if (savedTagInt + Math.max(effectDuration - 100, 0) < worldTime) {
+                                multiplier = 4;
                             }
-                            drawContext.getMatrices().pop();
-                            drawContext.setShaderColor(1.0F, 1.0F, 1.0F, 1.0F);
+
+                            float pulsating = (float) Math.sin((float) ((worldTime * multiplier) - (savedTagInt - 1)) / 6.2831855F);
+                            drawContext.setShaderColor(1.0F, 1.0F, 1.0F, pulsating + 0.5F);
+                            drawContext.drawTexture(ACTIVE_ARMOR_TEXTURE, (scaledWidth / 2) - 5, scaledHeight - 49, 10, 10, 0, 0, 16, 16, 16, 16);
+                        } else {
+                            float fading = (1F - (((float) (worldTime - (savedTagInt + (effectDuration - 1f))) / effectDuration) - 0.4F));
+                            drawContext.setShaderColor(1.0F, 0.65F, 0.65F, fading);
+                            drawContext.drawTexture(ACTIVE_ARMOR_TEXTURE, (scaledWidth / 2) - 5, scaledHeight - 49, 10, 10, 0, 0, 16, 16, 16, 16);
                         }
+                        drawContext.getMatrices().pop();
+                        drawContext.setShaderColor(1.0F, 1.0F, 1.0F, 1.0F);
                     }
                 }
                 if (client.player.hasStatusEffect(EffectInit.WITHERING)) {

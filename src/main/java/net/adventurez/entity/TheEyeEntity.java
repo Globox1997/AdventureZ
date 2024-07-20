@@ -15,9 +15,6 @@ import net.minecraft.block.Block;
 import net.minecraft.block.BlockState;
 import net.minecraft.block.Blocks;
 import net.minecraft.entity.Entity;
-import net.minecraft.entity.EntityDimensions;
-import net.minecraft.entity.EntityGroup;
-import net.minecraft.entity.EntityPose;
 import net.minecraft.entity.EntityType;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.MovementType;
@@ -35,6 +32,7 @@ import net.minecraft.entity.damage.DamageSource;
 import net.minecraft.entity.data.DataTracker;
 import net.minecraft.entity.data.TrackedData;
 import net.minecraft.entity.data.TrackedDataHandlerRegistry;
+import net.minecraft.entity.data.DataTracker.Builder;
 import net.minecraft.entity.effect.StatusEffectInstance;
 import net.minecraft.entity.mob.FlyingEntity;
 import net.minecraft.entity.mob.HostileEntity;
@@ -44,6 +42,7 @@ import net.minecraft.particle.ParticleTypes;
 import net.minecraft.predicate.entity.EntityPredicates;
 import net.minecraft.registry.Registries;
 import net.minecraft.registry.tag.DamageTypeTags;
+import net.minecraft.registry.tag.EntityTypeTags;
 import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.server.world.ServerWorld;
 import net.minecraft.sound.SoundCategory;
@@ -64,7 +63,6 @@ import net.minecraft.util.math.Vec3d;
 import net.minecraft.util.math.random.Random;
 import net.minecraft.world.Difficulty;
 import net.minecraft.world.GameRules;
-import net.minecraft.world.SpawnHelper;
 import net.minecraft.world.World;
 import net.minecraft.world.Heightmap;
 
@@ -114,10 +112,10 @@ public class TheEyeEntity extends FlyingEntity {
     }
 
     @Override
-    protected void initDataTracker() {
-        super.initDataTracker();
-        this.dataTracker.startTracking(INVUL_TIMER, 0);
-        this.dataTracker.startTracking(BEAM_TARGET_ID, 0);
+    protected void initDataTracker(Builder builder) {
+        super.initDataTracker(builder);
+        builder.add(INVUL_TIMER, 0);
+        builder.add(BEAM_TARGET_ID, 0);
     }
 
     @Override
@@ -159,11 +157,6 @@ public class TheEyeEntity extends FlyingEntity {
     @Override
     protected SoundEvent getDeathSound() {
         return SoundInit.EYE_DEATH_EVENT;
-    }
-
-    @Override
-    public float getActiveEyeHeight(EntityPose pose, EntityDimensions dimensions) {
-        return 2.1F;
     }
 
     @Override
@@ -218,10 +211,10 @@ public class TheEyeEntity extends FlyingEntity {
                         int posY = livingEntity.getWorld().getTopY(Heightmap.Type.WORLD_SURFACE, posX, posZ) + 10 + livingEntity.getWorld().getRandom().nextInt(12);
                         BlockPos teleportPos = new BlockPos(posX, posY, posZ);
                         if (livingEntity.getWorld().isRegionLoaded(teleportPos.getX() - 4, teleportPos.getY() - 4, teleportPos.getZ() - 4, teleportPos.getX() + 4, teleportPos.getY() + 4,
-                                teleportPos.getZ() + 4) && SpawnHelper.canSpawn(SpawnRestriction.Location.ON_GROUND, livingEntity.getWorld(), teleportPos, EntityInit.THE_EYE)) {
+                                teleportPos.getZ() + 4)) {
                             this.lookControl.lookAt(teleportPos.getX(), teleportPos.getY(), teleportPos.getZ());
                             if (!this.getWorld().isClient()) {
-                                livingEntity.teleport(teleportPos.getX(), teleportPos.getY(), teleportPos.getZ());
+                                livingEntity.teleport(teleportPos.getX(), teleportPos.getY(), teleportPos.getZ(), false);
                             }
                             livingEntity.getWorld().playSound(null, teleportPos, SoundEvents.ENTITY_ENDERMAN_TELEPORT, SoundCategory.HOSTILE, 1.0F, 1.0F);
                             if (this.getWorld().isClient()) {
@@ -330,7 +323,7 @@ public class TheEyeEntity extends FlyingEntity {
             } else {
                 Entity entity2;
                 entity2 = source.getAttacker();
-                if (entity2 != null && !(entity2 instanceof PlayerEntity) && entity2 instanceof LivingEntity && ((LivingEntity) entity2).getGroup() == this.getGroup()) {
+                if (entity2 != null && !(entity2 instanceof PlayerEntity) && entity2 instanceof LivingEntity livingEntity && livingEntity.getType().isIn(EntityTypeTags.SENSITIVE_TO_SMITE)) {
                     return false;
                 } else {
                     if (this.field_7082 <= 0) {
@@ -381,17 +374,12 @@ public class TheEyeEntity extends FlyingEntity {
     }
 
     @Override
-    public EntityGroup getGroup() {
-        return EntityGroup.UNDEAD;
-    }
-
-    @Override
     protected boolean canStartRiding(Entity entity) {
         return false;
     }
 
     @Override
-    public boolean canUsePortals() {
+    public boolean canUsePortals(boolean allowVehicles) {
         return false;
     }
 
@@ -478,14 +466,14 @@ public class TheEyeEntity extends FlyingEntity {
                     for (int o = 0; o < 15; o++) {
                         ((ServerWorld) this.getWorld()).spawnParticles(ParticleTypes.EXPLOSION, deathPos.getX() - 6 + this.getWorld().getRandom().nextInt(13),
                                 deathPos.getY() - 1 + this.getWorld().getRandom().nextInt(11), deathPos.getZ() - 6 + this.getWorld().getRandom().nextInt(13), 0, 0.0D, 0.0D, 0.0D, 0.01D);
-                        this.getWorld().playSound(null, deathPos, SoundEvents.ENTITY_GENERIC_EXPLODE, SoundCategory.BLOCKS, 1F, 1F);
+                        this.getWorld().playSound(null, deathPos, SoundEvents.ENTITY_GENERIC_EXPLODE.value(), SoundCategory.BLOCKS, 1F, 1F);
                     }
                     // Platform
                     if (this.getWorld().getHeight() - 10 < deathPos.getY())
                         deathPos = deathPos.down(deathPos.getY() - this.getWorld().getHeight() + 10);
                     this.placeDeathStructure(deathPos);
                     if (this.isVoidZLoaded) {
-                        this.getWorld().setBlockState(deathPos.up(8).north().west(), Registries.BLOCK.get(new Identifier("voidz", "void_portal")).getDefaultState(), 3);
+                        this.getWorld().setBlockState(deathPos.up(8).north().west(), Registries.BLOCK.get(Identifier.of("voidz", "void_portal")).getDefaultState(), 3);
                     } else {
                         this.getWorld().setBlockState(deathPos.up(8).north().west(), Blocks.DRAGON_EGG.getDefaultState(), 3);
                     }
@@ -515,9 +503,13 @@ public class TheEyeEntity extends FlyingEntity {
 
     private void placeDeathStructure(BlockPos blockPos) {
         StructureTemplateManager structureTemplateManager = ((ServerWorld) this.getWorld()).getStructureTemplateManager();
-        Optional<StructureTemplate> structure = structureTemplateManager.getTemplate(new Identifier("adventurez:eyeland"));
+        Optional<StructureTemplate> structure = structureTemplateManager.getTemplate(Identifier.of("adventurez:eyeland"));
         structure.get().place((ServerWorld) this.getWorld(), blockPos.west(5).north(5), blockPos,
                 (new StructurePlacementData()).setMirror(BlockMirror.NONE).setRotation(BlockRotation.NONE).setIgnoreEntities(true), this.getWorld().getRandom(), Block.NOTIFY_LISTENERS);
+    }
+
+    public float getBeamProgress() {
+        return 0.0f;
     }
 
     static {
@@ -773,10 +765,11 @@ public class TheEyeEntity extends FlyingEntity {
                         BlockPos pos = theEyeEntity.getBlockPos();
                         pos = pos.add(pos.getX() - livingEntity.getBlockPos().getX() + theEyeEntity.getWorld().getRandom().nextInt(6) * 5, 0,
                                 pos.getZ() - livingEntity.getBlockPos().getZ() + theEyeEntity.getWorld().getRandom().nextInt(6) * 5);
-                        if (theEyeEntity.getWorld().getBlockState(pos).isAir() && SpawnHelper.canSpawn(SpawnRestriction.Location.NO_RESTRICTIONS, theEyeEntity.getWorld(), pos, EntityInit.THE_EYE)) {
-                            TheEyeEntity theEyeEntityDuplicate = (TheEyeEntity) EntityInit.THE_EYE.create(theEyeEntity.getWorld());
+                        if (theEyeEntity.getWorld().getBlockState(pos).isAir()
+                                && SpawnRestriction.canSpawn(EntityInit.THE_EYE, (ServerWorld) theEyeEntity.getWorld(), SpawnReason.EVENT, pos, theEyeEntity.getWorld().getRandom())) {
+                            TheEyeEntity theEyeEntityDuplicate = EntityInit.THE_EYE.create(theEyeEntity.getWorld());
                             theEyeEntityDuplicate.refreshPositionAndAngles(pos, theEyeEntity.getWorld().getRandom().nextFloat() * 360F, 0.0F);
-                            theEyeEntityDuplicate.initialize((ServerWorld) theEyeEntity.getWorld(), theEyeEntity.getWorld().getLocalDifficulty(pos), SpawnReason.EVENT, null, null);
+                            theEyeEntityDuplicate.initialize((ServerWorld) theEyeEntity.getWorld(), theEyeEntity.getWorld().getLocalDifficulty(pos), SpawnReason.EVENT, null);
                             theEyeEntityDuplicate.duplicationTimer = 800;
                             theEyeEntityDuplicate.setAttacker(livingEntity);
                             theEyeEntityDuplicate.getAttributeInstance(EntityAttributes.GENERIC_MAX_HEALTH).setBaseValue(100.0D);

@@ -37,14 +37,12 @@ import net.minecraft.util.math.Box;
 import net.minecraft.util.math.MathHelper;
 import net.minecraft.util.math.random.Random;
 import net.minecraft.world.ServerWorldAccess;
-import net.minecraft.world.SpawnHelper;
 import net.minecraft.world.World;
 
 public class NecromancerEntity extends SpellCastingEntity {
 
     public NecromancerEntity(EntityType<? extends HostileEntity> entityType, World world) {
         super(entityType, world);
-        this.setStepHeight(1.0f);
         this.experiencePoints = 15;
 
     }
@@ -227,19 +225,19 @@ public class NecromancerEntity extends SpellCastingEntity {
             int spellCount = 0;
             for (int i = 0; i < 20; ++i) {
                 BlockPos blockPos = NecromancerEntity.this.getBlockPos().add(-2 + NecromancerEntity.this.getRandom().nextInt(5), 1, -2 + NecromancerEntity.this.getRandom().nextInt(5));
-                if (SpawnHelper.canSpawn(SpawnRestriction.Location.ON_GROUND, NecromancerEntity.this.getWorld(), blockPos, EntityInit.WITHER_PUPPET)) {
+                if (SpawnRestriction.canSpawn(EntityInit.WITHER_PUPPET, serverWorld, SpawnReason.EVENT, blockPos, serverWorld.getRandom())) {
                     spellCount++;
-                    WitherPuppetEntity puppet = (WitherPuppetEntity) EntityInit.WITHER_PUPPET.create(serverWorld);
-                    puppet.initialize(serverWorld, serverWorld.getLocalDifficulty(blockPos), SpawnReason.EVENT, null, null);
-                    puppet.refreshPositionAndAngles(blockPos, NecromancerEntity.this.getWorld().getRandom().nextFloat() * 360F, 0.0F);
+                    WitherPuppetEntity puppet = EntityInit.WITHER_PUPPET.create(serverWorld);
+                    puppet.initialize(serverWorld, serverWorld.getLocalDifficulty(blockPos), SpawnReason.EVENT, null);
+                    puppet.refreshPositionAndAngles(blockPos, serverWorld.getRandom().nextFloat() * 360F, 0.0F);
                     puppet.setOwner(NecromancerEntity.this);
                     puppet.setLifeTicks(20 * (40 + NecromancerEntity.this.getRandom().nextInt(90)));
                     serverWorld.spawnEntityAndPassengers(puppet);
-                    int skeletonChance = NecromancerEntity.this.getWorld().getRandom().nextInt(14);
+                    int skeletonChance = serverWorld.getRandom().nextInt(14);
                     if (skeletonChance == 0) {
-                        WitherSkeletonEntity witherSkeletonEntity = (WitherSkeletonEntity) EntityType.WITHER_SKELETON.create(serverWorld);
-                        witherSkeletonEntity.refreshPositionAndAngles(blockPos, NecromancerEntity.this.getWorld().getRandom().nextFloat() * 360F, 0.0F);
-                        witherSkeletonEntity.initialize(serverWorld, serverWorld.getLocalDifficulty(blockPos), SpawnReason.EVENT, null, null);
+                        WitherSkeletonEntity witherSkeletonEntity = EntityType.WITHER_SKELETON.create(serverWorld);
+                        witherSkeletonEntity.refreshPositionAndAngles(blockPos, serverWorld.getRandom().nextFloat() * 360F, 0.0F);
+                        witherSkeletonEntity.initialize(serverWorld, serverWorld.getLocalDifficulty(blockPos), SpawnReason.EVENT, null);
                         serverWorld.spawnEntityAndPassengers(witherSkeletonEntity);
                     }
                 }

@@ -15,7 +15,7 @@ import net.minecraft.util.Identifier;
 
 @Environment(EnvType.CLIENT)
 public class DragonSaddleFeatureRenderer extends FeatureRenderer<DragonEntity, DragonModel<DragonEntity>> {
-    private static final RenderLayer SADDLE_LAYER = RenderLayer.getEntityCutoutNoCull(new Identifier("adventurez:textures/entity/feature/dragon_saddle.png"));
+    private static final RenderLayer SADDLE_LAYER = RenderLayer.getEntityCutoutNoCull(Identifier.of("adventurez:textures/entity/feature/dragon_saddle.png"));
 
     public DragonSaddleFeatureRenderer(FeatureRendererContext<DragonEntity, DragonModel<DragonEntity>> featureRendererContext) {
         super(featureRendererContext);
@@ -26,7 +26,7 @@ public class DragonSaddleFeatureRenderer extends FeatureRenderer<DragonEntity, D
             float animationProgress, float headYaw, float headPitch) {
         if (dragonEntity.getDataTracker().get(DragonEntity.HAS_SADDLE)) {
             VertexConsumer vertexConsumer = vertexConsumerProvider.getBuffer(SADDLE_LAYER);
-            this.getContextModel().render(matrixStack, vertexConsumer, light, OverlayTexture.DEFAULT_UV, 1.0F, 1.0F, 1.0F, 1.0F);
+            this.getContextModel().render(matrixStack, vertexConsumer, light, OverlayTexture.DEFAULT_UV);
         }
     }
 

@@ -14,7 +14,7 @@ import net.minecraft.util.Identifier;
 
 @Environment(EnvType.CLIENT)
 public class SummonerRenderer extends MobEntityRenderer<SummonerEntity, SummonerModel<SummonerEntity>> {
-    private static final Identifier TEXTURE = new Identifier("adventurez:textures/entity/summoner.png");
+    private static final Identifier TEXTURE = Identifier.of("adventurez:textures/entity/summoner.png");
 
     public SummonerRenderer(EntityRendererFactory.Context context) {
         super(context, new SummonerModel<>(context.getPart(RenderInit.SUMMONER_LAYER)), 0.7F);

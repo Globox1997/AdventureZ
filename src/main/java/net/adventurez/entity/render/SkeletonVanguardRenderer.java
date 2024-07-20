@@ -11,7 +11,7 @@ import net.minecraft.util.Identifier;
 
 @Environment(EnvType.CLIENT)
 public class SkeletonVanguardRenderer extends MobEntityRenderer<SkeletonVanguardEntity, SkeletonVanguardModel<SkeletonVanguardEntity>> {
-    private static final Identifier TEXTURE = new Identifier("adventurez:textures/entity/skeleton_vanguard.png");
+    private static final Identifier TEXTURE = Identifier.of("adventurez:textures/entity/skeleton_vanguard.png");
 
     public SkeletonVanguardRenderer(EntityRendererFactory.Context context) {
         super(context, new SkeletonVanguardModel<>(context.getPart(RenderInit.SKELETON_VANGUARD_LAYER)), 0.5F);

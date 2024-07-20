@@ -16,7 +16,7 @@ import net.minecraft.util.math.MathHelper;
 
 @Environment(EnvType.CLIENT)
 public class VoidBulletRenderer extends EntityRenderer<VoidBulletEntity> {
-    private static final Identifier TEXTURE = new Identifier("adventurez:textures/entity/void_bullet.png");
+    private static final Identifier TEXTURE = Identifier.of("adventurez:textures/entity/void_bullet.png");
     private final VoidBulletModel<VoidBulletEntity> model = new VoidBulletModel<>(VoidBulletModel.getTexturedModelData().createModel());
 
     public VoidBulletRenderer(EntityRendererFactory.Context context) {
@@ -37,7 +37,7 @@ public class VoidBulletRenderer extends EntityRenderer<VoidBulletEntity> {
         matrixStack.translate(0.0D, -1.55D, 0.0D);
         this.model.setAngles(voidBulletEntity, 0.0F, 0.0F, 0.0F, h, j);
         VertexConsumer vertexConsumer = vertexConsumerProvider.getBuffer(this.model.getLayer(TEXTURE));
-        this.model.render(matrixStack, vertexConsumer, i, OverlayTexture.DEFAULT_UV, 1.0F, 1.0F, 1.0F, 1.0F);
+        this.model.render(matrixStack, vertexConsumer, i, OverlayTexture.DEFAULT_UV);
         matrixStack.pop();
         super.render(voidBulletEntity, f, g, matrixStack, vertexConsumerProvider, i);
     }

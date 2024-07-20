@@ -37,8 +37,8 @@ public class FireBreathEntity extends ExplosiveProjectileEntity {
         this.setVelocity(velocityX, velocityY, velocityZ);
     }
 
-    public FireBreathEntity(World world, LivingEntity owner, double velocityX, double velocityY, double velocityZ) {
-        super(EntityInit.FIRE_BREATH, owner, velocityX, velocityY, velocityZ, world);
+    public FireBreathEntity(World world, LivingEntity owner, Vec3d velocity) {
+        super(EntityInit.FIRE_BREATH, owner, velocity, world);
         Vec3d newVec3d = this.getVelocity().normalize().add(this.random.nextGaussian() * 0.1D, -this.random.nextDouble() * 0.1D, this.random.nextGaussian() * 0.1D);
         this.setVelocity(newVec3d);
     }

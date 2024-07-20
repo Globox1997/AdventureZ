@@ -6,7 +6,7 @@ import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
 import net.adventurez.init.ItemInit;
-import net.adventurez.item.armor.GildedNetheriteArmor;
+import net.adventurez.item.GildedNetheriteArmor;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
 import net.minecraft.client.MinecraftClient;

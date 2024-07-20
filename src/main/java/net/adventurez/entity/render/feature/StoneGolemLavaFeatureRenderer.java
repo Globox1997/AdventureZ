@@ -17,8 +17,8 @@ import net.minecraft.util.Identifier;
 
 @Environment(EnvType.CLIENT)
 public class StoneGolemLavaFeatureRenderer extends FeatureRenderer<BlackstoneGolemEntity, BlackstoneGolemModel<BlackstoneGolemEntity>> {
-    private static final RenderLayer LAVA_LAYER = ExtraRenderLayer.getGlowing(new Identifier("adventurez:textures/entity/feature/lava_feature_golem.png"));
-    private static final RenderLayer FLOWING_LAVA_LAYER = RenderLayer.getEntityCutoutNoCull(new Identifier("adventurez:textures/entity/feature/lava_feature_golem.png"));
+    private static final RenderLayer LAVA_LAYER = ExtraRenderLayer.getGlowing(Identifier.of("adventurez:textures/entity/feature/lava_feature_golem.png"));
+    private static final RenderLayer FLOWING_LAVA_LAYER = RenderLayer.getEntityCutoutNoCull(Identifier.of("adventurez:textures/entity/feature/lava_feature_golem.png"));
 
     public StoneGolemLavaFeatureRenderer(FeatureRendererContext<BlackstoneGolemEntity, BlackstoneGolemModel<BlackstoneGolemEntity>> featureRendererContext) {
         super(featureRendererContext);
@@ -34,7 +34,7 @@ public class StoneGolemLavaFeatureRenderer extends FeatureRenderer<BlackstoneGol
             } else {
                 lavaFlow = Integer.MAX_VALUE;
             }
-            this.getContextModel().render(matrixStack, vertexConsumer, lavaFlow, OverlayTexture.DEFAULT_UV, 1.0F, 1.0F, 1.0F, 1.0F);
+            this.getContextModel().render(matrixStack, vertexConsumer, lavaFlow, OverlayTexture.DEFAULT_UV);
         }
     }
 

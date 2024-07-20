@@ -11,7 +11,7 @@ import net.minecraft.util.Identifier;
 
 @Environment(EnvType.CLIENT)
 public class DeerRenderer extends MobEntityRenderer<DeerEntity, DeerModel<DeerEntity>> {
-    private static final Identifier TEXTURE = new Identifier("adventurez:textures/entity/deer.png");
+    private static final Identifier TEXTURE = Identifier.of("adventurez:textures/entity/deer.png");
 
     public DeerRenderer(EntityRendererFactory.Context context) {
         super(context, new DeerModel<>(context.getPart(RenderInit.DEER_LAYER)), 0.7F);

@@ -28,6 +28,7 @@ import net.minecraft.entity.damage.DamageSource;
 import net.minecraft.entity.data.DataTracker;
 import net.minecraft.entity.data.TrackedData;
 import net.minecraft.entity.data.TrackedDataHandlerRegistry;
+import net.minecraft.entity.data.DataTracker.Builder;
 import net.minecraft.entity.mob.HostileEntity;
 import net.minecraft.entity.passive.VillagerEntity;
 import net.minecraft.entity.passive.WanderingTraderEntity;
@@ -54,13 +55,13 @@ public class OrcEntity extends HostileEntity {
 
     public final SimpleInventory inventory = new SimpleInventory(1);
 
+    @SuppressWarnings("deprecation")
     public OrcEntity(EntityType<? extends HostileEntity> entityType, World world) {
         super(entityType, world);
-        this.setStepHeight(1.0f);
         this.reinitDimensions();
     }
 
-    public static DefaultAttributeContainer.Builder createOrkAttributes() {
+    public static DefaultAttributeContainer.Builder createOrcAttributes() {
         return HostileEntity.createHostileAttributes().add(EntityAttributes.GENERIC_MAX_HEALTH, 20.0D).add(EntityAttributes.GENERIC_MOVEMENT_SPEED, 0.225D)
                 .add(EntityAttributes.GENERIC_KNOCKBACK_RESISTANCE, 0.2D).add(EntityAttributes.GENERIC_ATTACK_DAMAGE, 7.0D).add(EntityAttributes.GENERIC_ATTACK_KNOCKBACK, 1D)
                 .add(EntityAttributes.GENERIC_FOLLOW_RANGE, 38.0D).add(EntityAttributes.GENERIC_ARMOR, 1.0D);
@@ -88,11 +89,11 @@ public class OrcEntity extends HostileEntity {
     }
 
     @Override
-    protected void initDataTracker() {
-        super.initDataTracker();
-        this.dataTracker.startTracking(ORK_SIZE, 1);
-        this.dataTracker.startTracking(DOUBLE_HAND_ATTACK, false);
-        this.dataTracker.startTracking(INVENTORY_ITEM_ID, -1);
+    protected void initDataTracker(Builder builder) {
+        super.initDataTracker(builder);
+        builder.add(ORK_SIZE, 1);
+        builder.add(DOUBLE_HAND_ATTACK, false);
+        builder.add(INVENTORY_ITEM_ID, -1);
     }
 
     @Override
@@ -100,7 +101,7 @@ public class OrcEntity extends HostileEntity {
         super.readCustomDataFromNbt(tag);
         this.setSize(tag.getInt("OrkSize"), false);
         if (tag.contains("OrcItem", 10)) {
-            this.inventory.setStack(0, ItemStack.fromNbt(tag.getCompound("OrcItem")));
+            this.inventory.setStack(0, ItemStack.fromNbt(this.getRegistryManager(), tag.getCompound("OrcItem")).get());
             this.setItemId(this.inventory.getStack(0).getItem());
         }
     }
@@ -110,7 +111,7 @@ public class OrcEntity extends HostileEntity {
         super.writeCustomDataToNbt(tag);
         tag.putInt("OrkSize", this.getSize());
         if (!this.inventory.getStack(0).isEmpty()) {
-            tag.put("OrcItem", this.inventory.getStack(0).writeNbt(new NbtCompound()));
+            tag.put("OrcItem", this.inventory.getStack(0).encode(this.getRegistryManager()));
         }
     }
 
@@ -179,21 +180,16 @@ public class OrcEntity extends HostileEntity {
         this.playSound(SoundInit.ORC_STEP_EVENT, 1.0F, 1.0F);
     }
 
-    @Override
-    protected float getActiveEyeHeight(EntityPose pose, EntityDimensions dimensions) {
-        return 0.82F * dimensions.height;
-    }
-
     @Nullable
     @Override
-    public EntityData initialize(ServerWorldAccess world, LocalDifficulty difficulty, SpawnReason spawnReason, @Nullable EntityData entityData, @Nullable NbtCompound entityTag) {
+    public EntityData initialize(ServerWorldAccess world, LocalDifficulty difficulty, SpawnReason spawnReason, @Nullable EntityData entityData) {
         this.setSize(this.getRandom().nextInt(3) + 1, true);
-        return super.initialize(world, difficulty, spawnReason, entityData, entityTag);
+        return super.initialize(world, difficulty, spawnReason, entityData);
     }
 
     @Override
-    public EntityDimensions getDimensions(EntityPose pose) {
-        return super.getDimensions(pose).scaled(0.55F * (float) this.getSize());
+    protected EntityDimensions getBaseDimensions(EntityPose pose) {
+        return super.getBaseDimensions(pose).scaled(0.55F * (float) this.getSize());
     }
 
     @Override
@@ -246,14 +242,8 @@ public class OrcEntity extends HostileEntity {
         }
 
         @Override
-        protected double getSquaredMaxAttackDistance(LivingEntity entity) {
-            return (double) (this.mob.getWidth() * 2.0F * this.mob.getWidth() + entity.getWidth());
-        }
-
-        @Override
-        protected void attack(LivingEntity target, double squaredDistance) {
-            double d = this.getSquaredMaxAttackDistance(target);
-            if (squaredDistance <= d && this.getCooldown() <= 0) {
+        protected void attack(LivingEntity target) {
+            if (canAttack(target) && this.getCooldown() <= 0) {
                 this.resetCooldown();
                 this.mob.swingHand(Hand.MAIN_HAND);
                 this.mob.tryAttack(target);

@@ -30,6 +30,7 @@ import net.minecraft.entity.damage.DamageSource;
 import net.minecraft.entity.data.DataTracker;
 import net.minecraft.entity.data.TrackedData;
 import net.minecraft.entity.data.TrackedDataHandlerRegistry;
+import net.minecraft.entity.data.DataTracker.Builder;
 import net.minecraft.entity.mob.FlyingEntity;
 import net.minecraft.entity.mob.MobEntity;
 import net.minecraft.entity.player.PlayerEntity;
@@ -61,7 +62,6 @@ public class EnderWhaleEntity extends FlyingEntity implements ItemSteerable {
         super(entityType, world);
         this.saddledComponent = new SaddledComponent(this.dataTracker, BOOST_TIME, ALWAYS_SADDLED);
         this.moveControl = new EnderWhaleEntity.EnderWhaleMovementControl(this);
-        this.setStepHeight(1.0f);
         this.experiencePoints = 5;
     }
 
@@ -85,10 +85,10 @@ public class EnderWhaleEntity extends FlyingEntity implements ItemSteerable {
     }
 
     @Override
-    protected void initDataTracker() {
-        super.initDataTracker();
-        this.dataTracker.startTracking(ALWAYS_SADDLED, true);
-        this.dataTracker.startTracking(BOOST_TIME, 0);
+    protected void initDataTracker(Builder builder) {
+        super.initDataTracker(builder);
+        builder.add(ALWAYS_SADDLED, true);
+        builder.add(BOOST_TIME, 0);
     }
 
     @Override
@@ -98,7 +98,7 @@ public class EnderWhaleEntity extends FlyingEntity implements ItemSteerable {
     }
 
     @Override
-    public boolean canBeLeashedBy(PlayerEntity player) {
+    public boolean canBeLeashed() {
         return false;
     }
 
@@ -264,7 +264,7 @@ public class EnderWhaleEntity extends FlyingEntity implements ItemSteerable {
         float f = MathHelper.sin(this.bodyYaw * 0.017453292F) * offSet;
         float g = MathHelper.cos(this.bodyYaw * 0.017453292F) * offSet;
 
-        positionUpdater.accept(passenger, this.getX() + (double) (0.1F * f), this.getBodyY(0.83F) + passenger.getHeightOffset() + 0.0D, this.getZ() - (double) (0.1F * g));
+        positionUpdater.accept(passenger, this.getX() + (double) (0.1F * f), this.getBodyY(0.68F), this.getZ() - (double) (0.1F * g));
     }
 
     @Override

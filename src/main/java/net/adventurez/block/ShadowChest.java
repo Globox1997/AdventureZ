@@ -2,6 +2,8 @@ package net.adventurez.block;
 
 import org.jetbrains.annotations.Nullable;
 
+import com.mojang.serialization.MapCodec;
+
 import net.adventurez.block.entity.ShadowChestEntity;
 import net.adventurez.init.BlockInit;
 import net.minecraft.block.AbstractBlock;
@@ -36,7 +38,6 @@ import net.minecraft.state.property.Properties;
 import net.minecraft.util.ActionResult;
 import net.minecraft.util.BlockMirror;
 import net.minecraft.util.BlockRotation;
-import net.minecraft.util.Hand;
 import net.minecraft.util.ItemScatterer;
 import net.minecraft.util.hit.BlockHitResult;
 import net.minecraft.util.math.BlockPos;
@@ -51,7 +52,8 @@ public class ShadowChest extends AbstractChestBlock<ShadowChestEntity> implement
 
     public static final DirectionProperty FACING;
     public static final BooleanProperty WATERLOGGED;
-    protected static final VoxelShape SHAPE;
+    public static final MapCodec<ShadowChest> CODEC = ShadowChest.createCodec(ShadowChest::new);
+    private static final VoxelShape SHAPE;
 
     public ShadowChest(AbstractBlock.Settings settings) {
         super(settings, () -> BlockInit.SHADOW_CHEST_ENTITY);
@@ -87,7 +89,7 @@ public class ShadowChest extends AbstractChestBlock<ShadowChestEntity> implement
     }
 
     @Override
-    public ActionResult onUse(BlockState state, World world, BlockPos pos, PlayerEntity player, Hand hand, BlockHitResult hit) {
+    public ActionResult onUse(BlockState state, World world, BlockPos pos, PlayerEntity player, BlockHitResult hit) {
         if (world.isClient()) {
             return ActionResult.SUCCESS;
         } else {
@@ -108,7 +110,7 @@ public class ShadowChest extends AbstractChestBlock<ShadowChestEntity> implement
     @Override
     @Nullable
     public <T extends BlockEntity> BlockEntityTicker<T> getTicker(World world, BlockState state, BlockEntityType<T> type) {
-        return world.isClient() ? checkType(type, BlockInit.SHADOW_CHEST_ENTITY, ShadowChestEntity::clientTick) : null;
+        return world.isClient() ? validateTicker(type, BlockInit.SHADOW_CHEST_ENTITY, ShadowChestEntity::clientTick) : null;
     }
 
     @Override
@@ -146,8 +148,6 @@ public class ShadowChest extends AbstractChestBlock<ShadowChestEntity> implement
         return (Boolean) state.get(WATERLOGGED) ? Fluids.WATER.getStill(false) : Fluids.EMPTY.getDefaultState();
     }
 
-    // Found in ChestBlock
-    @SuppressWarnings("deprecation")
     @Override
     public BlockState getStateForNeighborUpdate(BlockState state, Direction direction, BlockState neighborState, WorldAccess world, BlockPos pos, BlockPos neighborPos) {
         if ((Boolean) state.get(WATERLOGGED)) {
@@ -158,7 +158,7 @@ public class ShadowChest extends AbstractChestBlock<ShadowChestEntity> implement
     }
 
     @Override
-    public boolean canPathfindThrough(BlockState state, BlockView world, BlockPos pos, NavigationType type) {
+    protected boolean canPathfindThrough(BlockState state, NavigationType type) {
         return false;
     }
 
@@ -190,6 +190,11 @@ public class ShadowChest extends AbstractChestBlock<ShadowChestEntity> implement
         FACING = HorizontalFacingBlock.FACING;
         WATERLOGGED = Properties.WATERLOGGED;
         SHAPE = Block.createCuboidShape(1.0D, 0.0D, 1.0D, 15.0D, 14.0D, 15.0D);
+    }
+
+    @Override
+    protected MapCodec<? extends AbstractChestBlock<ShadowChestEntity>> getCodec() {
+        return CODEC;
     }
 
 }

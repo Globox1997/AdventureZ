@@ -8,7 +8,6 @@ import com.google.common.collect.Lists;
 
 import org.jetbrains.annotations.Nullable;
 
-import io.netty.buffer.Unpooled;
 import net.adventurez.block.ShadowChest;
 import net.adventurez.entity.nonliving.ThrownRockEntity;
 import net.adventurez.entity.nonliving.VoidCloudEntity;
@@ -16,11 +15,11 @@ import net.adventurez.init.EffectInit;
 import net.adventurez.init.EntityInit;
 import net.adventurez.init.SoundInit;
 import net.adventurez.init.TagInit;
-import net.adventurez.network.AdventureServerPacket;
+import net.adventurez.network.packet.VelocityPacket;
+import net.fabricmc.fabric.api.networking.v1.ServerPlayNetworking;
 import net.fabricmc.loader.api.FabricLoader;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityData;
-import net.minecraft.entity.EntityGroup;
 import net.minecraft.entity.EntityType;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.MovementType;
@@ -36,6 +35,7 @@ import net.minecraft.entity.damage.DamageSource;
 import net.minecraft.entity.data.DataTracker;
 import net.minecraft.entity.data.TrackedData;
 import net.minecraft.entity.data.TrackedDataHandlerRegistry;
+import net.minecraft.entity.data.DataTracker.Builder;
 import net.minecraft.entity.effect.StatusEffectInstance;
 import net.minecraft.entity.effect.StatusEffects;
 import net.minecraft.entity.mob.FlyingEntity;
@@ -44,8 +44,6 @@ import net.minecraft.entity.mob.Monster;
 import net.minecraft.entity.projectile.ArrowEntity;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NbtCompound;
-import net.minecraft.network.PacketByteBuf;
-import net.minecraft.network.packet.s2c.play.CustomPayloadS2CPacket;
 import net.minecraft.particle.ParticleEffect;
 import net.minecraft.particle.ParticleTypes;
 import net.minecraft.predicate.entity.EntityPredicates;
@@ -141,12 +139,12 @@ public class VoidShadowEntity extends FlyingEntity implements Monster {
     }
 
     @Override
-    public void initDataTracker() {
-        super.initDataTracker();
-        dataTracker.startTracking(HALF_LIFE_CHANGE, false);
-        dataTracker.startTracking(IS_THROWING_BLOCKS, false);
-        dataTracker.startTracking(HOVERING_MAGIC_HANDS, false);
-        dataTracker.startTracking(CIRCLING_HANDS, false);
+    protected void initDataTracker(Builder builder) {
+        super.initDataTracker(builder);
+        builder.add(HALF_LIFE_CHANGE, false);
+        builder.add(IS_THROWING_BLOCKS, false);
+        builder.add(HOVERING_MAGIC_HANDS, false);
+        builder.add(CIRCLING_HANDS, false);
     }
 
     @Override
@@ -215,7 +213,7 @@ public class VoidShadowEntity extends FlyingEntity implements Monster {
     }
 
     @Override
-    public EntityData initialize(ServerWorldAccess world, LocalDifficulty difficulty, SpawnReason spawnReason, @Nullable EntityData entityData, @Nullable NbtCompound entityTag) {
+    public EntityData initialize(ServerWorldAccess world, LocalDifficulty difficulty, SpawnReason spawnReason, @Nullable EntityData entityData) {
         if (!this.hasVoidMiddleCoordinates() && FabricLoader.getInstance().isModLoaded("voidz")) {
             // For test purpose, use spawn egg on portal block
             if (world.getBlockState(this.getBlockPos().down()).getBlock() == BlockInit.PORTAL) {
@@ -223,7 +221,7 @@ public class VoidShadowEntity extends FlyingEntity implements Monster {
             }
         }
 
-        return super.initialize(world, difficulty, spawnReason, (EntityData) entityData, entityTag);
+        return super.initialize(world, difficulty, spawnReason, entityData);
     }
 
     @Override
@@ -255,17 +253,12 @@ public class VoidShadowEntity extends FlyingEntity implements Monster {
     }
 
     @Override
-    public EntityGroup getGroup() {
-        return EntityGroup.UNDEAD;
-    }
-
-    @Override
     public boolean canStartRiding(Entity entity) {
         return false;
     }
 
     @Override
-    public boolean canUsePortals() {
+    public boolean canUsePortals(boolean allowVehicles) {
         return false;
     }
 
@@ -380,7 +373,7 @@ public class VoidShadowEntity extends FlyingEntity implements Monster {
                 this.getWorld().syncGlobalEvent(1028, this.getBlockPos(), 0);
             }
             if (this.hasVoidMiddleCoordinates() && this.ticksSinceDeath == 40) {
-                this.teleport(this.getVoidMiddle().getX(), this.getVoidMiddle().up(5).getY(), this.getVoidMiddle().getZ());
+                this.teleport(this.getVoidMiddle().getX(), this.getVoidMiddle().up(5).getY(), this.getVoidMiddle().getZ(), false);
             }
         }
 
@@ -762,7 +755,7 @@ public class VoidShadowEntity extends FlyingEntity implements Monster {
                         }
                         if (!this.voidShadow.getWorld().getBlockState(spawnPos.down()).isAir()) {
                             VoidFragmentEntity voidFragmentEntity = (VoidFragmentEntity) EntityInit.VOID_FRAGMENT.create(voidShadow.getWorld());
-                            voidFragmentEntity.initialize((ServerWorld) voidShadow.getWorld(), voidShadow.getWorld().getLocalDifficulty(pos), SpawnReason.EVENT, null, null);
+                            voidFragmentEntity.initialize((ServerWorld) voidShadow.getWorld(), voidShadow.getWorld().getLocalDifficulty(pos), SpawnReason.EVENT, null);
                             voidFragmentEntity.setVoidOrb(isOrb);
                             voidFragmentEntity.refreshPositionAndAngles(spawnPos, voidShadow.getWorld().getRandom().nextFloat() * 360F, 0.0F);
                             voidShadow.getWorld().spawnEntity(voidFragmentEntity);
@@ -855,10 +848,8 @@ public class VoidShadowEntity extends FlyingEntity implements Monster {
             if (tick >= 300) {
                 if (this.voidShadow.getHealth() < this.voidShadow.getMaxHealth() / 10 && !playerList.isEmpty()) {
                     for (int i = 0; i < playerList.size(); i++) {
-                        if (playerList.get(i) instanceof ServerPlayerEntity) {
-                            CustomPayloadS2CPacket packet = new CustomPayloadS2CPacket(AdventureServerPacket.VELOCITY_PACKET,
-                                    new PacketByteBuf(Unpooled.buffer().writeInt(playerList.get(i).getId()).writeFloat(this.voidShadow.random.nextFloat() * 2F)));
-                            ((ServerPlayerEntity) playerList.get(i)).networkHandler.sendPacket(packet);
+                        if (playerList.get(i) instanceof ServerPlayerEntity serverPlayerEntity) {
+                            ServerPlayNetworking.send(serverPlayerEntity, new VelocityPacket(playerList.get(i).getId(), this.voidShadow.random.nextFloat() * 2F));
                         }
                     }
                     ((ServerWorld) this.voidShadow.getWorld()).playSoundFromEntity(null, this.voidShadow, SoundInit.SHADOW_IDLE_EVENT, SoundCategory.HOSTILE, 20.0F, 1.0F);
@@ -940,7 +931,7 @@ public class VoidShadowEntity extends FlyingEntity implements Monster {
                     if (!this.voidShadow.getWorld().isClient()) {
                         BlockPos spawnPos = new BlockPos(pos.getX() - 35 + voidShadow.random.nextInt(70), pos.getY(), pos.getZ() - 35 + voidShadow.random.nextInt(70));
                         VoidShadeEntity voidShadeEntity = (VoidShadeEntity) EntityInit.VOID_SHADE.create(voidShadow.getWorld());
-                        voidShadeEntity.initialize((ServerWorld) voidShadow.getWorld(), voidShadow.getWorld().getLocalDifficulty(pos), SpawnReason.EVENT, null, null);
+                        voidShadeEntity.initialize((ServerWorld) voidShadow.getWorld(), voidShadow.getWorld().getLocalDifficulty(pos), SpawnReason.EVENT, null);
                         voidShadeEntity.refreshPositionAndAngles(spawnPos, voidShadow.getWorld().getRandom().nextFloat() * 360F, 0.0F);
                         voidShadow.getWorld().spawnEntity(voidShadeEntity);
                     }
