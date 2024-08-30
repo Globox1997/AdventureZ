@@ -36,6 +36,7 @@ import net.minecraft.entity.data.DataTracker.Builder;
 import net.minecraft.entity.effect.StatusEffectInstance;
 import net.minecraft.entity.mob.FlyingEntity;
 import net.minecraft.entity.mob.HostileEntity;
+import net.minecraft.entity.mob.Monster;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.nbt.NbtCompound;
 import net.minecraft.particle.ParticleTypes;
@@ -69,7 +70,7 @@ import net.minecraft.world.Heightmap;
 import org.jetbrains.annotations.Nullable;
 
 @SuppressWarnings("deprecation")
-public class TheEyeEntity extends FlyingEntity {
+public class TheEyeEntity extends FlyingEntity implements Monster {
     private static final TrackedData<Integer> BEAM_TARGET_ID;
     public static final TrackedData<Integer> INVUL_TIMER;
     private int field_7082;
