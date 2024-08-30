@@ -14,7 +14,6 @@ import net.minecraft.block.entity.LidOpenable;
 import net.minecraft.block.entity.LootableContainerBlockEntity;
 import net.minecraft.block.entity.ViewerCountManager;
 import net.minecraft.enchantment.Enchantment;
-import net.minecraft.enchantment.EnchantmentHelper;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.player.PlayerInventory;
 import net.minecraft.inventory.Inventories;
@@ -31,8 +30,7 @@ import net.minecraft.registry.DynamicRegistryManager;
 import net.minecraft.registry.Registries;
 import net.minecraft.registry.RegistryKeys;
 import net.minecraft.registry.RegistryWrapper.WrapperLookup;
-import net.minecraft.registry.entry.RegistryEntryList;
-import net.minecraft.registry.tag.EnchantmentTags;
+import net.minecraft.registry.entry.RegistryEntry;
 import net.minecraft.screen.GenericContainerScreenHandler;
 import net.minecraft.screen.ScreenHandler;
 import net.minecraft.server.world.ServerWorld;
@@ -56,13 +54,13 @@ public class ShadowChestEntity extends LootableContainerBlockEntity implements L
         this.stateManager = new ViewerCountManager() {
             @Override
             protected void onContainerOpen(World world, BlockPos pos, BlockState state) {
-                world.playSound((PlayerEntity) null, (double) pos.getX() + 0.5D, (double) pos.getY() + 0.5D, (double) pos.getZ() + 0.5D, SoundInit.OPEN_SHADOW_CHEST_EVENT, SoundCategory.BLOCKS, 0.5F,
+                world.playSound(null, (double) pos.getX() + 0.5D, (double) pos.getY() + 0.5D, (double) pos.getZ() + 0.5D, SoundInit.OPEN_SHADOW_CHEST_EVENT, SoundCategory.BLOCKS, 0.5F,
                         world.getRandom().nextFloat() * 0.1F + 0.9F);
             }
 
             @Override
             protected void onContainerClose(World world, BlockPos pos, BlockState state) {
-                world.playSound((PlayerEntity) null, (double) pos.getX() + 0.5D, (double) pos.getY() + 0.5D, (double) pos.getZ() + 0.5D, SoundInit.CLOSE_SHADOW_CHEST_EVENT, SoundCategory.BLOCKS,
+                world.playSound(null, (double) pos.getX() + 0.5D, (double) pos.getY() + 0.5D, (double) pos.getZ() + 0.5D, SoundInit.CLOSE_SHADOW_CHEST_EVENT, SoundCategory.BLOCKS,
                         0.5F, world.getRandom().nextFloat() * 0.1F + 0.9F);
             }
 
@@ -204,27 +202,31 @@ public class ShadowChestEntity extends LootableContainerBlockEntity implements L
                     this.inventory.set(i, new ItemStack(Items.DRAGON_EGG));
                 else {
                     switch (this.getWorld().getRandom().nextInt(10)) {
-                    case 0:
-                        this.inventory.set(i, new ItemStack(Items.ENDER_PEARL, this.getWorld().getRandom().nextInt(5) + 1));
-                        break;
-                    case 4:
-                        this.inventory.set(i, new ItemStack(Items.GOLDEN_APPLE, 1));
-                        break;
-                    case 5:
-                        this.inventory.set(i, new ItemStack(Items.EXPERIENCE_BOTTLE, this.getWorld().getRandom().nextInt(12) + 1));
-                        break;
-                    case 6:
-                        ItemStack stack = new ItemStack(Items.ENCHANTED_BOOK);
-                        DynamicRegistryManager dynamicRegistryManager = this.getWorld().getRegistryManager();
-                        Optional<RegistryEntryList.Named<Enchantment>> optional = dynamicRegistryManager.get(RegistryKeys.ENCHANTMENT).getEntryList(EnchantmentTags.TREASURE);
-                        stack = EnchantmentHelper.enchant(this.getWorld().getRandom(), stack, 30, dynamicRegistryManager, optional);
-                        this.inventory.set(i, stack);
-                        break;
-                    case 7:
-                        this.inventory.set(i, tableList.get(this.getWorld().getRandom().nextInt(tableList.size())));
-                        break;
-                    default:
-                        break;
+                        case 0:
+                            this.inventory.set(i, new ItemStack(Items.ENDER_PEARL, this.getWorld().getRandom().nextInt(5) + 1));
+                            break;
+                        case 4:
+                            this.inventory.set(i, new ItemStack(Items.GOLDEN_APPLE, 1));
+                            break;
+                        case 5:
+                            this.inventory.set(i, new ItemStack(Items.EXPERIENCE_BOTTLE, this.getWorld().getRandom().nextInt(12) + 1));
+                            break;
+                        case 6:
+                            ItemStack stack = new ItemStack(Items.ENCHANTED_BOOK);
+                            DynamicRegistryManager dynamicRegistryManager = this.getWorld().getRegistryManager();
+                            Optional<RegistryEntry.Reference<Enchantment>> optional = dynamicRegistryManager.get(RegistryKeys.ENCHANTMENT).getRandom(this.getWorld().getRandom());
+                            if (optional.isPresent()) {
+                                stack.addEnchantment(optional.get(), optional.get().value().getMaxLevel() + 1);
+                            }
+                            stack.set(ItemInit.VOID_DROP, true);
+
+                            this.inventory.set(i, stack);
+                            break;
+                        case 7:
+                            this.inventory.set(i, tableList.get(this.getWorld().getRandom().nextInt(tableList.size())));
+                            break;
+                        default:
+                            break;
                     }
                 }
             }

@@ -1,6 +1,6 @@
 ### Added:
 - 
 ### Fixed:
-- 
+- Fixed shadow chest loot
 ### Changed:
-- Updated to mc 1.21
+- 
