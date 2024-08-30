@@ -49,7 +49,7 @@ public class PiglinFlag extends Block implements BlockEntityProvider {
 
     public PiglinFlag(Settings settings) {
         super(settings);
-        this.setDefaultState((BlockState) ((BlockState) ((BlockState) ((BlockState) this.stateManager.getDefaultState()).with(FACING, Direction.NORTH))));
+        this.setDefaultState(this.stateManager.getDefaultState().with(FACING, Direction.NORTH));
     }
 
     @Override
@@ -79,7 +79,7 @@ public class PiglinFlag extends Block implements BlockEntityProvider {
 
     @Override
     public BlockState getPlacementState(ItemPlacementContext ctx) {
-        return (BlockState) this.getDefaultState().with(FACING, ctx.getHorizontalPlayerFacing().rotateYClockwise());
+        return this.getDefaultState().with(FACING, ctx.getHorizontalPlayerFacing().rotateYClockwise());
     }
 
     @Override
@@ -108,7 +108,7 @@ public class PiglinFlag extends Block implements BlockEntityProvider {
     }
 
     private VoxelShape getShape(BlockState state) {
-        Direction direction = (Direction) state.get(FACING);
+        Direction direction = state.get(FACING);
         if (direction == Direction.NORTH) {
             return NORTH_FLAG;
         } else if (direction == Direction.EAST) {

@@ -81,7 +81,7 @@ public class PiglinFlagEntity extends BlockEntity {
     public void getPiglins() {
         List<LivingEntity> list = this.getWorld().getEntitiesByClass(LivingEntity.class, new Box(this.getPos()).expand(40D), EntityPredicates.EXCEPT_SPECTATOR);
         for (int i = 0; i < list.size(); ++i) {
-            LivingEntity entity = (LivingEntity) list.get(i);
+            LivingEntity entity = list.get(i);
             if (entity.getType() == EntityType.PIGLIN) {
                 PiglinEntity piglin = (PiglinEntity) entity;
                 if (piglin.getBrain().hasMemoryModule(MemoryModuleType.ATTACK_TARGET)) {
