@@ -41,7 +41,7 @@ dependencies {
 	// modCompileOnly ('maven.modrinth:voidz:1.0.9+1.20.1'){
 	// 	exclude(group: "net.fabricmc.fabric-api")
 	// }
-	modCompileOnly ("com.github.Globox1997:VoidZ:1.20-SNAPSHOT"),{
+	modCompileOnly ("com.github.Globox1997:VoidZ:1.21-SNAPSHOT") {
 		exclude(group: "net.fabricmc.fabric-api")
 	}
 	// Dragonloot
