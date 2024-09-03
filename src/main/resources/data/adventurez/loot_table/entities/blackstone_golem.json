@@ -46,7 +46,7 @@
       "conditions": [
         {
           "condition": "minecraft:random_chance",
-          "chance": 0.6
+          "chance": 0.7
         },
         {
           "condition": "minecraft:killed_by_player"
@@ -54,11 +54,11 @@
         {
           "condition": "minecraft:random_chance_with_enchanted_bonus",
           "enchantment": "minecraft:looting",
-          "unenchanted_chance": 0.025,
+          "unenchanted_chance": 0.75,
           "enchanted_chance": {
             "type": "minecraft:linear",
-            "base": 0.035,
-            "per_level_above_first": 0.01
+            "base": 0.75,
+            "per_level_above_first": 0.05
           }
         }
       ]
@@ -73,20 +73,16 @@
       ],
       "conditions": [
         {
-          "condition": "minecraft:random_chance",
-          "chance": 0.5
-        },
-        {
           "condition": "minecraft:killed_by_player"
         },
         {
           "condition": "minecraft:random_chance_with_enchanted_bonus",
           "enchantment": "minecraft:looting",
-          "unenchanted_chance": 0.025,
+          "unenchanted_chance": 0.7,
           "enchanted_chance": {
             "type": "minecraft:linear",
-            "base": 0.035,
-            "per_level_above_first": 0.01
+            "base": 0.75,
+            "per_level_above_first": 0.05
           }
         }
       ]
@@ -102,7 +98,7 @@
       "conditions": [
         {
           "condition": "minecraft:random_chance",
-          "chance": 0.05
+          "chance": 0.1
         },
         {
           "condition": "minecraft:killed_by_player"
@@ -110,11 +106,11 @@
         {
           "condition": "minecraft:random_chance_with_enchanted_bonus",
           "enchantment": "minecraft:looting",
-          "unenchanted_chance": 0.025,
+          "unenchanted_chance": 0.5,
           "enchanted_chance": {
             "type": "minecraft:linear",
-            "base": 0.035,
-            "per_level_above_first": 0.01
+            "base": 0.6,
+            "per_level_above_first": 0.1
           }
         }
       ]
