@@ -1,6 +1,6 @@
 ### Added:
 - 
 ### Fixed:
-- Fixed shadow chest loot
-### Changed:
 - 
+### Changed:
+- Tweaked entity loot table chances
