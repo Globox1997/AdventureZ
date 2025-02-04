@@ -199,7 +199,7 @@ public class OrcEntity extends HostileEntity {
         } else {
             dataTracker.set(DOUBLE_HAND_ATTACK, false);
         }
-        return this.isInvulnerableTo(source) ? false : super.damage(source, amount);
+        return !this.isInvulnerableTo(source) && super.damage(source, amount);
     }
 
     @Override

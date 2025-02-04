@@ -1,6 +1,6 @@
 ### Added:
 - 
 ### Fixed:
-- 
+- Fixed /kill on specific occasions
 ### Changed:
-- Tweaked entity loot table chances
+- 

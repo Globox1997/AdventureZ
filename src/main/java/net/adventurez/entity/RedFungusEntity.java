@@ -123,11 +123,10 @@ public class RedFungusEntity extends PathAwareEntity implements Angerable {
 
     @Override
     public boolean damage(DamageSource source, float amount) {
-        if (source.getSource() != null && source.getSource() instanceof PlayerEntity) {
-            PlayerEntity attacker = (PlayerEntity) source.getSource();
+        if (source.getSource() != null && source.getSource() instanceof PlayerEntity attacker) {
             this.setAngryAt(attacker.getUuid());
         }
-        return this.isInvulnerableTo(source) ? false : super.damage(source, amount);
+        return !this.isInvulnerableTo(source) && super.damage(source, amount);
 
     }
 

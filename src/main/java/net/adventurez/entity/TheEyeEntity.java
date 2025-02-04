@@ -316,7 +316,9 @@ public class TheEyeEntity extends FlyingEntity implements Monster {
 
     @Override
     public boolean damage(DamageSource source, float amount) {
-        if (this.isInvulnerableTo(source)) {
+        if (source.isIn(DamageTypeTags.BYPASSES_INVULNERABILITY)) {
+            return super.damage(source, amount);
+        } else if (this.isInvulnerableTo(source)) {
             return false;
         } else if (!source.isIn(DamageTypeTags.IS_DROWNING) && !(source.getAttacker() instanceof TheEyeEntity)) {
             if (this.getInvulnerableTimer() > 0 && !source.isIn(DamageTypeTags.BYPASSES_INVULNERABILITY)) {
@@ -324,7 +326,7 @@ public class TheEyeEntity extends FlyingEntity implements Monster {
             } else {
                 Entity entity2;
                 entity2 = source.getAttacker();
-                if (entity2 != null && !(entity2 instanceof PlayerEntity) && entity2 instanceof LivingEntity livingEntity && livingEntity.getType().isIn(EntityTypeTags.SENSITIVE_TO_SMITE)) {
+                if (!(entity2 instanceof PlayerEntity) && entity2 instanceof LivingEntity livingEntity && livingEntity.getType().isIn(EntityTypeTags.SENSITIVE_TO_SMITE)) {
                     return false;
                 } else {
                     if (this.field_7082 <= 0) {

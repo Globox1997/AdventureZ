@@ -43,6 +43,7 @@ import net.minecraft.nbt.NbtCompound;
 import net.minecraft.particle.EntityEffectParticleEffect;
 import net.minecraft.particle.ParticleTypes;
 import net.minecraft.registry.tag.BlockTags;
+import net.minecraft.registry.tag.DamageTypeTags;
 import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.sound.SoundEvent;
 import net.minecraft.text.Text;
@@ -219,7 +220,8 @@ public class BlackstoneGolemEntity extends HostileEntity {
                 Iterator<BlockPos> var8 = BlockPos.iterate(MathHelper.floor(box.minX), MathHelper.floor(box.minY + 0.25D), MathHelper.floor(box.minZ), MathHelper.floor(box.maxX),
                         MathHelper.floor(box.maxY + 0.4D), MathHelper.floor(box.maxZ)).iterator();
 
-                label60: while (true) {
+                label60:
+                while (true) {
                     BlockPos blockPos;
                     Block block;
                     BlockState blockState;
@@ -441,18 +443,19 @@ public class BlackstoneGolemEntity extends HostileEntity {
 
     @Override
     public boolean damage(DamageSource source, float amount) {
-        if (this.getDataTracker().get(INVULNERABLE)) {
+        if (source.isIn(DamageTypeTags.BYPASSES_INVULNERABILITY)) {
+            return super.damage(source, amount);
+        } else if (this.getDataTracker().get(INVULNERABLE)) {
             return false;
         } else {
-            if (source.getSource() instanceof LivingEntity) {
-                this.setAttacker((LivingEntity) source.getSource());
-                this.setTarget((LivingEntity) source.getSource());
+            if (source.getSource() instanceof LivingEntity attacker) {
+                this.setAttacker(attacker);
+                this.setTarget(attacker);
                 if (this.getWorld().getRandom().nextFloat() <= 0.05F) {
-                    MiniBlackstoneGolemEntity smallStoneGolemEntity = (MiniBlackstoneGolemEntity) EntityInit.MINI_BLACKSTONE_GOLEM.create(this.getWorld());
+                    MiniBlackstoneGolemEntity smallStoneGolemEntity = EntityInit.MINI_BLACKSTONE_GOLEM.create(this.getWorld());
                     smallStoneGolemEntity.refreshPositionAndAngles(this.getBlockPos(), this.getWorld().getRandom().nextFloat() * 360F, 0.0F);
                     this.getWorld().spawnEntity(smallStoneGolemEntity);
                 }
-
             }
             return super.damage(source, amount);
         }

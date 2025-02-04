@@ -170,7 +170,7 @@ public class SummonerEntity extends SpellCastingEntity {
             chance = this.getWorld().getRandom().nextInt(2);
             this.gotShotByABow = true;
         }
-        if (chance == 1) {
+        if (!source.isIn(DamageTypeTags.BYPASSES_INVULNERABILITY) &&chance == 1) {
             this.getWorld().playSoundFromEntity(null, this, SoundInit.MAGIC_SHIELD_HIT_EVENT, SoundCategory.HOSTILE, 1.0F, 1.0F);
             if (source.getSource() != null && source.getSource() instanceof ArrowEntity) {
                 if (!this.getWorld().isClient()) {
@@ -179,7 +179,7 @@ public class SummonerEntity extends SpellCastingEntity {
             }
             return false;
         } else {
-            return this.isInvulnerableTo(source) ? false : super.damage(source, amount);
+            return !this.isInvulnerableTo(source) && super.damage(source, amount);
         }
     }
 

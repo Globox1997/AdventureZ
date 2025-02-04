@@ -2,6 +2,7 @@ package net.adventurez.entity;
 
 import java.util.List;
 
+import net.minecraft.registry.tag.DamageTypeTags;
 import org.jetbrains.annotations.Nullable;
 
 import net.adventurez.entity.nonliving.ThrownRockEntity;
@@ -143,13 +144,16 @@ public class VoidFragmentEntity extends FlyingEntity implements Monster {
 
     @Override
     public boolean damage(DamageSource source, float amount) {
-        if ((source.getAttacker() != null && source.getAttacker() instanceof PlayerEntity && ((PlayerEntity) source.getAttacker()).isCreative())) {
+        if (source.isIn(DamageTypeTags.BYPASSES_INVULNERABILITY)) {
+            return super.damage(source, amount);
+        } else if ((source.getAttacker() != null && source.getAttacker() instanceof PlayerEntity && ((PlayerEntity) source.getAttacker()).isCreative())) {
             return super.damage(source, amount);
         }
         if (this.isInvulnerableTo(source) || source.getSource() instanceof ThrownRockEntity || (this.isVoidOrb && !(source.getSource() instanceof VoidBulletEntity))) {
             return false;
-        } else
+        } else {
             return super.damage(source, source.getSource() instanceof VoidBulletEntity ? this.getHealth() : amount);
+        }
     }
 
     @Override

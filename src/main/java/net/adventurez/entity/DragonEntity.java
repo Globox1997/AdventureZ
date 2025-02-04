@@ -1060,7 +1060,7 @@ public class DragonEntity extends PathAwareEntity implements InventoryChangedLis
         if (!this.getWorld().isClient()) {
             this.setSitting(false);
         }
-        return this.isInvulnerableTo(source) ? false : super.damage(source, amount);
+        return !this.isInvulnerableTo(source) && super.damage(source, amount);
     }
 
     static {

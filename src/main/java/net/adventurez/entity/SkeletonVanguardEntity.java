@@ -48,8 +48,8 @@ public class SkeletonVanguardEntity extends HostileEntity {
         this.goalSelector.add(7, new LookAtEntityGoal(this, PlayerEntity.class, 3.0F, 1.0F));
         this.goalSelector.add(8, new LookAtEntityGoal(this, MobEntity.class, 8.0F));
         this.goalSelector.add(7, new WanderAroundFarGoal(this, 0.9D));
-        this.targetSelector.add(1, (new RevengeGoal(this, new Class[] { SkeletonVanguardEntity.class })));
-        this.targetSelector.add(2, (new RevengeGoal(this, new Class[] { SummonerEntity.class })));
+        this.targetSelector.add(1, (new RevengeGoal(this, new Class[]{SkeletonVanguardEntity.class})));
+        this.targetSelector.add(2, (new RevengeGoal(this, new Class[]{SummonerEntity.class})));
         this.targetSelector.add(3, new ActiveTargetGoal<>(this, PlayerEntity.class, true));
     }
 
@@ -112,12 +112,12 @@ public class SkeletonVanguardEntity extends HostileEntity {
         } else {
             chance = this.getWorld().getRandom().nextInt(10);
         }
-        if (chance == 1) {
+        if (!source.isIn(DamageTypeTags.BYPASSES_INVULNERABILITY) && chance == 1) {
             dataTracker.set(SHIELD_SWING, 0.1F);
             this.getWorld().playSoundFromEntity(null, this, SoundEvents.ITEM_SHIELD_BLOCK, SoundCategory.HOSTILE, 1.0F, 1.0F);
             return false;
         } else {
-            return this.isInvulnerableTo(source) ? false : super.damage(source, amount);
+            return !this.isInvulnerableTo(source) && super.damage(source, amount);
         }
     }
 

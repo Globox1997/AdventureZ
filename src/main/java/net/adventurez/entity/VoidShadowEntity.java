@@ -291,20 +291,19 @@ public class VoidShadowEntity extends FlyingEntity implements Monster {
 
     @Override
     public boolean damage(DamageSource source, float amount) {
-        if (source.getAttacker() instanceof LivingEntity && !(source.getAttacker() instanceof VoidFragmentEntity)) {
+        if (source.getAttacker() instanceof LivingEntity attacker && !(source.getAttacker() instanceof VoidFragmentEntity)) {
             if (this.circling) {
-                this.setTarget((LivingEntity) source.getAttacker());
+                this.setTarget(attacker);
             }
             amount *= 0.5F;
-            ((LivingEntity) source.getAttacker()).takeKnockback(4.0D, this.getX() - source.getAttacker().getX(), this.getZ() - source.getAttacker().getZ());
-            ((LivingEntity) source.getAttacker()).damage(this.getDamageSources().magic(), 1f);
+            attacker.takeKnockback(4.0D, this.getX() - source.getAttacker().getX(), this.getZ() - source.getAttacker().getZ());
+            attacker.damage(this.getDamageSources().magic(), 1f);
         }
         if (source.getSource() instanceof ThrownRockEntity) {
             return false;
         }
         if (source.isIn(DamageTypeTags.IS_PROJECTILE)) {
-            if (source.getSource() instanceof ArrowEntity) {
-                ArrowEntity arrowEntity = (ArrowEntity) source.getSource();
+            if (source.getSource() instanceof ArrowEntity arrowEntity) {
                 if (arrowEntity.isGlowing()) {
                     return true;
                 }
@@ -313,7 +312,7 @@ public class VoidShadowEntity extends FlyingEntity implements Monster {
             }
 
         }
-        return this.isInvulnerableTo(source) ? false : super.damage(source, amount);
+        return !this.isInvulnerableTo(source) && super.damage(source, amount);
     }
 
     @Override

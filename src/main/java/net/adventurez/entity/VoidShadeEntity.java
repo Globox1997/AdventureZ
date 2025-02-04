@@ -55,8 +55,9 @@ public class VoidShadeEntity extends FlyingEntity implements Monster {
     public boolean damage(DamageSource source, float amount) {
         if (this.isInvulnerableTo(source) || source.getSource() instanceof ThrownRockEntity) {
             return false;
-        } else
+        } else {
             return super.damage(source, amount);
+        }
     }
 
     @Override
