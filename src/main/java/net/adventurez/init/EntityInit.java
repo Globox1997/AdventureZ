@@ -1,5 +1,6 @@
 package net.adventurez.init;
 
+import net.adventurez.AdventureMain;
 import net.adventurez.entity.*;
 import net.adventurez.entity.nonliving.*;
 import net.fabricmc.fabric.api.itemgroup.v1.ItemGroupEvents;
@@ -15,7 +16,6 @@ import net.minecraft.registry.Registries;
 import net.minecraft.registry.Registry;
 import net.minecraft.registry.RegistryKey;
 import net.minecraft.registry.RegistryKeys;
-import net.minecraft.util.Identifier;
 
 @SuppressWarnings("unchecked")
 public class EntityInit {
@@ -88,19 +88,19 @@ public class EntityInit {
             EntityType.Builder.create(VoidFragmentEntity::new, SpawnGroup.MONSTER).dimensions(1.0F, 1.0F).build());
 
     // Damage Types
-    public static final RegistryKey<DamageType> AMETHYST_SHARD_KEY = RegistryKey.of(RegistryKeys.DAMAGE_TYPE, Identifier.of("adventurez", "amethyst_shard"));
-    public static final RegistryKey<DamageType> VOID_BULLET_KEY = RegistryKey.of(RegistryKeys.DAMAGE_TYPE, Identifier.of("adventurez", "void_bullet"));
-    public static final RegistryKey<DamageType> FIRE_BREATH_KEY = RegistryKey.of(RegistryKeys.DAMAGE_TYPE, Identifier.of("adventurez", "fire_breath"));
-    public static final RegistryKey<DamageType> TINY_EYE_KEY = RegistryKey.of(RegistryKeys.DAMAGE_TYPE, Identifier.of("adventurez", "tiny_eye"));
-    public static final RegistryKey<DamageType> ROCK_KEY = RegistryKey.of(RegistryKeys.DAMAGE_TYPE, Identifier.of("adventurez", "rock"));
+    public static final RegistryKey<DamageType> AMETHYST_SHARD_KEY = RegistryKey.of(RegistryKeys.DAMAGE_TYPE, AdventureMain.identifierOf("amethyst_shard"));
+    public static final RegistryKey<DamageType> VOID_BULLET_KEY = RegistryKey.of(RegistryKeys.DAMAGE_TYPE, AdventureMain.identifierOf("void_bullet"));
+    public static final RegistryKey<DamageType> FIRE_BREATH_KEY = RegistryKey.of(RegistryKeys.DAMAGE_TYPE, AdventureMain.identifierOf("fire_breath"));
+    public static final RegistryKey<DamageType> TINY_EYE_KEY = RegistryKey.of(RegistryKeys.DAMAGE_TYPE, AdventureMain.identifierOf("tiny_eye"));
+    public static final RegistryKey<DamageType> ROCK_KEY = RegistryKey.of(RegistryKeys.DAMAGE_TYPE, AdventureMain.identifierOf("rock"));
 
     private static <T extends Entity> EntityType<T> register(String id, int primaryColor, int secondaryColor, EntityType<T> entityType) {
         if (primaryColor != 0) {
-            Item item = Registry.register(Registries.ITEM, Identifier.of("adventurez", "spawn_" + id),
+            Item item = Registry.register(Registries.ITEM, AdventureMain.identifierOf("spawn_" + id),
                     new SpawnEggItem((EntityType<? extends MobEntity>) entityType, primaryColor, secondaryColor, new Item.Settings()));
             ItemGroupEvents.modifyEntriesEvent(ItemInit.ADVENTUREZ_ITEM_GROUP).register(entries -> entries.add(item));
         }
-        return Registry.register(Registries.ENTITY_TYPE, Identifier.of("adventurez", id), entityType);
+        return Registry.register(Registries.ENTITY_TYPE, AdventureMain.identifierOf(id), entityType);
     }
 
     public static void init() {

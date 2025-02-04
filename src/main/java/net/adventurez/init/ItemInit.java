@@ -5,6 +5,7 @@ import java.util.function.UnaryOperator;
 
 import com.mojang.serialization.Codec;
 
+import net.adventurez.AdventureMain;
 import net.adventurez.item.*;
 import net.adventurez.item.component.GildedActivationComponent;
 import net.fabricmc.fabric.api.itemgroup.v1.FabricItemGroup;
@@ -66,7 +67,7 @@ public class ItemInit {
                     Text.translatable("item.minecraft.smithing_template.gilded_upgrade.ingredients").formatted(Formatting.BLUE),
                     Text.translatable("item.adventurez.gilded_upgrade").formatted(Formatting.GRAY), Text.translatable("item.smithing_template.gilded_upgrade.base_slot_description"),
                     Text.translatable("item.adventurez.smithing_template.gilded_upgrade.additions_slot_description"), List.of(Identifier.of("item/empty_armor_slot_helmet"),
-                            Identifier.of("item/empty_armor_slot_chestplate"), Identifier.of("item/empty_armor_slot_leggings"), Identifier.of("item/empty_armor_slot_boots")),
+                    Identifier.of("item/empty_armor_slot_chestplate"), Identifier.of("item/empty_armor_slot_leggings"), Identifier.of("item/empty_armor_slot_boots")),
                     List.of(Identifier.of("adventurez:item/empty_slot_gilded_netherite_fragment"))));
 
     // Food
@@ -97,7 +98,7 @@ public class ItemInit {
             new GildedNetheriteArmor(AdventureArmorMaterials.GILDED_NETHERITE, ArmorItem.Type.BOOTS, new Item.Settings().maxDamage(ArmorItem.Type.BOOTS.getMaxDamage(37)).fireproof()));
 
     private static Item register(String id, Item item) {
-        return register(Identifier.of("adventurez", id), item);
+        return register(AdventureMain.identifierOf(id), item);
     }
 
     private static Item register(Identifier id, Item item) {

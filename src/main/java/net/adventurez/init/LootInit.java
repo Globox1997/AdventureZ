@@ -1,11 +1,11 @@
 package net.adventurez.init;
 
+import net.fabricmc.fabric.api.loot.v3.LootTableEvents;
 import net.minecraft.loot.provider.number.BinomialLootNumberProvider;
 import net.minecraft.registry.RegistryKey;
 
 import java.util.List;
 
-import net.fabricmc.fabric.api.loot.v2.LootTableEvents;
 import net.minecraft.loot.LootPool;
 import net.minecraft.loot.LootTable;
 import net.minecraft.loot.LootTables;
@@ -26,7 +26,7 @@ public class LootInit {
     }
 
     public static void init() {
-        LootTableEvents.MODIFY.register((key, tableBuilder, source) -> {
+        LootTableEvents.MODIFY.register((key, tableBuilder, source, registries) -> {
             if (addedLootTable(key)) {
                 LootPool pool = LootPool.builder().with(ItemEntry.builder(ItemInit.GILDED_BLACKSTONE_SHARD).build()).rolls(BinomialLootNumberProvider.create(1, 0.01F)).build();
                 tableBuilder.pool(pool);

@@ -3,6 +3,7 @@ package net.adventurez;
 import net.adventurez.init.*;
 import net.adventurez.network.AdventureServerPacket;
 import net.fabricmc.api.ModInitializer;
+import net.minecraft.util.Identifier;
 
 public class AdventureMain implements ModInitializer {
 
@@ -20,6 +21,10 @@ public class AdventureMain implements ModInitializer {
         SpawnInit.init();
         TagInit.init();
         EventInit.init();
+    }
+
+    public static Identifier identifierOf(String name) {
+        return Identifier.of("adventurez", name);
     }
 }
 

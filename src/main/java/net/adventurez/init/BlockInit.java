@@ -1,5 +1,6 @@
 package net.adventurez.init;
 
+import net.adventurez.AdventureMain;
 import net.fabricmc.fabric.api.itemgroup.v1.ItemGroupEvents;
 import net.minecraft.block.AbstractBlock;
 import net.minecraft.block.Block;
@@ -26,7 +27,7 @@ public class BlockInit {
     public static BlockEntityType<ShadowChestEntity> SHADOW_CHEST_ENTITY;
 
     private static Block register(String id, Block block) {
-        return register(Identifier.of("adventurez", id), block);
+        return register(AdventureMain.identifierOf(id), block);
     }
 
     private static Block register(Identifier id, Block block) {

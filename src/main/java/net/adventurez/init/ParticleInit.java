@@ -1,22 +1,18 @@
 package net.adventurez.init;
 
-import java.util.Random;
-
+import net.adventurez.AdventureMain;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
 import net.fabricmc.fabric.api.client.particle.v1.FabricSpriteProvider;
 import net.fabricmc.fabric.api.particle.v1.FabricParticleTypes;
-import net.minecraft.registry.Registries;
-import net.minecraft.registry.Registry;
-import net.minecraft.util.Identifier;
-import net.minecraft.util.math.MathHelper;
-import net.minecraft.client.particle.SpriteProvider;
+import net.minecraft.client.particle.*;
 import net.minecraft.client.world.ClientWorld;
 import net.minecraft.particle.SimpleParticleType;
-import net.minecraft.client.particle.Particle;
-import net.minecraft.client.particle.ParticleFactory;
-import net.minecraft.client.particle.ParticleTextureSheet;
-import net.minecraft.client.particle.SpriteBillboardParticle;
+import net.minecraft.registry.Registries;
+import net.minecraft.registry.Registry;
+import net.minecraft.util.math.MathHelper;
+
+import java.util.Random;
 
 public class ParticleInit {
 
@@ -25,9 +21,9 @@ public class ParticleInit {
     public static final SimpleParticleType SPRINT_PARTICLE = FabricParticleTypes.simple();
 
     public static void init() {
-        Registry.register(Registries.PARTICLE_TYPE, Identifier.of("adventurez", "amethyst_shard_particle"), AMETHYST_SHARD_PARTICLE);
-        Registry.register(Registries.PARTICLE_TYPE, Identifier.of("adventurez", "void_cloud_particle"), VOID_CLOUD_PARTICLE);
-        Registry.register(Registries.PARTICLE_TYPE, Identifier.of("adventurez", "sprint_particle"), SPRINT_PARTICLE);
+        Registry.register(Registries.PARTICLE_TYPE, AdventureMain.identifierOf("amethyst_shard_particle"), AMETHYST_SHARD_PARTICLE);
+        Registry.register(Registries.PARTICLE_TYPE, AdventureMain.identifierOf("void_cloud_particle"), VOID_CLOUD_PARTICLE);
+        Registry.register(Registries.PARTICLE_TYPE, AdventureMain.identifierOf("sprint_particle"), SPRINT_PARTICLE);
     }
 
     @Environment(EnvType.CLIENT)
