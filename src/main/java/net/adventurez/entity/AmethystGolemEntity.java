@@ -151,11 +151,12 @@ public class AmethystGolemEntity extends HostileEntity {
     }
 
     public void amethystGolemRageMode() {
-        if (this.getWorld() instanceof ServerWorld) {
+        if (this.getWorld() instanceof ServerWorld serverWorld) {
             this.getAttributeInstance(EntityAttributes.GENERIC_ARMOR).setBaseValue(this.getAttributeBaseValue(EntityAttributes.GENERIC_ARMOR) + 2.0D);
-            if (!this.isStronger)
+            if (!this.isStronger) {
                 this.getAttributeInstance(EntityAttributes.GENERIC_MOVEMENT_SPEED).setBaseValue(this.getAttributeBaseValue(EntityAttributes.GENERIC_MOVEMENT_SPEED) + 0.1D);
-            ((ServerWorld) this.getWorld()).playSoundFromEntity(null, this, SoundInit.AMETHYST_GOLEM_RAGE_EVENT, SoundCategory.HOSTILE, 1.0F, 1.0F);
+            }
+            serverWorld.playSoundFromEntity(null, this, SoundInit.AMETHYST_GOLEM_RAGE_EVENT, SoundCategory.HOSTILE, 1.0F, 1.0F);
             for (int i = 0; i < 20; i++) {
                 double d = (double) this.getX() - 1.0F + this.getWorld().getRandom().nextFloat() * 2.0F;
                 double e = (double) ((float) this.getRandomBodyY() + this.getWorld().getRandom().nextFloat() * 0.1F);
@@ -174,7 +175,7 @@ public class AmethystGolemEntity extends HostileEntity {
         DEEPSLATE_VARIANT = DataTracker.registerData(AmethystGolemEntity.class, TrackedDataHandlerRegistry.BOOLEAN);
     }
 
-    public class ThrowShardGoal extends Goal {
+    public static class ThrowShardGoal extends Goal {
         private final AmethystGolemEntity amethystGolemEntity;
         private int cooldown;
         private long lastUpdateTime;
@@ -196,10 +197,7 @@ public class AmethystGolemEntity extends HostileEntity {
                 } else if (!livingEntity.isAlive()) {
                     return false;
                 } else {
-                    if (this.amethystGolemEntity.canSee(livingEntity)) {
-                        return true;
-                    } else
-                        return false;
+                    return this.amethystGolemEntity.canSee(livingEntity);
                 }
             }
         }
@@ -207,28 +205,27 @@ public class AmethystGolemEntity extends HostileEntity {
         @Override
         public boolean shouldContinue() {
             LivingEntity livingEntity = this.amethystGolemEntity.getTarget();
-            if (livingEntity == null)
+            if (livingEntity == null) {
                 return false;
-            else if (!livingEntity.isAlive())
+            } else if (!livingEntity.isAlive()) {
                 return false;
-            else if (!this.amethystGolemEntity.isInWalkTargetRange(livingEntity.getBlockPos()) || !this.amethystGolemEntity.canSee(livingEntity))
+            } else if (!this.amethystGolemEntity.isInWalkTargetRange(livingEntity.getBlockPos()) || !this.amethystGolemEntity.canSee(livingEntity)) {
                 return false;
-            else if (this.cooldown > 0)
+            } else if (this.cooldown > 0) {
                 return false;
-            else
+            } else {
                 return !(livingEntity instanceof PlayerEntity) || !livingEntity.isSpectator() && !((PlayerEntity) livingEntity).isCreative();
-
+            }
         }
 
         @Override
         public void start() {
             this.amethystGolemEntity.swingHand(Hand.MAIN_HAND);
             if (!this.amethystGolemEntity.getWorld().isClient()) {
-                ((ServerWorld) this.amethystGolemEntity.getWorld()).playSoundFromEntity(null, this.amethystGolemEntity, SoundInit.ROCK_THROW_EVENT, SoundCategory.HOSTILE, 0.74F, 1.0F);
+                this.amethystGolemEntity.getWorld().playSoundFromEntity(null, this.amethystGolemEntity, SoundInit.ROCK_THROW_EVENT, SoundCategory.HOSTILE, 0.74F, 1.0F);
                 AmethystShardEntity amethystShardEntity = new AmethystShardEntity(this.amethystGolemEntity, this.amethystGolemEntity.getWorld());
-                amethystShardEntity.setVelocity(amethystGolemEntity, amethystGolemEntity.getPitch(), amethystGolemEntity.getYaw(), -20.0F, 0.7F, 1.0F);
+                amethystShardEntity.setVelocity(amethystGolemEntity, amethystGolemEntity.getPitch(), amethystGolemEntity.getYaw(), -20.0F, 0.7F, this.amethystGolemEntity.getRandom().nextFloat());
                 this.amethystGolemEntity.getWorld().spawnEntity(amethystShardEntity);
-
             }
             this.cooldown = 80 + this.amethystGolemEntity.getRandom().nextInt(200);
             this.stop();
