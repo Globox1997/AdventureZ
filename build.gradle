@@ -34,7 +34,7 @@ dependencies {
 		exclude(group: "net.fabricmc.fabric-api")
 	}
 	// Patchouli
-	modCompileOnly "vazkii.patchouli:Patchouli:${project.patchouli_version}",{
+	modCompileOnly ("vazkii.patchouli:Patchouli:${project.patchouli_version}") {
 		exclude(group: "net.fabricmc.fabric-api")
 	}
 	// VoidZ
