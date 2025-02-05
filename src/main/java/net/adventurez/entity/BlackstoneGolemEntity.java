@@ -10,6 +10,7 @@ import net.adventurez.init.SoundInit;
 import net.adventurez.init.TagInit;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
+import net.fabricmc.loader.api.FabricLoader;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockState;
 import net.minecraft.block.Blocks;
@@ -59,6 +60,7 @@ import net.minecraft.world.WorldView;
 import net.minecraft.entity.boss.BossBar;
 
 public class BlackstoneGolemEntity extends HostileEntity {
+
     public static final TrackedData<Integer> THROW_COOLDOWN;
     public static final TrackedData<Boolean> INVULNERABLE;
     public static final TrackedData<Integer> INVULNERABLE_TIMER;
@@ -78,6 +80,8 @@ public class BlackstoneGolemEntity extends HostileEntity {
     private int lavaRegenerateLife = 0;
 
     private final ServerBossBar bossBar;
+
+    private final boolean isDungeonZLoaded = FabricLoader.getInstance().isModLoaded("dungeonz");
 
     public BlackstoneGolemEntity(EntityType<? extends BlackstoneGolemEntity> entityType, World world) {
         super(entityType, world);
@@ -217,28 +221,31 @@ public class BlackstoneGolemEntity extends HostileEntity {
             if (this.horizontalCollision && this.getWorld().getGameRules().getBoolean(GameRules.DO_MOB_GRIEFING)) {
                 boolean bl = false;
                 Box box = this.getBoundingBox().expand(0.25D);
-                Iterator<BlockPos> var8 = BlockPos.iterate(MathHelper.floor(box.minX), MathHelper.floor(box.minY + 0.25D), MathHelper.floor(box.minZ), MathHelper.floor(box.maxX),
+                Iterator<BlockPos> iterator = BlockPos.iterate(MathHelper.floor(box.minX), MathHelper.floor(box.minY + 0.25D), MathHelper.floor(box.minZ), MathHelper.floor(box.maxX),
                         MathHelper.floor(box.maxY + 0.4D), MathHelper.floor(box.maxZ)).iterator();
 
-                label60:
                 while (true) {
-                    BlockPos blockPos;
-                    Block block;
-                    BlockState blockState;
-                    do {
-                        if (!var8.hasNext()) {
-                            if (!bl && this.isOnGround()) {
-                                this.jump();
-                            }
-                            break label60;
+                    BlockPos blockPos = null;
+                    Block block = null;
+                    BlockState blockState = null;
+
+                    if (!iterator.hasNext()) {
+                        if (!bl && this.isOnGround()) {
+                            this.jump();
                         }
+                        break;
+                    }
 
-                        blockPos = (BlockPos) var8.next();
-                        blockState = this.getWorld().getBlockState(blockPos);
-                        block = blockState.getBlock();
-                    } while (!(block instanceof Block && !blockState.isIn(TagInit.UNBREAKABLE_BLOCKS)));
+                    blockPos = iterator.next();
+                    blockState = this.getWorld().getBlockState(blockPos);
+                    block = blockState.getBlock();
 
-                    bl = this.getWorld().breakBlock(blockPos, true, this) || bl;
+                    if (block instanceof Block && !blockState.isIn(TagInit.UNBREAKABLE_BLOCKS)) {
+                        if (isDungeonZLoaded && this.getWorld().getRegistryKey().getValue().equals(Identifier.of("dungeonz", "dungeon"))) {
+                            break;
+                        }
+                        bl = this.getWorld().breakBlock(blockPos, false, this) || bl;
+                    }
                 }
             }
 
