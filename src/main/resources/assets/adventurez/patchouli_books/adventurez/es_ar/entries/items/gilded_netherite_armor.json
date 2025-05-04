@@ -1,0 +1,28 @@
+{
+    "name": "Armadura Dorada",
+    "icon": "adventurez:gilded_netherite_chestplate",
+    "category": "adventurez:item_category",
+    "pages": [
+        {
+            "type": "text",
+            "title": "Armadura de Netherite Dorada",
+            "text": "Dora tu armadura de netherite en la mesa de herrería. Los fragmentos de netherite dorada se consiguen al matar al Gólem de Piedra Negra."
+        },
+        {
+            "type": "smithing",
+            "title": "Herrería",
+            "recipe": "adventurez:gilded_netherite_helmet",
+            "recipe2": "adventurez:gilded_netherite_chestplate"
+        },
+        {
+            "type": "smithing",
+            "title": "Herrería",
+            "recipe": "adventurez:gilded_netherite_leggings",
+            "recipe2": "adventurez:gilded_netherite_boots"
+        },
+        {
+            "type": "empty",
+            "draw_filler": false
+        }
+    ]
+}
