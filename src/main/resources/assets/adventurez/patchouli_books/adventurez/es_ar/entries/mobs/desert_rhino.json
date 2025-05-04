@@ -1,0 +1,17 @@
+{
+    "name": "Rinoceronte del Desierto",
+    "icon": "adventurez:blackstone_golem_heart",
+    "category": "adventurez:mob_category",
+    "pages": [
+        {
+            "type": "text",
+            "text": "El Rinoceronte del Desierto se puede encontrar en el desierto y cerca de los pozos del desierto. Es agresivo y correrá hacia vos para golpearte con su cuerno."
+        },
+        {
+            "type": "entity",
+            "name": "Muestra",
+            "entity": "adventurez:desert_rhino",
+            "scale": 0.6
+        }
+    ]
+}
