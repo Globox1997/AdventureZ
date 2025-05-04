@@ -1,0 +1,19 @@
+{
+    "name": "Soporte de Piedra Negra Pulida Labrada",
+    "icon": "adventurez:chiseled_polished_blackstone_holder",
+    "category": "adventurez:block_category",
+    "pages": [
+        {
+            "type": "spotlight",
+            "title": "Soporte de Piedra Negra Pulida Labrada",
+            "item": "adventurez:chiseled_polished_blackstone_holder",
+            "link_recipe": true,
+            "text": "Contiene el poder para sostener un Fragmento de Piedra Negra Dorada. Es necesario para invocar al Gólem de Piedra Negra."
+        },
+        {
+            "type": "stonecutting",
+            "title": "Cortapiedras",
+            "recipe": "adventurez:chiseled_polished_blackstone_holder"
+        }
+    ]
+}
