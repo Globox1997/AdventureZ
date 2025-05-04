@@ -1,0 +1,16 @@
+{
+    "name": "Segador de Almas",
+    "icon": "adventurez:blackstone_golem_heart",
+    "category": "adventurez:mob_category",
+    "pages": [
+        {
+            "type": "text",
+            "text": "El Segador de Almas es más letal que cualquier otro esqueleto wither que hayas visto. Dispara flechas con el efecto de marchitez o te corta por la mitad con una espada de netherite, está preparado para todo. Normalmente monta una Pesadilla para moverse más rápido y lo encontrarás en el valle de arena de alma."
+        },
+        {
+            "type": "entity",
+            "name": "Muestra",
+            "entity": "adventurez:soul_reaper"
+        }
+    ]
+}
