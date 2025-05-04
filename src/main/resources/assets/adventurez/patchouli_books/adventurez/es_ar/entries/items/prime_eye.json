@@ -1,0 +1,17 @@
+{
+    "name": "Ojo Supremo",
+    "icon": "adventurez:prime_eye",
+    "category": "adventurez:item_category",
+    "pages": [
+        {
+            "type": "spotlight",
+            "title": "Ojo Supremo",
+            "item": "adventurez:prime_eye",
+            "text": "El Ojo Supremo es el remanente del Ojo y puede ser dejado por él. Rellénalo con Perlas de Ender en la yunque, así hará menos daño cuando lo lances."
+        },
+        {
+            "type": "empty",
+            "draw_filler": false
+        }
+    ]
+}
