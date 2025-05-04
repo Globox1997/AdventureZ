@@ -1,0 +1,18 @@
+{
+    "name": "Pesadilla",
+    "icon": "adventurez:blackstone_golem_heart",
+    "category": "adventurez:mob_category",
+    "pages": [
+        {
+            "type": "text",
+            "text": "La Pesadilla es la montura del Segador de Almas, la cual puede encontrarse en los valles de arena del alma. Tiene un alma oscura debido a la influencia de su jinete. Puede ser domesticada."
+        },
+        {
+            "type": "entity",
+            "name": "Muestra",
+            "entity": "adventurez:nightmare",
+            "scale": 0.6,
+            "offset": 0.5
+        }
+    ]
+}
