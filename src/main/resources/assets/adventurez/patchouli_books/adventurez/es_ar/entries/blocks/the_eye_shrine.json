@@ -1,0 +1,54 @@
+{
+	"name": "El Santuario del Ojo",
+	"icon": "minecraft:dragon_egg",
+	"category": "adventurez:block_category",
+	"pages": [
+		{
+			"type": "text",
+			"title": "El Santuario del Ojo",
+			"text": "Este santuario absorbe energía del bloque más raro de Minecraft: el Huevo de Dragón. Construilo dentro de El End para invocar a una criatura letal llamada El Ojo."
+		},
+		{
+			"type": "multiblock",
+			"text": "La capa inferior también se puede construir con Obsidiana Llorosa",
+			"offset": [
+				0,
+				4,
+				0
+			],
+			"multiblock": {
+				"pattern": [
+					[
+						"     ",
+						" E E ",
+						"  D  ",
+						" E E ",
+						"     "
+					],
+					[
+						"E   E",
+						" CCC ",
+						" CCC ",
+						" CCC ",
+						"E   E"
+					],
+					[
+						"OOOOO",
+						"OOOOO",
+						"OO0OO",
+						"OOOOO",
+						"OOOOO"
+					]
+				],
+				"mapping": {
+					"O": "minecraft:obsidian",
+					"C": "minecraft:crying_obsidian",
+					"E": "minecraft:end_rod",
+					"D": "minecraft:dragon_egg",
+					"0": "minecraft:obsidian"
+				},
+				"symmetrical": true
+			}
+		}
+	]
+}
