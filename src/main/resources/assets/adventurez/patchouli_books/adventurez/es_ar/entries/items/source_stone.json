@@ -1,0 +1,17 @@
+{
+    "name": "Piedra Fuente",
+    "icon": "adventurez:source_stone",
+    "category": "adventurez:item_category",
+    "pages": [
+        {
+            "type": "spotlight",
+            "title": "Piedra Fuente",
+            "item": "adventurez:source_stone",
+            "text": "La Piedra Fuente es dejada por la Sombra del Vacío. Es una piedra legendaria creada en tiempos antiguos por un mago oscuro cuyo nombre ha sido olvidado. Hacer clic derecho disparará una bala de vacío. Mantener Shift y hacer clic derecho intentará atravesar bloques."
+        },
+        {
+            "type": "empty",
+            "draw_filler": false
+        }
+    ]
+}
