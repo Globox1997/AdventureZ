@@ -78,12 +78,12 @@ public class StoneGolemArmor extends ArmorItem {
         if (stack.getItem() == ItemInit.STONE_GOLEM_CHESTPLATE) {
             NbtCompound tag = stack.getNbt();
             if (tag != null && tag.contains("armor_time")) {
-                if (tag.getBoolean("activating_armor") && tag.getInt("armor_time") + (ConfigInit.CONFIG.stone_golem_armor_effect_duration * 2) < (int) world.getTime()) {
-                    tag.putBoolean("activating_armor", false);
-                }
                 if (tag.getBoolean("activating_armor") && tag.getInt("armor_time") + ConfigInit.CONFIG.stone_golem_armor_effect_duration < (int) world.getTime()) {
                     entity.setFireTicks(0);
                     tag.putBoolean("activating_armor_visuals", false);
+                }
+                if (tag.getBoolean("activating_armor") && tag.getInt("armor_time") + (ConfigInit.CONFIG.stone_golem_armor_effect_duration * 2) < (int) world.getTime()) {
+                    tag.putBoolean("activating_armor", false);
                 }
             }
         }
