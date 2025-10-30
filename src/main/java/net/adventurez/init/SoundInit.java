@@ -106,6 +106,11 @@ public class SoundInit {
     public static SoundEvent ENDERWARTHOG_IDLE_EVENT = register("hog_idle");
     public static SoundEvent ENDERWARTHOG_HURT_EVENT = register("hog_hurt");
     public static SoundEvent ENDERWARTHOG_ATTACK_EVENT = register("hog_attack");
+    // Skunk
+    public static SoundEvent SKUNK_DEATH_EVENT = register("skunk_death");
+    public static SoundEvent SKUNK_IDLE_EVENT = register("skunk_idle");
+    public static SoundEvent SKUNK_HURT_EVENT = register("skunk_hurt");
+    public static SoundEvent SKUNK_FART_EVENT = register("skunk_fart");
     // Item
     public static SoundEvent ROCK_IMPACT_EVENT = register("rock_impact");
     public static SoundEvent ROCK_THROW_EVENT = register("rock_throw");

@@ -653,5 +653,30 @@
       "adventurez:hog_attack1",
       "adventurez:hog_attack2"
     ]
+  },
+  "skunk_death": {
+    "sounds": [
+      "adventurez:skunk_death_1"
+    ]
+  },
+  "skunk_idle": {
+    "sounds": [
+      "adventurez:skunk_idle_1",
+      "adventurez:skunk_idle_2",
+      "adventurez:skunk_idle_3",
+      "adventurez:skunk_idle_4"
+    ]
+  },
+  "skunk_hurt": {
+    "sounds": [
+      "adventurez:skunk_hurt_1",
+      "adventurez:skunk_hurt_2",
+      "adventurez:skunk_hurt_3"
+    ]
+  },
+  "skunk_fart": {
+    "sounds": [
+      "adventurez:skunk_fart_1"
+    ]
   }
 }

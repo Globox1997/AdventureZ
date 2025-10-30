@@ -7,6 +7,7 @@ import net.adventurez.entity.render.*;
 import net.adventurez.init.ParticleInit.ShardParticle;
 import net.adventurez.init.ParticleInit.SprintParticle;
 import net.adventurez.init.ParticleInit.VoidCloudParticle;
+import net.adventurez.init.ParticleInit.FartParticle;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
 import net.fabricmc.fabric.api.blockrenderlayer.v1.BlockRenderLayerMap;
@@ -66,6 +67,7 @@ public class RenderInit {
     public static final EntityModelLayer DESERT_RHINO_LAYER = new EntityModelLayer(AdventureMain.identifierOf("desert_rhino_render_layer"), "desert_rhino_render_layer");
     public static final EntityModelLayer SHAMAN_LAYER = new EntityModelLayer(AdventureMain.identifierOf("shaman_render_layer"), "shaman_render_layer");
     public static final EntityModelLayer DEER_LAYER = new EntityModelLayer(AdventureMain.identifierOf("deer_render_layer"), "deer_render_layer");
+    public static final EntityModelLayer SKUNK_LAYER = new EntityModelLayer(AdventureMain.identifierOf("skunk_render_layer"), "skunk_render_layer");
     public static final EntityModelLayer ENDERWARTHOG_LAYER = new EntityModelLayer(AdventureMain.identifierOf("enderwarthog_render_layer"), "enderwarthog_render_layer");
 
     public static void init() {
@@ -103,6 +105,7 @@ public class RenderInit {
         EntityRendererRegistry.register(EntityInit.VOID_CLOUD, EmptyEntityRenderer::new);
         EntityRendererRegistry.register(EntityInit.SHAMAN, ShamanRenderer::new);
         EntityRendererRegistry.register(EntityInit.DEER, DeerRenderer::new);
+        EntityRendererRegistry.register(EntityInit.SKUNK, SkunkRenderer::new);
         EntityRendererRegistry.register(EntityInit.ENDERWARTHOG, EnderwarthogRenderer::new);
 
         // Entity Layer
@@ -136,6 +139,7 @@ public class RenderInit {
         EntityModelLayerRegistry.registerModelLayer(DESERT_RHINO_LAYER, DesertRhinoModel::getTexturedModelData);
         EntityModelLayerRegistry.registerModelLayer(SHAMAN_LAYER, ShamanModel::getTexturedModelData);
         EntityModelLayerRegistry.registerModelLayer(DEER_LAYER, DeerModel::getTexturedModelData);
+        EntityModelLayerRegistry.registerModelLayer(SKUNK_LAYER, SkunkModel::getTexturedModelData);
         EntityModelLayerRegistry.registerModelLayer(ENDERWARTHOG_LAYER, EnderwarthogModel::getTexturedModelData);
 
         // Blocks
@@ -149,10 +153,11 @@ public class RenderInit {
         ParticleFactoryRegistry.getInstance().register(ParticleInit.AMETHYST_SHARD_PARTICLE, ShardParticle.ShardFactory::new);
         ParticleFactoryRegistry.getInstance().register(ParticleInit.VOID_CLOUD_PARTICLE, VoidCloudParticle.CloudFactory::new);
         ParticleFactoryRegistry.getInstance().register(ParticleInit.SPRINT_PARTICLE, SprintParticle.SprintFactory::new);
+        ParticleFactoryRegistry.getInstance().register(ParticleInit.FART_PARTICLE, FartParticle.Factory::new);
 
         HudRenderCallback.EVENT.register((drawContext, tickDelta) -> {
             MinecraftClient client = MinecraftClient.getInstance();
-            if (!client.options.hudHidden) {
+            if (!client.options.hudHidden&& !client.player.isCreative()&& !client.player.isSpectator()) {
                 ItemStack itemStack = client.player.getEquippedStack(EquipmentSlot.CHEST);
                 if (!itemStack.isEmpty() && itemStack.isOf(ItemInit.GILDED_NETHERITE_CHESTPLATE)) {
                     if (itemStack.get(ItemInit.GILDED_DATA) != null && itemStack.get(ItemInit.GILDED_DATA).activated()) {

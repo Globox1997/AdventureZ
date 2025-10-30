@@ -2,6 +2,8 @@ package net.adventurez.entity.model;
 
 import com.google.common.collect.ImmutableList;
 
+import net.fabricmc.api.EnvType;
+import net.fabricmc.api.Environment;
 import net.minecraft.client.model.Dilation;
 import net.minecraft.client.model.ModelData;
 import net.minecraft.client.model.ModelPart;
@@ -13,6 +15,7 @@ import net.minecraft.client.render.entity.model.AnimalModel;
 import net.minecraft.entity.passive.AnimalEntity;
 import net.minecraft.util.math.MathHelper;
 
+@Environment(EnvType.CLIENT)
 public class DeerModel<T extends AnimalEntity> extends AnimalModel<T> {
     private final ModelPart root;
     private final ModelPart root_r1;
@@ -114,10 +117,11 @@ public class DeerModel<T extends AnimalEntity> extends AnimalModel<T> {
         this.leg1.pitch = MathHelper.cos(limbAngle * 0.6662F + 3.1415927F) * 1.4F * limbDistance;
         this.leg2.pitch = MathHelper.cos(limbAngle * 0.6662F + 3.1415927F) * 1.4F * limbDistance;
         this.leg3.pitch = MathHelper.cos(limbAngle * 0.6662F) * 1.4F * limbDistance;
-        if (entity.isBaby())
+        if (entity.isBaby()) {
             this.antlers.visible = false;
-        else
+        } else {
             this.antlers.visible = true;
+        }
     }
 
 }

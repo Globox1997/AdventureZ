@@ -67,6 +67,7 @@ public class EntityInit {
             EntityType.Builder.create(EnderWhaleEntity::new, SpawnGroup.CREATURE).dimensions(4.0F, 2.5F).build());
     public static final EntityType<IguanaEntity> IGUANA = register("iguana", 11485475, 8988193, EntityType.Builder.create(IguanaEntity::new, SpawnGroup.CREATURE).dimensions(1.5F, 0.5F).build());
     public static final EntityType<DeerEntity> DEER = register("deer", 5780491, 9725748, EntityType.Builder.create(DeerEntity::new, SpawnGroup.CREATURE).dimensions(1.4F, 1.8F).build());
+    public static final EntityType<SkunkEntity> SKUNK = register("skunk", 3091500, 15525848, EntityType.Builder.create(SkunkEntity::new, SpawnGroup.CREATURE).dimensions(1.1F, 0.7F).build());
 
     // Nonliving Entity
     public static final EntityType<ThrownRockEntity> THROWN_ROCK = register("thrown_rock", 0, 0,
@@ -130,6 +131,7 @@ public class EntityInit {
         FabricDefaultAttributeRegistry.register(DESERT_RHINO, DesertRhinoEntity.createDesertRhinoAttributes());
         FabricDefaultAttributeRegistry.register(SHAMAN, ShamanEntity.createShamanAttributes());
         FabricDefaultAttributeRegistry.register(DEER, DeerEntity.createDeerAttributes());
+        FabricDefaultAttributeRegistry.register(SKUNK, SkunkEntity.createSkunkAttributes());
         FabricDefaultAttributeRegistry.register(ENDERWARTHOG, EnderwarthogEntity.createEnderwarthogAttributes());
     }
 }

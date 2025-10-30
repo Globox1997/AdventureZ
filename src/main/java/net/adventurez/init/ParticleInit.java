@@ -19,15 +19,43 @@ public class ParticleInit {
     public static final SimpleParticleType AMETHYST_SHARD_PARTICLE = FabricParticleTypes.simple();
     public static final SimpleParticleType VOID_CLOUD_PARTICLE = FabricParticleTypes.simple();
     public static final SimpleParticleType SPRINT_PARTICLE = FabricParticleTypes.simple();
+    public static final SimpleParticleType FART_PARTICLE = FabricParticleTypes.simple();
 
     public static void init() {
         Registry.register(Registries.PARTICLE_TYPE, AdventureMain.identifierOf("amethyst_shard_particle"), AMETHYST_SHARD_PARTICLE);
         Registry.register(Registries.PARTICLE_TYPE, AdventureMain.identifierOf("void_cloud_particle"), VOID_CLOUD_PARTICLE);
         Registry.register(Registries.PARTICLE_TYPE, AdventureMain.identifierOf("sprint_particle"), SPRINT_PARTICLE);
+        Registry.register(Registries.PARTICLE_TYPE, AdventureMain.identifierOf("fart_particle"), FART_PARTICLE);
     }
 
     @Environment(EnvType.CLIENT)
-    static class ShardParticle extends SpriteBillboardParticle {
+    public static class FartParticle extends ExplosionSmokeParticle {
+
+        public FartParticle(ClientWorld clientWorld, double d, double e, double f, double g, double h, double i, SpriteProvider spriteProvider) {
+            super(clientWorld, d, e, f, g, h, i, spriteProvider);
+            this.gravityStrength = 0.5F;
+            this.red = 0f;
+            this.green = 0f;
+            this.blue = 0f;
+        }
+
+        @Environment(EnvType.CLIENT)
+        public static class Factory implements ParticleFactory<SimpleParticleType> {
+            private final SpriteProvider spriteProvider;
+
+            public Factory(SpriteProvider spriteProvider) {
+                this.spriteProvider = spriteProvider;
+            }
+
+            @Override
+            public Particle createParticle(SimpleParticleType simpleParticleType, ClientWorld clientWorld, double d, double e, double f, double g, double h, double i) {
+                return new FartParticle(clientWorld, d, e, f, g, h, i, this.spriteProvider);
+            }
+        }
+    }
+
+    @Environment(EnvType.CLIENT)
+    public static class ShardParticle extends SpriteBillboardParticle {
         static final Random RANDOM = new Random();
         private final SpriteProvider spriteProvider;
 
@@ -102,7 +130,7 @@ public class ParticleInit {
     }
 
     @Environment(EnvType.CLIENT)
-    static class VoidCloudParticle extends SpriteBillboardParticle {
+    public static class VoidCloudParticle extends SpriteBillboardParticle {
         private final double startX;
         private final double startY;
         private final double startZ;

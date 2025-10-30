@@ -87,6 +87,9 @@ public class ItemInit {
     public static final Item WARTHOG_MEAT = register("warthog_meat", new Item(new Item.Settings().food(new FoodComponent.Builder().nutrition(3).saturationModifier(0.3F).build())));
     public static final Item COOKED_WARTHOG_MEAT = register("cooked_warthog_meat",
             new Item(new Item.Settings().food(new FoodComponent.Builder().nutrition(6).saturationModifier(0.8F).statusEffect(new StatusEffectInstance(StatusEffects.SPEED, 600, 0), 1.0F).build())));
+    public static final Item SKUNK_MEAT = register("skunk_meat", new Item(new Item.Settings().food(new FoodComponent.Builder().nutrition(2).saturationModifier(0.3F).build())));
+    public static final Item COOKED_SKUNK_MEAT = register("cooked_skunk_meat", new Item(new Item.Settings().food(new FoodComponent.Builder().nutrition(4).saturationModifier(0.8F).build())));
+
     // Armor
     public static final Item GILDED_NETHERITE_HELMET = register("gilded_netherite_helmet",
             new GildedNetheriteArmor(AdventureArmorMaterials.GILDED_NETHERITE, ArmorItem.Type.HELMET, new Item.Settings().maxDamage(ArmorItem.Type.HELMET.getMaxDamage(37)).fireproof()));
