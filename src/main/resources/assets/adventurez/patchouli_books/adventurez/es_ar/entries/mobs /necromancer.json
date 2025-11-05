@@ -1,0 +1,28 @@
+{
+    "name": "Nigromante",
+    "icon": "adventurez:blackstone_golem_heart",
+    "category": "adventurez:mob_category",
+    "pages": [
+        {
+            "type": "text",
+            "text": "El oscuro Nigromante hizo de las fortalezas del Nether su hogar. Aprendió a usar magia oscura y convocará Marionetas del Wither para protegerse de los enemigos."
+        },
+        {
+            "type": "entity",
+            "name": "Muestra",
+            "entity": "adventurez:necromancer",
+            "offset": 0.2
+        },
+        {
+            "type": "text",
+            "title": "Marioneta del Wither",
+            "text": "La Marioneta del Wither es controlada por su líder e infecta a su enemigo con el efecto de descomposición. Mata a su líder para destruir su voluntad."
+        },
+        {
+            "type": "entity",
+            "name": "Muestra",
+            "entity": "adventurez:wither_puppet",
+            "scale": 1.1
+        }
+    ]
+}
