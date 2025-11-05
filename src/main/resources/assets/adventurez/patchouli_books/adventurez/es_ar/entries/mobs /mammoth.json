@@ -1,0 +1,17 @@
+{
+    "name": "Mamút",
+    "icon": "adventurez:blackstone_golem_heart",
+    "category": "adventurez:mob_category",
+    "pages": [
+        {
+            "type": "text",
+            "text": "Los mamuts son mobs amigables y algunos dicen que se han extinguido. Se pueden reproducir con pasto y se encuentran en ambientes muy fríos."
+        },
+        {
+            "type": "entity",
+            "name": "Muestra",
+            "entity": "adventurez:mammoth",
+            "scale": 0.8
+        }
+    ]
+}
