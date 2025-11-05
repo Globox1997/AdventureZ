@@ -1,0 +1,41 @@
+{
+    "name": "Altar de Piedra Negra",
+    "icon": "minecraft:dragon_egg",
+    "category": "adventurez:block_category",
+    "pages": [
+        {
+            "type": "text",
+            "title": "Altar de Piedra Negra",
+            "text": "Este altar está hecho de piedra negra, la cual se encuentra en las profundidades del Nether. Construilo dentro del Nether para invocar a la criatura más letal que hayas visto."
+        },
+        {
+            "type": "multiblock",
+            "text": "La plataforma se puede construir con cualquier tipo de piedra negra",
+            "multiblock": {
+                "pattern": [
+                    [
+                        "     S     ",
+                        " PPPPPPPPP ",
+                        " PCCCCCCCP ",
+                        " PCPPPPPCP ",
+                        " PCPOOOPCP ",
+                        "SPCPO0OPCPS",
+                        " PCPOOOPCP ",
+                        " PCPPPPPCP ",
+                        " PCCCCCCCP ",
+                        " PPPPPPPPP ",
+                        "     S     "
+                    ]
+                ],
+                "mapping": {
+                    "S": "adventurez:chiseled_polished_blackstone_holder",
+                    "P": "minecraft:polished_blackstone",
+                    "O": "minecraft:polished_blackstone_bricks",
+                    "C": "minecraft:cracked_polished_blackstone_bricks",
+                    "0": "minecraft:polished_blackstone"
+                },
+                "symmetrical": true
+            }
+        }
+    ]
+}
