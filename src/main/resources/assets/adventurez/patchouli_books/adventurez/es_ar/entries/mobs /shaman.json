@@ -1,0 +1,16 @@
+{
+    "name": "Chamán",
+    "icon": "adventurez:blackstone_golem_heart",
+    "category": "adventurez:mob_category",
+    "pages": [
+        {
+            "type": "text",
+            "text": "El Chamán es una criatura de los pantanos que cayó en un caldero de alquimia cuando era joven. Desde entonces, experimenta con una especie de magia maligna y tóxica."
+        },
+        {
+            "type": "entity",
+            "name": "Muestra",
+            "entity": "adventurez:shaman"
+        }
+    ]
+}
