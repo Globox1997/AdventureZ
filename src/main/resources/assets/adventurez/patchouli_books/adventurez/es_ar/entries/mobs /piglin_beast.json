@@ -1,0 +1,18 @@
+{
+    "name": "Bestia Piglin",
+    "icon": "adventurez:blackstone_golem_heart",
+    "category": "adventurez:mob_category",
+    "pages": [
+        {
+            "type": "text",
+            "text": "¡Una Bestia de los Piglins! Los Piglins la llamarán si has matado demasiados de sus amigos y, a veces, también la llaman cuando minas oro. Puede dejar caer la Bandera Piglin."
+        },
+        {
+            "type": "entity",
+            "name": "Muestra",
+            "entity": "adventurez:piglin_beast",
+            "scale": 0.9,
+            "offset": 0.3
+        }
+    ]
+}
