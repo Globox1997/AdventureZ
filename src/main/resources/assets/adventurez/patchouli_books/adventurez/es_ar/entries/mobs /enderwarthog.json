@@ -1,0 +1,17 @@
+{
+    "name": "Jabalí Ender",
+    "icon": "adventurez:blackstone_golem_heart",
+    "category": "adventurez:mob_category",
+    "pages": [
+        {
+            "type": "text",
+            "text": "Los Jabalíes Ender aparecen en la dimensión End y tratarán de lanzarte al vacío."
+        },
+        {
+            "type": "entity",
+            "name": "Muestra",
+            "entity": "adventurez:enderwarthog",
+            "scale": 0.6
+        }
+    ]
+}
