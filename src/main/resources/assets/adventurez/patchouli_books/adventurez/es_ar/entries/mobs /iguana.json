@@ -1,0 +1,18 @@
+{
+    "name": "Iguana",
+    "icon": "adventurez:blackstone_golem_heart",
+    "category": "adventurez:mob_category",
+    "pages": [
+        {
+            "type": "text",
+            "text": "Las iguanas son mobs amigables, les gusta comer arbustos secos, se pueden reproducir con arbustos secos y se encuentran en los biomas de mesa."
+        },
+        {
+            "type": "entity",
+            "name": "Muestra",
+            "entity": "adventurez:iguana",
+            "scale": 0.7,
+            "offset": -0.3
+        }
+    ]
+}
