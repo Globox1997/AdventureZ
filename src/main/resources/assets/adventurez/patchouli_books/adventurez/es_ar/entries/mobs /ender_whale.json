@@ -1,0 +1,40 @@
+{
+    "name": "Ballena Ender",
+    "icon": "adventurez:blackstone_golem_heart",
+    "category": "adventurez:mob_category",
+    "pages": [
+        {
+            "type": "text",
+            "text": "Las Ballenas Ender son criaturas amistosas y vuelan por el vacío. Son montables, incluso con un amigo, y se pueden llamar con la Flauta Ender. Conseguí un fruto de coro y fabricá una Fruta de Coro en un Palo para guiarlas hacia la dirección que quieras."
+        },
+        {
+            "type": "entity",
+            "name": "Muestra",
+            "entity": "adventurez:ender_whale",
+            "rotate": false,
+            "default_rotation": 25.0,
+            "scale": 0.6,
+            "offset": -0.3
+        },
+        {
+            "type": "spotlight",
+            "item": "adventurez:ender_flute",
+            "link_recipe": true,
+            "text": "La Flauta Ender es un antiguo instrumento para llamar a las Ballenas Ender para montar."
+        },
+        {
+            "type": "crafting",
+            "recipe": "adventurez:ender_flute"
+        },
+        {
+            "type": "spotlight",
+            "item": "adventurez:chorus_fruit_on_a_stick",
+            "link_recipe": true,
+            "text": "La Fruta de Coro en un Palo es un simple palo para guiar a las Ballenas Ender, ya que les encanta comer esas frutas."
+        },
+        {
+            "type": "crafting",
+            "recipe": "adventurez:chorus_fruit_on_a_stick"
+        }
+    ]
+}
