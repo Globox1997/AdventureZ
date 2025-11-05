@@ -1,0 +1,25 @@
+{
+    "name": "Hongo",
+    "icon": "adventurez:blackstone_golem_heart",
+    "category": "adventurez:mob_category",
+    "pages": [
+        {
+            "type": "text",
+            "text": "El Hongo Rojo y Marrón se puede encontrar en las raras islas de hongos y suele ser pacífico. De vez en cuando, defeca hongos."
+        },
+        {
+            "type": "entity",
+            "name": "Muestra",
+            "entity": "adventurez:red_fungus"
+        },
+        {
+            "type": "entity",
+            "name": "Muestra",
+            "entity": "adventurez:brown_fungus"
+        },
+        {
+            "type": "empty",
+            "draw_filler": false
+        }
+    ]
+}
