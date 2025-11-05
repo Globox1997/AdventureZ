@@ -1,0 +1,18 @@
+{
+    "name": "Bandera Piglin",
+    "icon": "adventurez:piglin_flag",
+    "category": "adventurez:block_category",
+    "pages": [
+        {
+            "type": "spotlight",
+            "title": "Bandera Piglin",
+            "item": "adventurez:piglin_flag",
+            "link_recipe": false,
+            "text": "La Bandera Piglin es un bloque raro que deja caer la Bestia Piglin. Calma a los Piglins cercanos si el jugador se acerca. Tarda 2 minutos en recargarse."
+        },
+        {
+            "type": "empty",
+            "draw_filler": false
+        }
+    ]
+}
