@@ -1,0 +1,18 @@
+{
+    "name": "Corazón de Gólem de Piedra Negra",
+    "icon": "adventurez:blackstone_golem_heart",
+    "category": "adventurez:item_category",
+    "pages": [
+        {
+            "type": "spotlight",
+            "title": "Corazón de Gólem de Piedra Negra",
+            "item": "adventurez:blackstone_golem_heart",
+            "link_recipe": false,
+            "text": "El corazón del gólem de piedra negra es un botín de jefe que se consigue al derrotar al Gólem de Piedra Negra y puede usarse para tres cosas distintas. Sirve como material para craftear el brazo de piedra negra, podés infundírtelo para obtener una mejora o usarlo para potenciar a un gólem de hierro y hacerlo más fuerte."
+        },
+        {
+            "type": "empty",
+            "draw_filler": false
+        }
+    ]
+}
