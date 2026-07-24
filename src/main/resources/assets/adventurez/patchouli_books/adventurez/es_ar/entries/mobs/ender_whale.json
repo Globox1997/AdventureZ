@@ -1,0 +1,40 @@
+{
+    "name": "Ballena del End",
+    "icon": "adventurez:blackstone_golem_heart",
+    "category": "adventurez:mob_category",
+    "pages": [
+        {
+            "type": "text",
+            "text": "Las Ballenas del End son criaturas pacíficas que vuelan por el vacío. Se pueden montar, incluso con un amigo, y se las puede llamar con la Flauta del End. Conseguite una fruta chorus y crafteá una Fruta Chorus en un Palo para guiarlas hacia donde quieras"
+        },
+        {
+            "type": "entity",
+            "name": "Muestra",
+            "entity": "adventurez:ender_whale",
+            "rotate": false,
+            "default_rotation": 25.0,
+            "scale": 0.6,
+            "offset": -0.3
+        },
+        {
+            "type": "spotlight",
+            "item": "adventurez:ender_flute",
+            "link_recipe": true,
+            "text": "La Flauta del End es un instrumento antiguo para llamar a las Ballenas del End y dar una vuelta"
+        },
+        {
+            "type": "crafting",
+            "recipe": "adventurez:ender_flute"
+        },
+        {
+            "type": "spotlight",
+            "item": "adventurez:chorus_fruit_on_a_stick",
+            "link_recipe": true,
+            "text": "La Fruta Chorus en un Palo es un simple palo para guiar a las Ballenas del End, ya que les encanta comer esa fruta"
+        },
+        {
+            "type": "crafting",
+            "recipe": "adventurez:chorus_fruit_on_a_stick"
+        }
+    ]
+}
