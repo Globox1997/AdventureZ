@@ -1,0 +1,16 @@
+{
+    "name": "Ojo Primigenio",
+    "icon": "adventurez:prime_eye",
+    "category": "adventurez:item_category",
+    "pages": [
+        {
+            "type": "spotlight",
+            "item": "adventurez:prime_eye",
+            "text": "El Ojo Primigenio es un resto de El Ojo y puede que lo suelte al morir. Cargalo con Perlas de Ender en el yunque, así te hace menos daño al lanzarlo"
+        },
+        {
+            "type": "empty",
+            "draw_filler": false
+        }
+    ]
+}
