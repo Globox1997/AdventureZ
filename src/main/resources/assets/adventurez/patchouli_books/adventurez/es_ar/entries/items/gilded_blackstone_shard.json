@@ -1,0 +1,17 @@
+{
+    "name": "Fragmento de Piedra Negra Dorada",
+    "icon": "adventurez:gilded_blackstone_shard",
+    "category": "adventurez:item_category",
+    "pages": [
+        {
+            "type": "spotlight",
+            "item": "adventurez:gilded_blackstone_shard",
+            "link_recipe": false,
+            "text": "Los fragmentos de piedra negra dorada se pueden encontrar en los Bastiones del Nether, los suelta el Piglin Brutal, o podés conseguir algunos intercambiando con los Piglins"
+        },
+        {
+            "type": "empty",
+            "draw_filler": false
+        }
+    ]
+}
