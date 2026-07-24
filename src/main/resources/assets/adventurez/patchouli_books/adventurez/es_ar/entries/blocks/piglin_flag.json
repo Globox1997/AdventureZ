@@ -1,0 +1,17 @@
+{
+    "name": "Bandera Piglin",
+    "icon": "adventurez:piglin_flag",
+    "category": "adventurez:block_category",
+    "pages": [
+        {
+            "type": "spotlight",
+            "item": "adventurez:piglin_flag",
+            "link_recipe": false,
+            "text": "La Bandera Piglin es un bloque raro que suelta la Bestia Piglin. Calma a los Piglins cercanos cuando el jugador se acerca. Tiempo de carga: 2 minutos."
+        },
+        {
+            "type": "empty",
+            "draw_filler": false
+        }
+    ]
+}
