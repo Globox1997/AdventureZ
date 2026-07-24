@@ -1,0 +1,17 @@
+{
+    "name": "Silla de Dragón",
+    "icon": "adventurez:dragon_saddle",
+    "category": "adventurez:item_category",
+    "pages": [
+        {
+            "type": "spotlight",
+            "item": "adventurez:dragon_saddle",
+            "link_recipe": true,
+            "text": "La silla de dragón está hecha de piel de orco. Una vez que el Dragón creció lo suficiente, se la podés poner en el lomo"
+        },
+        {
+            "type": "crafting",
+            "recipe": "adventurez:dragon_saddle"
+        }
+    ]
+}
