@@ -1,0 +1,17 @@
+{
+    "name": "Gólem de Amatista",
+    "icon": "adventurez:blackstone_golem_heart",
+    "category": "adventurez:mob_category",
+    "pages": [
+        {
+            "type": "text",
+            "text": "El Gólem de Amatista se encuentra en las geodas y no le cae bien la raza humana, ya que la mayoría de la gente solo piensa en el beneficio propio, saca las amatistas y deja atrás un pozo vacío y sin cariño. ¡Se va a enfurecer si destruís amatistas!"
+        },
+        {
+            "type": "entity",
+            "name": "Muestra",
+            "entity": "adventurez:amethyst_golem",
+            "offset": 0.2
+        }
+    ]
+}

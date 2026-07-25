@@ -1,0 +1,26 @@
+{
+    "name": "Invocador",
+    "icon": "adventurez:blackstone_golem_heart",
+    "category": "adventurez:mob_category",
+    "pages": [
+        {
+            "type": "text",
+            "text": "El Invocador va a aparecer de repente cuando menos lo esperes. Pero solo durante una tormenta hay chance de verlo. También aprendió a manejar distintos hechizos que te pueden sorprender, y durante la pelea va a invocar Vanguardias"
+        },
+        {
+            "type": "entity",
+            "name": "Muestra",
+            "entity": "adventurez:summoner"
+        },
+        {
+            "type": "text",
+            "title": "Vanguardia Esqueleto",
+            "text": "La Vanguardia va a defender a su invocador y atacar enemigos. Puede parar ataques entrantes con su escudo"
+        },
+        {
+            "type": "entity",
+            "name": "Muestra",
+            "entity": "adventurez:skeleton_vanguard"
+        }
+    ]
+}

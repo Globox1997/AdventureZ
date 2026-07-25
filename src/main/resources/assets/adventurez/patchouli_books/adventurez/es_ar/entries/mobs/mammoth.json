@@ -1,0 +1,17 @@
+{
+    "name": "Mamut",
+    "icon": "adventurez:blackstone_golem_heart",
+    "category": "adventurez:mob_category",
+    "pages": [
+        {
+            "type": "text",
+            "text": "Los mamuts son criaturas pacíficas y hay quienes dicen que están extintos. Se pueden criar con pasto y se encuentran en ambientes muy fríos."
+        },
+        {
+            "type": "entity",
+            "name": "Muestra",
+            "entity": "adventurez:mammoth",
+            "scale": 0.8
+        }
+    ]
+}

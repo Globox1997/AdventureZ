@@ -33,6 +33,7 @@
   "entity.adventurez.desert_rhino": "Rinoceronte del Desierto",
   "entity.adventurez.shaman": "Chamán",
   "entity.adventurez.deer": "Ciervo",
+  "entity.adventurez.skunk": "Zorrino",
   "entity.adventurez.enderwarthog": "Jabalí del End",
 
   "item.adventurez.item_group": "AdventureZ",
@@ -61,6 +62,7 @@
   "item.adventurez.spawn_desert_rhino": "Huevo de Rinoceronte del Desierto",
   "item.adventurez.spawn_shaman": "Huevo de Chamán",
   "item.adventurez.spawn_deer": "Huevo de Ciervo",
+  "item.adventurez.spawn_skunk": "Huevo de Zorrino",
   "item.adventurez.spawn_enderwarthog": "Huevo de Jabalí del End",
 
   "item.adventurez.gilded_blackstone_shard": "Fragmento de Piedra Negra Dorada",
@@ -97,7 +99,7 @@
   "item.adventurez.cooked_iguana_meat": "Carne de Iguana Cocida",
   "item.adventurez.ender_whale_meat": "Carne de Ballena del End",
   "item.adventurez.cooked_ender_whale_meat": "Carne de Ballena del End Cocida",
-  "item.adventurez.ivory_arrow": "Flecha de Marfil"
+  "item.adventurez.ivory_arrow": "Flecha de Marfil",
   "item.adventurez.mammoth_tusk": "Colmillo de Mamut",
   "item.adventurez.rhino_leather": "Cuero de Rinoceronte",
   "item.adventurez.rhino_meat": "Carne de Rinoceronte",
@@ -107,8 +109,11 @@
   "item.adventurez.warthog_shell_piece": "Fragmento de Caparazón de Jabalí",
   "item.adventurez.warthog_meat": "Carne de Jabalí",
   "item.adventurez.cooked_warthog_meat": "Carne de Jabalí Cocida",
+  "item.adventurez.skunk_meat": "Carne de Zorrino",
+  "item.adventurez.cooked_skunk_meat": "Carne de Zorrino Cocida",
   "item.adventurez.handbook": "Manual",
-  "item.adventurez.patchouli_book.tooltip": "§cFalta el mod Patchouli",
+  "item.adventurez.patchouli_book.tooltip.1": "Si falta Patchouli - solo NRTTM",
+  "item.adventurez.patchouli_book.tooltip.2": "Si Patchouli está cargado - libro de información",
   "item.adventurez.enchanted_book.tooltip": "§cOver Enchanted es incompatible con AdventureZ",
   "item.adventurez.enchanted_book.tooltip2": "§cLa función de encantamiento de este libro está desactivada",
   "item.adventurez.gilded_upgrade_smithing_template": "Plantilla de Mejora Dorada",
@@ -146,8 +151,11 @@
   "adventurez.advancements.void_shadow.description": "Superá las profundidades del Vacío",
 
   "effect.adventurez.withering": "Marchitez",
+  "effect.adventurez.withering.description": "§kDescripción faltante§r",
   "effect.adventurez.fame": "Fama",
+  "effect.adventurez.fame.description": "§kDescripción faltante§r",
   "effect.adventurez.blackstoned_heart": "Corazón de Piedra Negra",
+  "effect.adventurez.blackstoned_heart.description": "§kDescripción faltante§r",
 
   "death.attack.rock": "%1$s fue aplastado por una roca",
   "death.attack.tiny_eye": "%1$s fue golpeado demasiado fuerte por un ojo pequeño",
@@ -185,6 +193,7 @@
   "text.autoconfig.adventurez.option.allow_extra_tooltips": "Permitir Tooltips Extras",
   "text.autoconfig.adventurez.option.shaman_spawn_weight": "Frecuencia de Aparición de Chamanes",
   "text.autoconfig.adventurez.option.deer_spawn_weight": "Frecuencia de Aparición de Ciervos",
+  "text.autoconfig.adventurez.option.skunk_spawn_weight": "Frecuencia de Aparición de Zorrinos",
   "text.autoconfig.adventurez.option.allow_all_items_on_holder": "Permitir cualquier ítem en el Soporte",
   "text.autoconfig.adventurez.option.enderwarthog_spawn_weight": "Frecuencia de Aparición de Jabalí del End",
   "text.autoconfig.adventurez.option.warthog_rare_chance": "Probabilidad Rara de Jabalí del End",

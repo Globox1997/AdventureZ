@@ -1,0 +1,28 @@
+{
+    "name": "Gólem de Piedra Negra",
+    "icon": "adventurez:blackstone_golem_heart",
+    "category": "adventurez:mob_category",
+    "pages": [
+        {
+            "type": "text",
+            "text": "El Gólem de Piedra Negra es la criatura más letal del mundo de Minecraft. Invocado en el Altar del Gólem, va a destruir tu mundo hasta matarte. Si lograste matarlo, sea como sea que lo hayas hecho, se va a partir al medio"
+        },
+        {
+            "type": "entity",
+            "name": "Muestra",
+            "entity": "adventurez:blackstone_golem",
+            "scale": 0.8
+        },
+        {
+            "type": "text",
+            "title": "Mini Gólem de Piedra Negra",
+            "text": "Los Mini Gólems de Piedra Negra son restos del Gólem de Piedra Negra y se pueden encontrar en deltas de basalto"
+        },
+        {
+            "type": "entity",
+            "name": "Muestra",
+            "entity": "adventurez:mini_blackstone_golem",
+            "scale": 0.5
+        }
+    ]
+}

@@ -1,0 +1,17 @@
+{
+    "name": "Corazón de Gólem de Piedra Negra",
+    "icon": "adventurez:blackstone_golem_heart",
+    "category": "adventurez:item_category",
+    "pages": [
+        {
+            "type": "spotlight",
+            "item": "adventurez:blackstone_golem_heart",
+            "link_recipe": false,
+            "text": "El corazón de gólem de piedra negra es un drop de jefe del Gólem de Piedra Negra y se puede usar para tres cosas distintas. Es un material de crafteo para el brazo de piedra negra, podés fusionarlo con vos mismo para obtener una mejora, o usarlo para potenciar a un gólem de hierro y hacerlo más fuerte!"
+        },
+        {
+            "type": "empty",
+            "draw_filler": false
+        }
+    ]
+}

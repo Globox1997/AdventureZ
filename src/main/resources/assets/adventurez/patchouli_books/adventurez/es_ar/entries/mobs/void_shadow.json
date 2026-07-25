@@ -1,0 +1,50 @@
+{
+    "name": "Sombra del Vacío",
+    "icon": "adventurez:blackstone_golem_heart",
+    "category": "adventurez:mob_category",
+    "pages": [
+        {
+            "type": "text",
+            "text": "La Sombra del Vacío es el jefe final definitivo de Minecraft, visto en un vacío distinto al que probablemente conocés. Todos van a conocerte, e incluso los Aldeanos van a reconocer tu fama si lograste matarla. Se genera un portal a la dimensión cuando matás a El Ojo"
+        },
+        {
+            "type": "entity",
+            "name": "Muestra",
+            "entity": "adventurez:void_shadow",
+            "scale": 0.8,
+            "offset": 0.8
+        },
+        {
+            "type": "text",
+            "title": "Sombra Vacía",
+            "text": "La Sombra Vacía es una criatura que te persigue sin parar. Dispara balas del vacío que se pueden bloquear golpeándolas"
+        },
+        {
+            "type": "entity",
+            "name": "Muestra",
+            "entity": "adventurez:void_shade"
+        },
+        {
+            "type": "text",
+            "title": "Fragmento del Vacío",
+            "text": "Los Fragmentos del Vacío aparecen durante la pelea contra la Sombra del Vacío. ¡No te acerques demasiado, este libro te avisó! Los fragmentos más grandes se llaman Orbes del Vacío y solo se pueden matar con balas del vacío, pero dañan a la Sombra"
+        },
+        {
+            "type": "entity",
+            "name": "Muestra",
+            "entity": "adventurez:void_fragment",
+            "scale": 0.6
+        },
+        {
+            "type": "link",
+            "title": "Complemento VoidZ",
+            "text": "Tenés que descargar e instalar el mod VoidZ porque la Sombra del Vacío va a aparecer en una nueva dimensión usada solo para la pelea. La razón por la que es un complemento aparte es que Fabric tiene su propia API de dimensiones, que puede no actualizarse rápido cuando se hace una actualización grande",
+            "url": "https://www.curseforge.com/minecraft/mc-mods/voidz",
+            "link_text": "Página del Mod VoidZ"
+        },
+        {
+            "type": "empty",
+            "draw_filler": false
+        }
+    ]
+}

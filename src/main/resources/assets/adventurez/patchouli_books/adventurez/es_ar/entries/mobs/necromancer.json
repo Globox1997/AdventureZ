@@ -1,0 +1,28 @@
+{
+    "name": "Nigromante",
+    "icon": "adventurez:blackstone_golem_heart",
+    "category": "adventurez:mob_category",
+    "pages": [
+        {
+            "type": "text",
+            "text": "El oscuro Nigromante hizo de las fortalezas del Nether su hogar. Aprendió a usar magia oscura y va a invocar Títeres del Wither para protegerse de los enemigos"
+        },
+        {
+            "type": "entity",
+            "name": "Muestra",
+            "entity": "adventurez:necromancer",
+            "offset": 0.2
+        },
+        {
+            "type": "text",
+            "title": "Títere del Wither",
+            "text": "El Títere del Wither es controlado por su líder e infecta a sus enemigos con el efecto de marchitez. Matá a su líder para destruir su voluntad"
+        },
+        {
+            "type": "entity",
+            "name": "Muestra",
+            "entity": "adventurez:wither_puppet",
+            "scale": 1.1
+        }
+    ]
+}

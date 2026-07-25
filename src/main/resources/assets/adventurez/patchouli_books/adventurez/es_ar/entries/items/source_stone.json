@@ -1,0 +1,16 @@
+{
+    "name": "Piedra de Origen",
+    "icon": "adventurez:source_stone",
+    "category": "adventurez:item_category",
+    "pages": [
+        {
+            "type": "spotlight",
+            "item": "adventurez:source_stone",
+            "text": "La Piedra de Origen la suelta la Sombra del Vacío. Es una piedra legendaria hecha en tiempos antiguos por un mago oscuro cuyo nombre quedó olvidado hace mucho. Clic derecho dispara una bala del vacío. Shift + clic derecho intenta atravesarte a través de los bloques"
+        },
+        {
+            "type": "empty",
+            "draw_filler": false
+        }
+    ]
+}
