@@ -129,4 +129,6 @@ public class AdventureConfig implements ConfigData {
     public boolean allow_other_dragon_hatching = false;
     @ConfigEntry.Category("misc")
     public boolean allow_gilded_blackstone_shard_throw = false;
+    @ConfigEntry.Category("misc")
+    public boolean allow_orc_stealing = true;
 }

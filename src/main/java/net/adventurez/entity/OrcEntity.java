@@ -1,40 +1,21 @@
 package net.adventurez.entity;
 
-import java.util.EnumSet;
-import java.util.List;
-
-import org.jetbrains.annotations.Nullable;
-
+import net.adventurez.init.ConfigInit;
 import net.adventurez.init.SoundInit;
 import net.minecraft.block.BlockState;
-import net.minecraft.entity.EntityData;
-import net.minecraft.entity.EntityDimensions;
-import net.minecraft.entity.EntityPose;
-import net.minecraft.entity.EntityType;
-import net.minecraft.entity.LivingEntity;
-import net.minecraft.entity.SpawnReason;
+import net.minecraft.entity.*;
 import net.minecraft.entity.ai.NoPenaltyTargeting;
-import net.minecraft.entity.ai.goal.ActiveTargetGoal;
-import net.minecraft.entity.ai.goal.Goal;
-import net.minecraft.entity.ai.goal.LookAroundGoal;
-import net.minecraft.entity.ai.goal.LookAtEntityGoal;
-import net.minecraft.entity.ai.goal.MeleeAttackGoal;
-import net.minecraft.entity.ai.goal.RevengeGoal;
-import net.minecraft.entity.ai.goal.SwimGoal;
-import net.minecraft.entity.ai.goal.WanderAroundGoal;
+import net.minecraft.entity.ai.goal.*;
 import net.minecraft.entity.attribute.DefaultAttributeContainer;
 import net.minecraft.entity.attribute.EntityAttributes;
 import net.minecraft.entity.damage.DamageSource;
 import net.minecraft.entity.data.DataTracker;
+import net.minecraft.entity.data.DataTracker.Builder;
 import net.minecraft.entity.data.TrackedData;
 import net.minecraft.entity.data.TrackedDataHandlerRegistry;
-import net.minecraft.entity.data.DataTracker.Builder;
 import net.minecraft.entity.mob.HostileEntity;
 import net.minecraft.entity.passive.VillagerEntity;
 import net.minecraft.entity.passive.WanderingTraderEntity;
-import net.minecraft.world.LocalDifficulty;
-import net.minecraft.world.ServerWorldAccess;
-import net.minecraft.world.World;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.inventory.SimpleInventory;
 import net.minecraft.item.Item;
@@ -47,6 +28,13 @@ import net.minecraft.util.Hand;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Vec3d;
 import net.minecraft.util.math.random.Random;
+import net.minecraft.world.LocalDifficulty;
+import net.minecraft.world.ServerWorldAccess;
+import net.minecraft.world.World;
+import org.jetbrains.annotations.Nullable;
+
+import java.util.EnumSet;
+import java.util.List;
 
 public class OrcEntity extends HostileEntity {
     public static final TrackedData<Integer> ORK_SIZE;
@@ -81,7 +69,7 @@ public class OrcEntity extends HostileEntity {
         this.targetSelector.add(1, new ActiveTargetGoal<>(this, PlayerEntity.class, true));
         this.targetSelector.add(2, new ActiveTargetGoal<>(this, WanderingTraderEntity.class, true));
         this.targetSelector.add(3, new ActiveTargetGoal<>(this, VillagerEntity.class, true));
-        this.targetSelector.add(4, (new RevengeGoal(this, new Class[] { OrcEntity.class })));
+        this.targetSelector.add(4, (new RevengeGoal(this, new Class[]{OrcEntity.class})));
     }
 
     public static boolean canSpawn(EntityType<OrcEntity> type, ServerWorldAccess world, SpawnReason spawnReason, BlockPos pos, Random random) {
@@ -247,8 +235,7 @@ public class OrcEntity extends HostileEntity {
                 this.resetCooldown();
                 this.mob.swingHand(Hand.MAIN_HAND);
                 this.mob.tryAttack(target);
-                if (!this.orcEntity.isBigOrc() && this.orcEntity.inventory.isEmpty() && this.orcEntity.getWorld().getRandom().nextFloat() <= 0.3F && target instanceof PlayerEntity) {
-                    PlayerEntity playerEntity = (PlayerEntity) target;
+                if (ConfigInit.CONFIG.allow_orc_stealing && !this.orcEntity.isBigOrc() && this.orcEntity.inventory.isEmpty() && this.orcEntity.getWorld().getRandom().nextFloat() <= 0.3F && target instanceof PlayerEntity playerEntity) {
                     for (int i = 45; i > 0; i--) {
                         if (!playerEntity.getInventory().getStack(i).isEmpty() && playerEntity.getInventory().getStack(i).getItem() instanceof ToolItem
                                 && playerEntity.getWorld().getRandom().nextFloat() < 0.3F) {
