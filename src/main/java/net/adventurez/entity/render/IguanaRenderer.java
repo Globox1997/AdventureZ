@@ -1,5 +1,6 @@
 package net.adventurez.entity.render;
 
+import net.adventurez.AdventureMain;
 import net.adventurez.entity.IguanaEntity;
 import net.adventurez.entity.model.IguanaModel;
 import net.adventurez.init.RenderInit;
@@ -11,7 +12,7 @@ import net.minecraft.util.Identifier;
 
 @Environment(EnvType.CLIENT)
 public class IguanaRenderer extends MobEntityRenderer<IguanaEntity, IguanaModel<IguanaEntity>> {
-    private static final Identifier TEXTURE = Identifier.of("adventurez:textures/entity/iguana.png");
+    private static final Identifier TEXTURE = AdventureMain.identifierOf("textures/entity/iguana.png");
 
     public IguanaRenderer(EntityRendererFactory.Context context) {
         super(context, new IguanaModel<>(context.getPart(RenderInit.IGUANA_LAYER)), 0.7F);

@@ -1,5 +1,6 @@
 package net.adventurez.entity.render;
 
+import net.adventurez.AdventureMain;
 import net.adventurez.entity.VoidFragmentEntity;
 import net.adventurez.entity.model.VoidFragmentModel;
 import net.adventurez.entity.render.feature.VoidFragmentCorruptFeatureRenderer;
@@ -12,7 +13,7 @@ import net.minecraft.util.Identifier;
 
 @Environment(EnvType.CLIENT)
 public class VoidFragmentRenderer extends MobEntityRenderer<VoidFragmentEntity, VoidFragmentModel<VoidFragmentEntity>> {
-    private static final Identifier TEXTURE = Identifier.of("adventurez:textures/entity/void_fragment.png");
+    private static final Identifier TEXTURE = AdventureMain.identifierOf("textures/entity/void_fragment.png");
 
     public VoidFragmentRenderer(EntityRendererFactory.Context context) {
         super(context, new VoidFragmentModel<>(context.getPart(RenderInit.VOID_FRAGMENT_LAYER)), 0.5F);

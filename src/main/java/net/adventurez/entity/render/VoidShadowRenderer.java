@@ -1,5 +1,6 @@
 package net.adventurez.entity.render;
 
+import net.adventurez.AdventureMain;
 import org.joml.Quaternionf;
 import org.joml.Vector3f;
 
@@ -24,7 +25,7 @@ import net.minecraft.util.math.random.Random;
 
 @Environment(EnvType.CLIENT)
 public class VoidShadowRenderer extends MobEntityRenderer<VoidShadowEntity, VoidShadowModel<VoidShadowEntity>> {
-    private static final Identifier TEXTURE = Identifier.of("adventurez:textures/entity/void_shadow.png");
+    private static final Identifier TEXTURE = AdventureMain.identifierOf("textures/entity/void_shadow.png");
 
     public VoidShadowRenderer(EntityRendererFactory.Context context) {
         super(context, new VoidShadowModel<>(context.getPart(RenderInit.VOID_SHADOW_LAYER)), 1.7F);

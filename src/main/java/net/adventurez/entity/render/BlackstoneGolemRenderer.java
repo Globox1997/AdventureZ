@@ -1,5 +1,6 @@
 package net.adventurez.entity.render;
 
+import net.adventurez.AdventureMain;
 import net.adventurez.entity.BlackstoneGolemEntity;
 import net.adventurez.entity.model.BlackstoneGolemModel;
 import net.adventurez.entity.render.feature.BlackstoneGolemBlueLavaFeatureRenderer;
@@ -14,7 +15,7 @@ import net.minecraft.util.Identifier;
 
 @Environment(EnvType.CLIENT)
 public class BlackstoneGolemRenderer extends MobEntityRenderer<BlackstoneGolemEntity, BlackstoneGolemModel<BlackstoneGolemEntity>> {
-    private static final Identifier TEXTURE = Identifier.of("adventurez:textures/entity/blackstone_golem.png");
+    private static final Identifier TEXTURE = AdventureMain.identifierOf("textures/entity/blackstone_golem.png");
 
     public BlackstoneGolemRenderer(EntityRendererFactory.Context context) {
         super(context, new BlackstoneGolemModel<>(context.getPart(RenderInit.BLACKSTONE_GOLEM_LAYER)), 1.7F);

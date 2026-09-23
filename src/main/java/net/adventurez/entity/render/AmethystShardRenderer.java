@@ -1,5 +1,6 @@
 package net.adventurez.entity.render;
 
+import net.adventurez.AdventureMain;
 import net.adventurez.entity.model.AmethystShardModel;
 import net.adventurez.entity.nonliving.AmethystShardEntity;
 import net.fabricmc.api.EnvType;
@@ -16,7 +17,7 @@ import net.minecraft.util.math.MathHelper;
 
 @Environment(EnvType.CLIENT)
 public class AmethystShardRenderer extends EntityRenderer<AmethystShardEntity> {
-    private static final Identifier TEXTURE = Identifier.of("adventurez:textures/entity/amethyst_shard.png");
+    private static final Identifier TEXTURE = AdventureMain.identifierOf("textures/entity/amethyst_shard.png");
     private final AmethystShardModel<AmethystShardEntity> model = new AmethystShardModel<>(AmethystShardModel.getTexturedModelData().createModel());
 
     public AmethystShardRenderer(EntityRendererFactory.Context context) {

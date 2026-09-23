@@ -1,5 +1,6 @@
 package net.adventurez.entity.render;
 
+import net.adventurez.AdventureMain;
 import net.adventurez.entity.MammothEntity;
 import net.adventurez.entity.model.MammothModel;
 import net.adventurez.init.RenderInit;
@@ -12,7 +13,7 @@ import net.minecraft.util.Identifier;
 
 @Environment(EnvType.CLIENT)
 public class MammothRenderer extends MobEntityRenderer<MammothEntity, MammothModel<MammothEntity>> {
-    private static final Identifier TEXTURE = Identifier.of("adventurez:textures/entity/mammoth.png");
+    private static final Identifier TEXTURE = AdventureMain.identifierOf("textures/entity/mammoth.png");
 
     public MammothRenderer(EntityRendererFactory.Context context) {
         super(context, new MammothModel<>(context.getPart(RenderInit.MAMMOTH_LAYER)), 1.2F);

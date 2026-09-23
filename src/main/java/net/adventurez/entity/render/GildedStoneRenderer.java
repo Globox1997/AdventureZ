@@ -1,5 +1,6 @@
 package net.adventurez.entity.render;
 
+import net.adventurez.AdventureMain;
 import net.adventurez.entity.model.GildedStoneModel;
 import net.adventurez.entity.nonliving.GildedBlackstoneShardEntity;
 import net.fabricmc.api.EnvType;
@@ -16,7 +17,7 @@ import net.minecraft.util.math.BlockPos;
 
 @Environment(EnvType.CLIENT)
 public class GildedStoneRenderer extends EntityRenderer<GildedBlackstoneShardEntity> {
-    private static final Identifier TEXTURE = Identifier.of("adventurez:textures/item/gilded_stone.png");
+    private static final Identifier TEXTURE = AdventureMain.identifierOf("textures/item/gilded_stone.png");
     private final GildedStoneModel model = new GildedStoneModel(GildedStoneModel.getTexturedModelData().createModel());
 
     public GildedStoneRenderer(EntityRendererFactory.Context context) {

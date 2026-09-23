@@ -1,5 +1,6 @@
 package net.adventurez.entity.render;
 
+import net.adventurez.AdventureMain;
 import net.adventurez.entity.SummonerEntity;
 import net.adventurez.entity.model.SummonerModel;
 import net.adventurez.entity.render.feature.SummonerEntityShieldFeatureRenderer;
@@ -14,7 +15,7 @@ import net.minecraft.util.Identifier;
 
 @Environment(EnvType.CLIENT)
 public class SummonerRenderer extends MobEntityRenderer<SummonerEntity, SummonerModel<SummonerEntity>> {
-    private static final Identifier TEXTURE = Identifier.of("adventurez:textures/entity/summoner.png");
+    private static final Identifier TEXTURE = AdventureMain.identifierOf("textures/entity/summoner.png");
 
     public SummonerRenderer(EntityRendererFactory.Context context) {
         super(context, new SummonerModel<>(context.getPart(RenderInit.SUMMONER_LAYER)), 0.7F);

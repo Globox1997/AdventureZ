@@ -1,5 +1,6 @@
 package net.adventurez.entity.render;
 
+import net.adventurez.AdventureMain;
 import net.adventurez.entity.RedFungusEntity;
 import net.adventurez.entity.model.RedFungusModel;
 import net.adventurez.init.RenderInit;
@@ -11,7 +12,7 @@ import net.minecraft.util.Identifier;
 
 @Environment(EnvType.CLIENT)
 public class RedFungusRenderer extends MobEntityRenderer<RedFungusEntity, RedFungusModel<RedFungusEntity>> {
-    private static final Identifier TEXTURE = Identifier.of("adventurez:textures/entity/red_fungus.png");
+    private static final Identifier TEXTURE = AdventureMain.identifierOf("textures/entity/red_fungus.png");
 
     public RedFungusRenderer(EntityRendererFactory.Context context) {
         super(context, new RedFungusModel<>(context.getPart(RenderInit.RED_FUNGUS_LAYER)), 0.3F);

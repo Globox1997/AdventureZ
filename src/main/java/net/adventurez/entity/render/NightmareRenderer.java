@@ -1,5 +1,6 @@
 package net.adventurez.entity.render;
 
+import net.adventurez.AdventureMain;
 import net.adventurez.entity.NightmareEntity;
 import net.adventurez.entity.render.feature.NightmareEyesFeatureRenderer;
 import net.fabricmc.api.EnvType;
@@ -13,10 +14,10 @@ import net.minecraft.util.Identifier;
 @Environment(EnvType.CLIENT)
 public final class NightmareRenderer extends AbstractHorseEntityRenderer<NightmareEntity, HorseEntityModel<NightmareEntity>> {
 
-    private static final Identifier TEXTURE = Identifier.of("adventurez:textures/entity/nightmare.png");
+    private static final Identifier TEXTURE = AdventureMain.identifierOf("textures/entity/nightmare.png");
 
     public NightmareRenderer(EntityRendererFactory.Context context) {
-        super(context, new HorseEntityModel<NightmareEntity>(context.getPart(EntityModelLayers.HORSE)), 1.1F);
+        super(context, new HorseEntityModel<>(context.getPart(EntityModelLayers.HORSE)), 1.1F);
         this.addFeature(new NightmareEyesFeatureRenderer(this));
     }
 

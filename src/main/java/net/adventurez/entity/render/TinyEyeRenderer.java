@@ -1,5 +1,6 @@
 package net.adventurez.entity.render;
 
+import net.adventurez.AdventureMain;
 import net.adventurez.entity.model.TinyEyeModel;
 import net.adventurez.entity.nonliving.TinyEyeEntity;
 import net.fabricmc.api.EnvType;
@@ -16,7 +17,7 @@ import net.minecraft.util.math.MathHelper;
 
 @Environment(EnvType.CLIENT)
 public class TinyEyeRenderer extends EntityRenderer<TinyEyeEntity> {
-    private static final Identifier TEXTURE = Identifier.of("adventurez:textures/entity/the_eye.png");
+    private static final Identifier TEXTURE = AdventureMain.identifierOf("textures/entity/the_eye.png");
     private final TinyEyeModel<TinyEyeEntity> model = new TinyEyeModel<>(TinyEyeModel.getTexturedModelData().createModel());
 
     public TinyEyeRenderer(EntityRendererFactory.Context context) {

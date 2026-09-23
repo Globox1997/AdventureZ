@@ -1,5 +1,6 @@
 package net.adventurez.entity.render;
 
+import net.adventurez.AdventureMain;
 import net.adventurez.entity.SoulReaperEntity;
 import net.adventurez.entity.model.SoulReaperModel;
 import net.adventurez.entity.render.feature.SoulReaperEyesFeatureRenderer;
@@ -13,7 +14,7 @@ import net.minecraft.util.Identifier;
 
 @Environment(EnvType.CLIENT)
 public class SoulReaperRenderer extends BipedEntityRenderer<SoulReaperEntity, SoulReaperModel<SoulReaperEntity>> {
-    private static final Identifier TEXTURE = Identifier.of("adventurez:textures/entity/soul_reaper.png");
+    private static final Identifier TEXTURE = AdventureMain.identifierOf("textures/entity/soul_reaper.png");
 
     public SoulReaperRenderer(EntityRendererFactory.Context context) {
         super(context, new SoulReaperModel<>(context.getPart(RenderInit.SOUL_REAPER_LAYER)), 0.5F);
@@ -30,7 +31,4 @@ public class SoulReaperRenderer extends BipedEntityRenderer<SoulReaperEntity, So
         matrixStack.scale(1.2F, 1.2F, 1.2F);
     }
 
-    // protected boolean isShaking(AbstractSkeletonEntity abstractSkeletonEntity) {
-    // return abstractSkeletonEntity.isShaking();
-    // }
 }

@@ -1,5 +1,6 @@
 package net.adventurez.entity.render;
 
+import net.adventurez.AdventureMain;
 import net.adventurez.entity.model.RockModel;
 import net.adventurez.entity.nonliving.ThrownRockEntity;
 import net.fabricmc.api.EnvType;
@@ -16,8 +17,8 @@ import net.minecraft.util.math.BlockPos;
 
 @Environment(EnvType.CLIENT)
 public class ThrownRockRenderer extends EntityRenderer<ThrownRockEntity> {
-    private static final Identifier GOLEM_TEXTURE = Identifier.of("adventurez:textures/entity/thrown_golem_rock.png");
-    private static final Identifier VOID_TEXTURE = Identifier.of("adventurez:textures/entity/thrown_void_rock.png");
+    private static final Identifier GOLEM_TEXTURE = AdventureMain.identifierOf("textures/entity/thrown_golem_rock.png");
+    private static final Identifier VOID_TEXTURE = AdventureMain.identifierOf("textures/entity/thrown_void_rock.png");
     private final RockModel model = new RockModel(RockModel.getTexturedModelData().createModel());
 
     public ThrownRockRenderer(EntityRendererFactory.Context context) {

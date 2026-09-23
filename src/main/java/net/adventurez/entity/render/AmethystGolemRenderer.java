@@ -1,5 +1,6 @@
 package net.adventurez.entity.render;
 
+import net.adventurez.AdventureMain;
 import net.adventurez.entity.AmethystGolemEntity;
 import net.adventurez.entity.model.AmethystGolemModel;
 import net.adventurez.init.RenderInit;
@@ -11,8 +12,8 @@ import net.minecraft.util.Identifier;
 
 @Environment(EnvType.CLIENT)
 public class AmethystGolemRenderer extends MobEntityRenderer<AmethystGolemEntity, AmethystGolemModel<AmethystGolemEntity>> {
-    private static final Identifier TEXTURE = Identifier.of("adventurez:textures/entity/amethyst_golem.png");
-    private static final Identifier OTHER_TEXTURE = Identifier.of("adventurez:textures/entity/deepslate_amethyst_golem.png");
+    private static final Identifier TEXTURE = AdventureMain.identifierOf("textures/entity/amethyst_golem.png");
+    private static final Identifier OTHER_TEXTURE = AdventureMain.identifierOf("textures/entity/deepslate_amethyst_golem.png");
 
     public AmethystGolemRenderer(EntityRendererFactory.Context context) {
         super(context, new AmethystGolemModel<>(context.getPart(RenderInit.AMETHYST_GOLEM_LAYER)), 0.7F);

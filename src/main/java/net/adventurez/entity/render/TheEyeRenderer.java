@@ -1,5 +1,6 @@
 package net.adventurez.entity.render;
 
+import net.adventurez.AdventureMain;
 import net.adventurez.entity.TheEyeEntity;
 import net.adventurez.entity.model.TheEyeModel;
 import net.adventurez.init.RenderInit;
@@ -23,8 +24,8 @@ import net.minecraft.util.math.Vec3d;
 
 @Environment(EnvType.CLIENT)
 public class TheEyeRenderer extends MobEntityRenderer<TheEyeEntity, TheEyeModel<TheEyeEntity>> {
-    private static final Identifier TEXTURE = Identifier.of("adventurez:textures/entity/the_eye.png");
-    private static final Identifier EXPLOSION_BEAM_TEXTURE = Identifier.of("adventurez:textures/entity/eye_beam.png");
+    private static final Identifier TEXTURE = AdventureMain.identifierOf("textures/entity/the_eye.png");
+    private static final Identifier EXPLOSION_BEAM_TEXTURE = AdventureMain.identifierOf("textures/entity/eye_beam.png");
     private static final RenderLayer LAYER;
 
     public TheEyeRenderer(EntityRendererFactory.Context context) {

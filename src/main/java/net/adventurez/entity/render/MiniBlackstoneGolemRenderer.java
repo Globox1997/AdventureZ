@@ -1,5 +1,6 @@
 package net.adventurez.entity.render;
 
+import net.adventurez.AdventureMain;
 import net.adventurez.entity.MiniBlackstoneGolemEntity;
 import net.adventurez.entity.model.MiniBlackstoneGolemModel;
 import net.adventurez.init.RenderInit;
@@ -11,7 +12,7 @@ import net.minecraft.util.Identifier;
 
 @Environment(EnvType.CLIENT)
 public class MiniBlackstoneGolemRenderer extends MobEntityRenderer<MiniBlackstoneGolemEntity, MiniBlackstoneGolemModel<MiniBlackstoneGolemEntity>> {
-    private static final Identifier TEXTURE = Identifier.of("adventurez:textures/entity/mini_blackstone_golem.png");
+    private static final Identifier TEXTURE = AdventureMain.identifierOf("textures/entity/mini_blackstone_golem.png");
 
     public MiniBlackstoneGolemRenderer(EntityRendererFactory.Context context) {
         super(context, new MiniBlackstoneGolemModel<>(context.getPart(RenderInit.MINI_BLACKSTONE_GOLEM_LAYER)), 0.7F);

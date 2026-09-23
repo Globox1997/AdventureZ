@@ -1,5 +1,6 @@
 package net.adventurez.entity.render;
 
+import net.adventurez.AdventureMain;
 import net.adventurez.entity.EnderwarthogEntity;
 import net.adventurez.entity.model.EnderwarthogModel;
 import net.adventurez.entity.render.feature.EnderwarthogEyesFeatureRenderer;
@@ -12,7 +13,7 @@ import net.minecraft.util.Identifier;
 
 @Environment(EnvType.CLIENT)
 public class EnderwarthogRenderer extends MobEntityRenderer<EnderwarthogEntity, EnderwarthogModel<EnderwarthogEntity>> {
-    private static final Identifier TEXTURE = Identifier.of("adventurez:textures/entity/enderwarthog.png");
+    private static final Identifier TEXTURE = AdventureMain.identifierOf("textures/entity/enderwarthog.png");
 
     public EnderwarthogRenderer(EntityRendererFactory.Context context) {
         super(context, new EnderwarthogModel<>(context.getPart(RenderInit.ENDERWARTHOG_LAYER)), 1.5F);

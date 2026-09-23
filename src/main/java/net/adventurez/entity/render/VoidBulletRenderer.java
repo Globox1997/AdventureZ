@@ -1,5 +1,6 @@
 package net.adventurez.entity.render;
 
+import net.adventurez.AdventureMain;
 import net.adventurez.entity.model.VoidBulletModel;
 import net.adventurez.entity.nonliving.VoidBulletEntity;
 import net.fabricmc.api.EnvType;
@@ -16,7 +17,7 @@ import net.minecraft.util.math.MathHelper;
 
 @Environment(EnvType.CLIENT)
 public class VoidBulletRenderer extends EntityRenderer<VoidBulletEntity> {
-    private static final Identifier TEXTURE = Identifier.of("adventurez:textures/entity/void_bullet.png");
+    private static final Identifier TEXTURE = AdventureMain.identifierOf("textures/entity/void_bullet.png");
     private final VoidBulletModel<VoidBulletEntity> model = new VoidBulletModel<>(VoidBulletModel.getTexturedModelData().createModel());
 
     public VoidBulletRenderer(EntityRendererFactory.Context context) {

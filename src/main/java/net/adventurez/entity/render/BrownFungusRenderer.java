@@ -1,5 +1,6 @@
 package net.adventurez.entity.render;
 
+import net.adventurez.AdventureMain;
 import net.adventurez.entity.BrownFungusEntity;
 import net.adventurez.entity.model.BrownFungusModel;
 import net.adventurez.init.RenderInit;
@@ -12,7 +13,7 @@ import net.minecraft.util.Identifier;
 
 @Environment(EnvType.CLIENT)
 public class BrownFungusRenderer extends MobEntityRenderer<BrownFungusEntity, BrownFungusModel<BrownFungusEntity>> {
-    private static final Identifier TEXTURE = Identifier.of("adventurez:textures/entity/brown_fungus.png");
+    private static final Identifier TEXTURE = AdventureMain.identifierOf("textures/entity/brown_fungus.png");
 
     public BrownFungusRenderer(EntityRendererFactory.Context context) {
         super(context, new BrownFungusModel<>(context.getPart(RenderInit.BROWN_FUNGUS_LAYER)), 0.4F);

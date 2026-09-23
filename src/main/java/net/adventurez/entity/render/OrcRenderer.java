@@ -1,5 +1,6 @@
 package net.adventurez.entity.render;
 
+import net.adventurez.AdventureMain;
 import net.adventurez.entity.OrcEntity;
 import net.adventurez.entity.model.OrcModel;
 import net.adventurez.entity.render.feature.OrcInventoryFeatureRenderer;
@@ -14,7 +15,7 @@ import net.minecraft.util.Identifier;
 
 @Environment(EnvType.CLIENT)
 public class OrcRenderer extends MobEntityRenderer<OrcEntity, OrcModel<OrcEntity>> {
-    private static final Identifier TEXTURE = Identifier.of("adventurez:textures/entity/orc.png");
+    private static final Identifier TEXTURE = AdventureMain.identifierOf("textures/entity/orc.png");
 
     public OrcRenderer(EntityRendererFactory.Context context) {
         super(context, new OrcModel<>(context.getPart(RenderInit.ORC_LAYER)), 0.7F);

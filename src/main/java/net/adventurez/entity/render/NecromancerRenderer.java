@@ -1,5 +1,6 @@
 package net.adventurez.entity.render;
 
+import net.adventurez.AdventureMain;
 import net.adventurez.entity.NecromancerEntity;
 import net.adventurez.entity.model.NecromancerModel;
 import net.adventurez.init.RenderInit;
@@ -11,7 +12,7 @@ import net.minecraft.util.Identifier;
 
 @Environment(EnvType.CLIENT)
 public class NecromancerRenderer extends MobEntityRenderer<NecromancerEntity, NecromancerModel<NecromancerEntity>> {
-    private static final Identifier TEXTURE = Identifier.of("adventurez:textures/entity/necromancer.png");
+    private static final Identifier TEXTURE = AdventureMain.identifierOf("textures/entity/necromancer.png");
 
     public NecromancerRenderer(EntityRendererFactory.Context context) {
         super(context, new NecromancerModel<>(context.getPart(RenderInit.NECROMANCER_LAYER)), 0.7F);
