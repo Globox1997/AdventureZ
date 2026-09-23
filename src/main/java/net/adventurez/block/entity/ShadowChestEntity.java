@@ -1,9 +1,7 @@
 package net.adventurez.block.entity;
 
-import java.util.List;
-import java.util.Optional;
-
 import net.adventurez.init.BlockInit;
+import net.adventurez.init.ConfigInit;
 import net.adventurez.init.ItemInit;
 import net.adventurez.init.SoundInit;
 import net.adventurez.mixin.accessor.ChestLidAnimatorAccessor;
@@ -41,6 +39,9 @@ import net.minecraft.util.collection.DefaultedList;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.World;
+
+import java.util.List;
+import java.util.Optional;
 
 public class ShadowChestEntity extends LootableContainerBlockEntity implements LidOpenable {
 
@@ -216,7 +217,7 @@ public class ShadowChestEntity extends LootableContainerBlockEntity implements L
                             DynamicRegistryManager dynamicRegistryManager = this.getWorld().getRegistryManager();
                             Optional<RegistryEntry.Reference<Enchantment>> optional = dynamicRegistryManager.get(RegistryKeys.ENCHANTMENT).getRandom(this.getWorld().getRandom());
                             if (optional.isPresent()) {
-                                stack.addEnchantment(optional.get(), optional.get().value().getMaxLevel() + 1);
+                                stack.addEnchantment(optional.get(), optional.get().value().getMaxLevel() + (ConfigInit.CONFIG.allow_special_enchant_loot ? 1 : 0));
                             }
                             stack.set(ItemInit.VOID_DROP, true);
 

@@ -1,6 +1,6 @@
 ### Added:
-- Added dubious pumpkin
+- Dubious pumpkin
 ### Fixed:
-- 
+- Special loot config
 ### Changed:
 - 
