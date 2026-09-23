@@ -678,5 +678,33 @@
     "sounds": [
       "adventurez:skunk_fart_1"
     ]
+  },
+  "dubious_pumpkin_death": {
+    "sounds": [
+      "adventurez:dubious_pumpkin_death_1",
+      "adventurez:dubious_pumpkin_death_2"
+    ]
+  },
+  "dubious_pumpkin_idle": {
+    "sounds": [
+      "adventurez:dubious_pumpkin_idle_1",
+      "adventurez:dubious_pumpkin_idle_2",
+      "adventurez:dubious_pumpkin_idle_3"
+    ]
+  },
+  "dubious_pumpkin_hurt": {
+    "sounds": [
+      "adventurez:dubious_pumpkin_hurt_1",
+      "adventurez:dubious_pumpkin_hurt_2",
+      "adventurez:dubious_pumpkin_hurt_3",
+      "adventurez:dubious_pumpkin_hurt_4",
+      "adventurez:dubious_pumpkin_hurt_5"
+    ]
+  },
+  "dubious_pumpkin_step": {
+    "sounds": [
+      "adventurez:dubious_pumpkin_step_1",
+      "adventurez:dubious_pumpkin_step_2"
+    ]
   }
 }

@@ -111,6 +111,11 @@ public class SoundInit {
     public static SoundEvent SKUNK_IDLE_EVENT = register("skunk_idle");
     public static SoundEvent SKUNK_HURT_EVENT = register("skunk_hurt");
     public static SoundEvent SKUNK_FART_EVENT = register("skunk_fart");
+    // Dubious Pumpkin
+    public static SoundEvent DUBIOUS_PUMPKIN_DEATH_EVENT = register("dubious_pumpkin_death");
+    public static SoundEvent DUBIOUS_PUMPKIN_IDLE_EVENT = register("dubious_pumpkin_idle");
+    public static SoundEvent DUBIOUS_PUMPKIN_HURT_EVENT = register("dubious_pumpkin_hurt");
+    public static SoundEvent DUBIOUS_PUMPKIN_STEP_EVENT = register("dubious_pumpkin_step");
     // Item
     public static SoundEvent ROCK_IMPACT_EVENT = register("rock_impact");
     public static SoundEvent ROCK_THROW_EVENT = register("rock_throw");

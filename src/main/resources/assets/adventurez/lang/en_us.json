@@ -35,6 +35,7 @@
   "entity.adventurez.deer": "Deer",
   "entity.adventurez.skunk": "Skunk",
   "entity.adventurez.enderwarthog": "Enderwarthog",
+  "entity.adventurez.dubious_pumpkin": "Dubious Pumpkin",
 
   "item.adventurez.item_group": "AdventureZ",
   "item.adventurez.spawn_blackstone_golem": "Blackstone Golem Spawn Egg",
@@ -64,6 +65,7 @@
   "item.adventurez.spawn_deer": "Deer Spawn Egg",
   "item.adventurez.spawn_skunk": "Skunk Spawn Egg",
   "item.adventurez.spawn_enderwarthog": "Enderwarthog Spawn Egg",
+  "item.adventurez.spawn_dubious_pumpkin": "Dubious Pumpkin Spawn Egg",
 
   "item.adventurez.gilded_blackstone_shard": "Gilded Blackstone Shard",
   "item.adventurez.gilded_blackstone_shard.tooltip": "§7Placeable in the Blackstone Holder",
@@ -202,5 +204,6 @@
   "text.autoconfig.adventurez.option.allow_other_dragon_hatching": "Allow Other Dragon Hatching",
   "text.autoconfig.adventurez.option.gilded_netherite_armor_effect_duration": "Gilded Netherite Armor Effect Duration",
   "text.autoconfig.adventurez.option.gilded_netherite_armor_dodge_chance": "Gilded Netherite Armor Dodge Chance",
-  "text.autoconfig.adventurez.option.allow_gilded_blackstone_shard_throw": "Allow Gilded Blackstone Shard Throw"
+  "text.autoconfig.adventurez.option.allow_gilded_blackstone_shard_throw": "Allow Gilded Blackstone Shard Throw",
+  "text.autoconfig.adventurez.option.dubious_pumpkin_spawn_chance": "Dubious Pumpkin Spawn Chance"
 }

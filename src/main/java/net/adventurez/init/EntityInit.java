@@ -52,6 +52,8 @@ public class EntityInit {
     public static final EntityType<ShamanEntity> SHAMAN = register("shaman", 210734, 8739394, EntityType.Builder.create(ShamanEntity::new, SpawnGroup.MONSTER).dimensions(0.9F, 2.01F).build());
     public static final EntityType<EnderwarthogEntity> ENDERWARTHOG = register("enderwarthog", 2828080, 6553725,
             EntityType.Builder.create(EnderwarthogEntity::new, SpawnGroup.MONSTER).dimensions(2.3F, 2.15F).build());
+    public static final EntityType<DubiousPumpkinEntity> DUBIOUS_PUMPKIN = register("dubious_pumpkin", 7377453, 12873492,
+            EntityType.Builder.create(DubiousPumpkinEntity::new, SpawnGroup.CREATURE).dimensions(0.9F, 0.9F).build());
 
     // Passive
     public static final EntityType<RedFungusEntity> RED_FUNGUS = register("red_fungus", 13084791, 13183785,
@@ -133,5 +135,6 @@ public class EntityInit {
         FabricDefaultAttributeRegistry.register(DEER, DeerEntity.createDeerAttributes());
         FabricDefaultAttributeRegistry.register(SKUNK, SkunkEntity.createSkunkAttributes());
         FabricDefaultAttributeRegistry.register(ENDERWARTHOG, EnderwarthogEntity.createEnderwarthogAttributes());
+        FabricDefaultAttributeRegistry.register(DUBIOUS_PUMPKIN, DubiousPumpkinEntity.createDubiousPumpkinAttributes());
     }
 }

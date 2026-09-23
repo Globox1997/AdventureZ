@@ -1,5 +1,5 @@
 ### Added:
-- Added skunk
+- Added dubious pumpkin
 ### Fixed:
 - 
 ### Changed:

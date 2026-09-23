@@ -1,0 +1,16 @@
+{
+  "name": "Dubious Pumpkin",
+  "icon": "adventurez:dubious_pumpkin",
+  "category": "adventurez:mob_category",
+  "pages": [
+    {
+      "type": "text",
+      "text": "This pumpkin is dubious. Rarely when a pumpkin grows it will start moving..."
+    },
+    {
+      "type": "entity",
+      "name": "Showcase",
+      "entity": "adventurez:dubious_pumpkin"
+    }
+  ]
+}

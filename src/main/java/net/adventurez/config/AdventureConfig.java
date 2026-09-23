@@ -86,6 +86,10 @@ public class AdventureConfig implements ConfigData {
     @ConfigEntry.Gui.RequiresRestart
     @ConfigEntry.BoundedDiscrete(min = 0, max = 100)
     public int skunk_spawn_weight = 6;
+    @ConfigEntry.Category("spawn_setting")
+    @ConfigEntry.Gui.RequiresRestart
+    @ConfigEntry.BoundedDiscrete(min = 0, max = 100)
+    public int dubious_pumpkin_spawn_chance = 2;
 
     // Allow settings
     @ConfigEntry.Category("spawn_setting")
