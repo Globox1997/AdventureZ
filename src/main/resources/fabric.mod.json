@@ -12,7 +12,10 @@
     "sources": "https://github.com/Globox1997/AdventureZ",
     "issues": "https://github.com/Globox1997/AdventureZ/issues"
   },
-  "license": "GPLv3",
+  "license": [
+    "GPLv3",
+    "ARR (Assets)"
+  ],
   "icon": "assets/adventurez/icon.png",
   "environment": "*",
   "entrypoints": {

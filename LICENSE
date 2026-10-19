@@ -672,3 +672,15 @@ may consider it more useful to permit linking proprietary applications with
 the library.  If this is what you want to do, use the GNU Lesser General
 Public License instead of this License.  But first, please read
 <https://www.gnu.org/licenses/why-not-lgpl.html>.
+
+Asset License
+
+Unless explicitly stated otherwise, all non-source-code assets contained in this
+repository, including but not limited to images, textures, audio, music,
+fonts, 3D models, videos, and other media files, are NOT covered by the MIT
+License.
+
+These assets are © 2026 Globox_Z. All Rights Reserved.
+
+You may not copy, modify, redistribute, sublicense, or use these assets in
+whole or in part without prior written permission from the copyright holder.
