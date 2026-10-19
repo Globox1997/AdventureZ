@@ -1,7 +1,6 @@
 ### Added:
-- Dubious pumpkin
-- Allow orc stealing config
+- Gilded netherite tools
 ### Fixed:
-- Special loot config
-### Changed:
 - 
+### Changed:
+- Removed gilded netherite armor trimming

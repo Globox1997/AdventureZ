@@ -15,13 +15,7 @@ import net.minecraft.component.ComponentType;
 import net.minecraft.component.type.FoodComponent;
 import net.minecraft.entity.effect.StatusEffectInstance;
 import net.minecraft.entity.effect.StatusEffects;
-import net.minecraft.item.ArmorItem;
-import net.minecraft.item.ArrowItem;
-import net.minecraft.item.Item;
-import net.minecraft.item.ItemGroup;
-import net.minecraft.item.ItemStack;
-import net.minecraft.item.OnAStickItem;
-import net.minecraft.item.SmithingTemplateItem;
+import net.minecraft.item.*;
 import net.minecraft.network.codec.PacketCodecs;
 import net.minecraft.potion.Potions;
 import net.minecraft.registry.Registries;
@@ -99,6 +93,13 @@ public class ItemInit {
             new GildedNetheriteArmor(AdventureArmorMaterials.GILDED_NETHERITE, ArmorItem.Type.LEGGINGS, new Item.Settings().maxDamage(ArmorItem.Type.LEGGINGS.getMaxDamage(37)).fireproof()));
     public static final Item GILDED_NETHERITE_BOOTS = register("gilded_netherite_boots",
             new GildedNetheriteArmor(AdventureArmorMaterials.GILDED_NETHERITE, ArmorItem.Type.BOOTS, new Item.Settings().maxDamage(ArmorItem.Type.BOOTS.getMaxDamage(37)).fireproof()));
+
+    // Tool
+    public static final Item GILDED_NETHERITE_SWORD = register("gilded_netherite_sword", new SwordItem(AdventureToolMaterials.GILDED_NETHERITE, new Item.Settings().attributeModifiers(SwordItem.createAttributeModifiers(AdventureToolMaterials.GILDED_NETHERITE, 3, -2.4f)).fireproof()));
+    public static final Item GILDED_NETHERITE_SHOVEL = register("gilded_netherite_shovel", new ShovelItem(AdventureToolMaterials.GILDED_NETHERITE, new Item.Settings().attributeModifiers(ShovelItem.createAttributeModifiers(AdventureToolMaterials.GILDED_NETHERITE, 1.5f, -3.0f)).fireproof()));
+    public static final Item GILDED_NETHERITE_PICKAXE = register("gilded_netherite_pickaxe", new PickaxeItem(AdventureToolMaterials.GILDED_NETHERITE, new Item.Settings().attributeModifiers(PickaxeItem.createAttributeModifiers(AdventureToolMaterials.GILDED_NETHERITE, 1.0f, -2.8f)).fireproof()));
+    public static final Item GILDED_NETHERITE_AXE = register("gilded_netherite_axe", new AxeItem(AdventureToolMaterials.GILDED_NETHERITE, new Item.Settings().attributeModifiers(AxeItem.createAttributeModifiers(AdventureToolMaterials.GILDED_NETHERITE, 5.0f, -3.0f)).fireproof()));
+    public static final Item GILDED_NETHERITE_HOE = register("gilded_netherite_hoe", new HoeItem(AdventureToolMaterials.GILDED_NETHERITE, new Item.Settings().attributeModifiers(HoeItem.createAttributeModifiers(AdventureToolMaterials.GILDED_NETHERITE, -4f, -2.0f)).fireproof()));
 
     private static Item register(String id, Item item) {
         return register(AdventureMain.identifierOf(id), item);

@@ -1,0 +1,15 @@
+{
+  "type": "minecraft:smithing_transform",
+  "base": {
+    "item": "minecraft:netherite_pickaxe"
+  },
+  "addition": {
+    "item": "adventurez:gilded_netherite_fragment"
+  },
+  "result": {
+    "id": "adventurez:gilded_netherite_pickaxe"
+  },
+  "template": {
+    "item": "adventurez:gilded_upgrade_smithing_template"
+  }
+}

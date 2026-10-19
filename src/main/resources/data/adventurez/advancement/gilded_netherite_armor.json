@@ -43,6 +43,31 @@
                         "items": [
                             "adventurez:gilded_netherite_boots"
                         ]
+                    },
+                    {
+                        "items": [
+                            "adventurez:gilded_netherite_sword"
+                        ]
+                    },
+                    {
+                        "items": [
+                            "adventurez:gilded_netherite_shovel"
+                        ]
+                    },
+                    {
+                        "items": [
+                            "adventurez:gilded_netherite_hoe"
+                        ]
+                    },
+                    {
+                        "items": [
+                            "adventurez:gilded_netherite_axe"
+                        ]
+                    },
+                    {
+                        "items": [
+                            "adventurez:gilded_netherite_pickaxe"
+                        ]
                     }
                 ]
             }

@@ -1,0 +1,6 @@
+{
+  "parent": "item/handheld",
+  "textures": {
+    "layer0": "adventurez:item/gilded_netherite_pickaxe"
+  }
+}
