@@ -1,12 +1,9 @@
 package net.adventurez.item;
 
-import java.util.List;
-
 import net.adventurez.init.ConfigInit;
 import net.adventurez.init.ItemInit;
 import net.adventurez.item.component.GildedActivationComponent;
-import net.minecraft.client.MinecraftClient;
-import net.minecraft.client.util.InputUtil;
+import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EquipmentSlot;
 import net.minecraft.entity.effect.StatusEffectInstance;
@@ -21,6 +18,8 @@ import net.minecraft.sound.SoundEvents;
 import net.minecraft.text.Text;
 import net.minecraft.world.World;
 
+import java.util.List;
+
 public class GildedNetheriteArmor extends ArmorItem {
 
     public GildedNetheriteArmor(RegistryEntry<ArmorMaterial> material, Type type, Settings settings) {
@@ -32,7 +31,7 @@ public class GildedNetheriteArmor extends ArmorItem {
         super.appendTooltip(stack, context, tooltip, type);
         if (ConfigInit.CONFIG.allow_extra_tooltips) {
             tooltip.add(Text.translatable("item.adventurez.moreinfo.tooltip"));
-            if (InputUtil.isKeyPressed(MinecraftClient.getInstance().getWindow().getHandle(), 340)) {
+            if (Screen.hasShiftDown()) {
                 tooltip.remove(Text.translatable("item.adventurez.moreinfo.tooltip"));
                 tooltip.add(Text.translatable("item.adventurez.gilded_netherite_armor.tooltip"));
                 tooltip.add(Text.translatable("item.adventurez.gilded_netherite_armor.tooltip2"));

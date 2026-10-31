@@ -1,22 +1,17 @@
 package net.adventurez.block;
 
+import net.adventurez.block.entity.PiglinFlagEntity;
 import net.adventurez.init.BlockInit;
 import net.adventurez.init.ConfigInit;
-import net.minecraft.block.Block;
-import net.minecraft.block.BlockEntityProvider;
-import net.minecraft.block.BlockRenderType;
-import net.minecraft.block.BlockState;
-import net.minecraft.block.HorizontalFacingBlock;
-import net.minecraft.block.ShapeContext;
+import net.minecraft.block.*;
 import net.minecraft.block.entity.BlockEntity;
 import net.minecraft.block.entity.BlockEntityTicker;
 import net.minecraft.block.entity.BlockEntityType;
-import net.minecraft.client.MinecraftClient;
-import net.minecraft.client.util.InputUtil;
+import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.entity.ai.pathing.NavigationType;
+import net.minecraft.item.Item.TooltipContext;
 import net.minecraft.item.ItemPlacementContext;
 import net.minecraft.item.ItemStack;
-import net.minecraft.item.Item.TooltipContext;
 import net.minecraft.item.tooltip.TooltipType;
 import net.minecraft.state.StateManager;
 import net.minecraft.state.property.DirectionProperty;
@@ -26,13 +21,10 @@ import net.minecraft.util.math.Direction;
 import net.minecraft.util.shape.VoxelShape;
 import net.minecraft.util.shape.VoxelShapes;
 import net.minecraft.world.BlockView;
-
-import java.util.List;
-
 import net.minecraft.world.World;
 import org.jetbrains.annotations.Nullable;
 
-import net.adventurez.block.entity.PiglinFlagEntity;
+import java.util.List;
 
 public class PiglinFlag extends Block implements BlockEntityProvider {
     public static final DirectionProperty FACING;
@@ -68,7 +60,7 @@ public class PiglinFlag extends Block implements BlockEntityProvider {
         super.appendTooltip(stack, context, tooltip, options);
         if (ConfigInit.CONFIG.allow_extra_tooltips) {
             tooltip.add(Text.translatable("item.adventurez.moreinfo.tooltip"));
-            if (InputUtil.isKeyPressed(MinecraftClient.getInstance().getWindow().getHandle(), 340)) {
+            if (Screen.hasShiftDown()) {
                 tooltip.remove(Text.translatable("item.adventurez.moreinfo.tooltip"));
                 tooltip.add(Text.translatable("block.adventurez.piglin_flag.tooltip"));
                 tooltip.add(Text.translatable("block.adventurez.piglin_flag.tooltip2"));

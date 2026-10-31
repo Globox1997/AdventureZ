@@ -65,7 +65,6 @@ public class Handbook extends Item {
     public void appendTooltip(ItemStack stack, TooltipContext context, List<Text> tooltip, TooltipType type) {
         super.appendTooltip(stack, context, tooltip, type);
         if (ConfigInit.CONFIG.allow_extra_tooltips) {
-            tooltip.add(Text.translatable("item.adventurez.moreinfo.tooltip"));
             if (!isPatchouliLoaded) {
                 tooltip.add(Text.translatable("item.adventurez.patchouli_book.tooltip.1"));
                 tooltip.add(Text.translatable("item.adventurez.patchouli_book.tooltip.2"));

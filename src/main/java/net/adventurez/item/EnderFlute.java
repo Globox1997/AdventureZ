@@ -1,12 +1,9 @@
 package net.adventurez.item;
 
-import java.util.List;
-
 import net.adventurez.entity.EnderWhaleEntity;
 import net.adventurez.init.ConfigInit;
 import net.adventurez.init.SoundInit;
-import net.minecraft.client.MinecraftClient;
-import net.minecraft.client.util.InputUtil;
+import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.player.PlayerEntity;
@@ -22,6 +19,8 @@ import net.minecraft.util.TypedActionResult;
 import net.minecraft.util.math.Box;
 import net.minecraft.world.World;
 
+import java.util.List;
+
 public class EnderFlute extends Item {
 
     public EnderFlute(Settings settings) {
@@ -33,7 +32,7 @@ public class EnderFlute extends Item {
         super.appendTooltip(stack, context, tooltip, type);
         if (ConfigInit.CONFIG.allow_extra_tooltips) {
             tooltip.add(Text.translatable("item.adventurez.moreinfo.tooltip"));
-            if (InputUtil.isKeyPressed(MinecraftClient.getInstance().getWindow().getHandle(), 340)) {
+            if (Screen.hasShiftDown()) {
                 tooltip.remove(Text.translatable("item.adventurez.moreinfo.tooltip"));
                 tooltip.add(Text.translatable("item.adventurez.ender_flute.tooltip"));
             }

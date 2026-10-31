@@ -1,8 +1,11 @@
 package net.adventurez.item;
 
-import java.util.List;
-import java.util.function.Supplier;
-
+import net.adventurez.entity.nonliving.GildedBlackstoneShardEntity;
+import net.adventurez.init.ConfigInit;
+import net.minecraft.client.gui.screen.Screen;
+import net.minecraft.entity.EntityType;
+import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.tooltip.TooltipType;
 import net.minecraft.sound.SoundCategory;
@@ -11,13 +14,9 @@ import net.minecraft.text.Text;
 import net.minecraft.util.Hand;
 import net.minecraft.util.TypedActionResult;
 import net.minecraft.world.World;
-import net.adventurez.entity.nonliving.GildedBlackstoneShardEntity;
-import net.adventurez.init.ConfigInit;
-import net.minecraft.client.MinecraftClient;
-import net.minecraft.client.util.InputUtil;
-import net.minecraft.entity.EntityType;
-import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.item.Item;
+
+import java.util.List;
+import java.util.function.Supplier;
 
 public class GildedBlackstoneShard extends Item {
 
@@ -41,7 +40,7 @@ public class GildedBlackstoneShard extends Item {
         super.appendTooltip(stack, context, tooltip, type);
         if (ConfigInit.CONFIG.allow_extra_tooltips) {
             tooltip.add(Text.translatable("item.adventurez.moreinfo.tooltip"));
-            if (InputUtil.isKeyPressed(MinecraftClient.getInstance().getWindow().getHandle(), 340)) {
+            if (Screen.hasShiftDown()) {
                 tooltip.remove(Text.translatable("item.adventurez.moreinfo.tooltip"));
                 tooltip.add(Text.translatable("item.adventurez.gilded_blackstone_shard.tooltip"));
             }

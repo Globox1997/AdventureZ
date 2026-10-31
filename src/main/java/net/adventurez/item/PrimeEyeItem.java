@@ -1,10 +1,7 @@
 package net.adventurez.item;
 
-import java.util.List;
-
 import net.adventurez.init.ConfigInit;
-import net.minecraft.client.MinecraftClient;
-import net.minecraft.client.util.InputUtil;
+import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.projectile.thrown.EnderPearlEntity;
 import net.minecraft.item.Item;
@@ -18,6 +15,8 @@ import net.minecraft.util.Hand;
 import net.minecraft.util.TypedActionResult;
 import net.minecraft.world.World;
 
+import java.util.List;
+
 public class PrimeEyeItem extends Item {
     public PrimeEyeItem(Settings settings) {
         super(settings);
@@ -28,7 +27,7 @@ public class PrimeEyeItem extends Item {
         super.appendTooltip(stack, context, tooltip, type);
         if (ConfigInit.CONFIG.allow_extra_tooltips) {
             tooltip.add(Text.translatable("item.adventurez.moreinfo.tooltip"));
-            if (InputUtil.isKeyPressed(MinecraftClient.getInstance().getWindow().getHandle(), 340)) {
+            if (Screen.hasShiftDown()) {
                 tooltip.remove(Text.translatable("item.adventurez.moreinfo.tooltip"));
                 tooltip.add(Text.translatable("item.adventurez.prime_eye.tooltip"));
             }

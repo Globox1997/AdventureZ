@@ -6,6 +6,7 @@ import net.adventurez.init.BlockInit;
 import net.adventurez.init.ConfigInit;
 import net.minecraft.block.entity.BlockEntityTicker;
 import net.minecraft.block.entity.BlockEntityType;
+import net.minecraft.client.gui.screen.Screen;
 import org.jetbrains.annotations.Nullable;
 
 import net.adventurez.block.entity.ChiseledPolishedBlackstoneHolderEntity;
@@ -56,7 +57,7 @@ public class ChiseledPolishedBlackstoneHolder extends Block implements BlockEnti
         super.appendTooltip(stack, context, tooltip, options);
         if (ConfigInit.CONFIG.allow_extra_tooltips) {
             tooltip.add(Text.translatable("item.adventurez.moreinfo.tooltip"));
-            if (InputUtil.isKeyPressed(MinecraftClient.getInstance().getWindow().getHandle(), 340)) {
+            if (Screen.hasShiftDown()) {
                 tooltip.remove(Text.translatable("item.adventurez.moreinfo.tooltip"));
                 tooltip.add(Text.translatable("block.adventurez.chiseled_polished_blackstone_holder.tooltip"));
                 tooltip.add(Text.translatable("block.adventurez.chiseled_polished_blackstone_holder.tooltip2"));
