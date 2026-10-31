@@ -20,7 +20,7 @@
         "experience": 100
     },
     "criteria": {
-        "dragon_armor": {
+        "gilded_netherite_armor": {
             "trigger": "minecraft:inventory_changed",
             "conditions": {
                 "items": [
@@ -43,31 +43,6 @@
                         "items": [
                             "adventurez:gilded_netherite_boots"
                         ]
-                    },
-                    {
-                        "items": [
-                            "adventurez:gilded_netherite_sword"
-                        ]
-                    },
-                    {
-                        "items": [
-                            "adventurez:gilded_netherite_shovel"
-                        ]
-                    },
-                    {
-                        "items": [
-                            "adventurez:gilded_netherite_hoe"
-                        ]
-                    },
-                    {
-                        "items": [
-                            "adventurez:gilded_netherite_axe"
-                        ]
-                    },
-                    {
-                        "items": [
-                            "adventurez:gilded_netherite_pickaxe"
-                        ]
                     }
                 ]
             }
@@ -75,7 +50,7 @@
     },
     "requirements": [
         [
-            "dragon_armor"
+            "gilded_netherite_armor"
         ]
     ]
 }
