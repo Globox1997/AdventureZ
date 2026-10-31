@@ -1,6 +1,6 @@
 {
     "name": "Summoner",
-    "icon": "adventurez:blackstone_golem_heart",
+    "icon": "adventurez:spawn_summoner",
     "category": "adventurez:mob_category",
     "pages": [
         {

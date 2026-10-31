@@ -1,6 +1,6 @@
 {
     "name": "Blackstone Golem",
-    "icon": "adventurez:blackstone_golem_heart",
+    "icon": "adventurez:spawn_blackstone_golem",
     "category": "adventurez:mob_category",
     "pages": [
         {

@@ -1,6 +1,6 @@
 {
     "name": "Desert Rhino",
-    "icon": "adventurez:blackstone_golem_heart",
+    "icon": "adventurez:spawn_desert_rhino",
     "category": "adventurez:mob_category",
     "pages": [
         {

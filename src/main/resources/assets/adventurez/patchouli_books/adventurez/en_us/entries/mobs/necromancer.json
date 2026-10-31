@@ -1,6 +1,6 @@
 {
     "name": "Necromancer",
-    "icon": "adventurez:blackstone_golem_heart",
+    "icon": "adventurez:spawn_necromancer",
     "category": "adventurez:mob_category",
     "pages": [
         {

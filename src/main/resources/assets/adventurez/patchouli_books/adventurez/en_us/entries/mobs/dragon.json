@@ -1,6 +1,6 @@
 {
     "name": "Dragon",
-    "icon": "adventurez:blackstone_golem_heart",
+    "icon": "adventurez:spawn_dragon",
     "category": "adventurez:mob_category",
     "pages": [
         {

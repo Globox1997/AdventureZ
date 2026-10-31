@@ -1,6 +1,6 @@
 {
     "name": "Deer",
-    "icon": "adventurez:blackstone_golem_heart",
+    "icon": "adventurez:spawn_deer",
     "category": "adventurez:mob_category",
     "pages": [
         {

@@ -1,6 +1,6 @@
 {
     "name": "Shaman",
-    "icon": "adventurez:blackstone_golem_heart",
+    "icon": "adventurez:spawn_shaman",
     "category": "adventurez:mob_category",
     "pages": [
         {
