@@ -70,6 +70,7 @@ public class RenderInit {
     public static final EntityModelLayer SKUNK_LAYER = new EntityModelLayer(AdventureMain.identifierOf("skunk_render_layer"), "skunk_render_layer");
     public static final EntityModelLayer ENDERWARTHOG_LAYER = new EntityModelLayer(AdventureMain.identifierOf("enderwarthog_render_layer"), "enderwarthog_render_layer");
     public static final EntityModelLayer DUBIOUS_PUMPKIN_LAYER = new EntityModelLayer(AdventureMain.identifierOf("dubious_pumpkin_render_layer"), "dubious_pumpkin_render_layer");
+    public static final EntityModelLayer CRYSTAL_BEETLE_LAYER = new EntityModelLayer(AdventureMain.identifierOf("crystal_beetle_render_layer"), "crystal_beetle_render_layer");
 
     public static void init() {
         // Entity Renderer
@@ -109,6 +110,7 @@ public class RenderInit {
         EntityRendererRegistry.register(EntityInit.SKUNK, SkunkRenderer::new);
         EntityRendererRegistry.register(EntityInit.ENDERWARTHOG, EnderwarthogRenderer::new);
         EntityRendererRegistry.register(EntityInit.DUBIOUS_PUMPKIN, DubiousPumpkinRenderer::new);
+        EntityRendererRegistry.register(EntityInit.CRYSTAL_BEETLE, CrystalBeetleRenderer::new);
 
         // Entity Layer
         EntityModelLayerRegistry.registerModelLayer(BLACKSTONE_GOLEM_LAYER, BlackstoneGolemModel::getTexturedModelData);
@@ -144,6 +146,7 @@ public class RenderInit {
         EntityModelLayerRegistry.registerModelLayer(SKUNK_LAYER, SkunkModel::getTexturedModelData);
         EntityModelLayerRegistry.registerModelLayer(ENDERWARTHOG_LAYER, EnderwarthogModel::getTexturedModelData);
         EntityModelLayerRegistry.registerModelLayer(DUBIOUS_PUMPKIN_LAYER, DubiousPumpkinModel::getTexturedModelData);
+        EntityModelLayerRegistry.registerModelLayer(CRYSTAL_BEETLE_LAYER, CrystalBeetleModel::getTexturedModelData);
 
         // Blocks
         BlockEntityRendererFactories.register(BlockInit.CHISELED_POLISHED_BLACKSTONE_HOLDER_ENTITY, ChiseledPolishedBlackstoneHolderRenderer::new);

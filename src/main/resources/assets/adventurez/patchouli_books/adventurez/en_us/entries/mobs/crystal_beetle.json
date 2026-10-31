@@ -1,0 +1,17 @@
+{
+    "name": "Crystal Beetle",
+    "icon": "adventurez:blackstone_golem_heart",
+    "category": "adventurez:mob_category",
+    "pages": [
+        {
+            "type": "text",
+            "text": "The Crystal Beetle is a mostly harmless creature crawling around in the end. But watch out, do not get too close!"
+        },
+        {
+            "type": "entity",
+            "name": "Showcase",
+            "entity": "adventurez:crystal_beetle",
+            "offset": 0.0
+        }
+    ]
+}

@@ -1,41 +1,21 @@
 package net.adventurez.entity;
 
-import java.util.EnumSet;
-
-import org.jetbrains.annotations.Nullable;
-
 import net.adventurez.init.ConfigInit;
 import net.adventurez.init.EntityInit;
 import net.adventurez.init.ParticleInit;
 import net.adventurez.init.SoundInit;
 import net.minecraft.block.BlockState;
-import net.minecraft.entity.Entity;
-import net.minecraft.entity.EntityData;
-import net.minecraft.entity.EntityType;
-import net.minecraft.entity.LivingEntity;
-import net.minecraft.entity.MovementType;
-import net.minecraft.entity.SpawnReason;
-import net.minecraft.entity.ai.goal.ActiveTargetGoal;
-import net.minecraft.entity.ai.goal.Goal;
-import net.minecraft.entity.ai.goal.LookAroundGoal;
-import net.minecraft.entity.ai.goal.LookAtEntityGoal;
-import net.minecraft.entity.ai.goal.MeleeAttackGoal;
-import net.minecraft.entity.ai.goal.RevengeGoal;
-import net.minecraft.entity.ai.goal.SwimGoal;
-import net.minecraft.entity.ai.goal.WanderAroundFarGoal;
+import net.minecraft.entity.*;
+import net.minecraft.entity.ai.goal.*;
 import net.minecraft.entity.attribute.DefaultAttributeContainer;
 import net.minecraft.entity.attribute.EntityAttributes;
 import net.minecraft.entity.boss.dragon.EnderDragonEntity;
 import net.minecraft.entity.damage.DamageSource;
 import net.minecraft.entity.data.DataTracker;
+import net.minecraft.entity.data.DataTracker.Builder;
 import net.minecraft.entity.data.TrackedData;
 import net.minecraft.entity.data.TrackedDataHandlerRegistry;
-import net.minecraft.entity.data.DataTracker.Builder;
-import net.minecraft.entity.mob.EndermanEntity;
-import net.minecraft.entity.mob.EndermiteEntity;
-import net.minecraft.entity.mob.HostileEntity;
-import net.minecraft.entity.mob.PathAwareEntity;
-import net.minecraft.entity.mob.ShulkerEntity;
+import net.minecraft.entity.mob.*;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.nbt.NbtCompound;
 import net.minecraft.particle.BlockStateParticleEffect;
@@ -50,12 +30,10 @@ import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.MathHelper;
 import net.minecraft.util.math.Vec3d;
 import net.minecraft.util.math.random.Random;
-import net.minecraft.world.Difficulty;
-import net.minecraft.world.LocalDifficulty;
-import net.minecraft.world.RaycastContext;
-import net.minecraft.world.ServerWorldAccess;
-import net.minecraft.world.SpawnHelper;
-import net.minecraft.world.World;
+import net.minecraft.world.*;
+import org.jetbrains.annotations.Nullable;
+
+import java.util.EnumSet;
 
 public class EnderwarthogEntity extends HostileEntity {
 
@@ -77,7 +55,7 @@ public class EnderwarthogEntity extends HostileEntity {
     public static boolean canSpawn(EntityType<EnderwarthogEntity> type, ServerWorldAccess world, SpawnReason spawnReason, BlockPos pos, Random random) {
         BlockState blockState = world.getBlockState(pos);
         return world.getDifficulty() != Difficulty.PEACEFUL && HostileEntity.isSpawnDark(world, pos, random) && HostileEntity.canMobSpawn(type, world, spawnReason, pos, random)
-                && random.nextInt(6) == 0 && SpawnHelper.isClearForSpawn(world, pos, blockState, blockState.getFluidState(), EntityInit.ENDERWARTHOG);
+                && SpawnHelper.isClearForSpawn(world, pos, blockState, blockState.getFluidState(), EntityInit.ENDERWARTHOG);
     }
 
     @Override
@@ -90,11 +68,11 @@ public class EnderwarthogEntity extends HostileEntity {
         this.goalSelector.add(4, new LookAtEntityGoal(this, PlayerEntity.class, 6.0F));
         this.goalSelector.add(5, new LookAroundGoal(this));
         this.targetSelector.add(1, new ActiveTargetGoal<>(this, PlayerEntity.class, true));
-        this.targetSelector.add(2, (new RevengeGoal(this, new Class[] { EnderwarthogEntity.class })));
-        this.targetSelector.add(3, (new RevengeGoal(this, new Class[] { EnderDragonEntity.class })));
-        this.targetSelector.add(4, (new RevengeGoal(this, new Class[] { EndermanEntity.class })));
-        this.targetSelector.add(5, (new RevengeGoal(this, new Class[] { EndermiteEntity.class })));
-        this.targetSelector.add(6, (new RevengeGoal(this, new Class[] { ShulkerEntity.class })));
+        this.targetSelector.add(2, (new RevengeGoal(this, new Class[]{EnderwarthogEntity.class})));
+        this.targetSelector.add(3, (new RevengeGoal(this, new Class[]{EnderDragonEntity.class})));
+        this.targetSelector.add(4, (new RevengeGoal(this, new Class[]{EndermanEntity.class})));
+        this.targetSelector.add(5, (new RevengeGoal(this, new Class[]{EndermiteEntity.class})));
+        this.targetSelector.add(6, (new RevengeGoal(this, new Class[]{ShulkerEntity.class})));
     }
 
     @Override

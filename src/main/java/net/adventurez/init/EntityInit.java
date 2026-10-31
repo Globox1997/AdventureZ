@@ -54,6 +54,8 @@ public class EntityInit {
             EntityType.Builder.create(EnderwarthogEntity::new, SpawnGroup.MONSTER).dimensions(2.3F, 2.15F).build());
     public static final EntityType<DubiousPumpkinEntity> DUBIOUS_PUMPKIN = register("dubious_pumpkin", 7377453, 12873492,
             EntityType.Builder.create(DubiousPumpkinEntity::new, SpawnGroup.CREATURE).dimensions(0.9F, 0.9F).build());
+    public static final EntityType<CrystalBeetleEntity> CRYSTAL_BEETLE = register("crystal_beetle", 2236963, 10770912,
+            EntityType.Builder.create(CrystalBeetleEntity::new, SpawnGroup.CREATURE).dimensions(1.5F, 0.75F).build());
 
     // Passive
     public static final EntityType<RedFungusEntity> RED_FUNGUS = register("red_fungus", 13084791, 13183785,
@@ -136,5 +138,6 @@ public class EntityInit {
         FabricDefaultAttributeRegistry.register(SKUNK, SkunkEntity.createSkunkAttributes());
         FabricDefaultAttributeRegistry.register(ENDERWARTHOG, EnderwarthogEntity.createEnderwarthogAttributes());
         FabricDefaultAttributeRegistry.register(DUBIOUS_PUMPKIN, DubiousPumpkinEntity.createDubiousPumpkinAttributes());
+        FabricDefaultAttributeRegistry.register(CRYSTAL_BEETLE, CrystalBeetleEntity.createCrystalBeetleAttributes());
     }
 }

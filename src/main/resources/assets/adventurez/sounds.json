@@ -706,5 +706,33 @@
       "adventurez:dubious_pumpkin_step_1",
       "adventurez:dubious_pumpkin_step_2"
     ]
+  },
+  "crystal_beetle_death": {
+    "sounds": [
+      "adventurez:crystal_beetle_death_1",
+      "adventurez:crystal_beetle_death_2"
+    ]
+  },
+  "crystal_beetle_idle": {
+    "sounds": [
+      "adventurez:crystal_beetle_idle_1",
+      "adventurez:crystal_beetle_idle_2",
+      "adventurez:crystal_beetle_idle_3",
+      "adventurez:crystal_beetle_idle_4",
+      "adventurez:crystal_beetle_idle_5"
+    ]
+  },
+  "crystal_beetle_hurt": {
+    "sounds": [
+      "adventurez:crystal_beetle_hurt_1",
+      "adventurez:crystal_beetle_hurt_2",
+      "adventurez:crystal_beetle_hurt_3"
+    ]
+  },
+  "crystal_beetle_step": {
+    "sounds": [
+      "adventurez:crystal_beetle_step_1",
+      "adventurez:crystal_beetle_step_2"
+    ]
   }
 }

@@ -116,6 +116,11 @@ public class SoundInit {
     public static SoundEvent DUBIOUS_PUMPKIN_IDLE_EVENT = register("dubious_pumpkin_idle");
     public static SoundEvent DUBIOUS_PUMPKIN_HURT_EVENT = register("dubious_pumpkin_hurt");
     public static SoundEvent DUBIOUS_PUMPKIN_STEP_EVENT = register("dubious_pumpkin_step");
+    // Crystal Beetle
+    public static SoundEvent CRYSTAL_BEETLE_DEATH_EVENT = register("crystal_beetle_death");
+    public static SoundEvent CRYSTAL_BEETLE_IDLE_EVENT = register("crystal_beetle_idle");
+    public static SoundEvent CRYSTAL_BEETLE_HURT_EVENT = register("crystal_beetle_hurt");
+    public static SoundEvent CRYSTAL_BEETLE_STEP_EVENT = register("crystal_beetle_step");
     // Item
     public static SoundEvent ROCK_IMPACT_EVENT = register("rock_impact");
     public static SoundEvent ROCK_THROW_EVENT = register("rock_throw");

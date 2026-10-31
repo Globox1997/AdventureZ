@@ -1,5 +1,6 @@
 ### Added:
 - Gilded netherite tools
+- Crystal Beetle
 ### Fixed:
 - 
 ### Changed:
