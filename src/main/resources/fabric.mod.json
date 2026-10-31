@@ -39,9 +39,6 @@
     "fabricloader": ">=${loader_version}",
     "cloth-config2": ">=${cloth_config_version}"
   },
-  "suggests": {
-    "flamingo": "*"
-  },
   "custom": {
     "mc-publish": {
       "modrinth": "defK2XM3",
