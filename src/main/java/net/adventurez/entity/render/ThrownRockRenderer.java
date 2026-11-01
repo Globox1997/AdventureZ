@@ -32,7 +32,6 @@ public class ThrownRockRenderer extends EntityRenderer<ThrownRockEntity> {
 
     @Override
     public void render(ThrownRockEntity thrownRockEntity, float f, float g, MatrixStack matrixStack, VertexConsumerProvider vertexConsumerProvider, int i) {
-
         matrixStack.push();
         VertexConsumer vertexConsumer = vertexConsumerProvider.getBuffer(this.model.getLayer(this.getTexture(thrownRockEntity)));
         model.render(matrixStack, vertexConsumer, i, OverlayTexture.DEFAULT_UV);

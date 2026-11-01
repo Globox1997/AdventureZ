@@ -21,9 +21,10 @@ public class AmethystGolemRenderer extends MobEntityRenderer<AmethystGolemEntity
 
     @Override
     public Identifier getTexture(AmethystGolemEntity amethystGolemEntity) {
-        if (amethystGolemEntity.getDataTracker().get(AmethystGolemEntity.DEEPSLATE_VARIANT))
+        if (amethystGolemEntity.getDataTracker().get(AmethystGolemEntity.DEEPSLATE_VARIANT)) {
             return OTHER_TEXTURE;
-        else
+        } else {
             return TEXTURE;
+        }
     }
 }

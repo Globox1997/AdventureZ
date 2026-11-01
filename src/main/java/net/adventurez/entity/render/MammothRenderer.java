@@ -23,8 +23,9 @@ public class MammothRenderer extends MobEntityRenderer<MammothEntity, MammothMod
     public void scale(MammothEntity mammothEntity, MatrixStack matrixStack, float f) {
         if (mammothEntity.isBaby()) {
             matrixStack.scale(1.15F, 1.15F, 1.15F);
-        } else
+        } else {
             matrixStack.scale(2.1F, 2.1F, 2.1F);
+        }
     }
 
     @Override
