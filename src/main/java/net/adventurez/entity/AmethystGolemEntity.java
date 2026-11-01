@@ -46,7 +46,6 @@ public class AmethystGolemEntity extends HostileEntity {
 
     public AmethystGolemEntity(EntityType<? extends HostileEntity> entityType, World world) {
         super(entityType, world);
-
     }
 
     public static DefaultAttributeContainer.Builder createAmethystGolemAttributes() {
