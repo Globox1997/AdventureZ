@@ -6,43 +6,43 @@ import net.minecraft.registry.Registry;
 import net.minecraft.sound.SoundEvent;
 
 public class SoundInit {
-    // Stone Golem
-    public static SoundEvent GOLEM_IDLE_EVENT = register("golem_idle");
-    public static SoundEvent GOLEM_WALK_EVENT = register("golem_walk");
-    public static SoundEvent GOLEM_HIT_EVENT = register("golem_hit");
-    public static SoundEvent GOLEM_ROAR_EVENT = register("golem_roar");
-    public static SoundEvent GOLEM_DEATH_EVENT = register("golem_death");
-    public static SoundEvent GOLEM_SPAWN_EVENT = register("golem_spawn");
-    public static SoundEvent GOLEM_AWAKENS_EVENT = register("golem_awakens");
-    // Small Golem
-    public static SoundEvent SMALL_GOLEM_IDLE_EVENT = register("small_golem_idle");
-    public static SoundEvent SMALL_GOLEM_WALK_EVENT = register("small_golem_walk");
-    public static SoundEvent SMALL_GOLEM_HIT_EVENT = register("small_golem_hit");
-    public static SoundEvent SMALL_GOLEM_DEATH_EVENT = register("small_golem_death");
+    // Blackstone Golem
+    public static SoundEvent BLACKSTONE_GOLEM_IDLE_EVENT = register("blackstone_golem_idle");
+    public static SoundEvent BLACKSTONE_GOLEM_STEP_EVENT = register("blackstone_golem_step");
+    public static SoundEvent BLACKSTONE_GOLEM_HURT_EVENT = register("blackstone_golem_hurt");
+    public static SoundEvent BLACKSTONE_GOLEM_ROAR_EVENT = register("blackstone_golem_roar");
+    public static SoundEvent BLACKSTONE_GOLEM_DEATH_EVENT = register("blackstone_golem_death");
+    public static SoundEvent BLACKSTONE_GOLEM_SPAWN_EVENT = register("blackstone_golem_spawn");
+    public static SoundEvent BLACKSTONE_GOLEM_AWAKENS_EVENT = register("blackstone_golem_awakens");
+    // Mini Blackstone Golem
+    public static SoundEvent MINI_BLACKSTONE_GOLEM_IDLE_EVENT = register("mini_blackstone_golem_idle");
+    public static SoundEvent MINI_BLACKSTONE_GOLEM_STEP_EVENT = register("mini_blackstone_golem_step");
+    public static SoundEvent MINI_BLACKSTONE_GOLEM_HURT_EVENT = register("mini_blackstone_golem_hurt");
+    public static SoundEvent MINI_BLACKSTONE_GOLEM_DEATH_EVENT = register("mini_blackstone_golem_death");
     // Piglin Beast
-    public static SoundEvent PIGLINBEAST_IDLE_EVENT = register("piglinbeast_idle");
-    public static SoundEvent PIGLINBEAST_DEATH_EVENT = register("piglinbeast_death");
-    public static SoundEvent PIGLINBEAST_HURT_EVENT = register("piglinbeast_hurt");
-    public static SoundEvent PIGLINBEAST_WALK_EVENT = register("piglinbeast_walk");
-    public static SoundEvent PIGLINBEAST_SHOUT_EVENT = register("piglinbeast_shout");
-    public static SoundEvent PIGLINBEAST_CLUBSWING_EVENT = register("piglinbeast_clubswing");
+    public static SoundEvent PIGLIN_BEAST_IDLE_EVENT = register("piglin_beast_idle");
+    public static SoundEvent PIGLIN_BEAST_DEATH_EVENT = register("piglin_beast_death");
+    public static SoundEvent PIGLIN_BEAST_HURT_EVENT = register("piglin_beast_hurt");
+    public static SoundEvent PIGLIN_BEAST_STEP_EVENT = register("piglin_beast_step");
+    public static SoundEvent PIGLIN_BEAST_SHOUT_EVENT = register("piglin_beast_shout");
+    public static SoundEvent PIGLIN_BEAST_CLUBSWING_EVENT = register("piglin_beast_clubswing");
     // Nightmare
     public static SoundEvent NIGHTMARE_IDLE_EVENT = register("nightmare_idle");
     public static SoundEvent NIGHTMARE_DEATH_EVENT = register("nightmare_death");
     public static SoundEvent NIGHTMARE_HURT_EVENT = register("nightmare_hurt");
     public static SoundEvent NIGHTMARE_ANGRY_EVENT = register("nightmare_angry");
     // Soul Reaper
-    public static SoundEvent SOULREAPER_IDLE_EVENT = register("soulreaper_idle");
-    public static SoundEvent SOULREAPER_HURT_EVENT = register("soulreaper_hurt");
-    public static SoundEvent SOULREAPER_DEATH_EVENT = register("soulreaper_death");
-    // Magic
+    public static SoundEvent SOUL_REAPER_IDLE_EVENT = register("soul_reaper_idle");
+    public static SoundEvent SOUL_REAPER_HURT_EVENT = register("soul_reaper_hurt");
+    public static SoundEvent SOUL_REAPER_DEATH_EVENT = register("soul_reaper_death");
+    // Summoner Magic
     public static SoundEvent SPELL_CAST_SHIELD_EVENT = register("spellcast_shield");
     public static SoundEvent MAGIC_SHIELD_HIT_EVENT = register("magic_shield_hit");
     // The Eye
-    public static SoundEvent EYE_DEATH_EVENT = register("eye_death");
-    public static SoundEvent EYE_HURT_EVENT = register("eye_hurt");
-    public static SoundEvent EYE_IDLE_EVENT = register("eye_idle");
-    public static SoundEvent EYE_DEATH_PLATFORM_EVENT = register("eye_death_platform");
+    public static SoundEvent THE_EYE_DEATH_EVENT = register("the_eye_death");
+    public static SoundEvent THE_EYE_HURT_EVENT = register("the_eye_hurt");
+    public static SoundEvent THE_EYE_IDLE_EVENT = register("the_eye_idle");
+    public static SoundEvent THE_EYE_DEATH_PLATFORM_EVENT = register("the_eye_death_platform");
     // Fungus
     public static SoundEvent FUNGUS_IDLE_EVENT = register("fungus_idle");
     public static SoundEvent FUNGUS_HURT_EVENT = register("fungus_hurt");
@@ -54,44 +54,44 @@ public class SoundInit {
     public static SoundEvent ORC_STEP_EVENT = register("orc_step");
     // Dragon
     public static SoundEvent DRAGON_DEATH_EVENT = register("dragon_death");
-    public static SoundEvent DRAGON_HIT_EVENT = register("dragon_hit");
+    public static SoundEvent DRAGON_HURT_EVENT = register("dragon_hurt");
     public static SoundEvent DRAGON_IDLE_EVENT = register("dragon_idle");
     public static SoundEvent DRAGON_STEP_EVENT = register("dragon_step");
     public static SoundEvent DRAGON_BREATH_EVENT = register("dragon_breath");
     // Mammoth
-    public static SoundEvent MAMMOTH_HIT_EVENT = register("mammoth_hit");
+    public static SoundEvent MAMMOTH_HURT_EVENT = register("mammoth_hurt");
     public static SoundEvent MAMMOTH_IDLE_EVENT = register("mammoth_idle");
     public static SoundEvent MAMMOTH_DEATH_EVENT = register("mammoth_death");
     public static SoundEvent MAMMOTH_BABY_IDLE_EVENT = register("mammoth_baby_idle");
     // Void Shadow
-    public static SoundEvent SHADOW_CAST_EVENT = register("shadow_cast");
-    public static SoundEvent SHADOW_PREPARE_EVENT = register("shadow_prepare");
-    public static SoundEvent SHADOW_IDLE_EVENT = register("shadow_idle");
-    public static SoundEvent SHADOW_DEATH_EVENT = register("shadow_death");
+    public static SoundEvent VOID_SHADOW_CAST_EVENT = register("void_shadow_cast");
+    public static SoundEvent VOID_SHADOW_PREPARE_EVENT = register("void_shadow_prepare");
+    public static SoundEvent VOID_SHADOW_IDLE_EVENT = register("void_shadow_idle");
+    public static SoundEvent VOID_SHADOW_DEATH_EVENT = register("void_shadow_death");
     // Iguana
     public static SoundEvent IGUANA_DEATH_EVENT = register("iguana_death");
     public static SoundEvent IGUANA_HURT_EVENT = register("iguana_hurt");
     public static SoundEvent IGUANA_IDLE_EVENT = register("iguana_idle");
     public static SoundEvent IGUANA_STEP_EVENT = register("iguana_step");
     // Ender Whale
-    public static SoundEvent WHALE_DEATH_EVENT = register("whale_death");
-    public static SoundEvent WHALE_HURT_EVENT = register("whale_hurt");
-    public static SoundEvent WHALE_IDLE_EVENT = register("whale_idle");
+    public static SoundEvent ENDER_WHALE_DEATH_EVENT = register("ender_whale_death");
+    public static SoundEvent ENDER_WHALE_HURT_EVENT = register("ender_whale_hurt");
+    public static SoundEvent ENDER_WHALE_IDLE_EVENT = register("ender_whale_idle");
     // Amethyst Golem
     public static SoundEvent AMETHYST_GOLEM_DEATH_EVENT = register("amethyst_golem_death");
-    public static SoundEvent AMETHYST_GOLEM_HIT_EVENT = register("amethyst_golem_hit");
-    public static SoundEvent AMETHYST_GOLEM_WALK_EVENT = register("amethyst_golem_walk");
+    public static SoundEvent AMETHYST_GOLEM_HURT_EVENT = register("amethyst_golem_hurt");
+    public static SoundEvent AMETHYST_GOLEM_STEP_EVENT = register("amethyst_golem_step");
     public static SoundEvent AMETHYST_GOLEM_IDLE_EVENT = register("amethyst_golem_idle");
     public static SoundEvent AMETHYST_GOLEM_RAGE_EVENT = register("amethyst_golem_rage");
     // Desert Rhino
     public static SoundEvent DESERT_RHINO_DEATH_EVENT = register("desert_rhino_death");
     public static SoundEvent DESERT_RHINO_ATTACK_EVENT = register("desert_rhino_attack");
-    public static SoundEvent DESERT_RHINO_WALK_EVENT = register("desert_rhino_walk");
+    public static SoundEvent DESERT_RHINO_STEP_EVENT = register("desert_rhino_step");
     public static SoundEvent DESERT_RHINO_IDLE_EVENT = register("desert_rhino_idle");
-    public static SoundEvent DESERT_RHINO_HIT_EVENT = register("desert_rhino_hit");
+    public static SoundEvent DESERT_RHINO_HURT_EVENT = register("desert_rhino_hurt");
     // Shaman
     public static SoundEvent SHAMAN_DEATH_EVENT = register("shaman_death");
-    public static SoundEvent SHAMAN_WALK_EVENT = register("shaman_walk");
+    public static SoundEvent SHAMAN_STEP_EVENT = register("shaman_step");
     public static SoundEvent SHAMAN_IDLE_EVENT = register("shaman_idle");
     public static SoundEvent SHAMAN_HURT_EVENT = register("shaman_hurt");
     // Deer
@@ -100,12 +100,12 @@ public class SoundInit {
     public static SoundEvent DEER_HURT_EVENT = register("deer_hurt");
     public static SoundEvent BABY_DEER_IDLE_EVENT = register("baby_deer_idle");
     public static SoundEvent BABY_DEER_HURT_EVENT = register("baby_deer_hurt");
-    // Warthog
-    public static SoundEvent ENDERWARTHOG_DEATH_EVENT = register("hog_death");
-    public static SoundEvent ENDERWARTHOG_WALK_EVENT = register("hog_step");
-    public static SoundEvent ENDERWARTHOG_IDLE_EVENT = register("hog_idle");
-    public static SoundEvent ENDERWARTHOG_HURT_EVENT = register("hog_hurt");
-    public static SoundEvent ENDERWARTHOG_ATTACK_EVENT = register("hog_attack");
+    // Enderwarthog
+    public static SoundEvent ENDERWARTHOG_DEATH_EVENT = register("enderwarthog_death");
+    public static SoundEvent ENDERWARTHOG_STEP_EVENT = register("enderwarthog_step");
+    public static SoundEvent ENDERWARTHOG_IDLE_EVENT = register("enderwarthog_idle");
+    public static SoundEvent ENDERWARTHOG_HURT_EVENT = register("enderwarthog_hurt");
+    public static SoundEvent ENDERWARTHOG_ATTACK_EVENT = register("enderwarthog_attack");
     // Skunk
     public static SoundEvent SKUNK_DEATH_EVENT = register("skunk_death");
     public static SoundEvent SKUNK_IDLE_EVENT = register("skunk_idle");

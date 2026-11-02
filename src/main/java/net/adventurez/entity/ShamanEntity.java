@@ -101,7 +101,7 @@ public class ShamanEntity extends SpellCastingEntity {
 
     @Override
     protected void playStepSound(BlockPos pos, BlockState state) {
-        this.playSound(SoundInit.SHAMAN_WALK_EVENT, 0.5F, 1.0F);
+        this.playSound(SoundInit.SHAMAN_STEP_EVENT, 0.5F, 1.0F);
     }
 
     @Override

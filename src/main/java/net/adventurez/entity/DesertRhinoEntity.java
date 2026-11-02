@@ -118,7 +118,7 @@ public class DesertRhinoEntity extends HostileEntity {
 
     @Override
     protected SoundEvent getHurtSound(DamageSource source) {
-        return SoundInit.DESERT_RHINO_HIT_EVENT;
+        return SoundInit.DESERT_RHINO_HURT_EVENT;
     }
 
     @Override
@@ -128,7 +128,7 @@ public class DesertRhinoEntity extends HostileEntity {
 
     @Override
     protected void playStepSound(BlockPos pos, BlockState state) {
-        this.playSound(SoundInit.DESERT_RHINO_WALK_EVENT, 0.8F, 1.0F);
+        this.playSound(SoundInit.DESERT_RHINO_STEP_EVENT, 0.8F, 1.0F);
     }
 
     @Override

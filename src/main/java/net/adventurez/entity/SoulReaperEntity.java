@@ -220,17 +220,17 @@ public class SoulReaperEntity extends HostileEntity implements RangedAttackMob {
 
     @Override
     protected SoundEvent getAmbientSound() {
-        return SoundInit.SOULREAPER_IDLE_EVENT;
+        return SoundInit.SOUL_REAPER_IDLE_EVENT;
     }
 
     @Override
     protected SoundEvent getHurtSound(DamageSource source) {
-        return SoundInit.SOULREAPER_HURT_EVENT;
+        return SoundInit.SOUL_REAPER_HURT_EVENT;
     }
 
     @Override
     protected SoundEvent getDeathSound() {
-        return SoundInit.SOULREAPER_DEATH_EVENT;
+        return SoundInit.SOUL_REAPER_DEATH_EVENT;
     }
 
     @Override

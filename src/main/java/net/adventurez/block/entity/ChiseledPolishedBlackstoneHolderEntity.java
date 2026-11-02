@@ -240,7 +240,7 @@ public class ChiseledPolishedBlackstoneHolderEntity extends BlockEntity implemen
                 stoneGolemEntity.initialize(((ServerWorld) this.getWorld()), this.getWorld().getLocalDifficulty(this.getPos()), SpawnReason.STRUCTURE, null);
                 stoneGolemEntity.sendtoEntity();
                 this.getWorld().spawnEntity(stoneGolemEntity);
-                this.getWorld().playSound(null, this.getPos(), SoundInit.GOLEM_SPAWN_EVENT, SoundCategory.HOSTILE, 1F, 1F);
+                this.getWorld().playSound(null, this.getPos(), SoundInit.BLACKSTONE_GOLEM_SPAWN_EVENT, SoundCategory.HOSTILE, 1F, 1F);
             }
         } else {
             double d = (double) this.getPos().getX() + (double) this.getWorld().getRandom().nextFloat();

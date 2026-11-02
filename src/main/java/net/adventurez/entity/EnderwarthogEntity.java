@@ -122,7 +122,7 @@ public class EnderwarthogEntity extends HostileEntity {
 
     @Override
     protected void playStepSound(BlockPos pos, BlockState state) {
-        this.playSound(SoundInit.ENDERWARTHOG_WALK_EVENT, 0.15F, 1.0F);
+        this.playSound(SoundInit.ENDERWARTHOG_STEP_EVENT, 0.15F, 1.0F);
     }
 
     @Override

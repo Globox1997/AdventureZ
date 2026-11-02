@@ -130,7 +130,7 @@ public class MammothEntity extends AnimalEntity implements Angerable {
 
     @Override
     protected SoundEvent getHurtSound(DamageSource source) {
-        return SoundInit.MAMMOTH_HIT_EVENT;
+        return SoundInit.MAMMOTH_HURT_EVENT;
     }
 
     @Override

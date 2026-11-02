@@ -51,22 +51,22 @@ public class MiniBlackstoneGolemEntity extends HostileEntity {
 
     @Override
     protected SoundEvent getAmbientSound() {
-        return SoundInit.SMALL_GOLEM_IDLE_EVENT;
+        return SoundInit.MINI_BLACKSTONE_GOLEM_IDLE_EVENT;
     }
 
     @Override
     protected SoundEvent getHurtSound(DamageSource source) {
-        return SoundInit.SMALL_GOLEM_HIT_EVENT;
+        return SoundInit.MINI_BLACKSTONE_GOLEM_HURT_EVENT;
     }
 
     @Override
     protected SoundEvent getDeathSound() {
-        return SoundInit.SMALL_GOLEM_DEATH_EVENT;
+        return SoundInit.MINI_BLACKSTONE_GOLEM_DEATH_EVENT;
     }
 
     @Override
     protected void playStepSound(BlockPos pos, BlockState state) {
-        this.playSound(SoundInit.SMALL_GOLEM_WALK_EVENT, 0.15F, 1.0F);
+        this.playSound(SoundInit.MINI_BLACKSTONE_GOLEM_STEP_EVENT, 0.15F, 1.0F);
     }
 
     @Override

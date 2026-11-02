@@ -330,12 +330,12 @@ public class VoidShadowEntity extends FlyingEntity implements Monster {
 
     @Override
     protected SoundEvent getAmbientSound() {
-        return SoundInit.SHADOW_IDLE_EVENT;
+        return SoundInit.VOID_SHADOW_IDLE_EVENT;
     }
 
     @Override
     protected SoundEvent getDeathSound() {
-        return SoundInit.SHADOW_DEATH_EVENT;
+        return SoundInit.VOID_SHADOW_DEATH_EVENT;
     }
 
     @Override
@@ -664,7 +664,7 @@ public class VoidShadowEntity extends FlyingEntity implements Monster {
 
             }
             if (destroyBlocksTicker == 110) {
-                ((ServerWorld) this.voidShadow.getWorld()).playSoundFromEntity(null, this.voidShadow, SoundInit.SHADOW_CAST_EVENT, SoundCategory.HOSTILE, 20.0F, 1.0F);
+                ((ServerWorld) this.voidShadow.getWorld()).playSoundFromEntity(null, this.voidShadow, SoundInit.VOID_SHADOW_CAST_EVENT, SoundCategory.HOSTILE, 20.0F, 1.0F);
             }
             if (destroyBlocksTicker == 120) {
                 this.voidShadow.dataTracker.set(HOVERING_MAGIC_HANDS, false);
@@ -685,7 +685,7 @@ public class VoidShadowEntity extends FlyingEntity implements Monster {
         public void start() {
             this.voidShadow.dataTracker.set(HOVERING_MAGIC_HANDS, true);
             canStartTicker = 0;
-            ((ServerWorld) this.voidShadow.getWorld()).playSoundFromEntity(null, this.voidShadow, SoundInit.SHADOW_PREPARE_EVENT, SoundCategory.HOSTILE, 20.0F, 1.0F);
+            ((ServerWorld) this.voidShadow.getWorld()).playSoundFromEntity(null, this.voidShadow, SoundInit.VOID_SHADOW_PREPARE_EVENT, SoundCategory.HOSTILE, 20.0F, 1.0F);
         }
 
         @Override
@@ -777,13 +777,13 @@ public class VoidShadowEntity extends FlyingEntity implements Monster {
         @Override
         public void start() {
             this.voidShadow.dataTracker.set(HOVERING_MAGIC_HANDS, true);
-            ((ServerWorld) this.voidShadow.getWorld()).playSoundFromEntity(null, this.voidShadow, SoundInit.SHADOW_PREPARE_EVENT, SoundCategory.HOSTILE, 20.0F, 1.0F);
+            ((ServerWorld) this.voidShadow.getWorld()).playSoundFromEntity(null, this.voidShadow, SoundInit.VOID_SHADOW_PREPARE_EVENT, SoundCategory.HOSTILE, 20.0F, 1.0F);
         }
 
         @Override
         public void stop() {
             this.voidShadow.dataTracker.set(HOVERING_MAGIC_HANDS, false);
-            ((ServerWorld) this.voidShadow.getWorld()).playSoundFromEntity(null, this.voidShadow, SoundInit.SHADOW_CAST_EVENT, SoundCategory.HOSTILE, 20.0F, 1.0F);
+            ((ServerWorld) this.voidShadow.getWorld()).playSoundFromEntity(null, this.voidShadow, SoundInit.VOID_SHADOW_CAST_EVENT, SoundCategory.HOSTILE, 20.0F, 1.0F);
         }
 
     }
@@ -842,7 +842,7 @@ public class VoidShadowEntity extends FlyingEntity implements Monster {
                 for (int u = 0; u < this.voidShadow.blockPosList.size(); ++u) {
                     this.voidShadow.getWorld().setBlockState(this.voidShadow.blockPosList.get(u), BlockInit.INFESTED_VOID.getDefaultState());
                 }
-                ((ServerWorld) this.voidShadow.getWorld()).playSoundFromEntity(null, this.voidShadow, SoundInit.SHADOW_CAST_EVENT, SoundCategory.HOSTILE, 20.0F, 1.0F);
+                ((ServerWorld) this.voidShadow.getWorld()).playSoundFromEntity(null, this.voidShadow, SoundInit.VOID_SHADOW_CAST_EVENT, SoundCategory.HOSTILE, 20.0F, 1.0F);
             }
             if (tick >= 300) {
                 if (this.voidShadow.getHealth() < this.voidShadow.getMaxHealth() / 10 && !playerList.isEmpty()) {
@@ -851,7 +851,7 @@ public class VoidShadowEntity extends FlyingEntity implements Monster {
                             ServerPlayNetworking.send(serverPlayerEntity, new VelocityPacket(playerList.get(i).getId(), this.voidShadow.random.nextFloat() * 2F));
                         }
                     }
-                    ((ServerWorld) this.voidShadow.getWorld()).playSoundFromEntity(null, this.voidShadow, SoundInit.SHADOW_IDLE_EVENT, SoundCategory.HOSTILE, 20.0F, 1.0F);
+                    ((ServerWorld) this.voidShadow.getWorld()).playSoundFromEntity(null, this.voidShadow, SoundInit.VOID_SHADOW_IDLE_EVENT, SoundCategory.HOSTILE, 20.0F, 1.0F);
                 }
                 tick = 0;
                 this.stop();
@@ -871,7 +871,7 @@ public class VoidShadowEntity extends FlyingEntity implements Monster {
             this.voidShadow.moveControl.moveTo((double) voidShadow.getVoidMiddle().getX(), (double) voidShadow.getVoidMiddle().getY(), (double) voidShadow.getVoidMiddle().getZ(), 1.0D);
             this.voidShadow.addVelocity(0D, 0.2D, 0D);
             this.voidShadow.dataTracker.set(CIRCLING_HANDS, true);
-            ((ServerWorld) this.voidShadow.getWorld()).playSoundFromEntity(null, this.voidShadow, SoundInit.SHADOW_PREPARE_EVENT, SoundCategory.HOSTILE, 20.0F, 1.0F);
+            ((ServerWorld) this.voidShadow.getWorld()).playSoundFromEntity(null, this.voidShadow, SoundInit.VOID_SHADOW_PREPARE_EVENT, SoundCategory.HOSTILE, 20.0F, 1.0F);
         }
 
         @Override
@@ -879,7 +879,7 @@ public class VoidShadowEntity extends FlyingEntity implements Monster {
             voidShadow.circling = true;
             voidShadow.wasCircling = false;
             this.voidShadow.dataTracker.set(CIRCLING_HANDS, false);
-            ((ServerWorld) this.voidShadow.getWorld()).playSoundFromEntity(null, this.voidShadow, SoundInit.SHADOW_CAST_EVENT, SoundCategory.HOSTILE, 20.0F, 1.0F);
+            ((ServerWorld) this.voidShadow.getWorld()).playSoundFromEntity(null, this.voidShadow, SoundInit.VOID_SHADOW_CAST_EVENT, SoundCategory.HOSTILE, 20.0F, 1.0F);
             insanityStartTicker = 0;
             for (int u = 0; u < this.voidShadow.blockPosList.size(); ++u) {
                 this.voidShadow.getWorld().setBlockState(this.voidShadow.blockPosList.get(u), BlockInit.VOID_STONE.getDefaultState());
@@ -944,13 +944,13 @@ public class VoidShadowEntity extends FlyingEntity implements Monster {
         @Override
         public void start() {
             this.voidShadow.dataTracker.set(HOVERING_MAGIC_HANDS, true);
-            ((ServerWorld) this.voidShadow.getWorld()).playSoundFromEntity(null, this.voidShadow, SoundInit.SHADOW_PREPARE_EVENT, SoundCategory.HOSTILE, 20.0F, 1.0F);
+            ((ServerWorld) this.voidShadow.getWorld()).playSoundFromEntity(null, this.voidShadow, SoundInit.VOID_SHADOW_PREPARE_EVENT, SoundCategory.HOSTILE, 20.0F, 1.0F);
         }
 
         @Override
         public void stop() {
             this.voidShadow.dataTracker.set(HOVERING_MAGIC_HANDS, false);
-            ((ServerWorld) this.voidShadow.getWorld()).playSoundFromEntity(null, this.voidShadow, SoundInit.SHADOW_CAST_EVENT, SoundCategory.HOSTILE, 20.0F, 1.0F);
+            ((ServerWorld) this.voidShadow.getWorld()).playSoundFromEntity(null, this.voidShadow, SoundInit.VOID_SHADOW_CAST_EVENT, SoundCategory.HOSTILE, 20.0F, 1.0F);
         }
 
     }

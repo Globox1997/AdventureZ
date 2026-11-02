@@ -63,7 +63,7 @@ public class SourceStone extends Item {
                     Vec3d vec3d = playerEntity.getRotationVec(1.0F);
                     VoidBulletEntity voidBulletEntity = new VoidBulletEntity(playerEntity, vec3d, world);
                     world.spawnEntity(voidBulletEntity);
-                    world.playSoundFromEntity((PlayerEntity) null, voidBulletEntity, SoundInit.SHADOW_CAST_EVENT, SoundCategory.PLAYERS, 1.0F, 1.0F);
+                    world.playSoundFromEntity((PlayerEntity) null, voidBulletEntity, SoundInit.VOID_SHADOW_CAST_EVENT, SoundCategory.PLAYERS, 1.0F, 1.0F);
                 }
             }
             playerEntity.getItemCooldownManager().set(stack.getItem(), 40);

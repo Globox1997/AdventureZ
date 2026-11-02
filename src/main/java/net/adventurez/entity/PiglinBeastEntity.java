@@ -86,7 +86,7 @@ public class PiglinBeastEntity extends HostileEntity {
             if (makePiglinsAngry == 600) {
                 dataTracker.set(LEAD_ARM, 1F);
                 getPiglins();
-                this.getWorld().playSoundFromEntity(null, this, SoundInit.PIGLINBEAST_SHOUT_EVENT, SoundCategory.HOSTILE, 1.0F, 1.0F);
+                this.getWorld().playSoundFromEntity(null, this, SoundInit.PIGLIN_BEAST_SHOUT_EVENT, SoundCategory.HOSTILE, 1.0F, 1.0F);
                 this.getAttributeInstance(EntityAttributes.GENERIC_MOVEMENT_SPEED).setBaseValue(0.0D);
             }
             if (makePiglinsAngry > 600) {
@@ -145,22 +145,22 @@ public class PiglinBeastEntity extends HostileEntity {
 
     @Override
     protected SoundEvent getAmbientSound() {
-        return SoundInit.PIGLINBEAST_IDLE_EVENT;
+        return SoundInit.PIGLIN_BEAST_IDLE_EVENT;
     }
 
     @Override
     protected SoundEvent getHurtSound(DamageSource source) {
-        return SoundInit.PIGLINBEAST_HURT_EVENT;
+        return SoundInit.PIGLIN_BEAST_HURT_EVENT;
     }
 
     @Override
     protected SoundEvent getDeathSound() {
-        return SoundInit.PIGLINBEAST_DEATH_EVENT;
+        return SoundInit.PIGLIN_BEAST_DEATH_EVENT;
     }
 
     @Override
     protected void playStepSound(BlockPos pos, BlockState state) {
-        this.playSound(SoundInit.PIGLINBEAST_WALK_EVENT, 0.5F, 1.0F);
+        this.playSound(SoundInit.PIGLIN_BEAST_STEP_EVENT, 0.5F, 1.0F);
     }
 
     private class AttackGoal extends MeleeAttackGoal {
@@ -172,7 +172,7 @@ public class PiglinBeastEntity extends HostileEntity {
         @Override
         protected void attack(LivingEntity target) {
             if (canAttack(target) && attackTick <= 0F) {
-                this.mob.getWorld().playSoundFromEntity(null, PiglinBeastEntity.this, SoundInit.PIGLINBEAST_CLUBSWING_EVENT, SoundCategory.HOSTILE, 1.0F, 1.0F);
+                this.mob.getWorld().playSoundFromEntity(null, PiglinBeastEntity.this, SoundInit.PIGLIN_BEAST_CLUBSWING_EVENT, SoundCategory.HOSTILE, 1.0F, 1.0F);
                 this.resetCooldown();
                 this.mob.tryAttack(target);
                 attackTick = 1F;

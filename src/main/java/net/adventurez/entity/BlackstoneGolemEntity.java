@@ -192,7 +192,7 @@ public class BlackstoneGolemEntity extends HostileEntity {
                 }
                 if (dataTracker.get(INVULNERABLE)) {
                     dataTracker.set(INVULNERABLE, false);
-                    this.playSound(SoundInit.GOLEM_AWAKENS_EVENT, 2.0F, 1.0F);
+                    this.playSound(SoundInit.BLACKSTONE_GOLEM_AWAKENS_EVENT, 2.0F, 1.0F);
                 }
             }
             if (this.getHealth() <= this.getMaxHealth() / 2) {
@@ -264,7 +264,7 @@ public class BlackstoneGolemEntity extends HostileEntity {
                 --this.stunTick;
                 this.spawnStunnedParticles();
                 if (this.stunTick == 0) {
-                    this.playSound(SoundInit.GOLEM_ROAR_EVENT, 1.0F, 1.0F);
+                    this.playSound(SoundInit.BLACKSTONE_GOLEM_ROAR_EVENT, 1.0F, 1.0F);
                     this.roarTick = 30;
                 }
             }
@@ -273,7 +273,7 @@ public class BlackstoneGolemEntity extends HostileEntity {
                     dataTracker.set(THROW_COOLDOWN, cooldown);
                     this.cooldown++;
                     if (cooldown == thrownStoneCooldown - 10) {
-                        this.playSound(SoundInit.GOLEM_ROAR_EVENT, 1F, 1F);
+                        this.playSound(SoundInit.BLACKSTONE_GOLEM_ROAR_EVENT, 1F, 1F);
                         throwRock(this.getTarget());
                     }
                     if (cooldown >= thrownStoneCooldown) {
@@ -321,7 +321,7 @@ public class BlackstoneGolemEntity extends HostileEntity {
         if (this.roarTick == 0) {
             if (this.random.nextDouble() < 0.5D) {
                 this.stunTick = 40;
-                this.playSound(SoundInit.GOLEM_IDLE_EVENT, 1.0F, 1.0F);
+                this.playSound(SoundInit.BLACKSTONE_GOLEM_IDLE_EVENT, 1.0F, 1.0F);
                 this.getWorld().sendEntityStatus(this, (byte) 39);
                 target.pushAwayFrom(this);
             } else {
@@ -369,7 +369,7 @@ public class BlackstoneGolemEntity extends HostileEntity {
 
         if (status == 4) {
             this.attackTick = 10;
-            this.playSound(SoundInit.GOLEM_HIT_EVENT, 1.0F, 1.0F);
+            this.playSound(SoundInit.BLACKSTONE_GOLEM_HURT_EVENT, 1.0F, 1.0F);
         } else if (status == 39) {
             this.stunTick = 40;
         }
@@ -396,7 +396,7 @@ public class BlackstoneGolemEntity extends HostileEntity {
     public boolean tryAttack(Entity target) {
         this.attackTick = 10;
         this.getWorld().sendEntityStatus(this, (byte) 4);
-        this.playSound(SoundInit.GOLEM_HIT_EVENT, 1.0F, 1.0F);
+        this.playSound(SoundInit.BLACKSTONE_GOLEM_HURT_EVENT, 1.0F, 1.0F);
         if (target instanceof LivingEntity)
             ((LivingEntity) target).setOnFireFor(3 + this.getWorld().getRandom().nextInt(6));
         return super.tryAttack(target);
@@ -407,22 +407,22 @@ public class BlackstoneGolemEntity extends HostileEntity {
         if (this.getDataTracker().get(INVULNERABLE)) {
             return null;
         } else
-            return SoundInit.GOLEM_IDLE_EVENT;
+            return SoundInit.BLACKSTONE_GOLEM_IDLE_EVENT;
     }
 
     @Override
     protected SoundEvent getHurtSound(DamageSource source) {
-        return SoundInit.GOLEM_HIT_EVENT;
+        return SoundInit.BLACKSTONE_GOLEM_HURT_EVENT;
     }
 
     @Override
     protected SoundEvent getDeathSound() {
-        return SoundInit.GOLEM_DEATH_EVENT;
+        return SoundInit.BLACKSTONE_GOLEM_DEATH_EVENT;
     }
 
     @Override
     protected void playStepSound(BlockPos pos, BlockState state) {
-        this.playSound(SoundInit.GOLEM_WALK_EVENT, 0.15F, 1.0F);
+        this.playSound(SoundInit.BLACKSTONE_GOLEM_STEP_EVENT, 0.15F, 1.0F);
     }
 
     @Override

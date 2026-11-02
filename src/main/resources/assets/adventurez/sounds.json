@@ -1,738 +1,738 @@
 {
-  "golem_idle": {
+  "blackstone_golem_idle": {
     "sounds": [
-      "adventurez:golem_idle1",
-      "adventurez:golem_idle2",
-      "adventurez:golem_idle3",
-      "adventurez:golem_idle4"
+      "adventurez:blackstone_golem/idle_1",
+      "adventurez:blackstone_golem/idle_2",
+      "adventurez:blackstone_golem/idle_3",
+      "adventurez:blackstone_golem/idle_4"
     ]
   },
-  "golem_hit": {
+  "blackstone_golem_hurt": {
     "sounds": [
-      "adventurez:golem_hit1",
-      "adventurez:golem_hit2",
-      "adventurez:golem_hit3",
-      "adventurez:golem_hit4"
+      "adventurez:blackstone_golem/hurt_1",
+      "adventurez:blackstone_golem/hurt_2",
+      "adventurez:blackstone_golem/hurt_3",
+      "adventurez:blackstone_golem/hurt_4"
     ]
   },
-  "golem_walk": {
+  "blackstone_golem_step": {
     "sounds": [
-      "adventurez:golem_walk1",
-      "adventurez:golem_walk2",
-      "adventurez:golem_walk3",
-      "adventurez:golem_walk4"
+      "adventurez:blackstone_golem/step_1",
+      "adventurez:blackstone_golem/step_2",
+      "adventurez:blackstone_golem/step_3",
+      "adventurez:blackstone_golem/step_4"
     ]
   },
-  "golem_roar": {
+  "blackstone_golem_roar": {
     "sounds": [
       {
-        "name": "adventurez:golem_roar1",
+        "name": "adventurez:blackstone_golem/roar_1",
         "attenuation_distance": 40
       },
       {
-        "name": "adventurez:golem_roar2",
+        "name": "adventurez:blackstone_golem/roar_2",
         "attenuation_distance": 40
       }
     ]
   },
-  "golem_death": {
+  "blackstone_golem_death": {
     "sounds": [
-      "adventurez:golem_death1"
+      "adventurez:blackstone_golem/death_1"
     ]
   },
-  "golem_awakens": {
+  "blackstone_golem_awakens": {
     "sounds": [
-      "adventurez:golem_awakens"
+      "adventurez:blackstone_golem/awakens_1"
+    ]
+  },
+  "blackstone_golem_spawn": {
+    "sounds": [
+      {
+        "name": "adventurez:blackstone_golem/spawn_1",
+        "attenuation_distance": 50
+      }
     ]
   },
   "rock_impact": {
     "sounds": [
       {
-        "name": "adventurez:rock_impact1",
+        "name": "adventurez:blackstone_golem/rock_impact_1",
         "attenuation_distance": 40
       },
       {
-        "name": "adventurez:rock_impact2",
+        "name": "adventurez:blackstone_golem/rock_impact_2",
         "attenuation_distance": 40
       },
       {
-        "name": "adventurez:rock_impact3",
+        "name": "adventurez:blackstone_golem/rock_impact_3",
         "attenuation_distance": 40
-      }
-    ]
-  },
-  "golem_spawn": {
-    "sounds": [
-      {
-        "name": "adventurez:golem_spawn",
-        "attenuation_distance": 50
       }
     ]
   },
   "rock_throw": {
     "sounds": [
-      "adventurez:rock_throw"
+      "adventurez:blackstone_golem/rock_throw_1"
     ]
   },
-  "small_golem_idle": {
+  "mini_blackstone_golem_idle": {
     "sounds": [
-      "adventurez:small_golem_idle1",
-      "adventurez:small_golem_idle2"
+      "adventurez:mini_blackstone_golem/idle_1",
+      "adventurez:mini_blackstone_golem/idle_2"
     ]
   },
-  "small_golem_hit": {
+  "mini_blackstone_golem_hurt": {
     "sounds": [
-      "adventurez:small_golem_hit1",
-      "adventurez:small_golem_hit2"
+      "adventurez:mini_blackstone_golem/hurt_1",
+      "adventurez:mini_blackstone_golem/hurt_2"
     ]
   },
-  "small_golem_walk": {
+  "mini_blackstone_golem_step": {
     "sounds": [
-      "adventurez:small_golem_walk1",
-      "adventurez:small_golem_walk2"
+      "adventurez:mini_blackstone_golem/step_1",
+      "adventurez:mini_blackstone_golem/step_2"
     ]
   },
-  "small_golem_death": {
+  "mini_blackstone_golem_death": {
     "sounds": [
-      "adventurez:small_golem_death1"
+      "adventurez:mini_blackstone_golem/death_1"
     ]
   },
   "heart_beat": {
     "sounds": [
-      "adventurez:heart_beat"
+      "adventurez:other/heart_beat"
     ]
   },
-  "piglinbeast_idle": {
+  "piglin_beast_idle": {
     "sounds": [
-      "adventurez:piglinbeast_angry1",
-      "adventurez:piglinbeast_angry2",
-      "adventurez:piglinbeast_angry3"
+      "adventurez:piglin_beast/angry_1",
+      "adventurez:piglin_beast/angry_2",
+      "adventurez:piglin_beast/angry_3"
     ]
   },
-  "piglinbeast_death": {
+  "piglin_beast_death": {
     "sounds": [
-      "adventurez:piglinbeast_death1",
-      "adventurez:piglinbeast_death2",
-      "adventurez:piglinbeast_death3"
+      "adventurez:piglin_beast/death_1",
+      "adventurez:piglin_beast/death_2",
+      "adventurez:piglin_beast/death_3"
     ]
   },
-  "piglinbeast_hurt": {
+  "piglin_beast_hurt": {
     "sounds": [
-      "adventurez:piglinbeast_hurt1",
-      "adventurez:piglinbeast_hurt2",
-      "adventurez:piglinbeast_hurt3"
+      "adventurez:piglin_beast/hurt_1",
+      "adventurez:piglin_beast/hurt_2",
+      "adventurez:piglin_beast/hurt_3"
     ]
   },
-  "piglinbeast_walk": {
+  "piglin_beast_step": {
     "sounds": [
-      "adventurez:piglinbeast_step1",
-      "adventurez:piglinbeast_step2",
-      "adventurez:piglinbeast_step3",
-      "adventurez:piglinbeast_step4",
-      "adventurez:piglinbeast_step5"
+      "adventurez:piglin_beast/step_1",
+      "adventurez:piglin_beast/step_2",
+      "adventurez:piglin_beast/step_3",
+      "adventurez:piglin_beast/step_4",
+      "adventurez:piglin_beast/step_5"
     ]
   },
-  "piglinbeast_shout": {
+  "piglin_beast_shout": {
     "sounds": [
-      "adventurez:piglinbeast_shout"
+      "adventurez:piglin_beast/shout_1"
     ]
   },
-  "piglinbeast_clubswing": {
+  "piglin_beast_clubswing": {
     "sounds": [
-      "adventurez:club_swing1",
-      "adventurez:club_swing2",
-      "adventurez:club_swing3"
+      "adventurez:piglin_beast/club_swing_1",
+      "adventurez:piglin_beast/club_swing_2",
+      "adventurez:piglin_beast/club_swing_3"
     ]
   },
   "nightmare_idle": {
     "sounds": [
-      "adventurez:nightmare_idle1",
-      "adventurez:nightmare_idle2",
-      "adventurez:nightmare_idle3"
+      "adventurez:nightmare/idle_1",
+      "adventurez:nightmare/idle_2",
+      "adventurez:nightmare/idle_3"
     ]
   },
   "nightmare_death": {
     "sounds": [
-      "adventurez:nightmare_death"
+      "adventurez:nightmare/death_1"
     ]
   },
   "nightmare_hurt": {
     "sounds": [
-      "adventurez:nightmare_hit1",
-      "adventurez:nightmare_hit2",
-      "adventurez:nightmare_hit3"
-    ]
-  },
-  "soulreaper_idle": {
-    "sounds": [
-      "adventurez:reaper_idle1",
-      "adventurez:reaper_idle2",
-      "adventurez:reaper_idle3"
-    ]
-  },
-  "soulreaper_hurt": {
-    "sounds": [
-      "adventurez:reaper_death1",
-      "adventurez:reaper_death2"
-    ]
-  },
-  "soulreaper_death": {
-    "sounds": [
-      "adventurez:reaper_hurt1",
-      "adventurez:reaper_hurt2",
-      "adventurez:reaper_hurt3",
-      "adventurez:reaper_hurt4"
+      "adventurez:nightmare/hurt_1",
+      "adventurez:nightmare/hurt_2",
+      "adventurez:nightmare/hurt_3"
     ]
   },
   "nightmare_angry": {
     "sounds": [
-      "adventurez:nightmare_angry1"
+      "adventurez:nightmare/angry_1"
+    ]
+  },
+  "soul_reaper_idle": {
+    "sounds": [
+      "adventurez:soul_reaper/idle_1",
+      "adventurez:soul_reaper/idle_2",
+      "adventurez:soul_reaper/idle_3"
+    ]
+  },
+  "soul_reaper_hurt": {
+    "sounds": [
+      "adventurez:soul_reaper/death_1",
+      "adventurez:soul_reaper/death_2"
+    ]
+  },
+  "soul_reaper_death": {
+    "sounds": [
+      "adventurez:soul_reaper/hurt_1",
+      "adventurez:soul_reaper/hurt_2",
+      "adventurez:soul_reaper/hurt_3",
+      "adventurez:soul_reaper/hurt_4"
     ]
   },
   "spellcast_shield": {
     "sounds": [
-      "adventurez:spellcast_shield"
+      "adventurez:summoner/spellcast_shield_1"
     ]
   },
   "magic_shield_hit": {
     "sounds": [
-      "adventurez:magic_shield_hit"
+      "adventurez:summoner/magic_shield_hit_1"
     ]
   },
-  "eye_death": {
+  "the_eye_death": {
     "sounds": [
-      "adventurez:eye_death"
+      "adventurez:the_eye/death_1"
     ]
   },
-  "eye_hurt": {
+  "the_eye_hurt": {
     "sounds": [
-      "adventurez:eye_hurt1",
-      "adventurez:eye_hurt2",
-      "adventurez:eye_hurt3"
+      "adventurez:the_eye/hurt_1",
+      "adventurez:the_eye/hurt_2",
+      "adventurez:the_eye/hurt_3"
     ]
   },
-  "eye_idle": {
+  "the_eye_idle": {
     "sounds": [
-      "adventurez:eye_idle1",
-      "adventurez:eye_idle2",
-      "adventurez:eye_idle3",
-      "adventurez:eye_idle4"
+      "adventurez:the_eye/idle_1",
+      "adventurez:the_eye/idle_2",
+      "adventurez:the_eye/idle_3",
+      "adventurez:the_eye/idle_4"
     ]
   },
-  "eye_death_platform": {
+  "the_eye_death_platform": {
     "sounds": [
-      "adventurez:eye_death_platform"
+      "adventurez:the_eye/death_platform_1"
     ]
   },
   "fungus_idle": {
     "sounds": [
-      "adventurez:fungus_idle1",
-      "adventurez:fungus_idle2",
-      "adventurez:fungus_idle3",
-      "adventurez:fungus_idle4"
+      "adventurez:fungus/idle_1",
+      "adventurez:fungus/idle_2",
+      "adventurez:fungus/idle_3",
+      "adventurez:fungus/idle_4"
     ]
   },
   "fungus_hurt": {
     "sounds": [
-      "adventurez:fungus_hurt1",
-      "adventurez:fungus_hurt2",
-      "adventurez:fungus_hurt3"
+      "adventurez:fungus/hurt_1",
+      "adventurez:fungus/hurt_2",
+      "adventurez:fungus/hurt_3"
     ]
   },
   "fungus_death": {
     "sounds": [
-      "adventurez:fungus_death1",
-      "adventurez:fungus_death2"
+      "adventurez:fungus/death_1",
+      "adventurez:fungus/death_2"
     ]
   },
   "orc_death": {
     "sounds": [
-      "adventurez:orc_death1",
-      "adventurez:orc_death2",
-      "adventurez:orc_death3",
-      "adventurez:orc_death4"
+      "adventurez:orc/death_1",
+      "adventurez:orc/death_2",
+      "adventurez:orc/death_3",
+      "adventurez:orc/death_4"
     ]
   },
   "orc_hurt": {
     "sounds": [
-      "adventurez:orc_hurt1",
-      "adventurez:orc_hurt2",
-      "adventurez:orc_hurt3",
-      "adventurez:orc_hurt4",
-      "adventurez:orc_hurt5"
+      "adventurez:orc/hurt_1",
+      "adventurez:orc/hurt_2",
+      "adventurez:orc/hurt_3",
+      "adventurez:orc/hurt_4",
+      "adventurez:orc/hurt_5"
     ]
   },
   "orc_idle": {
     "sounds": [
-      "adventurez:orc_idle1",
-      "adventurez:orc_idle2",
-      "adventurez:orc_idle3"
+      "adventurez:orc/idle_1",
+      "adventurez:orc/idle_2",
+      "adventurez:orc/idle_3"
     ]
   },
   "orc_step": {
     "sounds": [
-      "adventurez:orc_step1",
-      "adventurez:orc_step2",
-      "adventurez:orc_step3",
-      "adventurez:orc_step4",
-      "adventurez:orc_step5"
+      "adventurez:orc/step_1",
+      "adventurez:orc/step_2",
+      "adventurez:orc/step_3",
+      "adventurez:orc/step_4",
+      "adventurez:orc/step_5"
     ]
   },
   "dragon_death": {
     "sounds": [
-      "adventurez:dragon_death"
+      "adventurez:dragon/death_1"
     ]
   },
-  "dragon_hit": {
+  "dragon_hurt": {
     "sounds": [
-      "adventurez:dragon_hit1",
-      "adventurez:dragon_hit2",
-      "adventurez:dragon_hit3",
-      "adventurez:dragon_hit4"
+      "adventurez:dragon/hurt_1",
+      "adventurez:dragon/hurt_2",
+      "adventurez:dragon/hurt_3",
+      "adventurez:dragon/hurt_4"
     ]
   },
   "dragon_idle": {
     "sounds": [
-      "adventurez:dragon_idle1",
-      "adventurez:dragon_idle2",
-      "adventurez:dragon_idle3",
-      "adventurez:dragon_idle4"
+      "adventurez:dragon/idle_1",
+      "adventurez:dragon/idle_2",
+      "adventurez:dragon/idle_3",
+      "adventurez:dragon/idle_4"
     ]
   },
   "dragon_breath": {
     "sounds": [
-      "adventurez:dragon_breath"
+      "adventurez:dragon/breath_1"
     ]
   },
   "dragon_step": {
     "sounds": [
-      "adventurez:dragon_step1",
-      "adventurez:dragon_step2",
-      "adventurez:dragon_step3",
-      "adventurez:dragon_step4"
+      "adventurez:dragon/step_1",
+      "adventurez:dragon/step_2",
+      "adventurez:dragon/step_3",
+      "adventurez:dragon/step_4"
     ]
   },
   "equip_chest": {
     "sounds": [
-      "adventurez:equip_chest1",
-      "adventurez:equip_chest2"
+      "adventurez:other/equip_chest_1",
+      "adventurez:other/equip_chest_2"
     ]
   },
-  "mammoth_hit": {
+  "mammoth_hurt": {
     "sounds": [
-      "adventurez:mammoth_hit1",
-      "adventurez:mammoth_hit2",
-      "adventurez:mammoth_hit3"
+      "adventurez:mammoth/hurt_1",
+      "adventurez:mammoth/hurt_2",
+      "adventurez:mammoth/hurt_3"
     ]
   },
   "mammoth_idle": {
     "sounds": [
-      "adventurez:mammoth_idle1",
-      "adventurez:mammoth_idle2",
-      "adventurez:mammoth_idle3",
-      "adventurez:mammoth_idle4"
+      "adventurez:mammoth/idle_1",
+      "adventurez:mammoth/idle_2",
+      "adventurez:mammoth/idle_3",
+      "adventurez:mammoth/idle_4"
     ]
   },
   "mammoth_death": {
     "sounds": [
-      "adventurez:mammoth_death1",
-      "adventurez:mammoth_death2",
-      "adventurez:mammoth_death3"
+      "adventurez:mammoth/death_1",
+      "adventurez:mammoth/death_2",
+      "adventurez:mammoth/death_3"
     ]
   },
   "mammoth_baby_idle": {
     "sounds": [
-      "adventurez:mammoth_baby_idle1",
-      "adventurez:mammoth_baby_idle2",
-      "adventurez:mammoth_baby_idle3"
+      "adventurez:mammoth/baby_idle_1",
+      "adventurez:mammoth/baby_idle_2",
+      "adventurez:mammoth/baby_idle_3"
     ]
   },
-  "shadow_cast": {
+  "void_shadow_cast": {
     "sounds": [
       {
-        "name": "adventurez:shadow_cast1",
+        "name": "adventurez:void_shadow/cast_1",
         "attenuation_distance": 50
       },
       {
-        "name": "adventurez:shadow_cast2",
+        "name": "adventurez:void_shadow/cast_2",
         "attenuation_distance": 50
       }
     ]
   },
-  "shadow_prepare": {
+  "void_shadow_prepare": {
     "sounds": [
       {
-        "name": "adventurez:shadow_prepare1",
+        "name": "adventurez:void_shadow/prepare_1",
         "attenuation_distance": 50
       },
       {
-        "name": "adventurez:shadow_prepare2",
+        "name": "adventurez:void_shadow/prepare_2",
         "attenuation_distance": 50
       }
     ]
   },
-  "shadow_idle": {
+  "void_shadow_idle": {
     "sounds": [
-      "adventurez:shadow_idle1",
-      "adventurez:shadow_idle2",
-      "adventurez:shadow_idle3"
+      "adventurez:void_shadow/idle_1",
+      "adventurez:void_shadow/idle_2",
+      "adventurez:void_shadow/idle_3"
     ]
   },
-  "shadow_death": {
+  "void_shadow_death": {
     "sounds": [
       {
-        "name": "adventurez:shadow_death",
+        "name": "adventurez:void_shadow/death_1",
         "attenuation_distance": 50
       }
     ]
   },
   "open_shadow_chest": {
     "sounds": [
-      "adventurez:open_shadow_chest"
+      "adventurez:other/open_shadow_chest"
     ]
   },
   "close_shadow_chest": {
     "sounds": [
-      "adventurez:close_shadow_chest"
+      "adventurez:other/close_shadow_chest"
     ]
   },
   "iguana_hurt": {
     "sounds": [
-      "adventurez:iguana_hit1",
-      "adventurez:iguana_hit2",
-      "adventurez:iguana_hit3",
-      "adventurez:iguana_hit4"
+      "adventurez:iguana/hurt_1",
+      "adventurez:iguana/hurt_2",
+      "adventurez:iguana/hurt_3",
+      "adventurez:iguana/hurt_4"
     ]
   },
   "iguana_idle": {
     "sounds": [
-      "adventurez:iguana_idle1",
-      "adventurez:iguana_idle2",
-      "adventurez:iguana_idle3"
+      "adventurez:iguana/idle_1",
+      "adventurez:iguana/idle_2",
+      "adventurez:iguana/idle_3"
     ]
   },
   "iguana_death": {
     "sounds": [
-      "adventurez:iguana_kill1",
-      "adventurez:iguana_kill2",
-      "adventurez:iguana_kill3"
+      "adventurez:iguana/kill_1",
+      "adventurez:iguana/kill_2",
+      "adventurez:iguana/kill_3"
     ]
   },
   "iguana_step": {
     "sounds": [
-      "adventurez:iguana_step1",
-      "adventurez:iguana_step2",
-      "adventurez:iguana_step3",
-      "adventurez:iguana_step4",
-      "adventurez:iguana_step5"
+      "adventurez:iguana/step_1",
+      "adventurez:iguana/step_2",
+      "adventurez:iguana/step_3",
+      "adventurez:iguana/step_4",
+      "adventurez:iguana/step_5"
     ]
   },
-  "whale_hurt": {
+  "ender_whale_hurt": {
     "sounds": [
-      "adventurez:whale_hurt1",
-      "adventurez:whale_hurt2",
-      "adventurez:whale_hurt3"
+      "adventurez:ender_whale/hurt_1",
+      "adventurez:ender_whale/hurt_2",
+      "adventurez:ender_whale/hurt_3"
     ]
   },
-  "whale_idle": {
+  "ender_whale_idle": {
     "sounds": [
-      "adventurez:whale_idle1",
-      "adventurez:whale_idle2",
-      "adventurez:whale_idle3"
+      "adventurez:ender_whale/idle_1",
+      "adventurez:ender_whale/idle_2",
+      "adventurez:ender_whale/idle_3"
     ]
   },
-  "whale_death": {
+  "ender_whale_death": {
     "sounds": [
-      "adventurez:whale_death1",
-      "adventurez:whale_death2",
-      "adventurez:whale_death3"
+      "adventurez:ender_whale/death_1",
+      "adventurez:ender_whale/death_2",
+      "adventurez:ender_whale/death_3"
     ]
   },
   "flute_call": {
     "sounds": [
-      "adventurez:flute_call1",
-      "adventurez:flute_call2"
+      "adventurez:other/flute_call_1",
+      "adventurez:other/flute_call_2"
     ]
   },
   "shard_destroy": {
     "sounds": [
-      "adventurez:shard_destroyed1",
-      "adventurez:shard_destroyed2",
-      "adventurez:shard_destroyed3",
-      "adventurez:shard_destroyed4"
+      "adventurez:other/shard_destroyed_1",
+      "adventurez:other/shard_destroyed_2",
+      "adventurez:other/shard_destroyed_3",
+      "adventurez:other/shard_destroyed_4"
     ]
   },
   "amethyst_golem_death": {
     "sounds": [
-      "adventurez:amethyst_golem_death1",
-      "adventurez:amethyst_golem_death2",
-      "adventurez:amethyst_golem_death3"
+      "adventurez:amethyst_golem/death_1",
+      "adventurez:amethyst_golem/death_2",
+      "adventurez:amethyst_golem/death_3"
     ]
   },
-  "amethyst_golem_hit": {
+  "amethyst_golem_hurt": {
     "sounds": [
-      "adventurez:amethyst_golem_hit1",
-      "adventurez:amethyst_golem_hit2",
-      "adventurez:amethyst_golem_hit3"
+      "adventurez:amethyst_golem/hurt_1",
+      "adventurez:amethyst_golem/hurt_2",
+      "adventurez:amethyst_golem/hurt_3"
     ]
   },
-  "amethyst_golem_walk": {
+  "amethyst_golem_step": {
     "sounds": [
-      "adventurez:amethyst_golem_walk1",
-      "adventurez:amethyst_golem_walk2",
-      "adventurez:amethyst_golem_walk3",
-      "adventurez:amethyst_golem_walk4"
+      "adventurez:amethyst_golem/step_1",
+      "adventurez:amethyst_golem/step_2",
+      "adventurez:amethyst_golem/step_3",
+      "adventurez:amethyst_golem/step_4"
     ]
   },
   "amethyst_golem_idle": {
     "sounds": [
-      "adventurez:amethyst_golem_idle1",
-      "adventurez:amethyst_golem_idle2",
-      "adventurez:amethyst_golem_idle3",
-      "adventurez:amethyst_golem_idle4"
+      "adventurez:amethyst_golem/idle_1",
+      "adventurez:amethyst_golem/idle_2",
+      "adventurez:amethyst_golem/idle_3",
+      "adventurez:amethyst_golem/idle_4"
     ]
   },
   "amethyst_golem_rage": {
     "sounds": [
-      "adventurez:amethyst_golem_rage1",
-      "adventurez:amethyst_golem_rage2",
-      "adventurez:amethyst_golem_rage3"
+      "adventurez:amethyst_golem/rage_1",
+      "adventurez:amethyst_golem/rage_2",
+      "adventurez:amethyst_golem/rage_3"
     ]
   },
   "desert_rhino_death": {
     "sounds": [
-      "adventurez:rhino_death1",
-      "adventurez:rhino_death2",
-      "adventurez:rhino_death3"
+      "adventurez:desert_rhino/death_1",
+      "adventurez:desert_rhino/death_2",
+      "adventurez:desert_rhino/death_3"
     ]
   },
-  "desert_rhino_hit": {
+  "desert_rhino_hurt": {
     "sounds": [
-      "adventurez:rhino_hit1",
-      "adventurez:rhino_hit2",
-      "adventurez:rhino_hit3",
-      "adventurez:rhino_hit4"
+      "adventurez:desert_rhino/hurt_1",
+      "adventurez:desert_rhino/hurt_2",
+      "adventurez:desert_rhino/hurt_3",
+      "adventurez:desert_rhino/hurt_4"
     ]
   },
-  "desert_rhino_walk": {
+  "desert_rhino_step": {
     "sounds": [
-      "adventurez:rhino_walk1",
-      "adventurez:rhino_walk2",
-      "adventurez:rhino_walk3",
-      "adventurez:rhino_walk4"
+      "adventurez:desert_rhino/step_1",
+      "adventurez:desert_rhino/step_2",
+      "adventurez:desert_rhino/step_3",
+      "adventurez:desert_rhino/step_4"
     ]
   },
   "desert_rhino_idle": {
     "sounds": [
-      "adventurez:rhino_idle1",
-      "adventurez:rhino_idle2",
-      "adventurez:rhino_idle3"
+      "adventurez:desert_rhino/idle_1",
+      "adventurez:desert_rhino/idle_2",
+      "adventurez:desert_rhino/idle_3"
     ]
   },
   "desert_rhino_attack": {
     "sounds": [
-      "adventurez:rhino_attack1",
-      "adventurez:rhino_attack2",
-      "adventurez:rhino_attack3",
-      "adventurez:rhino_attack4"
+      "adventurez:desert_rhino/attack_1",
+      "adventurez:desert_rhino/attack_2",
+      "adventurez:desert_rhino/attack_3",
+      "adventurez:desert_rhino/attack_4"
     ]
   },
   "shaman_death": {
     "sounds": [
-      "adventurez:shaman_death1",
-      "adventurez:shaman_death2",
-      "adventurez:shaman_death3"
+      "adventurez:shaman/death_1",
+      "adventurez:shaman/death_2",
+      "adventurez:shaman/death_3"
     ]
   },
   "shaman_hurt": {
     "sounds": [
-      "adventurez:shaman_hurt1",
-      "adventurez:shaman_hurt2",
-      "adventurez:shaman_hurt3",
-      "adventurez:shaman_hurt4"
+      "adventurez:shaman/hurt_1",
+      "adventurez:shaman/hurt_2",
+      "adventurez:shaman/hurt_3",
+      "adventurez:shaman/hurt_4"
     ]
   },
-  "shaman_walk": {
+  "shaman_step": {
     "sounds": [
-      "adventurez:shaman_walk1",
-      "adventurez:shaman_walk2",
-      "adventurez:shaman_walk3",
-      "adventurez:shaman_walk4"
+      "adventurez:shaman/step_1",
+      "adventurez:shaman/step_2",
+      "adventurez:shaman/step_3",
+      "adventurez:shaman/step_4"
     ]
   },
   "shaman_idle": {
     "sounds": [
-      "adventurez:shaman_idle1",
-      "adventurez:shaman_idle2",
-      "adventurez:shaman_idle3",
-      "adventurez:shaman_idle4",
-      "adventurez:shaman_idle5"
+      "adventurez:shaman/idle_1",
+      "adventurez:shaman/idle_2",
+      "adventurez:shaman/idle_3",
+      "adventurez:shaman/idle_4",
+      "adventurez:shaman/idle_5"
     ]
   },
   "deer_death": {
     "sounds": [
-      "adventurez:deer_death1",
-      "adventurez:deer_death2",
-      "adventurez:deer_death3"
+      "adventurez:deer/death_1",
+      "adventurez:deer/death_2",
+      "adventurez:deer/death_3"
     ]
   },
   "deer_idle": {
     "sounds": [
-      "adventurez:deer_idle1",
-      "adventurez:deer_idle2",
-      "adventurez:deer_idle3",
-      "adventurez:deer_idle4",
-      "adventurez:deer_idle5",
-      "adventurez:deer_idle6",
-      "adventurez:deer_idle7"
+      "adventurez:deer/idle_1",
+      "adventurez:deer/idle_2",
+      "adventurez:deer/idle_3",
+      "adventurez:deer/idle_4",
+      "adventurez:deer/idle_5",
+      "adventurez:deer/idle_6",
+      "adventurez:deer/idle_7"
     ]
   },
   "deer_hurt": {
     "sounds": [
-      "adventurez:deer_hurt1",
-      "adventurez:deer_hurt2",
-      "adventurez:deer_hurt3"
+      "adventurez:deer/hurt_1",
+      "adventurez:deer/hurt_2",
+      "adventurez:deer/hurt_3"
     ]
   },
   "baby_deer_idle": {
     "sounds": [
-      "adventurez:baby_deer_idle1",
-      "adventurez:baby_deer_idle2",
-      "adventurez:baby_deer_idle3",
-      "adventurez:baby_deer_idle4"
+      "adventurez:deer/baby_idle_1",
+      "adventurez:deer/baby_idle_2",
+      "adventurez:deer/baby_idle_3",
+      "adventurez:deer/baby_idle_4"
     ]
   },
   "baby_deer_hurt": {
     "sounds": [
-      "adventurez:baby_deer_hurt1",
-      "adventurez:baby_deer_hurt2",
-      "adventurez:baby_deer_hurt3"
+      "adventurez:deer/baby_hurt_1",
+      "adventurez:deer/baby_hurt_2",
+      "adventurez:deer/baby_hurt_3"
     ]
   },
-  "hog_death": {
+  "enderwarthog_death": {
     "sounds": [
-      "adventurez:hog_death1",
-      "adventurez:hog_death2",
-      "adventurez:hog_death3",
-      "adventurez:hog_death4"
+      "adventurez:enderwarthog/death_1",
+      "adventurez:enderwarthog/death_2",
+      "adventurez:enderwarthog/death_3",
+      "adventurez:enderwarthog/death_4"
     ]
   },
-  "hog_step": {
+  "enderwarthog_step": {
     "sounds": [
-      "adventurez:hog_step1",
-      "adventurez:hog_step2",
-      "adventurez:hog_step3",
-      "adventurez:hog_step4",
-      "adventurez:hog_step5"
+      "adventurez:enderwarthog/step_1",
+      "adventurez:enderwarthog/step_2",
+      "adventurez:enderwarthog/step_3",
+      "adventurez:enderwarthog/step_4",
+      "adventurez:enderwarthog/step_5"
     ]
   },
-  "hog_idle": {
+  "enderwarthog_idle": {
     "sounds": [
-      "adventurez:hog_idle1",
-      "adventurez:hog_idle2",
-      "adventurez:hog_idle3",
-      "adventurez:hog_idle4",
-      "adventurez:hog_idle5",
-      "adventurez:hog_idle6",
-      "adventurez:hog_idle7",
-      "adventurez:hog_idle8",
-      "adventurez:hog_idle9"
+      "adventurez:enderwarthog/idle_1",
+      "adventurez:enderwarthog/idle_2",
+      "adventurez:enderwarthog/idle_3",
+      "adventurez:enderwarthog/idle_4",
+      "adventurez:enderwarthog/idle_5",
+      "adventurez:enderwarthog/idle_6",
+      "adventurez:enderwarthog/idle_7",
+      "adventurez:enderwarthog/idle_8",
+      "adventurez:enderwarthog/idle_9"
     ]
   },
-  "hog_hurt": {
+  "enderwarthog_hurt": {
     "sounds": [
-      "adventurez:hog_hurt1",
-      "adventurez:hog_hurt2",
-      "adventurez:hog_hurt3",
-      "adventurez:hog_hurt4",
-      "adventurez:hog_hurt5"
+      "adventurez:enderwarthog/hurt_1",
+      "adventurez:enderwarthog/hurt_2",
+      "adventurez:enderwarthog/hurt_3",
+      "adventurez:enderwarthog/hurt_4",
+      "adventurez:enderwarthog/hurt_5"
     ]
   },
-  "hog_attack": {
+  "enderwarthog_attack": {
     "sounds": [
-      "adventurez:hog_attack1",
-      "adventurez:hog_attack2"
+      "adventurez:enderwarthog/attack_1",
+      "adventurez:enderwarthog/attack_2"
     ]
   },
   "skunk_death": {
     "sounds": [
-      "adventurez:skunk_death_1"
+      "adventurez:skunk/death_1"
     ]
   },
   "skunk_idle": {
     "sounds": [
-      "adventurez:skunk_idle_1",
-      "adventurez:skunk_idle_2",
-      "adventurez:skunk_idle_3",
-      "adventurez:skunk_idle_4"
+      "adventurez:skunk/idle_1",
+      "adventurez:skunk/idle_2",
+      "adventurez:skunk/idle_3",
+      "adventurez:skunk/idle_4"
     ]
   },
   "skunk_hurt": {
     "sounds": [
-      "adventurez:skunk_hurt_1",
-      "adventurez:skunk_hurt_2",
-      "adventurez:skunk_hurt_3"
+      "adventurez:skunk/hurt_1",
+      "adventurez:skunk/hurt_2",
+      "adventurez:skunk/hurt_3"
     ]
   },
   "skunk_fart": {
     "sounds": [
-      "adventurez:skunk_fart_1"
+      "adventurez:skunk/fart_1"
     ]
   },
   "dubious_pumpkin_death": {
     "sounds": [
-      "adventurez:dubious_pumpkin_death_1",
-      "adventurez:dubious_pumpkin_death_2"
+      "adventurez:dubious_pumpkin/death_1",
+      "adventurez:dubious_pumpkin/death_2"
     ]
   },
   "dubious_pumpkin_idle": {
     "sounds": [
-      "adventurez:dubious_pumpkin_idle_1",
-      "adventurez:dubious_pumpkin_idle_2",
-      "adventurez:dubious_pumpkin_idle_3"
+      "adventurez:dubious_pumpkin/idle_1",
+      "adventurez:dubious_pumpkin/idle_2",
+      "adventurez:dubious_pumpkin/idle_3"
     ]
   },
   "dubious_pumpkin_hurt": {
     "sounds": [
-      "adventurez:dubious_pumpkin_hurt_1",
-      "adventurez:dubious_pumpkin_hurt_2",
-      "adventurez:dubious_pumpkin_hurt_3",
-      "adventurez:dubious_pumpkin_hurt_4",
-      "adventurez:dubious_pumpkin_hurt_5"
+      "adventurez:dubious_pumpkin/hurt_1",
+      "adventurez:dubious_pumpkin/hurt_2",
+      "adventurez:dubious_pumpkin/hurt_3",
+      "adventurez:dubious_pumpkin/hurt_4",
+      "adventurez:dubious_pumpkin/hurt_5"
     ]
   },
   "dubious_pumpkin_step": {
     "sounds": [
-      "adventurez:dubious_pumpkin_step_1",
-      "adventurez:dubious_pumpkin_step_2"
+      "adventurez:dubious_pumpkin/step_1",
+      "adventurez:dubious_pumpkin/step_2"
     ]
   },
   "crystal_beetle_death": {
     "sounds": [
-      "adventurez:crystal_beetle_death_1",
-      "adventurez:crystal_beetle_death_2"
+      "adventurez:crystal_beetle/death_1",
+      "adventurez:crystal_beetle/death_2"
     ]
   },
   "crystal_beetle_idle": {
     "sounds": [
-      "adventurez:crystal_beetle_idle_1",
-      "adventurez:crystal_beetle_idle_2",
-      "adventurez:crystal_beetle_idle_3",
-      "adventurez:crystal_beetle_idle_4",
-      "adventurez:crystal_beetle_idle_5"
+      "adventurez:crystal_beetle/idle_1",
+      "adventurez:crystal_beetle/idle_2",
+      "adventurez:crystal_beetle/idle_3",
+      "adventurez:crystal_beetle/idle_4",
+      "adventurez:crystal_beetle/idle_5"
     ]
   },
   "crystal_beetle_hurt": {
     "sounds": [
-      "adventurez:crystal_beetle_hurt_1",
-      "adventurez:crystal_beetle_hurt_2",
-      "adventurez:crystal_beetle_hurt_3"
+      "adventurez:crystal_beetle/hurt_1",
+      "adventurez:crystal_beetle/hurt_2",
+      "adventurez:crystal_beetle/hurt_3"
     ]
   },
   "crystal_beetle_step": {
     "sounds": [
-      "adventurez:crystal_beetle_step_1",
-      "adventurez:crystal_beetle_step_2"
+      "adventurez:crystal_beetle/step_1",
+      "adventurez:crystal_beetle/step_2"
     ]
   },
   "terracotta_golem_death": {

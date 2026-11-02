@@ -136,7 +136,7 @@ public class AmethystGolemEntity extends HostileEntity {
 
     @Override
     protected SoundEvent getHurtSound(DamageSource source) {
-        return SoundInit.AMETHYST_GOLEM_HIT_EVENT;
+        return SoundInit.AMETHYST_GOLEM_HURT_EVENT;
     }
 
     @Override
@@ -146,7 +146,7 @@ public class AmethystGolemEntity extends HostileEntity {
 
     @Override
     protected void playStepSound(BlockPos pos, BlockState state) {
-        this.playSound(SoundInit.AMETHYST_GOLEM_WALK_EVENT, 0.9F, 1.0F);
+        this.playSound(SoundInit.AMETHYST_GOLEM_STEP_EVENT, 0.9F, 1.0F);
     }
 
     public void amethystGolemRageMode() {

@@ -47,7 +47,7 @@ public class BlackstoneGolemHeart extends Item {
     public TypedActionResult<ItemStack> use(World world, PlayerEntity user, Hand hand) {
         ItemStack itemStack = user.getStackInHand(hand);
         if (user.isSneaking()) {
-            world.playSound(null, user.getX(), user.getY(), user.getZ(), SoundInit.GOLEM_AWAKENS_EVENT, SoundCategory.PLAYERS, 1.4F, 1.0F);
+            world.playSound(null, user.getX(), user.getY(), user.getZ(), SoundInit.BLACKSTONE_GOLEM_AWAKENS_EVENT, SoundCategory.PLAYERS, 1.4F, 1.0F);
             if (!world.isClient()) {
                 user.addStatusEffect(new StatusEffectInstance(EffectInit.BLACKSTONED_HEART, ConfigInit.CONFIG.stoned_heart_duration, ConfigInit.CONFIG.stoned_heart_amplifier, false, false, true));
                 itemStack.decrement(1);

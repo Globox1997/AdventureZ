@@ -147,17 +147,17 @@ public class TheEyeEntity extends FlyingEntity implements Monster {
 
     @Override
     protected SoundEvent getAmbientSound() {
-        return SoundInit.EYE_IDLE_EVENT;
+        return SoundInit.THE_EYE_IDLE_EVENT;
     }
 
     @Override
     protected SoundEvent getHurtSound(DamageSource source) {
-        return SoundInit.EYE_HURT_EVENT;
+        return SoundInit.THE_EYE_HURT_EVENT;
     }
 
     @Override
     protected SoundEvent getDeathSound() {
-        return SoundInit.EYE_DEATH_EVENT;
+        return SoundInit.THE_EYE_DEATH_EVENT;
     }
 
     @Override
@@ -463,7 +463,7 @@ public class TheEyeEntity extends FlyingEntity implements Monster {
                     }
                 }
                 if (deathTimer == 140) {
-                    this.getWorld().playSound(null, deathPos, SoundInit.EYE_DEATH_PLATFORM_EVENT, SoundCategory.HOSTILE, 1F, 1F);
+                    this.getWorld().playSound(null, deathPos, SoundInit.THE_EYE_DEATH_PLATFORM_EVENT, SoundCategory.HOSTILE, 1F, 1F);
                 }
                 if (deathTimer >= 200) {
                     for (int o = 0; o < 15; o++) {

@@ -128,17 +128,17 @@ public class EnderWhaleEntity extends FlyingEntity implements ItemSteerable {
 
     @Override
     protected SoundEvent getAmbientSound() {
-        return SoundInit.WHALE_IDLE_EVENT;
+        return SoundInit.ENDER_WHALE_IDLE_EVENT;
     }
 
     @Override
     protected SoundEvent getHurtSound(DamageSource source) {
-        return SoundInit.WHALE_HURT_EVENT;
+        return SoundInit.ENDER_WHALE_HURT_EVENT;
     }
 
     @Override
     protected SoundEvent getDeathSound() {
-        return SoundInit.WHALE_DEATH_EVENT;
+        return SoundInit.ENDER_WHALE_DEATH_EVENT;
     }
 
     @Override

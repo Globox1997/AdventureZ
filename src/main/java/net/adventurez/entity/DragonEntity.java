@@ -863,7 +863,7 @@ public class DragonEntity extends PathAwareEntity implements InventoryChangedLis
 
     @Override
     protected SoundEvent getHurtSound(DamageSource source) {
-        return SoundInit.DRAGON_HIT_EVENT;
+        return SoundInit.DRAGON_HURT_EVENT;
     }
 
     @Override

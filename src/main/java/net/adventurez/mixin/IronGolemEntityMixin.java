@@ -81,7 +81,7 @@ public abstract class IronGolemEntityMixin extends GolemEntity implements Entity
                 this.setHealth(this.getMaxHealth());
                 itemStack.decrement(1);
             }
-            this.getWorld().playSound(null, this.getX(), this.getY(), this.getZ(), SoundInit.GOLEM_AWAKENS_EVENT, SoundCategory.NEUTRAL, 1.4F, 1.0F);
+            this.getWorld().playSound(null, this.getX(), this.getY(), this.getZ(), SoundInit.BLACKSTONE_GOLEM_AWAKENS_EVENT, SoundCategory.NEUTRAL, 1.4F, 1.0F);
             info.setReturnValue(ActionResult.success(this.getWorld().isClient()));
         }
     }
