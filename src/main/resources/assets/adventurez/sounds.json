@@ -734,5 +734,48 @@
       "adventurez:crystal_beetle_step_1",
       "adventurez:crystal_beetle_step_2"
     ]
+  },
+  "terracotta_golem_death": {
+    "sounds": [
+      "adventurez:terracotta_golem/death_1",
+      "adventurez:terracotta_golem/death_2",
+      "adventurez:terracotta_golem/death_3",
+      "adventurez:terracotta_golem/death_4"
+    ]
+  },
+  "terracotta_golem_idle": {
+    "sounds": [
+      "adventurez:terracotta_golem/idle_1",
+      "adventurez:terracotta_golem/idle_2",
+      "adventurez:terracotta_golem/idle_3",
+      "adventurez:terracotta_golem/idle_4",
+      "adventurez:terracotta_golem/idle_5",
+      "adventurez:terracotta_golem/idle_6"
+    ]
+  },
+  "terracotta_golem_hurt": {
+    "sounds": [
+      "adventurez:terracotta_golem/hurt_1",
+      "adventurez:terracotta_golem/hurt_2",
+      "adventurez:terracotta_golem/hurt_3",
+      "adventurez:terracotta_golem/hurt_4"
+    ]
+  },
+  "terracotta_golem_step": {
+    "sounds": [
+      "adventurez:terracotta_golem/step_1",
+      "adventurez:terracotta_golem/step_2",
+      "adventurez:terracotta_golem/step_3"
+    ]
+  },
+  "terracotta_golem_build_up": {
+    "sounds": [
+      "adventurez:terracotta_golem/build_up_1"
+    ]
+  },
+  "terracotta_golem_build_down": {
+    "sounds": [
+      "adventurez:terracotta_golem/build_down_1"
+    ]
   }
 }

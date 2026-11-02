@@ -1,7 +1,6 @@
 ### Added:
-- Gilded netherite tools
-- Crystal Beetle
+- Terracotta Golem
 ### Fixed:
 - 
 ### Changed:
-- Removed gilded netherite armor trimming
+- 

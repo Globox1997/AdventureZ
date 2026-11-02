@@ -42,6 +42,8 @@ public class SpawnInit {
         BiomeModifications.addSpawn(BiomeSelectors.tag(BiomeTags.IS_FOREST), SpawnGroup.CREATURE, EntityInit.SKUNK, ConfigInit.CONFIG.skunk_spawn_weight, 1, 2);
         BiomeModifications.addSpawn(BiomeSelectors.foundInTheEnd().and(BiomeSelectors.excludeByKey(BiomeKeys.THE_END, BiomeKeys.END_BARRENS)), SpawnGroup.MONSTER, EntityInit.CRYSTAL_BEETLE,
                 ConfigInit.CONFIG.crystal_beetle_spawn_weight, 2, 3);
+        BiomeModifications.addSpawn(BiomeSelectors.tag(BiomeTags.IS_BADLANDS), SpawnGroup.CREATURE, EntityInit.TERRACOTTA_GOLEM, ConfigInit.CONFIG.terracotta_golem_spawn_weight, 1, 1);
+
     }
 
     private static void setSpawnRestriction() {
@@ -63,6 +65,7 @@ public class SpawnInit {
         SpawnRestriction.register(EntityInit.SKUNK, SpawnLocationTypes.ON_GROUND, Heightmap.Type.MOTION_BLOCKING_NO_LEAVES, AnimalEntity::isValidNaturalSpawn);
         SpawnRestriction.register(EntityInit.ENDERWARTHOG, SpawnLocationTypes.ON_GROUND, Heightmap.Type.MOTION_BLOCKING_NO_LEAVES, EnderwarthogEntity::canSpawn);
         SpawnRestriction.register(EntityInit.CRYSTAL_BEETLE, SpawnLocationTypes.ON_GROUND, Heightmap.Type.MOTION_BLOCKING_NO_LEAVES, CrystalBeetleEntity::canSpawn);
+        SpawnRestriction.register(EntityInit.TERRACOTTA_GOLEM, SpawnLocationTypes.ON_GROUND, Heightmap.Type.MOTION_BLOCKING_NO_LEAVES, TerracottaGolemEntity::canSpawn);
     }
 
 }

@@ -94,6 +94,10 @@ public class AdventureConfig implements ConfigData {
     @ConfigEntry.Gui.RequiresRestart
     @ConfigEntry.BoundedDiscrete(min = 0, max = 100)
     public int crystal_beetle_spawn_weight = 2;
+    @ConfigEntry.Category("spawn_setting")
+    @ConfigEntry.Gui.RequiresRestart
+    @ConfigEntry.BoundedDiscrete(min = 0, max = 100)
+    public int terracotta_golem_spawn_weight = 1;
 
     // Allow settings
     @ConfigEntry.Category("spawn_setting")

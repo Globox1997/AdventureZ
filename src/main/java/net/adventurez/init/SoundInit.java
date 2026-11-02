@@ -121,6 +121,13 @@ public class SoundInit {
     public static SoundEvent CRYSTAL_BEETLE_IDLE_EVENT = register("crystal_beetle_idle");
     public static SoundEvent CRYSTAL_BEETLE_HURT_EVENT = register("crystal_beetle_hurt");
     public static SoundEvent CRYSTAL_BEETLE_STEP_EVENT = register("crystal_beetle_step");
+    // Terracotta Golem
+    public static SoundEvent TERRACOTTA_GOLEM_DEATH_EVENT =register("terracotta_golem_death");
+    public static SoundEvent TERRACOTTA_GOLEM_IDLE_EVENT = register("terracotta_golem_idle");
+    public static SoundEvent TERRACOTTA_GOLEM_HURT_EVENT = register("terracotta_golem_hurt");
+    public static SoundEvent TERRACOTTA_GOLEM_STEP_EVENT = register("terracotta_golem_step");
+    public static SoundEvent TERRACOTTA_GOLEM_BUILD_UP_EVENT = register("terracotta_golem_build_up");
+    public static SoundEvent TERRACOTTA_GOLEM_BUILD_DOWN_EVENT = register("terracotta_golem_build_down");
     // Item
     public static SoundEvent ROCK_IMPACT_EVENT = register("rock_impact");
     public static SoundEvent ROCK_THROW_EVENT = register("rock_throw");
@@ -134,7 +141,7 @@ public class SoundInit {
     public static SoundEvent CLOSE_SHADOW_CHEST_EVENT = register("close_shadow_chest");
 
     private static SoundEvent register(String id) {
-        return Registry.register(Registries.SOUND_EVENT, id, SoundEvent.of(AdventureMain.identifierOf(id)));
+        return Registry.register(Registries.SOUND_EVENT, AdventureMain.identifierOf(id), SoundEvent.of(AdventureMain.identifierOf(id)));
     }
 
     public static void init() {

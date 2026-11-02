@@ -1,0 +1,17 @@
+{
+    "name": "Terracotta Golem",
+    "icon": "adventurez:spawn_terracotta_golem",
+    "category": "adventurez:mob_category",
+    "pages": [
+        {
+            "type": "text",
+            "text": "The Terracotta Golem hides in the badlands and is a quite heavy golem. Watch out, it is quite difficult to distinguish if it is just a block or a ..."
+        },
+        {
+            "type": "entity",
+            "name": "Showcase",
+            "entity": "adventurez:terracotta_golem",
+            "offset": 0.2
+        }
+    ]
+}

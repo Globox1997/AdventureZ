@@ -56,6 +56,8 @@ public class EntityInit {
             EntityType.Builder.create(DubiousPumpkinEntity::new, SpawnGroup.CREATURE).dimensions(0.9F, 0.9F).build());
     public static final EntityType<CrystalBeetleEntity> CRYSTAL_BEETLE = register("crystal_beetle", 2236963, 10770912,
             EntityType.Builder.create(CrystalBeetleEntity::new, SpawnGroup.CREATURE).dimensions(1.5F, 0.75F).build());
+    public static final EntityType<TerracottaGolemEntity> TERRACOTTA_GOLEM = register("terracotta_golem", 7684662, 9274753,
+            EntityType.Builder.create(TerracottaGolemEntity::new, SpawnGroup.MONSTER).dimensions(2.7F, 3.2F).build());
 
     // Passive
     public static final EntityType<RedFungusEntity> RED_FUNGUS = register("red_fungus", 13084791, 13183785,
@@ -139,5 +141,6 @@ public class EntityInit {
         FabricDefaultAttributeRegistry.register(ENDERWARTHOG, EnderwarthogEntity.createEnderwarthogAttributes());
         FabricDefaultAttributeRegistry.register(DUBIOUS_PUMPKIN, DubiousPumpkinEntity.createDubiousPumpkinAttributes());
         FabricDefaultAttributeRegistry.register(CRYSTAL_BEETLE, CrystalBeetleEntity.createCrystalBeetleAttributes());
+        FabricDefaultAttributeRegistry.register(TERRACOTTA_GOLEM, TerracottaGolemEntity.createTerracottaGolemAttributes());
     }
 }
