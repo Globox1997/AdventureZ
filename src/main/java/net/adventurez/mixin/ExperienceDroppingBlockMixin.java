@@ -1,7 +1,5 @@
 package net.adventurez.mixin;
 
-import org.spongepowered.asm.mixin.Mixin;
-
 import net.adventurez.entity.PiglinBeastEntity;
 import net.adventurez.init.ConfigInit;
 import net.adventurez.init.EntityInit;
@@ -20,6 +18,7 @@ import net.minecraft.server.world.ServerWorld;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.MathHelper;
 import net.minecraft.world.World;
+import org.spongepowered.asm.mixin.Mixin;
 
 @SuppressWarnings("deprecation")
 @Mixin(ExperienceDroppingBlock.class)
@@ -33,7 +32,7 @@ public abstract class ExperienceDroppingBlockMixin extends Block {
     public void afterBreak(World world, PlayerEntity player, BlockPos pos, BlockState state, BlockEntity blockEntity, ItemStack tool) {
         if (!world.isClient() && world instanceof ServerWorld serverWorld && state.isOf(Blocks.NETHER_GOLD_ORE) && ConfigInit.CONFIG.piglin_beast_ore_spawn_chance != 0) {
             if (!player.isCreative() && world.getRegistryKey() == World.NETHER
-                    && player.getMainHandStack().getEnchantments().getEnchantments().stream().filter(entry -> entry.matchesId(Enchantments.SILK_TOUCH.getRegistry())).findAny().isPresent()) {
+                    && player.getMainHandStack().getEnchantments().getEnchantments().stream().noneMatch(entry -> entry.matchesId(Enchantments.SILK_TOUCH.getValue()))) {
                 if (world.getEntitiesByType(EntityInit.PIGLIN_BEAST, player.getBoundingBox().expand(40D), EntityPredicates.EXCEPT_SPECTATOR).isEmpty()) {
                     int spawnChanceInt = world.getRandom().nextInt(ConfigInit.CONFIG.piglin_beast_ore_spawn_chance) + 1;
                     if (spawnChanceInt == 1) {
