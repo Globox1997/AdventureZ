@@ -1,5 +1,6 @@
 package net.adventurez.entity;
 
+import net.minecraft.nbt.NbtElement;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.Optional;
@@ -176,17 +177,17 @@ public class DragonEntity extends PathAwareEntity implements InventoryChangedLis
         tag.putBoolean("HasSaddle", this.hasSaddle);
         tag.putBoolean("HasChest", this.hasChest());
         if (this.hasChest()) {
-            NbtList listTag = new NbtList();
-            for (int i = 0; i < this.inventory.size(); ++i) {
+            NbtList nbtList = new NbtList();
+            for (int i = 0; i < this.inventory.size(); i++) {
                 ItemStack itemStack = this.inventory.getStack(i);
                 if (!itemStack.isEmpty()) {
-                    NbtCompound compoundTag = new NbtCompound();
-                    compoundTag.putByte("Slot", (byte) i);
-                    compoundTag.put("OrcItem", this.inventory.getStack(0).encode(this.getRegistryManager()));
-                    listTag.add(compoundTag);
+                    NbtCompound nbtCompound = new NbtCompound();
+                    nbtCompound.putByte("Slot", (byte) (i ));
+                    nbtList.add(itemStack.encode(this.getRegistryManager(), nbtCompound));
                 }
             }
-            tag.put("Items", listTag);
+
+            tag.put("Items", nbtList);
         }
         tag.putInt("DragonSize", this.getSize());
         tag.putBoolean("OtherDragonEars", this.getDataTracker().get(DragonEntity.OTHER_EARS));
@@ -223,14 +224,13 @@ public class DragonEntity extends PathAwareEntity implements InventoryChangedLis
         this.dataTracker.set(HAS_SADDLE, this.hasSaddle);
         this.setHasChest(tag.getBoolean("HasChest"));
         if (this.hasChest()) {
-            NbtList listTag = tag.getList("Items", 10);
+            NbtList nbtList = tag.getList("Items", NbtElement.COMPOUND_TYPE);
             this.onChestedStatusChanged();
-
-            for (int i = 0; i < listTag.size(); ++i) {
-                NbtCompound compoundTag = listTag.getCompound(i);
-                int j = compoundTag.getByte("Slot") & 255;
-                if (j >= 0 && j < this.inventory.size()) {
-                    this.inventory.setStack(j, ItemStack.fromNbt(this.getRegistryManager(), compoundTag).get());
+            for (int i = 0; i < nbtList.size(); i++) {
+                NbtCompound nbtCompound = nbtList.getCompound(i);
+                int j = nbtCompound.getByte("Slot") & 255;
+                if (j < this.inventory.size() ) {
+                    this.inventory.setStack(j, ItemStack.fromNbt(this.getRegistryManager(), nbtCompound).orElse(ItemStack.EMPTY));
                 }
             }
         }
