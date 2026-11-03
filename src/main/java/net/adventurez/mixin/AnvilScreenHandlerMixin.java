@@ -42,8 +42,8 @@ public abstract class AnvilScreenHandlerMixin extends ForgingScreenHandler {
         if (itemStack.getItem() == ItemInit.PRIME_EYE && itemStack.getDamage() != 0) {
             ItemStack itemStack2 = this.input.getStack(1);
             if (itemStack2.getItem() == Items.ENDER_PEARL) {
-                ItemStack itemStack3 = new ItemStack(ItemInit.PRIME_EYE);
-                repairedAmount = itemStack2.getCount() > itemStack.getDamage() ? itemStack.getDamage() : itemStack2.getCount();
+                ItemStack itemStack3 = itemStack.copy();
+                repairedAmount = Math.min(itemStack2.getCount(), itemStack.getDamage());
                 itemStack3.setDamage(itemStack.getDamage() - repairedAmount);
                 this.output.setStack(0, itemStack3);
                 info.cancel();
