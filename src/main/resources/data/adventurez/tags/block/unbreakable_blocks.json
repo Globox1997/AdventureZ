@@ -9,6 +9,9 @@
     "minecraft:jigsaw",
     "minecraft:respawn_anchor",
     "minecraft:end_portal",
-    "minecraft:dragon_egg"
+    "minecraft:dragon_egg",
+    "minecraft:end_gateway",
+    "minecraft:reinforced_deepslate",
+    "minecraft:end_portal_frame"
   ]
 }
