@@ -81,9 +81,9 @@ public class SummonerEntity extends SpellCastingEntity {
         this.goalSelector.add(8, new LookAtEntityGoal(this, PlayerEntity.class, 7.0F, 1.0F));
         this.goalSelector.add(9, new WanderAroundGoal(this, 0.9D));
         this.goalSelector.add(10, new LookAtEntityGoal(this, MobEntity.class, 8.0F));
-        this.targetSelector.add(1, (new RevengeGoal(this, new Class[] { SkeletonVanguardEntity.class })));
-        this.targetSelector.add(2, (new RevengeGoal(this, new Class[] { ZombieEntity.class })));
-        this.targetSelector.add(3, (new RevengeGoal(this, new Class[] { SkeletonEntity.class })));
+        this.targetSelector.add(1, (new RevengeGoal(this, new Class[]{SkeletonVanguardEntity.class})));
+        this.targetSelector.add(2, (new RevengeGoal(this, new Class[]{ZombieEntity.class})));
+        this.targetSelector.add(3, (new RevengeGoal(this, new Class[]{SkeletonEntity.class})));
         this.targetSelector.add(4, (new ActiveTargetGoal<>(this, PlayerEntity.class, true)).setMaxTimeWithoutVisibility(300));
     }
 
@@ -95,12 +95,14 @@ public class SummonerEntity extends SpellCastingEntity {
     public void writeCustomDataToNbt(NbtCompound tag) {
         super.writeCustomDataToNbt(tag);
         tag.putInt("InvulnerableMagicTick", this.invulnerableMagicTick);
+        tag.putBoolean("InvulnerableMagicShield", this.getDataTracker().get(INVULNERABLE_SHIELD));
     }
 
     @Override
     public void readCustomDataFromNbt(NbtCompound tag) {
         super.readCustomDataFromNbt(tag);
         this.invulnerableMagicTick = tag.getInt("InvulnerableMagicTick");
+        this.getDataTracker().set(INVULNERABLE_SHIELD, tag.getBoolean("InvulnerableMagicShield"));
     }
 
     @Override
@@ -170,7 +172,7 @@ public class SummonerEntity extends SpellCastingEntity {
             chance = this.getWorld().getRandom().nextInt(2);
             this.gotShotByABow = true;
         }
-        if (!source.isIn(DamageTypeTags.BYPASSES_INVULNERABILITY) &&chance == 1) {
+        if (!source.isIn(DamageTypeTags.BYPASSES_INVULNERABILITY) && chance == 1) {
             this.getWorld().playSoundFromEntity(null, this, SoundInit.MAGIC_SHIELD_HIT_EVENT, SoundCategory.HOSTILE, 1.0F, 1.0F);
             if (source.getSource() != null && source.getSource() instanceof ArrowEntity) {
                 if (!this.getWorld().isClient()) {
