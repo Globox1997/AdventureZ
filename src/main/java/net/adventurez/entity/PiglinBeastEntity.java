@@ -1,45 +1,37 @@
 package net.adventurez.entity;
 
-import java.util.List;
-import java.util.Optional;
-
 import com.google.common.collect.ImmutableList;
-
+import net.adventurez.AdventureMain;
 import net.adventurez.init.SoundInit;
 import net.minecraft.block.BlockState;
 import net.minecraft.entity.EntityType;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.ai.brain.MemoryModuleType;
-import net.minecraft.entity.ai.goal.ActiveTargetGoal;
-import net.minecraft.entity.ai.goal.LookAroundGoal;
-import net.minecraft.entity.ai.goal.LookAtEntityGoal;
-import net.minecraft.entity.ai.goal.MeleeAttackGoal;
-import net.minecraft.entity.ai.goal.RevengeGoal;
-import net.minecraft.entity.ai.goal.SwimGoal;
-import net.minecraft.entity.ai.goal.WanderAroundFarGoal;
+import net.minecraft.entity.ai.goal.*;
 import net.minecraft.entity.ai.pathing.PathNodeType;
 import net.minecraft.entity.attribute.DefaultAttributeContainer;
+import net.minecraft.entity.attribute.EntityAttributeModifier;
 import net.minecraft.entity.attribute.EntityAttributes;
 import net.minecraft.entity.damage.DamageSource;
 import net.minecraft.entity.data.DataTracker;
+import net.minecraft.entity.data.DataTracker.Builder;
 import net.minecraft.entity.data.TrackedData;
 import net.minecraft.entity.data.TrackedDataHandlerRegistry;
-import net.minecraft.entity.data.DataTracker.Builder;
-import net.minecraft.entity.mob.AbstractPiglinEntity;
-import net.minecraft.entity.mob.HostileEntity;
-import net.minecraft.entity.mob.MobEntity;
+import net.minecraft.entity.mob.*;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.nbt.NbtCompound;
 import net.minecraft.predicate.entity.EntityPredicates;
 import net.minecraft.sound.SoundCategory;
 import net.minecraft.sound.SoundEvent;
+import net.minecraft.util.Identifier;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.Difficulty;
 import net.minecraft.world.GameRules;
 import net.minecraft.world.World;
 import net.minecraft.world.WorldView;
-import net.minecraft.entity.mob.PiglinEntity;
-import net.minecraft.entity.mob.WitherSkeletonEntity;
+
+import java.util.List;
+import java.util.Optional;
 
 public class PiglinBeastEntity extends HostileEntity {
     public static final TrackedData<Float> ATTACK_TICK_VISUAL = DataTracker.registerData(PiglinBeastEntity.class, TrackedDataHandlerRegistry.FLOAT);
@@ -47,6 +39,9 @@ public class PiglinBeastEntity extends HostileEntity {
     private float attackTick;
     public float armTick;
     private int makePiglinsAngry = 0;
+    private static final Identifier LEAD_ARM_IDENTIFIER = AdventureMain.identifierOf("lead_arm_movement");
+    private static final EntityAttributeModifier LEAD_ARM_MOVEMENT = new EntityAttributeModifier(
+            LEAD_ARM_IDENTIFIER, -0.225F, EntityAttributeModifier.Operation.ADD_VALUE);
 
     public PiglinBeastEntity(EntityType<? extends HostileEntity> entityType, World world) {
         super(entityType, world);
@@ -72,7 +67,7 @@ public class PiglinBeastEntity extends HostileEntity {
         this.targetSelector.add(1, new ActiveTargetGoal<>(this, WitherSkeletonEntity.class, true));
         this.targetSelector.add(2, new ActiveTargetGoal<>(this, PlayerEntity.class, true));
         this.targetSelector.add(3, new ActiveTargetGoal<>(this, BlazeGuardianEntity.class, true));
-        this.targetSelector.add(4, (new RevengeGoal(this, new Class[] { PiglinEntity.class })));
+        this.targetSelector.add(4, (new RevengeGoal(this, new Class[]{PiglinEntity.class})));
     }
 
     @Override
@@ -85,16 +80,21 @@ public class PiglinBeastEntity extends HostileEntity {
             makePiglinsAngry++;
             if (makePiglinsAngry == 600) {
                 dataTracker.set(LEAD_ARM, 1F);
-                getPiglins();
+                angerNearbyPiglins();
                 this.getWorld().playSoundFromEntity(null, this, SoundInit.PIGLIN_BEAST_SHOUT_EVENT, SoundCategory.HOSTILE, 1.0F, 1.0F);
-                this.getAttributeInstance(EntityAttributes.GENERIC_MOVEMENT_SPEED).setBaseValue(0.0D);
+                this.getAttributeInstance(EntityAttributes.GENERIC_MOVEMENT_SPEED).addTemporaryModifier(LEAD_ARM_MOVEMENT);
             }
             if (makePiglinsAngry > 600) {
                 dataTracker.set(LEAD_ARM, dataTracker.get(LEAD_ARM) - 0.02F);
             }
             if (makePiglinsAngry == 650) {
-                this.getAttributeInstance(EntityAttributes.GENERIC_MOVEMENT_SPEED).setBaseValue(0.23D);
+                this.getAttributeInstance(EntityAttributes.GENERIC_MOVEMENT_SPEED).removeModifier(LEAD_ARM_IDENTIFIER);
                 makePiglinsAngry = 0;
+            }
+        } else if (makePiglinsAngry > 0) {
+            makePiglinsAngry--;
+            if (this.getAttributeInstance(EntityAttributes.GENERIC_MOVEMENT_SPEED).hasModifier(LEAD_ARM_IDENTIFIER)) {
+                this.getAttributeInstance(EntityAttributes.GENERIC_MOVEMENT_SPEED).removeModifier(LEAD_ARM_IDENTIFIER);
             }
         }
     }
@@ -135,7 +135,6 @@ public class PiglinBeastEntity extends HostileEntity {
         if (this.getWorld().getDifficulty() == Difficulty.PEACEFUL) {
             this.discard();
         }
-
     }
 
     @Override
@@ -180,19 +179,15 @@ public class PiglinBeastEntity extends HostileEntity {
         }
     }
 
-    public void getPiglins() {
+    private void angerNearbyPiglins() {
         List<PiglinEntity> list = this.getWorld().getEntitiesByClass(PiglinEntity.class, this.getBoundingBox().expand(40D), EntityPredicates.EXCEPT_SPECTATOR);
-        for (int i = 0; i < list.size(); ++i) {
-            angerNearbyPiglins(list.get(i));
-        }
-    }
-
-    private static void angerNearbyPiglins(AbstractPiglinEntity piglin) {
-        getNearbyPiglins(piglin).forEach((abstractPiglinEntity) -> {
-            getNearestDetectedPlayer(abstractPiglinEntity).ifPresent((playerEntity) -> {
-                becomeAngryWith(abstractPiglinEntity, playerEntity);
+        if (!list.isEmpty()) {
+            getNearbyPiglins(list.getFirst()).forEach((abstractPiglinEntity) -> {
+                getNearestDetectedPlayer(abstractPiglinEntity).ifPresent((playerEntity) -> {
+                    becomeAngryWith(abstractPiglinEntity, playerEntity);
+                });
             });
-        });
+        }
     }
 
     public static Optional<PlayerEntity> getNearestDetectedPlayer(AbstractPiglinEntity piglin) {
@@ -215,7 +210,7 @@ public class PiglinBeastEntity extends HostileEntity {
     }
 
     private static List<AbstractPiglinEntity> getNearbyPiglins(AbstractPiglinEntity piglin) {
-        return (List<AbstractPiglinEntity>) piglin.getBrain().getOptionalMemory(MemoryModuleType.NEARBY_ADULT_PIGLINS).orElse(ImmutableList.of());
+        return piglin.getBrain().getOptionalMemory(MemoryModuleType.NEARBY_ADULT_PIGLINS).orElse(ImmutableList.of());
     }
 
 }
