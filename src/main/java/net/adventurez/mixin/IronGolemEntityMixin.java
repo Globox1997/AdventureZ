@@ -62,13 +62,16 @@ public abstract class IronGolemEntityMixin extends GolemEntity implements Entity
             if (itemStack.getItem() instanceof BlockItem blockItem) {
                 if (blockItem.getBlock().getDefaultState().isIn(TagInit.PLATFORM_NETHER_BLOCKS)) {
                     this.heal(10.0F);
+                    itemStack.decrementUnlessCreative(1, player);
                     info.setReturnValue(ActionResult.success(this.getWorld().isClient()));
                 }
             } else if (itemStack.isOf(ItemInit.GILDED_BLACKSTONE_SHARD)) {
                 this.heal(this.getMaxHealth() * 0.2F);
+                itemStack.decrementUnlessCreative(1, player);
                 info.setReturnValue(ActionResult.success(this.getWorld().isClient()));
             } else if (itemStack.isOf(ItemInit.BLACKSTONE_GOLEM_HEART)) {
                 this.heal(this.getMaxHealth());
+                itemStack.decrementUnlessCreative(1, player);
                 info.setReturnValue(ActionResult.success(this.getWorld().isClient()));
             }
         } else if (itemStack.isOf(ItemInit.BLACKSTONE_GOLEM_HEART)) {
@@ -79,7 +82,7 @@ public abstract class IronGolemEntityMixin extends GolemEntity implements Entity
                 this.getAttributeInstance(EntityAttributes.GENERIC_ATTACK_DAMAGE).setBaseValue(this.getAttributeBaseValue(EntityAttributes.GENERIC_ATTACK_DAMAGE) + 5.0D);
                 this.getAttributeInstance(EntityAttributes.GENERIC_MOVEMENT_SPEED).setBaseValue(this.getAttributeBaseValue(EntityAttributes.GENERIC_MOVEMENT_SPEED) + 0.04D);
                 this.setHealth(this.getMaxHealth());
-                itemStack.decrement(1);
+                itemStack.decrementUnlessCreative(1, player);
             }
             this.getWorld().playSound(null, this.getX(), this.getY(), this.getZ(), SoundInit.BLACKSTONE_GOLEM_AWAKENS_EVENT, SoundCategory.NEUTRAL, 1.4F, 1.0F);
             info.setReturnValue(ActionResult.success(this.getWorld().isClient()));
@@ -88,7 +91,7 @@ public abstract class IronGolemEntityMixin extends GolemEntity implements Entity
 
     @Inject(method = "canTarget", at = @At(value = "HEAD"), cancellable = true)
     private void canTargetMixin(EntityType<?> type, CallbackInfoReturnable<Boolean> info) {
-        if (type == EntityType.CREEPER && this.dataTracker.get(BLACKSTONED) == true) {
+        if (type == EntityType.CREEPER && this.dataTracker.get(BLACKSTONED)) {
             info.setReturnValue(true);
         }
     }
