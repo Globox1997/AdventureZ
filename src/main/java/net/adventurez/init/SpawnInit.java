@@ -41,9 +41,9 @@ public class SpawnInit {
                 ConfigInit.CONFIG.enderwarthog_spawn_weight, 1, 2);
         BiomeModifications.addSpawn(BiomeSelectors.tag(BiomeTags.IS_FOREST), SpawnGroup.CREATURE, EntityInit.DEER, ConfigInit.CONFIG.deer_spawn_weight, 2, 3);
         BiomeModifications.addSpawn(BiomeSelectors.tag(BiomeTags.IS_FOREST), SpawnGroup.CREATURE, EntityInit.SKUNK, ConfigInit.CONFIG.skunk_spawn_weight, 1, 2);
-        BiomeModifications.addSpawn(BiomeSelectors.foundInTheEnd().and(BiomeSelectors.excludeByKey(BiomeKeys.THE_END, BiomeKeys.END_BARRENS)), SpawnGroup.MONSTER, EntityInit.CRYSTAL_BEETLE,
+        BiomeModifications.addSpawn(BiomeSelectors.foundInTheEnd().and(BiomeSelectors.excludeByKey(BiomeKeys.THE_END, BiomeKeys.END_BARRENS)), SpawnGroup.CREATURE, EntityInit.CRYSTAL_BEETLE,
                 ConfigInit.CONFIG.crystal_beetle_spawn_weight, 2, 3);
-        BiomeModifications.addSpawn(BiomeSelectors.tag(BiomeTags.IS_BADLANDS), SpawnGroup.CREATURE, EntityInit.TERRACOTTA_GOLEM, ConfigInit.CONFIG.terracotta_golem_spawn_weight, 1, 1);
+        BiomeModifications.addSpawn(BiomeSelectors.tag(BiomeTags.IS_BADLANDS), SpawnGroup.MONSTER, EntityInit.TERRACOTTA_GOLEM, ConfigInit.CONFIG.terracotta_golem_spawn_weight, 1, 1);
 
     }
 

@@ -5,4 +5,4 @@
 - Fungus spawn biome tag
 - Summoner invulnerability
 ### Changed:
-- 
+- Tweaked spawn of terracotta golem + beetle
