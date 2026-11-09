@@ -24,7 +24,7 @@ public abstract class PlayerEntityMixin extends LivingEntity {
 
     public PlayerEntityMixin(EntityType<PlayerEntity> type, World world) {
         super(type, world);
-    };
+    }
 
     @Inject(method = "damage", at = @At(value = "INVOKE", target = "Lnet/minecraft/entity/damage/DamageSource;isScaledWithDifficulty()Z"), cancellable = true)
     private void damageMixin(DamageSource source, float amount, CallbackInfoReturnable<Boolean> info) {
@@ -32,7 +32,7 @@ public abstract class PlayerEntityMixin extends LivingEntity {
             if (source.isIn(DamageTypeTags.IS_FIRE) && !GildedNetheriteArmor.isStoneGolemArmorActive(this.getEquippedStack(EquipmentSlot.CHEST))) {
                 GildedNetheriteArmor.activateStoneGolemArmor((PlayerEntity) (Object) this, this.getEquippedStack(EquipmentSlot.CHEST));
                 info.setReturnValue(false);
-            } else if (this.getWorld().getRandom().nextFloat() <= ConfigInit.CONFIG.gilded_netherite_armor_dodge_chance) {
+            } else if (!source.isIn(DamageTypeTags.BYPASSES_INVULNERABILITY) && this.getWorld().getRandom().nextFloat() <= ConfigInit.CONFIG.gilded_netherite_armor_dodge_chance) {
                 info.setReturnValue(false);
             }
         }
