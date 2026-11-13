@@ -263,16 +263,8 @@ public class NecromancerEntity extends SpellCastingEntity {
     }
 
     private boolean arePuppetsNearby() {
-        List<LivingEntity> list = this.getWorld().getEntitiesByClass(LivingEntity.class, this.getBoundingBox().expand(40D), EntityPredicates.EXCEPT_SPECTATOR);
-        if (!list.isEmpty()) {
-            for (int i = 0; i < list.size(); i++) {
-                LivingEntity entity = (LivingEntity) list.get(i);
-                if (entity.getType() == EntityInit.WITHER_PUPPET) {
-                    return true;
-                }
-            }
-        }
-        return false;
+        List<WitherPuppetEntity> list = this.getWorld().getEntitiesByClass(WitherPuppetEntity.class, this.getBoundingBox().expand(40D), EntityPredicates.EXCEPT_SPECTATOR);
+        return !list.isEmpty();
     }
 
 }

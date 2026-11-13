@@ -458,11 +458,10 @@ public class SummonerEntity extends SpellCastingEntity {
         if (!list.isEmpty()) {
             int vanguards = 0;
             int othermobs = 0;
-            for (int i = 0; i < list.size(); i++) {
-                LivingEntity entity = (LivingEntity) list.get(i);
-                if (entity.getType() == EntityInit.SKELETON_VANGUARD) {
+            for (LivingEntity livingEntity : list) {
+                if (livingEntity.getType() == EntityInit.SKELETON_VANGUARD) {
                     vanguards++;
-                } else if (entity.getType() == EntityType.ZOMBIE || entity.getType() == EntityType.SKELETON) {
+                } else if (livingEntity.getType() == EntityType.ZOMBIE || livingEntity.getType() == EntityType.SKELETON) {
                     othermobs++;
                 }
                 if (vanguards >= 5 || othermobs >= 7) {
@@ -473,7 +472,7 @@ public class SummonerEntity extends SpellCastingEntity {
         return false;
     }
 
-    private class NormalAttack extends MeleeAttackGoal {
+    private static class NormalAttack extends MeleeAttackGoal {
         private final SummonerEntity summonerEntity;
 
         public NormalAttack(PathAwareEntity mob, double speed, boolean pauseWhenMobIdle) {

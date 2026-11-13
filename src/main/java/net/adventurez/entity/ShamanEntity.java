@@ -66,11 +66,11 @@ public class ShamanEntity extends SpellCastingEntity {
         this.goalSelector.add(8, new LookAtEntityGoal(this, PlayerEntity.class, 7.0F, 1.0F));
         this.goalSelector.add(9, new WanderAroundGoal(this, 0.9D));
         this.goalSelector.add(10, new LookAtEntityGoal(this, MobEntity.class, 8.0F));
-        this.targetSelector.add(1, (new RevengeGoal(this, new Class[] { WitchEntity.class })));
-        this.targetSelector.add(2, (new RevengeGoal(this, new Class[] { ZombieEntity.class })));
-        this.targetSelector.add(3, (new RevengeGoal(this, new Class[] { SkeletonEntity.class })));
-        this.targetSelector.add(3, (new RevengeGoal(this, new Class[] { SpiderEntity.class })));
-        this.targetSelector.add(3, (new RevengeGoal(this, new Class[] { CaveSpiderEntity.class })));
+        this.targetSelector.add(1, (new RevengeGoal(this, new Class[]{WitchEntity.class})));
+        this.targetSelector.add(2, (new RevengeGoal(this, new Class[]{ZombieEntity.class})));
+        this.targetSelector.add(3, (new RevengeGoal(this, new Class[]{SkeletonEntity.class})));
+        this.targetSelector.add(3, (new RevengeGoal(this, new Class[]{SpiderEntity.class})));
+        this.targetSelector.add(3, (new RevengeGoal(this, new Class[]{CaveSpiderEntity.class})));
         this.targetSelector.add(4, (new ActiveTargetGoal<>(this, PlayerEntity.class, true)).setMaxTimeWithoutVisibility(300));
     }
 
@@ -114,11 +114,10 @@ public class ShamanEntity extends SpellCastingEntity {
         if (!list.isEmpty()) {
             int spiders = 0;
             int othermobs = 0;
-            for (int i = 0; i < list.size(); i++) {
-                LivingEntity entity = (LivingEntity) list.get(i);
-                if (entity.getType() == EntityType.CAVE_SPIDER) {
+            for (LivingEntity livingEntity : list) {
+                if (livingEntity.getType() == EntityType.CAVE_SPIDER) {
                     spiders++;
-                } else if (entity.getType() == EntityType.ZOMBIE || entity.getType() == EntityType.SKELETON || entity.getType() == EntityType.SPIDER) {
+                } else if (livingEntity.getType() == EntityType.ZOMBIE || livingEntity.getType() == EntityType.SKELETON || livingEntity.getType() == EntityType.SPIDER) {
                     othermobs++;
                 }
                 if (spiders >= 2 || othermobs >= 4) {
@@ -169,7 +168,7 @@ public class ShamanEntity extends SpellCastingEntity {
                 double posY = attacker.getY();
                 double posZ = attacker.getZ() + ShamanEntity.this.getWorld().getRandom().nextInt(3);
                 BlockPos pos = BlockPos.ofFloored(posX, posY, posZ);
-                LightningEntity lightningEntity = (LightningEntity) EntityType.LIGHTNING_BOLT.create(attacker.getWorld());
+                LightningEntity lightningEntity = EntityType.LIGHTNING_BOLT.create(attacker.getWorld());
                 lightningEntity.refreshPositionAndAngles(pos, 0.0F, 0.0F);
                 serverWorld.spawnEntity(lightningEntity);
             }
@@ -208,10 +207,7 @@ public class ShamanEntity extends SpellCastingEntity {
 
         @Override
         public boolean canStart() {
-            if (!super.canStart()) {
-                return false;
-            } else
-                return true;
+            return super.canStart();
         }
 
         @Override
@@ -247,10 +243,7 @@ public class ShamanEntity extends SpellCastingEntity {
 
         @Override
         public boolean canStart() {
-            if (!super.canStart() || tooManyCompanions()) {
-                return false;
-            } else
-                return true;
+            return super.canStart() && !tooManyCompanions();
         }
 
         @Override
@@ -324,7 +317,7 @@ public class ShamanEntity extends SpellCastingEntity {
         }
     }
 
-    private class NormalAttack extends MeleeAttackGoal {
+    private static class NormalAttack extends MeleeAttackGoal {
         private final ShamanEntity summonerEntity;
 
         public NormalAttack(PathAwareEntity mob, double speed, boolean pauseWhenMobIdle) {
