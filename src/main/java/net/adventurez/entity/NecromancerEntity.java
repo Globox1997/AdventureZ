@@ -160,12 +160,7 @@ public class NecromancerEntity extends SpellCastingEntity {
             LivingEntity livingEntity = NecromancerEntity.this.getTarget();
             if (livingEntity != null) {
                 livingEntity.addStatusEffect(new StatusEffectInstance(EffectInit.WITHERING, 180 + NecromancerEntity.this.getWorld().getRandom().nextInt(5) * 20, 0));
-                for (int i = 0; i < 60; ++i) {
-                    double x = MathHelper.nextDouble(NecromancerEntity.this.getWorld().getRandom(), livingEntity.getBoundingBox().minX - 1.5D, livingEntity.getBoundingBox().maxX) + 1.5D;
-                    double y = MathHelper.nextDouble(NecromancerEntity.this.getWorld().getRandom(), livingEntity.getBoundingBox().minY, livingEntity.getBoundingBox().maxY) + 1.0D;
-                    double z = MathHelper.nextDouble(NecromancerEntity.this.getWorld().getRandom(), livingEntity.getBoundingBox().minZ - 1.5D, livingEntity.getBoundingBox().maxZ) + 1.5D;
-                    ((ServerWorld) NecromancerEntity.this.getWorld()).spawnParticles(ParticleTypes.SMOKE, x, y, z, 0, 0.0D, 0.0D, 0.0D, 0.0D);
-                }
+                ((ServerWorld) NecromancerEntity.this.getWorld()).spawnParticles(ParticleTypes.SMOKE, livingEntity.getX(), livingEntity.getBodyY(0.5D), livingEntity.getZ(), 60, livingEntity.getWidth(), livingEntity.getHeight(), livingEntity.getWidth(), 0.0D);
             }
 
         }

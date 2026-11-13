@@ -1,25 +1,12 @@
 package net.adventurez.entity;
 
-import java.util.EnumSet;
-import java.util.List;
-import java.util.Optional;
-
 import net.adventurez.entity.nonliving.TinyEyeEntity;
-import net.adventurez.init.EffectInit;
-import net.adventurez.init.EntityInit;
-import net.adventurez.init.ItemInit;
-import net.adventurez.init.SoundInit;
-import net.adventurez.init.TagInit;
+import net.adventurez.init.*;
 import net.fabricmc.loader.api.FabricLoader;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockState;
 import net.minecraft.block.Blocks;
-import net.minecraft.entity.Entity;
-import net.minecraft.entity.EntityType;
-import net.minecraft.entity.LivingEntity;
-import net.minecraft.entity.MovementType;
-import net.minecraft.entity.SpawnReason;
-import net.minecraft.entity.SpawnRestriction;
+import net.minecraft.entity.*;
 import net.minecraft.entity.ai.control.MoveControl;
 import net.minecraft.entity.ai.goal.ActiveTargetGoal;
 import net.minecraft.entity.ai.goal.Goal;
@@ -30,9 +17,9 @@ import net.minecraft.entity.boss.BossBar;
 import net.minecraft.entity.boss.ServerBossBar;
 import net.minecraft.entity.damage.DamageSource;
 import net.minecraft.entity.data.DataTracker;
+import net.minecraft.entity.data.DataTracker.Builder;
 import net.minecraft.entity.data.TrackedData;
 import net.minecraft.entity.data.TrackedDataHandlerRegistry;
-import net.minecraft.entity.data.DataTracker.Builder;
 import net.minecraft.entity.effect.StatusEffectInstance;
 import net.minecraft.entity.mob.FlyingEntity;
 import net.minecraft.entity.mob.HostileEntity;
@@ -56,18 +43,17 @@ import net.minecraft.text.Text;
 import net.minecraft.util.BlockMirror;
 import net.minecraft.util.BlockRotation;
 import net.minecraft.util.Identifier;
-import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.math.Box;
-import net.minecraft.util.math.Direction;
-import net.minecraft.util.math.MathHelper;
-import net.minecraft.util.math.Vec3d;
+import net.minecraft.util.math.*;
 import net.minecraft.util.math.random.Random;
 import net.minecraft.world.Difficulty;
 import net.minecraft.world.GameRules;
-import net.minecraft.world.World;
 import net.minecraft.world.Heightmap;
-
+import net.minecraft.world.World;
 import org.jetbrains.annotations.Nullable;
+
+import java.util.EnumSet;
+import java.util.List;
+import java.util.Optional;
 
 @SuppressWarnings("deprecation")
 public class TheEyeEntity extends FlyingEntity implements Monster {
@@ -87,7 +73,7 @@ public class TheEyeEntity extends FlyingEntity implements Monster {
     public TheEyeEntity(EntityType<? extends TheEyeEntity> entityType, World world) {
         super(entityType, world);
         if (this.duplicationTimer <= 0) {
-            this.bossBar = (ServerBossBar) (new ServerBossBar(this.getDisplayName(), BossBar.Color.PURPLE, BossBar.Style.PROGRESS));
+            this.bossBar = new ServerBossBar(this.getDisplayName(), BossBar.Color.PURPLE, BossBar.Style.PROGRESS);
             this.experiencePoints = 80;
         } else {
             this.bossBar = null;
@@ -275,15 +261,7 @@ public class TheEyeEntity extends FlyingEntity implements Monster {
         if (!this.getWorld().isClient() && this.duplicationTimer > 0) {
             this.duplicationTimer--;
             if (this.duplicationTimer == 20) {
-                for (int i = 0; i < 50; i++) {
-                    double d = (double) this.getX() - 1.5F + this.getWorld().getRandom().nextFloat() * 3.0F;
-                    double e = (double) ((float) this.getRandomBodyY() + this.getWorld().getRandom().nextFloat() * 0.1F);
-                    double f = (double) this.getZ() - 1.5F + this.getWorld().getRandom().nextFloat() * 3.0F;
-                    double g = (double) (this.getWorld().getRandom().nextFloat() * 0.2D);
-                    double h = (double) this.getWorld().getRandom().nextFloat() * 0.1D;
-                    double l = (double) (this.getWorld().getRandom().nextFloat() * 0.2D);
-                    ((ServerWorld) this.getWorld()).spawnParticles(ParticleTypes.PORTAL, d, e, f, 4, g, h, l, 1.0D);
-                }
+                ((ServerWorld) this.getWorld()).spawnParticles(ParticleTypes.PORTAL, this.getX(), this.getBodyY(0.5D), this.getZ(), 200, this.getWidth(), this.getHeight(), this.getWidth(), 0.0D);
                 this.setAiDisabled(true);
             }
             if (this.duplicationTimer == 1) {
@@ -347,8 +325,9 @@ public class TheEyeEntity extends FlyingEntity implements Monster {
         if (this.gotDamage) {
             this.gotDamage = false;
             return true;
-        } else
+        } else {
             return false;
+        }
     }
 
     @Override
@@ -369,7 +348,7 @@ public class TheEyeEntity extends FlyingEntity implements Monster {
     }
 
     public int getInvulnerableTimer() {
-        return (Integer) this.dataTracker.get(INVUL_TIMER);
+        return this.dataTracker.get(INVUL_TIMER);
     }
 
     public void setInvulTimer(int ticks) {
@@ -396,7 +375,7 @@ public class TheEyeEntity extends FlyingEntity implements Monster {
     }
 
     public boolean hasBeamTarget() {
-        return (Integer) this.dataTracker.get(BEAM_TARGET_ID) != 0;
+        return this.dataTracker.get(BEAM_TARGET_ID) != 0;
     }
 
     @Nullable
@@ -407,7 +386,7 @@ public class TheEyeEntity extends FlyingEntity implements Monster {
             if (this.cachedBeamTarget != null) {
                 return this.cachedBeamTarget;
             } else {
-                Entity entity = this.getWorld().getEntityById((Integer) this.dataTracker.get(BEAM_TARGET_ID));
+                Entity entity = this.getWorld().getEntityById(this.dataTracker.get(BEAM_TARGET_ID));
                 if (entity instanceof LivingEntity) {
                     this.cachedBeamTarget = (LivingEntity) entity;
                     return this.cachedBeamTarget;
@@ -455,11 +434,8 @@ public class TheEyeEntity extends FlyingEntity implements Monster {
                 if (deathTimer == 20 && !this.isVoidZLoaded) {
                     Box box = new Box(this.getBlockPos());
                     List<PlayerEntity> list = this.getWorld().getEntitiesByClass(PlayerEntity.class, box.expand(128D), EntityPredicates.EXCEPT_SPECTATOR);
-                    for (int i = 0; i < list.size(); ++i) {
-                        PlayerEntity playerEntity = (PlayerEntity) list.get(i);
-                        if (playerEntity instanceof PlayerEntity) {
-                            playerEntity.addStatusEffect(new StatusEffectInstance(EffectInit.FAME, 48000, 0, false, false, true));
-                        }
+                    for (PlayerEntity player : list) {
+                        player.addStatusEffect(new StatusEffectInstance(EffectInit.FAME, 48000, 0, false, false, true));
                     }
                 }
                 if (deathTimer == 140) {
@@ -511,10 +487,6 @@ public class TheEyeEntity extends FlyingEntity implements Monster {
                 (new StructurePlacementData()).setMirror(BlockMirror.NONE).setRotation(BlockRotation.NONE).setIgnoreEntities(true), this.getWorld().getRandom(), Block.NOTIFY_LISTENERS);
     }
 
-    public float getBeamProgress() {
-        return 0.0f;
-    }
-
     static {
         INVUL_TIMER = DataTracker.registerData(TheEyeEntity.class, TrackedDataHandlerRegistry.INTEGER);
         BEAM_TARGET_ID = DataTracker.registerData(TheEyeEntity.class, TrackedDataHandlerRegistry.INTEGER);
@@ -554,7 +526,7 @@ public class TheEyeEntity extends FlyingEntity implements Monster {
         @Override
         public void stop() {
             this.theEye.setBeamTarget(0);
-            this.theEye.setTarget((LivingEntity) null);
+            this.theEye.setTarget(null);
         }
 
         @Override
@@ -562,7 +534,7 @@ public class TheEyeEntity extends FlyingEntity implements Monster {
             LivingEntity livingEntity = this.theEye.getTarget();
             this.theEye.getLookControl().lookAt(livingEntity, 90.0F, 90.0F);
             if (!this.theEye.canSee(livingEntity)) {
-                this.theEye.setTarget((LivingEntity) null);
+                this.theEye.setTarget(null);
             } else {
                 ++this.beamTicks;
                 if (this.beamTicks == 0) {
@@ -574,7 +546,7 @@ public class TheEyeEntity extends FlyingEntity implements Monster {
                     }
                     livingEntity.damage(this.theEye.getDamageSources().magic(), f);
                     livingEntity.damage(this.theEye.getDamageSources().mobAttack(this.theEye), (float) this.theEye.getAttributeValue(EntityAttributes.GENERIC_ATTACK_DAMAGE));
-                    this.theEye.setTarget((LivingEntity) null);
+                    this.theEye.setTarget(null);
                 }
 
                 super.tick();
@@ -749,14 +721,16 @@ public class TheEyeEntity extends FlyingEntity implements Monster {
             if (livingEntity != null && livingEntity.isAlive() && theEyeEntity.duplicationTimer <= 0 && this.cooldown >= 600) {
                 List<TheEyeEntity> list = theEyeEntity.getWorld().getEntitiesByClass(TheEyeEntity.class, theEyeEntity.getBoundingBox().expand(120D), EntityPredicates.EXCEPT_CREATIVE_OR_SPECTATOR);
                 if (!list.isEmpty())
-                    for (int i = 0; i < list.size(); i++)
-                        if (list.get(i).duplicationTimer > 0) {
+                    for (TheEyeEntity eyeEntity : list) {
+                        if (eyeEntity.duplicationTimer > 0) {
                             this.cooldown = 0;
                             return false;
                         }
+                    }
                 return true;
-            } else
+            } else {
                 return false;
+            }
         }
 
         @Override

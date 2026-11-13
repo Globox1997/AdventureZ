@@ -343,10 +343,9 @@ public class SummonerEntity extends SpellCastingEntity {
         public void castSpell() {
             dataTracker.set(INVULNERABLE_SHIELD, true);
             SummonerEntity.this.invulnerableMagicTick = 160;
-            for (int i = 0; i < 60; ++i) {
-                ((ServerWorld) SummonerEntity.this.getWorld()).spawnParticles(ParticleTypes.END_ROD, SummonerEntity.this.getParticleX(1.5D), SummonerEntity.this.getRandomBodyY(),
-                        SummonerEntity.this.getParticleZ(1.5D), 0, 0.0D, 0.0D, 0.0D, 0.0D);
-            }
+            ((ServerWorld) SummonerEntity.this.getWorld()).spawnParticles(ParticleTypes.END_ROD, SummonerEntity.this.getX(), SummonerEntity.this.getRandomBodyY(),
+                    SummonerEntity.this.getZ(), 60, 0.7D, SummonerEntity.this.getHeight() * 0.3D, 0.7D, 0.0D);
+
             if (SummonerEntity.this.getTarget() != null) {
                 SummonerEntity.this.getTarget().addStatusEffect(new StatusEffectInstance(StatusEffects.SLOWNESS, 100, 1, false, false));
             }
