@@ -1,34 +1,22 @@
 package net.adventurez.entity;
 
-import net.minecraft.entity.mob.CreeperEntity;
-import net.minecraft.server.world.ServerWorld;
-import org.jetbrains.annotations.Nullable;
-
 import net.adventurez.init.EntityInit;
 import net.adventurez.init.SoundInit;
 import net.adventurez.mixin.accessor.ProjectileEntityAccessor;
 import net.minecraft.block.BlockState;
-import net.minecraft.entity.Entity;
-import net.minecraft.entity.EntityData;
-import net.minecraft.entity.EntityType;
-import net.minecraft.entity.EquipmentSlot;
-import net.minecraft.entity.LivingEntity;
-import net.minecraft.entity.SpawnReason;
+import net.minecraft.entity.*;
 import net.minecraft.entity.ai.RangedAttackMob;
-import net.minecraft.entity.ai.goal.BowAttackGoal;
-import net.minecraft.entity.ai.goal.ActiveTargetGoal;
-import net.minecraft.entity.ai.goal.LookAroundGoal;
-import net.minecraft.entity.ai.goal.LookAtEntityGoal;
-import net.minecraft.entity.ai.goal.MeleeAttackGoal;
-import net.minecraft.entity.ai.goal.RevengeGoal;
-import net.minecraft.entity.ai.goal.SwimGoal;
-import net.minecraft.entity.ai.goal.WanderAroundFarGoal;
+import net.minecraft.entity.ai.goal.*;
 import net.minecraft.entity.ai.pathing.PathNodeType;
 import net.minecraft.entity.attribute.DefaultAttributeContainer;
 import net.minecraft.entity.attribute.EntityAttributes;
 import net.minecraft.entity.damage.DamageSource;
 import net.minecraft.entity.effect.StatusEffectInstance;
 import net.minecraft.entity.effect.StatusEffects;
+import net.minecraft.entity.mob.AbstractPiglinEntity;
+import net.minecraft.entity.mob.CreeperEntity;
+import net.minecraft.entity.mob.HostileEntity;
+import net.minecraft.entity.mob.PathAwareEntity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.projectile.ArrowEntity;
 import net.minecraft.entity.projectile.PersistentProjectileEntity;
@@ -37,18 +25,17 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.item.Items;
 import net.minecraft.item.RangedWeaponItem;
 import net.minecraft.predicate.entity.EntityPredicates;
+import net.minecraft.server.world.ServerWorld;
 import net.minecraft.sound.SoundEvent;
 import net.minecraft.sound.SoundEvents;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Box;
 import net.minecraft.util.math.MathHelper;
 import net.minecraft.util.math.random.Random;
-import net.minecraft.entity.mob.AbstractPiglinEntity;
-import net.minecraft.entity.mob.HostileEntity;
-import net.minecraft.entity.mob.PathAwareEntity;
 import net.minecraft.world.LocalDifficulty;
 import net.minecraft.world.ServerWorldAccess;
 import net.minecraft.world.World;
+import org.jetbrains.annotations.Nullable;
 
 public class SoulReaperEntity extends HostileEntity implements RangedAttackMob {
     private final BowAttackGoal<SoulReaperEntity> bowAttackGoal = new BowAttackGoal<>(this, 1.0D, 40, 15.0F);
@@ -82,7 +69,7 @@ public class SoulReaperEntity extends HostileEntity implements RangedAttackMob {
         this.goalSelector.add(5, new WanderAroundFarGoal(this, 1.0D));
         this.goalSelector.add(6, new LookAtEntityGoal(this, PlayerEntity.class, 8.0F));
         this.goalSelector.add(7, new LookAroundGoal(this));
-        this.targetSelector.add(1, (new RevengeGoal(this, new Class[] { SoulReaperEntity.class })));
+        this.targetSelector.add(1, (new RevengeGoal(this, new Class[]{SoulReaperEntity.class})));
         this.targetSelector.add(2, new ActiveTargetGoal<>(this, PlayerEntity.class, true));
         this.targetSelector.add(3, new ActiveTargetGoal<>(this, AbstractPiglinEntity.class, true));
     }
@@ -112,16 +99,15 @@ public class SoulReaperEntity extends HostileEntity implements RangedAttackMob {
     }
 
     public static boolean canSpawn(EntityType<SoulReaperEntity> type, ServerWorldAccess world, SpawnReason spawnReason, BlockPos pos, Random random) {
-        return (canSpawnInDark(type, world, spawnReason, pos, random) && world.getBlockState(pos.up(3)).isAir()
-                && world.getEntitiesByClass(SoulReaperEntity.class, new Box(pos).expand(60D), EntityPredicates.EXCEPT_SPECTATOR).isEmpty() && random.nextInt(7) == 0)
+        return (random.nextInt(7) == 0 && world.getBlockState(pos.up(3)).isAir() && canSpawnInDark(type, world, spawnReason, pos, random)
+                && world.getEntitiesByClass(SoulReaperEntity.class, new Box(pos).expand(60D), EntityPredicates.EXCEPT_SPECTATOR).isEmpty())
                 || spawnReason == SpawnReason.SPAWNER;
     }
 
     @Override
     public void tickRiding() {
         super.tickRiding();
-        if (this.getVehicle() instanceof PathAwareEntity) {
-            PathAwareEntity pathAwareEntity = (PathAwareEntity) this.getVehicle();
+        if (this.getVehicle() instanceof PathAwareEntity pathAwareEntity) {
             this.bodyYaw = pathAwareEntity.bodyYaw;
         }
 

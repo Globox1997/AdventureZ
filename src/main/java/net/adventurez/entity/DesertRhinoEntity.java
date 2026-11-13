@@ -56,8 +56,8 @@ public class DesertRhinoEntity extends HostileEntity {
     }
 
     public static boolean canSpawn(EntityType<DesertRhinoEntity> type, ServerWorldAccess world, SpawnReason spawnReason, BlockPos pos, Random random) {
-        return ((world.getBlockState(pos.down()).isOf(Blocks.SAND) || world.getBlockState(pos.down()).isOf(Blocks.SANDSTONE)) && world.getBaseLightLevel(pos, 0) > 8 && world.isSkyVisible(pos)
-                && world.getEntitiesByClass(DesertRhinoEntity.class, new Box(pos).expand(120D), EntityPredicates.EXCEPT_SPECTATOR).isEmpty() && world.getRandom().nextFloat() < 0.5F)
+        return (world.getRandom().nextFloat() < 0.5F && (world.getBlockState(pos.down()).isOf(Blocks.SAND) || world.getBlockState(pos.down()).isOf(Blocks.SANDSTONE))
+                && world.getBaseLightLevel(pos, 0) > 8 && world.isSkyVisible(pos) && world.getEntitiesByClass(DesertRhinoEntity.class, new Box(pos).expand(120D), EntityPredicates.EXCEPT_SPECTATOR).isEmpty())
                 || spawnReason == SpawnReason.SPAWNER;
     }
 
@@ -72,7 +72,7 @@ public class DesertRhinoEntity extends HostileEntity {
         this.goalSelector.add(5, new LookAroundGoal(this));
         this.targetSelector.add(1, new ActiveTargetGoal<>(this, HuskEntity.class, true));
         this.targetSelector.add(2, new ActiveTargetGoal<>(this, PlayerEntity.class, true));
-        this.targetSelector.add(3, (new RevengeGoal(this, new Class[] { DesertRhinoEntity.class })));
+        this.targetSelector.add(3, (new RevengeGoal(this, new Class[]{DesertRhinoEntity.class})));
     }
 
     @Override
