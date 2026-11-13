@@ -99,14 +99,13 @@ public class ChiseledPolishedBlackstoneHolderEntity extends BlockEntity implemen
                 tickCounter = -1;
             } else if (ConfigInit.CONFIG.allow_blackstone_golem_summoning) {
                 this.tickCounter++;
-                this.getWorld();
                 if (tickCounter > 40 && this.getStack(0).isOf(ItemInit.GILDED_BLACKSTONE_SHARD) && this.getWorld().getRegistryKey() == World.NETHER) {
                     this.update();
                     tickCounter = 0;
                 }
             }
         }
-        if (startBuildingGolem == true) {
+        if (startBuildingGolem) {
             this.buildStructure();
         }
     }
@@ -234,7 +233,7 @@ public class ChiseledPolishedBlackstoneHolderEntity extends BlockEntity implemen
                         }
                     }
                 }
-                BlackstoneGolemEntity stoneGolemEntity = (BlackstoneGolemEntity) EntityInit.BLACKSTONE_GOLEM.create(world);
+                BlackstoneGolemEntity stoneGolemEntity = EntityInit.BLACKSTONE_GOLEM.create(world);
                 BlockPos spawnPos = new BlockPos(this.getPos().getX(), this.getPos().getY() + 1, this.getPos().getZ() - 5);
                 stoneGolemEntity.refreshPositionAndAngles(spawnPos, 0.0F, 0.0F);
                 stoneGolemEntity.initialize(((ServerWorld) this.getWorld()), this.getWorld().getLocalDifficulty(this.getPos()), SpawnReason.STRUCTURE, null);
