@@ -24,6 +24,7 @@ import net.minecraft.entity.projectile.ProjectileUtil;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.Items;
 import net.minecraft.item.RangedWeaponItem;
+import net.minecraft.item.SwordItem;
 import net.minecraft.predicate.entity.EntityPredicates;
 import net.minecraft.server.world.ServerWorld;
 import net.minecraft.sound.SoundEvent;
@@ -38,6 +39,8 @@ import net.minecraft.world.World;
 import org.jetbrains.annotations.Nullable;
 
 public class SoulReaperEntity extends HostileEntity implements RangedAttackMob {
+
+    private boolean switchCombat = false;
     private final BowAttackGoal<SoulReaperEntity> bowAttackGoal = new BowAttackGoal<>(this, 1.0D, 40, 15.0F);
     private final MeleeAttackGoal meleeAttackGoal = new MeleeAttackGoal(this, 1.2D, true) {
         @Override
@@ -57,6 +60,7 @@ public class SoulReaperEntity extends HostileEntity implements RangedAttackMob {
         super(entityType, world);
         this.setPathfindingPenalty(PathNodeType.LAVA, 8.0F);
         this.experiencePoints = 30;
+        this.setEquipmentDropChance(EquipmentSlot.MAINHAND, 0.0f);
     }
 
     public static DefaultAttributeContainer.Builder createSoulReaperAttributes() {
@@ -139,28 +143,31 @@ public class SoulReaperEntity extends HostileEntity implements RangedAttackMob {
 
     @Override
     public void tickMovement() {
-        if (this.getWorld() != null && !this.getWorld().isClient) {
+        if (this.getWorld() != null && !this.getWorld().isClient()) {
+            boolean meleeGoal = this.getEquippedStack(EquipmentSlot.MAINHAND).getItem() instanceof SwordItem;
             LivingEntity target = this.getTarget();
             if (target != null) {
-                if (this.distanceTo(target) > 7F) {
-                    if (this.getEquippedStack(EquipmentSlot.MAINHAND).getItem().equals(Items.NETHERITE_SWORD)) {
-                        this.equipStack(EquipmentSlot.MAINHAND, ItemStack.EMPTY);
+                if (meleeGoal) {
+                    if (this.squaredDistanceTo(target) > 64F) {
                         this.equipStack(EquipmentSlot.MAINHAND, new ItemStack(Items.BOW));
+                        this.goalSelector.add(4, this.bowAttackGoal);
+                        this.goalSelector.remove(this.meleeAttackGoal);
+                        this.switchCombat = true;
                     }
-                    this.goalSelector.add(4, this.bowAttackGoal);
-                    this.goalSelector.remove(this.meleeAttackGoal);
-                } else {
-                    this.equipStack(EquipmentSlot.MAINHAND, ItemStack.EMPTY);
+
+                } else if (this.squaredDistanceTo(target) < 36F) {
                     this.equipStack(EquipmentSlot.MAINHAND, new ItemStack(Items.NETHERITE_SWORD));
                     this.goalSelector.add(4, this.meleeAttackGoal);
                     this.goalSelector.remove(this.bowAttackGoal);
+                    this.switchCombat = true;
                 }
-            } else {
+            } else if (!this.switchCombat) {
                 if (this.getEquippedStack(EquipmentSlot.MAINHAND).getItem().equals(Items.BOW)) {
                     this.goalSelector.add(4, this.bowAttackGoal);
                 } else {
                     this.goalSelector.add(4, this.meleeAttackGoal);
                 }
+                this.switchCombat = true;
             }
         }
         super.tickMovement();
