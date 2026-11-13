@@ -1,23 +1,12 @@
 package net.adventurez.entity;
 
-import java.util.List;
-
 import net.adventurez.init.EffectInit;
 import net.adventurez.init.EntityInit;
 import net.minecraft.block.BlockState;
 import net.minecraft.block.Blocks;
-import net.minecraft.entity.Entity;
-import net.minecraft.entity.EntityType;
-import net.minecraft.entity.LivingEntity;
-import net.minecraft.entity.SpawnReason;
-import net.minecraft.entity.SpawnRestriction;
+import net.minecraft.entity.*;
 import net.minecraft.entity.ai.TargetPredicate;
-import net.minecraft.entity.ai.goal.ActiveTargetGoal;
-import net.minecraft.entity.ai.goal.FleeEntityGoal;
-import net.minecraft.entity.ai.goal.LookAtEntityGoal;
-import net.minecraft.entity.ai.goal.RevengeGoal;
-import net.minecraft.entity.ai.goal.SwimGoal;
-import net.minecraft.entity.ai.goal.WanderAroundGoal;
+import net.minecraft.entity.ai.goal.*;
 import net.minecraft.entity.attribute.DefaultAttributeContainer;
 import net.minecraft.entity.attribute.EntityAttributes;
 import net.minecraft.entity.damage.DamageSource;
@@ -39,12 +28,13 @@ import net.minecraft.util.math.random.Random;
 import net.minecraft.world.ServerWorldAccess;
 import net.minecraft.world.World;
 
+import java.util.List;
+
 public class NecromancerEntity extends SpellCastingEntity {
 
     public NecromancerEntity(EntityType<? extends HostileEntity> entityType, World world) {
         super(entityType, world);
         this.experiencePoints = 15;
-
     }
 
     public static DefaultAttributeContainer.Builder createNecromancerAttributes() {
@@ -63,8 +53,8 @@ public class NecromancerEntity extends SpellCastingEntity {
         this.goalSelector.add(7, new WanderAroundGoal(this, 0.9D));
         this.goalSelector.add(8, new LookAtEntityGoal(this, PlayerEntity.class, 5.0F, 1.0F));
         this.goalSelector.add(9, new LookAtEntityGoal(this, MobEntity.class, 8.0F));
-        this.targetSelector.add(1, (new RevengeGoal(this, new Class[] { WitherPuppetEntity.class })));
-        this.targetSelector.add(2, (new RevengeGoal(this, new Class[] { WitherSkeletonEntity.class })));
+        this.targetSelector.add(1, (new RevengeGoal(this, new Class[]{WitherPuppetEntity.class})));
+        this.targetSelector.add(2, (new RevengeGoal(this, new Class[]{WitherSkeletonEntity.class})));
         this.targetSelector.add(3, (new ActiveTargetGoal<>(this, PlayerEntity.class, true)).setMaxTimeWithoutVisibility(300));
     }
 
@@ -82,7 +72,7 @@ public class NecromancerEntity extends SpellCastingEntity {
                 this.addStatusEffect(new StatusEffectInstance(StatusEffects.INVISIBILITY, 100));
                 if (this.getWorld().isClient()) {
                     for (int i = 0; i < 10; ++i) {
-                        this.getWorld().addParticle(ParticleTypes.SMOKE, this.getParticleX(0.5D), this.getRandomBodyY(), this.getParticleZ(0.5D), 0.0D, 0.0D, 0.0D);
+                        ((ServerWorld) this.getWorld()).spawnParticles(ParticleTypes.SMOKE, this.getParticleX(0.5D), this.getRandomBodyY(), this.getParticleZ(0.5D), 5, 0.0D, 0.0D, 0.0D, 1.0f);
                     }
                 }
             }
@@ -187,7 +177,7 @@ public class NecromancerEntity extends SpellCastingEntity {
 
         @Override
         public SpellCastingEntity.Spell getSpell() {
-            return SpellCastingEntity.Spell.SUMMON_PUPPET;
+            return Spell.WITHERING;
         }
     }
 
