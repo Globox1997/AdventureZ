@@ -74,10 +74,8 @@ public class ChiseledPolishedBlackstoneHolder extends Block implements BlockEnti
         if (blockStack.isEmpty()) {
             if ((itemStack.isIn(TagInit.HOLDER_ITEMS) || ConfigInit.CONFIG.allow_all_items_on_holder) && world.getBlockState(pos.up()).isAir()) {
                 if (!world.isClient()) {
-                    blockEntity.setStack(0, new ItemStack(itemStack.getItem(), 1));
-                    if (!player.isCreative()) {
-                        itemStack.decrement(1);
-                    }
+                    blockEntity.setStack(0, itemStack);
+                    itemStack.decrementUnlessCreative(1, player);
                 }
                 return ActionResult.success(world.isClient());
             } else {
