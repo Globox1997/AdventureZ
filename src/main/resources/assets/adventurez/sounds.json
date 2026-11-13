@@ -12,7 +12,8 @@
       "adventurez:blackstone_golem/hurt_1",
       "adventurez:blackstone_golem/hurt_2",
       "adventurez:blackstone_golem/hurt_3",
-      "adventurez:blackstone_golem/hurt_4"
+      "adventurez:blackstone_golem/hurt_4",
+      "adventurez:blackstone_golem/hurt_5"
     ]
   },
   "blackstone_golem_step": {
@@ -106,7 +107,8 @@
     "sounds": [
       "adventurez:piglin_beast/angry_1",
       "adventurez:piglin_beast/angry_2",
-      "adventurez:piglin_beast/angry_3"
+      "adventurez:piglin_beast/angry_3",
+      "adventurez:piglin_beast/angry_4"
     ]
   },
   "piglin_beast_death": {
