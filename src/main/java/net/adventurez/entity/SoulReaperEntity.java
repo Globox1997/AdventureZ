@@ -1,5 +1,7 @@
 package net.adventurez.entity;
 
+import net.minecraft.entity.mob.CreeperEntity;
+import net.minecraft.server.world.ServerWorld;
 import org.jetbrains.annotations.Nullable;
 
 import net.adventurez.init.EntityInit;
@@ -132,7 +134,7 @@ public class SoulReaperEntity extends HostileEntity implements RangedAttackMob {
 
     @Override
     public boolean canHaveStatusEffect(StatusEffectInstance effect) {
-        return effect.getEffectType() == StatusEffects.WITHER ? false : super.canHaveStatusEffect(effect);
+        return effect.getEffectType() != StatusEffects.WITHER && super.canHaveStatusEffect(effect);
     }
 
     @Override
@@ -238,4 +240,11 @@ public class SoulReaperEntity extends HostileEntity implements RangedAttackMob {
         this.playSound(SoundEvents.ENTITY_WITHER_SKELETON_STEP, 0.5F, 1.0F);
     }
 
+    @Override
+    protected void dropEquipment(ServerWorld world, DamageSource source, boolean causedByPlayer) {
+        if (source.getAttacker() instanceof CreeperEntity creeperEntity && creeperEntity.shouldDropHead()) {
+            creeperEntity.onHeadDropped();
+            this.dropItem(Items.WITHER_SKELETON_SKULL);
+        }
+    }
 }
