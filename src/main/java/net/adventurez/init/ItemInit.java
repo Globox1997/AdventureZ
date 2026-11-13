@@ -111,7 +111,7 @@ public class ItemInit {
     }
 
     private static <T> ComponentType<T> registerComponent(String id, UnaryOperator<ComponentType.Builder<T>> builderOperator) {
-        return Registry.register(Registries.DATA_COMPONENT_TYPE, id, builderOperator.apply(ComponentType.builder()).build());
+        return Registry.register(Registries.DATA_COMPONENT_TYPE, AdventureMain.identifierOf(id), builderOperator.apply(ComponentType.builder()).build());
     }
 
     public static void init() {
