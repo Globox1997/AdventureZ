@@ -46,29 +46,34 @@ public class GildedNetheriteArmor extends ArmorItem {
         if (stack.getItem() == ItemInit.GILDED_NETHERITE_CHESTPLATE) {
             GildedActivationComponent component = stack.getOrDefault(ItemInit.GILDED_DATA, GildedActivationComponent.DEFAULT);
 
-            if (component.activated() && component.time() + (ConfigInit.CONFIG.gilded_netherite_armor_effect_duration * 2) < (int) world.getTime()) {
-                stack.set(ItemInit.GILDED_DATA, new GildedActivationComponent(false, component.time(), component.visuals()));
-            }
-            if (component.activated() && component.time() + ConfigInit.CONFIG.gilded_netherite_armor_effect_duration < (int) world.getTime()) {
-                entity.setFireTicks(0);
-                stack.set(ItemInit.GILDED_DATA, new GildedActivationComponent(component.activated(), component.time(), false));
+            if (component.activated()) {
+                int elapsed = (int) world.getTime() - component.time();
+                if (elapsed > ConfigInit.CONFIG.gilded_netherite_armor_effect_duration * 2) {
+                    stack.set(ItemInit.GILDED_DATA, new GildedActivationComponent(false, component.time(), false));
+                } else if (elapsed > ConfigInit.CONFIG.gilded_netherite_armor_effect_duration && component.visuals()) {
+                    entity.setFireTicks(0);
+                    stack.set(ItemInit.GILDED_DATA, new GildedActivationComponent(true, component.time(), false));
+                }
             }
         }
     }
 
-    public static void activateStoneGolemArmor(PlayerEntity player, ItemStack stack) {
+    public static boolean activateStoneGolemArmor(PlayerEntity player, ItemStack stack) {
         if (!stack.isOf(ItemInit.GILDED_NETHERITE_CHESTPLATE)) {
-            return;
+            return false;
         }
 
         GildedActivationComponent component = stack.getOrDefault(ItemInit.GILDED_DATA, GildedActivationComponent.DEFAULT);
-        if (!component.activated()) {
-            stack.set(ItemInit.GILDED_DATA, new GildedActivationComponent(true, (int) player.getWorld().getTime(), true));
-            if (!player.getWorld().isClient()) {
-                player.addStatusEffect(new StatusEffectInstance(StatusEffects.FIRE_RESISTANCE, ConfigInit.CONFIG.gilded_netherite_armor_effect_duration, 0, false, false));
-            }
-            player.playSound(SoundEvents.BLOCK_FIRE_EXTINGUISH, 1.0F, 1.0F);
+        if (component.activated()) {
+            return false;
         }
+        stack.set(ItemInit.GILDED_DATA, new GildedActivationComponent(true, (int) player.getWorld().getTime(), true));
+
+        if (!player.getWorld().isClient()) {
+            player.addStatusEffect(new StatusEffectInstance(StatusEffects.FIRE_RESISTANCE, ConfigInit.CONFIG.gilded_netherite_armor_effect_duration, 0, false, false));
+        }
+        player.playSound(SoundEvents.BLOCK_FIRE_EXTINGUISH, 1.0F, 1.0F);
+        return true;
     }
 
     public static boolean isStoneGolemArmorActive(ItemStack stack) {

@@ -1,6 +1,7 @@
 package net.adventurez.mixin;
 
 import org.spongepowered.asm.mixin.Mixin;
+import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 import org.spongepowered.asm.mixin.injection.At;
@@ -22,6 +23,9 @@ import net.minecraft.world.World;
 @Mixin(PlayerEntity.class)
 public abstract class PlayerEntityMixin extends LivingEntity {
 
+    @Shadow
+    public abstract ItemStack getEquippedStack(EquipmentSlot slot);
+
     public PlayerEntityMixin(EntityType<PlayerEntity> type, World world) {
         super(type, world);
     }
@@ -29,7 +33,7 @@ public abstract class PlayerEntityMixin extends LivingEntity {
     @Inject(method = "damage", at = @At(value = "INVOKE", target = "Lnet/minecraft/entity/damage/DamageSource;isScaledWithDifficulty()Z"), cancellable = true)
     private void damageMixin(DamageSource source, float amount, CallbackInfoReturnable<Boolean> info) {
         if (this.getEquippedStack(EquipmentSlot.CHEST).getItem() == ItemInit.GILDED_NETHERITE_CHESTPLATE && GildedNetheriteArmor.fullGolemArmor((PlayerEntity) (Object) this)) {
-            if (source.isIn(DamageTypeTags.IS_FIRE) && !GildedNetheriteArmor.isStoneGolemArmorActive(this.getEquippedStack(EquipmentSlot.CHEST))) {
+            if (source.isIn(DamageTypeTags.IS_FIRE) && !GildedNetheriteArmor.isStoneGolemArmorActive(this.getEquippedStack(EquipmentSlot.CHEST)) && GildedNetheriteArmor.activateStoneGolemArmor((PlayerEntity) (Object) this, this.getEquippedStack(EquipmentSlot.CHEST))) {
                 GildedNetheriteArmor.activateStoneGolemArmor((PlayerEntity) (Object) this, this.getEquippedStack(EquipmentSlot.CHEST));
                 info.setReturnValue(false);
             } else if (!source.isIn(DamageTypeTags.BYPASSES_INVULNERABILITY) && this.getWorld().getRandom().nextFloat() <= ConfigInit.CONFIG.gilded_netherite_armor_dodge_chance) {
