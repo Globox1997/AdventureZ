@@ -14,8 +14,8 @@ public class AdventureServerPacket {
 
         ServerPlayNetworking.registerGlobalReceiver(DragonFireBreathPacket.PACKET_ID, (payload, context) -> {
             context.server().execute(() -> {
-                if (context.player().getVehicle() instanceof DragonEntity) {
-                    ((DragonEntity) context.player().getVehicle()).fireBreathActive = true;
+                if (context.player().getVehicle() instanceof DragonEntity dragonEntity && dragonEntity.getDataTracker().get(DragonEntity.DRAGON_SIZE) >= 3) {
+                    dragonEntity.setFireBreathActive(true);
                 }
             });
         });

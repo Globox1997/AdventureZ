@@ -1,13 +1,5 @@
 package net.adventurez.entity;
 
-import net.minecraft.nbt.NbtElement;
-import org.jetbrains.annotations.Nullable;
-
-import java.util.Optional;
-import java.util.UUID;
-
-import com.google.common.collect.UnmodifiableIterator;
-
 import net.adventurez.entity.goal.DragonFindOwnerGoal;
 import net.adventurez.entity.goal.DragonFlyRandomlyGoal;
 import net.adventurez.entity.goal.DragonSitGoal;
@@ -29,16 +21,7 @@ import net.minecraft.block.Blocks;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.network.ClientPlayerEntity;
 import net.minecraft.client.util.InputUtil;
-import net.minecraft.entity.Dismounting;
-import net.minecraft.entity.Entity;
-import net.minecraft.entity.EntityData;
-import net.minecraft.entity.EntityDimensions;
-import net.minecraft.entity.EntityPose;
-import net.minecraft.entity.EntityType;
-import net.minecraft.entity.LivingEntity;
-import net.minecraft.entity.MovementType;
-import net.minecraft.entity.SpawnReason;
-import net.minecraft.entity.Tameable;
+import net.minecraft.entity.*;
 import net.minecraft.entity.ai.goal.LookAroundGoal;
 import net.minecraft.entity.ai.goal.LookAtEntityGoal;
 import net.minecraft.entity.ai.goal.SwimGoal;
@@ -47,9 +30,9 @@ import net.minecraft.entity.attribute.DefaultAttributeContainer;
 import net.minecraft.entity.attribute.EntityAttributes;
 import net.minecraft.entity.damage.DamageSource;
 import net.minecraft.entity.data.DataTracker;
+import net.minecraft.entity.data.DataTracker.Builder;
 import net.minecraft.entity.data.TrackedData;
 import net.minecraft.entity.data.TrackedDataHandlerRegistry;
-import net.minecraft.entity.data.DataTracker.Builder;
 import net.minecraft.entity.mob.MobEntity;
 import net.minecraft.entity.mob.PathAwareEntity;
 import net.minecraft.entity.player.PlayerEntity;
@@ -60,15 +43,16 @@ import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.Items;
 import net.minecraft.nbt.NbtCompound;
+import net.minecraft.nbt.NbtElement;
 import net.minecraft.nbt.NbtList;
 import net.minecraft.particle.ParticleEffect;
 import net.minecraft.particle.ParticleTypes;
 import net.minecraft.registry.Registries;
 import net.minecraft.registry.tag.FluidTags;
 import net.minecraft.screen.GenericContainerScreenHandler;
+import net.minecraft.screen.ScreenHandlerType;
 import net.minecraft.screen.SimpleNamedScreenHandlerFactory;
 import net.minecraft.server.ServerConfigHandler;
-import net.minecraft.screen.ScreenHandlerType;
 import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.sound.SoundCategory;
 import net.minecraft.sound.SoundEvent;
@@ -77,15 +61,15 @@ import net.minecraft.util.ActionResult;
 import net.minecraft.util.Arm;
 import net.minecraft.util.Hand;
 import net.minecraft.util.Identifier;
-import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.math.Box;
-import net.minecraft.util.math.Direction;
-import net.minecraft.util.math.MathHelper;
-import net.minecraft.util.math.Vec3d;
+import net.minecraft.util.math.*;
 import net.minecraft.world.GameRules;
 import net.minecraft.world.LocalDifficulty;
 import net.minecraft.world.ServerWorldAccess;
 import net.minecraft.world.World;
+import org.jetbrains.annotations.Nullable;
+
+import java.util.Optional;
+import java.util.UUID;
 
 public class DragonEntity extends PathAwareEntity implements InventoryChangedListener, Tameable {
 
@@ -118,7 +102,7 @@ public class DragonEntity extends PathAwareEntity implements InventoryChangedLis
     private int dragonAge;
     private int dragonAgeFoodBonus;
     private int fireBreathCooldown;
-    public boolean fireBreathActive;
+    private boolean fireBreathActive;
     private int startFlyingTime = 0;
     private int fluidTicker = 0;
 
@@ -182,7 +166,7 @@ public class DragonEntity extends PathAwareEntity implements InventoryChangedLis
                 ItemStack itemStack = this.inventory.getStack(i);
                 if (!itemStack.isEmpty()) {
                     NbtCompound nbtCompound = new NbtCompound();
-                    nbtCompound.putByte("Slot", (byte) (i ));
+                    nbtCompound.putByte("Slot", (byte) (i));
                     nbtList.add(itemStack.encode(this.getRegistryManager(), nbtCompound));
                 }
             }
@@ -229,7 +213,7 @@ public class DragonEntity extends PathAwareEntity implements InventoryChangedLis
             for (int i = 0; i < nbtList.size(); i++) {
                 NbtCompound nbtCompound = nbtList.getCompound(i);
                 int j = nbtCompound.getByte("Slot") & 255;
-                if (j < this.inventory.size() ) {
+                if (j < this.inventory.size()) {
                     this.inventory.setStack(j, ItemStack.fromNbt(this.getRegistryManager(), nbtCompound).orElse(ItemStack.EMPTY));
                 }
             }
@@ -249,7 +233,7 @@ public class DragonEntity extends PathAwareEntity implements InventoryChangedLis
     public void travel(Vec3d movementInput) {
         if (this.isAlive()) {
             if (this.hasPassengers() && this.canBeControlledByRider()) {
-                LivingEntity livingEntity = (LivingEntity) this.getControllingPassenger();
+                LivingEntity livingEntity = this.getControllingPassenger();
                 double wrapper = MathHelper.wrapDegrees(this.bodyYaw - (double) this.getYaw());
                 this.setYaw((float) ((double) this.getYaw() + wrapper));
                 this.prevYaw = this.getYaw();
@@ -259,8 +243,7 @@ public class DragonEntity extends PathAwareEntity implements InventoryChangedLis
                 boolean shouldFlyUp = false;
                 boolean shouldFlyDown = false;
                 shouldFlyUp = ((LivingEntityAccessor) livingEntity).jumping(); // Pressing jump button for going upwards
-                if (this.getWorld().isClient() && livingEntity instanceof ClientPlayerEntity) {
-                    ClientPlayerEntity clientPlayerEntity = (ClientPlayerEntity) livingEntity;
+                if (this.getWorld().isClient() && livingEntity instanceof ClientPlayerEntity clientPlayerEntity) {
                     shouldFlyDown = InputUtil.isKeyPressed(MinecraftClient.getInstance().getWindow().getHandle(), this.keyBind);
                     if (clientPlayerEntity.input.pressingLeft) {
                         turningFloat -= 0.05F;
@@ -348,11 +331,11 @@ public class DragonEntity extends PathAwareEntity implements InventoryChangedLis
                 if (this.isLogicalSideForUpdatingMovement()) {
                     this.setMovementSpeed((float) this.getAttributeValue(EntityAttributes.GENERIC_MOVEMENT_SPEED));
                     if ((!this.getDataTracker().get(IS_FLYING) && !this.isFlying) || (this.isTouchingWater() && this.getFluidHeight(FluidTags.WATER) > 0.2D)) {
-                        super.travel(new Vec3d((double) f, movementInput.y, (double) g));
+                        super.travel(new Vec3d(f, movementInput.y, g));
                     } else {
                         Vec3d vec3d;
                         if (ConfigInit.CONFIG.heavy_dragon_flight)
-                            vec3d = new Vec3d((double) this.dragonSideSpeed, movementInput.y + flySpeed, (double) this.dragonForwardSpeed);
+                            vec3d = new Vec3d(this.dragonSideSpeed, movementInput.y + flySpeed, this.dragonForwardSpeed);
                         else {
                             vec3d = new Vec3d(livingEntity.sidewaysSpeed * 0.7D, movementInput.y + flySpeed, livingEntity.forwardSpeed * 0.7D);
                         }
@@ -425,10 +408,8 @@ public class DragonEntity extends PathAwareEntity implements InventoryChangedLis
         double e = this.getBoundingBox().minY;
         double f = this.getZ() + vec3d.z;
         BlockPos.Mutable mutable = new BlockPos.Mutable();
-        UnmodifiableIterator<EntityPose> var10 = livingEntity.getPoses().iterator();
 
-        while (var10.hasNext()) {
-            EntityPose entityPose = (EntityPose) var10.next();
+        for (EntityPose entityPose : livingEntity.getPoses()) {
             mutable.set(d, e, f);
             double g = this.getBoundingBox().maxY + 0.75D;
 
@@ -459,12 +440,12 @@ public class DragonEntity extends PathAwareEntity implements InventoryChangedLis
 
     @Override
     public Vec3d updatePassengerForDismount(LivingEntity passenger) {
-        Vec3d vec3d = getPassengerDismountOffset((double) this.getWidth(), (double) passenger.getWidth(), this.getYaw() + (passenger.getMainArm() == Arm.RIGHT ? 90.0F : -90.0F));
+        Vec3d vec3d = getPassengerDismountOffset(this.getWidth(), passenger.getWidth(), this.getYaw() + (passenger.getMainArm() == Arm.RIGHT ? 90.0F : -90.0F));
         Vec3d vec3d2 = this.method_27930(vec3d, passenger);
         if (vec3d2 != null) {
             return vec3d2;
         } else {
-            Vec3d vec3d3 = getPassengerDismountOffset((double) this.getWidth(), (double) passenger.getWidth(), this.getYaw() + (passenger.getMainArm() == Arm.LEFT ? 90.0F : -90.0F));
+            Vec3d vec3d3 = getPassengerDismountOffset(this.getWidth(), passenger.getWidth(), this.getYaw() + (passenger.getMainArm() == Arm.LEFT ? 90.0F : -90.0F));
             Vec3d vec3d4 = this.method_27930(vec3d3, passenger);
             return vec3d4 != null ? vec3d4 : this.getPos();
         }
@@ -483,7 +464,7 @@ public class DragonEntity extends PathAwareEntity implements InventoryChangedLis
             this.fireBreathCooldown++;
             if (!this.getWorld().isClient()) {
                 if (this.fireBreathCooldown == 1) {
-                    this.getWorld().playSoundFromEntity((PlayerEntity) null, this, SoundInit.DRAGON_BREATH_EVENT, SoundCategory.HOSTILE, 1.0F, 1.0F);
+                    this.getWorld().playSoundFromEntity(null, this, SoundInit.DRAGON_BREATH_EVENT, SoundCategory.HOSTILE, 1.0F, 1.0F);
                 }
                 if (this.fireBreathCooldown % 3 == 0) {
                     Vec3d vec3d = this.getRotationVector(prevPitch, headYaw);
@@ -502,7 +483,7 @@ public class DragonEntity extends PathAwareEntity implements InventoryChangedLis
                 }
             }
         } else {
-            this.fireBreathActive = false;
+            setFireBreathActive(false);
         }
     }
 
@@ -520,11 +501,9 @@ public class DragonEntity extends PathAwareEntity implements InventoryChangedLis
             // Check for owner
             if (this.isTamed() && this.getSize() > 1 && this.isOwner(player)) {
                 if (item == Items.CHEST && !this.hasChest() && this.getSize() > 2) {
-                    this.getWorld().playSoundFromEntity((PlayerEntity) null, this, SoundInit.EQUIP_CHEST_EVENT, SoundCategory.NEUTRAL, 0.5F, 1.0F);
+                    this.getWorld().playSoundFromEntity(null, this, SoundInit.EQUIP_CHEST_EVENT, SoundCategory.NEUTRAL, 0.5F, 1.0F);
                     this.setHasChest(true);
-                    if (!player.isCreative()) {
-                        itemStack.decrement(1);
-                    }
+                    itemStack.decrementUnlessCreative(1, player);
                     return ActionResult.SUCCESS;
                 }
                 if (this.dragonFood(item) && this.getHealth() < this.getMaxHealth() && player.isSneaking()) {
@@ -536,10 +515,8 @@ public class DragonEntity extends PathAwareEntity implements InventoryChangedLis
                 } else if (!player.isSneaking()) {
                     if (!this.hasSaddle) {
                         if (item == ItemInit.DRAGON_SADDLE) {
-                            this.getWorld().playSoundFromEntity((PlayerEntity) null, this, SoundEvents.ENTITY_HORSE_SADDLE, SoundCategory.NEUTRAL, 0.8F, 1.0F);
-                            if (!player.isCreative()) {
-                                itemStack.decrement(1);
-                            }
+                            this.getWorld().playSoundFromEntity(null, this, SoundEvents.ENTITY_HORSE_SADDLE, SoundCategory.NEUTRAL, 0.8F, 1.0F);
+                            itemStack.decrementUnlessCreative(1, player);
                             this.hasSaddle = true;
                             this.getDataTracker().set(HAS_SADDLE, true);
                             return ActionResult.SUCCESS;
@@ -559,19 +536,17 @@ public class DragonEntity extends PathAwareEntity implements InventoryChangedLis
                     return ActionResult.PASS;
             } else if (this.dragonFood(item)) {
                 if (!this.isTamed()) {
-                    if (!player.isCreative()) {
-                        itemStack.decrement(1);
-                    }
+                    itemStack.decrementUnlessCreative(1, player);
                     int tamer;
                     if (item == ItemInit.ORC_SKIN) {
                         tamer = 1;
                     } else {
                         tamer = healingFood;
                     }
-                    if (this.random.nextInt(tamer) == 0) {
+                    if (this.getRandom().nextInt(tamer) == 0) {
                         this.setOwner(player);
                         this.navigation.stop();
-                        this.setTarget((LivingEntity) null);
+                        this.setTarget(null);
                         this.getWorld().sendEntityStatus(this, (byte) 7);
                     } else {
                         this.getWorld().sendEntityStatus(this, (byte) 6);
@@ -580,9 +555,7 @@ public class DragonEntity extends PathAwareEntity implements InventoryChangedLis
                     return ActionResult.SUCCESS;
                 } else {
                     if (this.canEatFood(this.dragonAge, 3, 13)) {
-                        if (!player.isCreative()) {
-                            itemStack.decrement(1);
-                        }
+                        itemStack.decrementUnlessCreative(1, player);
                         dragonAgeFoodBonus++;
                         return ActionResult.SUCCESS;
                     } else {
@@ -615,10 +588,7 @@ public class DragonEntity extends PathAwareEntity implements InventoryChangedLis
     }
 
     private boolean canEatFood(int age, int minAge, int maxAge) {
-        if (age < minAge || (age < maxAge && age > maxAge - (minAge * 2))) {
-            return true;
-        } else
-            return false;
+        return age < minAge || (age < maxAge && age > maxAge - (minAge * 2));
     }
 
     @Override
@@ -722,11 +692,11 @@ public class DragonEntity extends PathAwareEntity implements InventoryChangedLis
     }
 
     public boolean isTamed() {
-        return ((Byte) this.dataTracker.get(TAMEABLE_FLAGS) & 4) != 0;
+        return (this.dataTracker.get(TAMEABLE_FLAGS) & 4) != 0;
     }
 
     public void setTamed(boolean tamed) {
-        byte b = (Byte) this.dataTracker.get(TAMEABLE_FLAGS);
+        byte b = this.dataTracker.get(TAMEABLE_FLAGS);
         if (tamed) {
             this.dataTracker.set(TAMEABLE_FLAGS, (byte) (b | 4));
         } else {
@@ -737,7 +707,7 @@ public class DragonEntity extends PathAwareEntity implements InventoryChangedLis
     @Nullable
     @Override
     public UUID getOwnerUuid() {
-        return (UUID) ((Optional<UUID>) this.dataTracker.get(OWNER_UUID)).orElse((UUID) (Object) null);
+        return this.dataTracker.get(OWNER_UUID).orElse(null);
     }
 
     public void setOwnerUuid(@Nullable UUID uuid) {
@@ -800,12 +770,12 @@ public class DragonEntity extends PathAwareEntity implements InventoryChangedLis
     }
 
     public boolean isInSittingPose() {
-        return ((Byte) this.dataTracker.get(TAMEABLE_FLAGS) & 1) != 0;
+        return (this.dataTracker.get(TAMEABLE_FLAGS) & 1) != 0;
     }
 
     private void setInSittingPose(boolean inSittingPose) {
         this.sitting = inSittingPose;
-        byte b = (Byte) this.dataTracker.get(TAMEABLE_FLAGS);
+        byte b = this.dataTracker.get(TAMEABLE_FLAGS);
         if (inSittingPose) {
             this.dataTracker.set(TAMEABLE_FLAGS, (byte) (b | 1));
         } else {
@@ -930,7 +900,7 @@ public class DragonEntity extends PathAwareEntity implements InventoryChangedLis
     }
 
     public boolean hasChest() {
-        return (Boolean) this.dataTracker.get(HAS_CHEST);
+        return this.dataTracker.get(HAS_CHEST);
     }
 
     public void setHasChest(boolean hasChest) {
@@ -1030,8 +1000,7 @@ public class DragonEntity extends PathAwareEntity implements InventoryChangedLis
         // public void updatePassengerPosition(Entity passenger) {
         // super.updatePassengerPosition(passenger);
         super.updatePassengerPosition(passenger, positionUpdater);
-        if (passenger instanceof MobEntity) {
-            MobEntity mobEntity = (MobEntity) passenger;
+        if (passenger instanceof MobEntity mobEntity) {
             this.bodyYaw = mobEntity.bodyYaw;
             // float slowlyIncreasingFloat = ((float) Math.floorMod(this.getWorld().getTime(), 100L) + animationProgress) / 100.0F;
             // float mediumSpeedSin = MathHelper.cos(12.566370614F * slowlyIncreasingFloat );
@@ -1063,6 +1032,10 @@ public class DragonEntity extends PathAwareEntity implements InventoryChangedLis
         return !this.isInvulnerableTo(source) && super.damage(source, amount);
     }
 
+    public void setFireBreathActive(boolean fireBreathActive) {
+        this.fireBreathActive = fireBreathActive;
+    }
+
     static {
         IS_FLYING = DataTracker.registerData(DragonEntity.class, TrackedDataHandlerRegistry.BOOLEAN);
         IS_START_FLYING = DataTracker.registerData(DragonEntity.class, TrackedDataHandlerRegistry.BOOLEAN);
@@ -1091,7 +1064,7 @@ public class DragonEntity extends PathAwareEntity implements InventoryChangedLis
         if (player.getVehicle() != null && player.getVehicle() instanceof DragonEntity dragonEntity && player.getVehicle().isAlive()) {
             if (dragonEntity.getDataTracker().get(DragonEntity.DRAGON_SIZE) >= 3) {
                 ClientPlayNetworking.send(new DragonFireBreathPacket());
-                ((DragonEntity) player.getVehicle()).fireBreathActive = true;
+                dragonEntity.setFireBreathActive(true);
             }
         }
     }
