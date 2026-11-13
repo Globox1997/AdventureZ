@@ -5,6 +5,7 @@ import java.util.List;
 
 import org.jetbrains.annotations.Nullable;
 import org.spongepowered.asm.mixin.Mixin;
+import org.spongepowered.asm.mixin.Unique;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
@@ -26,6 +27,7 @@ import net.minecraft.world.gen.structure.NetherFortressStructure;
 @Mixin(SpawnHelper.class)
 public class SpawnHelperMixin {
 
+    @Unique
     private static final Pool<SpawnSettings.SpawnEntry> ADDED_SPAWNS;
 
     @Inject(method = "getSpawnEntries", at = @At(value = "FIELD", target = "Lnet/minecraft/world/gen/structure/NetherFortressStructure;MONSTER_SPAWNS:Lnet/minecraft/util/collection/Pool;", ordinal = 0), cancellable = true)
