@@ -81,7 +81,7 @@ public class BlackstoneGolemEntity extends HostileEntity {
 
     private final ServerBossBar bossBar;
 
-    private final boolean isDungeonZLoaded = FabricLoader.getInstance().isModLoaded("dungeonz");
+    private static final boolean isDungeonZLoaded = FabricLoader.getInstance().isModLoaded("dungeonz");
 
     public BlackstoneGolemEntity(EntityType<? extends BlackstoneGolemEntity> entityType, World world) {
         super(entityType, world);
