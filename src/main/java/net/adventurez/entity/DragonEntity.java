@@ -106,6 +106,14 @@ public class DragonEntity extends PathAwareEntity implements InventoryChangedLis
     private int startFlyingTime = 0;
     private int fluidTicker = 0;
 
+    public float wingOpen;
+    public float prevWingOpen;
+    public float flapPhase;
+    public boolean landingWings;
+    public float landing;
+    public float prevLanding;
+    private int yawnTicks;
+
     @SuppressWarnings("deprecation")
     public DragonEntity(EntityType<? extends PathAwareEntity> entityType, World world) {
         super(entityType, world);
@@ -594,7 +602,9 @@ public class DragonEntity extends PathAwareEntity implements InventoryChangedLis
     @Override
     public void tick() {
         super.tick();
-        if (!this.getWorld().isClient()) {
+        if (this.getWorld().isClient()) {
+            this.tickAnimation();
+        } else {
             if (this.getSize() < 3) {
                 if (this.age % 1200 == 0) {
                     this.dragonAge++;
@@ -937,7 +947,7 @@ public class DragonEntity extends PathAwareEntity implements InventoryChangedLis
     }
 
     public int getSize() {
-        return (Integer) this.dataTracker.get(DRAGON_SIZE);
+        return this.dataTracker.get(DRAGON_SIZE);
     }
 
     public void setSize(int size) {
@@ -977,23 +987,6 @@ public class DragonEntity extends PathAwareEntity implements InventoryChangedLis
     public float getSoundPitch() {
         return 1.6F - ((float) 0.2F * this.getSize());
     }
-
-    // @Override
-    // protected float getActiveEyeHeight(EntityPose pose, EntityDimensions dimensions) {
-    // if (this.getSize() == 1) {
-    // return 0.80F * dimensions.height;
-    // }
-    // return 0.85F * dimensions.height;
-    // }
-
-    // @Override
-    // public double getMountedHeightOffset() {
-    // double flySubtraction = 0.92D;
-    // if (this.isFlying) {
-    // flySubtraction = 0.9D;
-    // }
-    // return (double) this.getSize() * 0.794 * flySubtraction;
-    // }
 
     @Override
     protected void updatePassengerPosition(Entity passenger, PositionUpdater positionUpdater) {
@@ -1036,6 +1029,82 @@ public class DragonEntity extends PathAwareEntity implements InventoryChangedLis
         this.fireBreathActive = fireBreathActive;
     }
 
+    public static float flapWaving(float time, float phase) {
+        return MathHelper.cos(time * 0.12566371F - phase - MathHelper.PI);
+    }
+
+    public boolean isYawning() {
+        return this.yawnTicks > 0;
+    }
+
+    public float getYawnPitch(float tickDelta) {
+        float progress = MathHelper.clamp((this.yawnTicks - 1 + tickDelta) / 50, 0.0f, 0.0f);
+        return MathHelper.sin(MathHelper.PI * progress) * 0.3f;
+    }
+
+    private void resetLandingAnimation() {
+        this.landingWings = false;
+        this.landing = 0.0f;
+        this.prevLanding = 0.0f;
+    }
+
+    private void spawnFlames() {
+        float relative = MathHelper.wrapDegrees(this.getHeadYaw() - this.bodyYaw);
+        double yaw = relative * MathHelper.RADIANS_PER_DEGREE * (1f / 6f + 2f / 5f + 2f / 4f) / MathHelper.PI * 1.5D;
+        double pitch = this.getPitch() * (0.00374f + 4f * 0.00174f) * 3D;
+        double angle = this.bodyYaw * MathHelper.RADIANS_PER_DEGREE + MathHelper.PI + yaw;
+        for (int i = 0; i < 3; i++) {
+            this.getWorld().addParticle(ParticleTypes.FLAME, true, this.getX() + Math.sin(angle) * 6D, this.getY() - pitch + 1.95D, this.getZ() - Math.cos(angle) * 6D, 0.0D, 0.0D, 0.0D);
+        }
+    }
+
+    private void tickAnimation() {
+        this.prevWingOpen = this.wingOpen;
+        this.prevLanding = this.landing;
+
+        boolean startFlying = this.getDataTracker().get(CLIENT_START_FLYING);
+        boolean flying = this.getDataTracker().get(IS_FLYING);
+        boolean endFlying = this.getDataTracker().get(CLIENT_END_FLYING);
+
+        if (startFlying) {
+            float step = this.getDataTracker().get(IS_START_FLYING) ? 0.15f : -0.15f;
+            this.wingOpen = MathHelper.clamp(this.wingOpen + step, 0.0f, 1.4981f);
+            this.flapPhase = this.age * 0.12566371f;
+        } else {
+            this.wingOpen = 0.0f;
+            this.prevWingOpen = 0.0f;
+        }
+
+        if (!startFlying && !flying && endFlying) {
+            if (!this.landingWings) {
+                float now = flapWaving(this.age, this.flapPhase);
+                float before = flapWaving(this.age - 1, this.flapPhase);
+                if (Math.abs(now) < 0.04f || Math.signum(now) != Math.signum(before)) {
+                    this.landingWings = true;
+                }
+            } else if (this.landing < 1f) {
+                this.landing = Math.min(1f, this.landing + 1f / 5);
+            } else {
+                this.getDataTracker().set(CLIENT_END_FLYING, false);
+                this.resetLandingAnimation();
+            }
+        } else {
+            this.resetLandingAnimation();
+        }
+
+        boolean sitting = !startFlying && !flying && !endFlying && this.isInSittingPose() && !this.hasPassengers();
+        boolean fireBreathing = this.getDataTracker().get(FIRE_BREATH);
+        if (this.yawnTicks > 0) {
+            if (++this.yawnTicks > 50 || !sitting || fireBreathing) {
+                this.yawnTicks = 0;
+            } else {
+                this.spawnFlames();
+            }
+        } else if (sitting && !fireBreathing && this.getSize() >= 3 && this.getRandom().nextInt(600) == 0) {
+            this.yawnTicks = 1;
+        }
+    }
+
     static {
         IS_FLYING = DataTracker.registerData(DragonEntity.class, TrackedDataHandlerRegistry.BOOLEAN);
         IS_START_FLYING = DataTracker.registerData(DragonEntity.class, TrackedDataHandlerRegistry.BOOLEAN);
@@ -1055,8 +1124,9 @@ public class DragonEntity extends PathAwareEntity implements InventoryChangedLis
 
     @Environment(EnvType.CLIENT)
     public static void flyDragonDown(ClientPlayerEntity player, String keyString) {
-        if (player.getVehicle() != null && player.getVehicle() instanceof DragonEntity)
-            ((DragonEntity) player.getVehicle()).setKeyBind(keyString);
+        if (player.getVehicle() != null && player.getVehicle() instanceof DragonEntity dragonEntity) {
+            dragonEntity.setKeyBind(keyString);
+        }
     }
 
     @Environment(EnvType.CLIENT)

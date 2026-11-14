@@ -1,19 +1,12 @@
 package net.adventurez.entity.model;
 
 import com.google.common.collect.ImmutableList;
-
 import net.adventurez.entity.DragonEntity;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
-import net.minecraft.client.model.ModelData;
-import net.minecraft.client.model.ModelPart;
-import net.minecraft.client.model.ModelPartBuilder;
-import net.minecraft.client.model.ModelPartData;
-import net.minecraft.client.model.ModelTransform;
-import net.minecraft.client.model.TexturedModelData;
+import net.minecraft.client.model.*;
 import net.minecraft.client.render.entity.model.CompositeEntityModel;
 import net.minecraft.entity.Entity;
-import net.minecraft.particle.ParticleTypes;
 import net.minecraft.util.math.MathHelper;
 
 @Environment(EnvType.CLIENT)
@@ -66,13 +59,6 @@ public class DragonModel<T extends DragonEntity> extends CompositeEntityModel<T>
     private final ModelPart otherTail_r4;
     private final ModelPart extraTail;
     private final ModelPart tail7;
-
-    private float betweenFloater;
-    private float startFlyingTicker;
-    private boolean endFlying;
-    private int endFlyingTicker;
-    private boolean randomYawFire;
-    private int randomYawFireTick;
 
     public DragonModel(ModelPart root) {
         this.body = root.getChild("body");
@@ -180,7 +166,7 @@ public class DragonModel<T extends DragonEntity> extends CompositeEntityModel<T>
                 ModelPartBuilder.create().uv(176, 238).cuboid(-7.0F, -6.0F, -10.0F, 14.0F, 12.0F, 10.0F).uv(0, 182).cuboid(-1.0F, -10.0F, -8.0F, 2.0F, 5.0F, 6.0F),
                 ModelTransform.pivot(0.0F, -2.0F, -10.0F));
         ModelPartData modelPartData16 = modelPartData15.addChild("head", ModelPartBuilder.create().uv(112, 184).cuboid(-8.0F, -3.0F, -30.0F, 16.0F, 7.0F, 16.0F).uv(168, 32)
-                .cuboid(-10.0F, -10.0F, -16.0F, 20.0F, 18.0F, 16.0F).uv(39, 130).cuboid(2.0F, -5.0F, -28.0F, 3.0F, 4.0F, 4.0F).uv(0, 123).cuboid(-5.0F, -5.0F, -28.0F, 3.0F, 4.0F, 4.0F),
+                        .cuboid(-10.0F, -10.0F, -16.0F, 20.0F, 18.0F, 16.0F).uv(39, 130).cuboid(2.0F, -5.0F, -28.0F, 3.0F, 4.0F, 4.0F).uv(0, 123).cuboid(-5.0F, -5.0F, -28.0F, 3.0F, 4.0F, 4.0F),
                 ModelTransform.pivot(0.0F, 0.0F, -10.0F));
         ModelPartData modelPartData17 = modelPartData16.addChild("otherEars", ModelPartBuilder.create(), ModelTransform.pivot(0.0F, -9.0F, -7.0F));
         modelPartData17.addChild("otherEars_r1", ModelPartBuilder.create().uv(42, 80).cuboid(-2.0F, -13.0F, -1.0F, 4.0F, 15.0F, 3.0F), ModelTransform.pivot(5.0F, 0.0F, 0.0F));
@@ -225,282 +211,74 @@ public class DragonModel<T extends DragonEntity> extends CompositeEntityModel<T>
 
     @Override
     public void setAngles(T entity, float limbAngle, float limbDistance, float animationProgress, float headYaw, float headPitch) {
+        this.getParts().forEach(part -> part.traverse().forEach(ModelPart::resetTransform));
         // Extras
         this.renderExtras(entity);
-        // General Body
-        this.otherEars.pitch = -1.0036F;
-        this.otherEars_r1.pitch = 0.1745F;
-        this.otherEars_r1.roll = 0.2182F;
-        this.otherEars_r2.pitch = 0.1745F;
-        this.otherEars_r2.roll = -0.2182F;
-        this.otherTail_r1.yaw = 0.7418F;
-        this.otherTail_r2.yaw = -0.7418F;
-        this.otherTail_r3.yaw = 0.6109F;
-        this.otherTail_r4.yaw = -0.7418F;
 
-        this.rearLegRight.pitch = -0.9599F;
-        this.rearLegRightTip.pitch = 1.309F;
-        this.rearLegRightTip_r1.pitch = 0.9599F;
-        this.rearFootRight.pitch = -0.3491F;
-        this.rearLegLeft.pitch = -0.9599F;
-        this.rearLegLefttip.pitch = 1.309F;
-        this.rearLegLefttip_r1.pitch = 0.9599F;
-        this.rearFootLeft.pitch = -0.3491F;
-        this.frontLegRight.pitch = 0.3491F;
-        this.frontLegRight_r1.pitch = 0.2618F;
-        this.frontLegRighttip.pitch = -1.5708F;
-        this.frontLegRighttip_r1.pitch = 0.2618F;
-        this.frontFootRight.pitch = 1.2217F;
-        this.frontLegLeft.pitch = 0.3491F;
-        this.frontLegLeft_r1.pitch = 0.2618F;
-        this.frontLegLefttip.pitch = -1.5708F;
-        this.frontLegLefttip_r1.pitch = 0.2618F;
-        this.frontFootLeft.pitch = 1.2217F;
+        float tickDelta = animationProgress - entity.age;
+        boolean fireBreathing = entity.getDataTracker().get(DragonEntity.FIRE_BREATH);
 
-        // Watching Animation
-        // Head glitches while riding
-        this.head.yaw = headYaw * (0.017453292F / 6.0F); // 0.0049453292F
-        this.head.pitch = headPitch * 0.0037453292F;
-        this.neck.yaw = headYaw * (0.017453292F / 5.0F);
-        this.neck2.yaw = headYaw * (0.017453292F / 5.0F);
-        this.neck3.yaw = headYaw * (0.017453292F / 4.0F);
-        this.neck4.yaw = headYaw * (0.017453292F / 4.0F);
+        this.setRestPose();
+        this.setLookAngles(headYaw, headPitch);
 
-        this.neck.pitch = headPitch * 0.0017453292F;
-        this.neck2.pitch = headPitch * 0.0017453292F;
-        this.neck3.pitch = headPitch * 0.0017453292F;
-        this.neck4.pitch = headPitch * 0.0017453292F;
-
-        // Fire Breath
-        Boolean isFireBreathing = entity.getDataTracker().get(DragonEntity.FIRE_BREATH);
-        if (isFireBreathing) {
-            this.jaw.pitch = 0.4F;
-        }
-
-        float slowlyIncreasingFloat = ((float) Math.floorMod(entity.getWorld().getTime(), 100L) + animationProgress) / 100.0F;
-
-        // Between Animation
         if (entity.getDataTracker().get(DragonEntity.CLIENT_START_FLYING)) {
-            if (entity.getDataTracker().get(DragonEntity.IS_START_FLYING)) {
-                startFlyingTicker = MathHelper.clamp(startFlyingTicker + 0.05164F, 0.0F, 1.4981F);
-            } else {
-                startFlyingTicker = MathHelper.clamp(startFlyingTicker - 0.05164F, 0.0F, 1.4981F);
-            }
-            this.wingRight.roll = 0.6981F - startFlyingTicker;
-            this.wingLeft.roll = -0.6981F + startFlyingTicker;
-            this.wingTipLeft.roll = 2.618F - (startFlyingTicker * 1.32033909618F);
-            this.wingTipRight.roll = -2.618F + (startFlyingTicker * 1.32033909618F);
-            betweenFloater = 12.566370614F * slowlyIncreasingFloat;
+            // Takeoff
+            float wingOpen = MathHelper.lerp(tickDelta, entity.prevWingOpen, entity.wingOpen);
+            this.wingRight.roll = 0.6981f - wingOpen;
+            this.wingLeft.roll = -0.6981f + wingOpen;
+            this.wingTipRight.roll = -2.618f + wingOpen * 1.32f;
+            this.wingTipLeft.roll = 2.618f - wingOpen * 1.32f;
+            this.setTailPose();
             if (entity.isOnGround()) {
-                float walkFloat = 32.0F;
-                this.rearLegRight.pitch = -0.9599F + 0.3F * MathHelper.wrap(limbAngle, walkFloat) * limbDistance * 1.3F;
-                this.rearLegLeft.pitch = -0.9599F - 0.3F * MathHelper.wrap(limbAngle, walkFloat) * limbDistance * 1.3F;
-
-                this.rearFootRight.pitch = -0.3491F - 0.3F * MathHelper.wrap(limbAngle, walkFloat) * limbDistance * 1.3F * 0.9F;
-                this.rearFootLeft.pitch = -0.3491F + 0.3F * MathHelper.wrap(limbAngle, walkFloat) * limbDistance * 1.3F * 0.9F;
-
-                this.frontLegRight.pitch = 0.3491F - 0.3F * MathHelper.wrap(limbAngle, walkFloat) * limbDistance * 1.3F;
-                this.frontLegLeft.pitch = 0.3491F + 0.3F * MathHelper.wrap(limbAngle, walkFloat) * limbDistance * 1.3F;
-
-                this.frontLegRighttip.pitch = -1.5708F + 0.3F * MathHelper.wrap(limbAngle, walkFloat) * limbDistance * 1.3F * 0.8F;
-                this.frontLegLefttip.pitch = -1.5708F - 0.3F * MathHelper.wrap(limbAngle, walkFloat) * limbDistance * 1.3F * 0.8F;
-
-                this.frontFootRight.pitch = 1.2217F + 0.3F * MathHelper.wrap(limbAngle, walkFloat) * limbDistance * 1.3F * 0.2F;
-                this.frontFootLeft.pitch = 1.2217F - 0.3F * MathHelper.wrap(limbAngle, walkFloat) * limbDistance * 1.3F * 0.2F;
+                this.animateWalking(limbAngle, limbDistance);
             }
-        } else
-
-        // While Flying Animation
-        if (entity.getDataTracker().get(DragonEntity.IS_FLYING)) {
-            startFlyingTicker = 0.0F;
-            // mediumSpeedSin goes from -1 to 1
-            float mediumSpeedSin = MathHelper.cos(12.566370614F * slowlyIncreasingFloat - (betweenFloater + 3.1415926535897F));
-            // Wings
-            this.wingRight.roll = mediumSpeedSin * 0.8F; // double pi inside cos does it make faster
-            this.wingTipRight.roll = this.wingRight.roll * 0.8F;
-            this.wingLeft.roll = -this.wingRight.roll;
-            this.wingTipLeft.roll = -this.wingTipRight.roll;
-
-            // Body Floating
-            float bodyFloating = -mediumSpeedSin - 4.0F;
-            this.body.pivotY = bodyFloating;
-            this.wingLeft.pivotY = bodyFloating - 10.0F;
-            this.wingRight.pivotY = bodyFloating - 10.0F; // Dont know why it has to be -10F
-            this.rearLegLeft.pivotY = bodyFloating;
-            this.rearLegRight.pivotY = bodyFloating;
-            this.frontLegLeft.pivotY = bodyFloating;
-            this.frontLegRight.pivotY = bodyFloating;
-            this.neck.pivotY = bodyFloating;
-            this.tail.pivotY = bodyFloating;
-            // head floating
-            float headFloat = MathHelper.cos(bodyFloating / 2.0F);
-            this.neck2.pivotY = -headFloat;
-            this.neck3.pivotY = -headFloat;
-            this.neck4.pivotY = -headFloat * 0.9F;
-            this.head.pivotY = -headFloat * 0.8F;
-            // yaw
-            if (!isFireBreathing) {
-                this.jaw.pitch = -headFloat * 0.3F;
-            }
-            // tail
-            this.tail2.pivotY = MathHelper.cos(6.2831855F * slowlyIncreasingFloat - (6.2831855F / 3F));
-            this.tail3.pivotY = MathHelper.cos(6.2831855F * slowlyIncreasingFloat - (6.2831855F / 3F));
-            this.tail4.pivotY = MathHelper.cos(6.2831855F * slowlyIncreasingFloat - (6.2831855F / 4F));
-            this.tail5.pivotY = MathHelper.cos(6.2831855F * slowlyIncreasingFloat - (6.2831855F / 4F));
-            this.tail5.pivotY = MathHelper.cos(6.2831855F * slowlyIncreasingFloat - (6.2831855F / 5F));
-            this.tail6.pivotY = MathHelper.cos(6.2831855F * slowlyIncreasingFloat - (6.2831855F / 5F));
-            this.tail7.pivotY = MathHelper.cos(6.2831855F * slowlyIncreasingFloat - (6.2831855F / 6F)) * 0.5F;
+        } else if (entity.getDataTracker().get(DragonEntity.IS_FLYING)) {
+            // Flying
+            float flap = DragonEntity.flapWaving(animationProgress, entity.flapPhase);
+            this.setFlapPose(flap);
+            this.setTailPose();
+            this.setFlightFloat(flap, animationProgress / 100f);
             if (entity.isOnGround()) {
-                float walkFloat = 32.0F;
-                this.rearLegRight.pitch = -0.9599F + 0.3F * MathHelper.wrap(limbAngle, walkFloat) * limbDistance * 1.3F;
-                this.rearLegLeft.pitch = -0.9599F - 0.3F * MathHelper.wrap(limbAngle, walkFloat) * limbDistance * 1.3F;
-
-                this.rearFootRight.pitch = -0.3491F - 0.3F * MathHelper.wrap(limbAngle, walkFloat) * limbDistance * 1.3F * 0.9F;
-                this.rearFootLeft.pitch = -0.3491F + 0.3F * MathHelper.wrap(limbAngle, walkFloat) * limbDistance * 1.3F * 0.9F;
-
-                this.frontLegRight.pitch = 0.3491F - 0.3F * MathHelper.wrap(limbAngle, walkFloat) * limbDistance * 1.3F;
-                this.frontLegLeft.pitch = 0.3491F + 0.3F * MathHelper.wrap(limbAngle, walkFloat) * limbDistance * 1.3F;
-
-                this.frontLegRighttip.pitch = -1.5708F + 0.3F * MathHelper.wrap(limbAngle, walkFloat) * limbDistance * 1.3F * 0.8F;
-                this.frontLegLefttip.pitch = -1.5708F - 0.3F * MathHelper.wrap(limbAngle, walkFloat) * limbDistance * 1.3F * 0.8F;
-
-                this.frontFootRight.pitch = 1.2217F + 0.3F * MathHelper.wrap(limbAngle, walkFloat) * limbDistance * 1.3F * 0.2F;
-                this.frontFootLeft.pitch = 1.2217F - 0.3F * MathHelper.wrap(limbAngle, walkFloat) * limbDistance * 1.3F * 0.2F;
+                this.animateWalking(limbAngle, limbDistance);
             } else {
-                // Legs rear
-                this.rearLegRight.pitch = 0.5672F;
-                this.rearLegRightTip.pitch = -0.2182F;
-                this.rearLegRightTip_r1.pitch = 0.9599F;
-                this.rearFootRight.pitch = 1.4835F;
-
-                this.rearLegLeft.pitch = 0.5672F;
-                this.rearLegLefttip.pitch = -0.2182F;
-                this.rearLegLefttip_r1.pitch = 0.9599F;
-                this.rearFootLeft.pitch = 1.4835F;
-
-                // Legs front
-                this.frontLegRight.pitch = 0.7418F;
-                this.frontLegRight_r1.pitch = 0.2618F;
-                this.frontLegRighttip.pitch = -1.0472F;
-                this.frontLegRighttip_r1.pitch = 0.2618F;
-                this.frontFootRight.pitch = 1.4835F;
-
-                this.frontLegLeft.pitch = 0.7418F;
-                this.frontLegLeft_r1.pitch = 0.2618F;
-                this.frontLegLefttip.pitch = -1.0472F;
-                this.frontLegLefttip_r1.pitch = 0.2618F;
-                this.frontFootLeft.pitch = 1.4835F;
+                this.setFlyingLegPose();
             }
-        } else
-
-        // End of Flying Animation
-        if (entity.getDataTracker().get(DragonEntity.CLIENT_END_FLYING)) {
-            float mediumSpeedSin = MathHelper.cos(12.566370614F * slowlyIncreasingFloat - (betweenFloater + 3.1415926535897F)); // 1to-1
-            if (mediumSpeedSin < 0.04F && mediumSpeedSin > -0.04F) {
-                endFlying = true;
-            }
-            if (endFlying == false) {
-                this.wingRight.roll = mediumSpeedSin * 0.8F;
-                this.wingTipRight.roll = this.wingRight.roll * 0.8F;
-                this.wingLeft.roll = -this.wingRight.roll;
-                this.wingTipLeft.roll = -this.wingTipRight.roll;
+        } else if (entity.getDataTracker().get(DragonEntity.CLIENT_END_FLYING)) {
+            // Landing
+            if (entity.landingWings) {
+                float fold = MathHelper.lerp(tickDelta, entity.prevLanding, entity.landing) * 0.6981f;
+                this.wingRight.roll = fold;
+                this.wingLeft.roll = -fold;
+                this.wingTipRight.roll = -fold * 3.75f;
+                this.wingTipLeft.roll = fold * 3.75f;
             } else {
-                endFlyingTicker++;
-                // Wings
-                if (endFlyingTicker <= 10) {
-                    startFlyingTicker = MathHelper.clamp(startFlyingTicker + 0.06205F, 0.0F, 0.6981F);
-                    // a*b=c
-                    this.wingRight.roll = startFlyingTicker;
-                    this.wingLeft.roll = -startFlyingTicker;
-                    this.wingTipLeft.roll = (startFlyingTicker * 3.75017905F);
-                    this.wingTipRight.roll = -(startFlyingTicker * 3.75017905F);
-
-                } else {
-                    entity.getDataTracker().set(DragonEntity.CLIENT_END_FLYING, false);
-                    endFlyingTicker = 0;
-                    startFlyingTicker = 0;
-                    endFlying = false;
-                }
-
+                this.setFlapPose(DragonEntity.flapWaving(animationProgress, entity.flapPhase));
             }
-
+            this.setTailPose();
             if (entity.isOnGround()) {
-                float walkFloat = 32.0F;
-                this.rearLegRight.pitch = -0.9599F + 0.3F * MathHelper.wrap(limbAngle, walkFloat) * limbDistance * 1.3F;
-                this.rearLegLeft.pitch = -0.9599F - 0.3F * MathHelper.wrap(limbAngle, walkFloat) * limbDistance * 1.3F;
-
-                this.rearFootRight.pitch = -0.3491F - 0.3F * MathHelper.wrap(limbAngle, walkFloat) * limbDistance * 1.3F * 0.9F;
-                this.rearFootLeft.pitch = -0.3491F + 0.3F * MathHelper.wrap(limbAngle, walkFloat) * limbDistance * 1.3F * 0.9F;
-
-                this.frontLegRight.pitch = 0.3491F - 0.3F * MathHelper.wrap(limbAngle, walkFloat) * limbDistance * 1.3F;
-                this.frontLegLeft.pitch = 0.3491F + 0.3F * MathHelper.wrap(limbAngle, walkFloat) * limbDistance * 1.3F;
-
-                this.frontLegRighttip.pitch = -1.5708F + 0.3F * MathHelper.wrap(limbAngle, walkFloat) * limbDistance * 1.3F * 0.8F;
-                this.frontLegLefttip.pitch = -1.5708F - 0.3F * MathHelper.wrap(limbAngle, walkFloat) * limbDistance * 1.3F * 0.8F;
-
-                this.frontFootRight.pitch = 1.2217F + 0.3F * MathHelper.wrap(limbAngle, walkFloat) * limbDistance * 1.3F * 0.2F;
-                this.frontFootLeft.pitch = 1.2217F - 0.3F * MathHelper.wrap(limbAngle, walkFloat) * limbDistance * 1.3F * 0.2F;
+                this.animateWalking(limbAngle, limbDistance);
             }
+        } else if (!entity.isInSittingPose() || entity.hasPassengers()) {
+            // Walking
+            this.animateWalking(limbAngle, limbDistance);
+            this.setTailPose();
 
-        } else
+            float sway = 0.0436f * limbDistance;
+            this.tail.yaw = sway * MathHelper.wrap(limbAngle, 60.0F);
+            this.tail2.yaw = sway * MathHelper.wrap(limbAngle, 60.0F);
+            this.tail3.yaw = sway * MathHelper.wrap(limbAngle, 60.0F);
+            this.tail4.yaw = sway * MathHelper.wrap(limbAngle, 60.0F);
+            this.tail5.yaw = sway * MathHelper.wrap(limbAngle, 70.0F);
+            this.tail6.yaw = sway * MathHelper.wrap(limbAngle, 70.0F);
+            this.tail7.yaw = sway * MathHelper.wrap(limbAngle, 80.0F);
 
-        // Walk Animation
-        if (!entity.isInSittingPose() || entity.hasPassengers()) {
-            float walkFloat = 32.0F;
-            this.rearLegRight.pitch = -0.9599F + 0.3F * MathHelper.wrap(limbAngle, walkFloat) * limbDistance * 1.3F;
-            this.rearLegLeft.pitch = -0.9599F - 0.3F * MathHelper.wrap(limbAngle, walkFloat) * limbDistance * 1.3F;
-
-            this.rearFootRight.pitch = -0.3491F - 0.3F * MathHelper.wrap(limbAngle, walkFloat) * limbDistance * 1.3F * 0.9F;
-            this.rearFootLeft.pitch = -0.3491F + 0.3F * MathHelper.wrap(limbAngle, walkFloat) * limbDistance * 1.3F * 0.9F;
-
-            this.frontLegRight.pitch = 0.3491F - 0.3F * MathHelper.wrap(limbAngle, walkFloat) * limbDistance * 1.3F;
-            this.frontLegLeft.pitch = 0.3491F + 0.3F * MathHelper.wrap(limbAngle, walkFloat) * limbDistance * 1.3F;
-
-            this.frontLegRighttip.pitch = -1.5708F + 0.3F * MathHelper.wrap(limbAngle, walkFloat) * limbDistance * 1.3F * 0.8F;
-            this.frontLegLefttip.pitch = -1.5708F - 0.3F * MathHelper.wrap(limbAngle, walkFloat) * limbDistance * 1.3F * 0.8F;
-
-            this.frontFootRight.pitch = 1.2217F + 0.3F * MathHelper.wrap(limbAngle, walkFloat) * limbDistance * 1.3F * 0.2F;
-            this.frontFootLeft.pitch = 1.2217F - 0.3F * MathHelper.wrap(limbAngle, walkFloat) * limbDistance * 1.3F * 0.2F;
-
-            // tail
-            this.tail.pitch = -0.1309F;
-            this.tail2.pitch = -0.1309F;
-            this.tail3.pitch = -0.1309F;
-            this.tail4.pitch = -0.1745F;
-            this.tail5.pitch = 0.1309F;
-            this.tail6.pitch = 0.1745F;
-            this.tail7.pitch = 0.2618F;
-
-            this.tail.yaw = 0.0436F * MathHelper.wrap(limbAngle, 60.0F) * limbDistance;
-            this.tail2.yaw = 0.0436F * MathHelper.wrap(limbAngle, 60.0F) * limbDistance;
-            this.tail3.yaw = 0.0436F * MathHelper.wrap(limbAngle, 60.0F) * limbDistance;
-            this.tail4.yaw = 0.0436F * MathHelper.wrap(limbAngle, 60.0F) * limbDistance;
-            this.tail5.yaw = 0.0436F * MathHelper.wrap(limbAngle, 70.0F) * limbDistance;
-            this.tail6.yaw = 0.0436F * MathHelper.wrap(limbAngle, 70.0F) * limbDistance;
-            this.tail7.yaw = 0.0436F * MathHelper.wrap(limbAngle, 80.0F) * limbDistance;
-
-            this.tail2.pivotY = 0.0F;
-            this.tail3.pivotY = 0.0F;
-            this.tail4.pivotY = 0.0F;
-            this.tail5.pivotY = 0.0F;
-            this.tail5.pivotY = 0.0F;
-            this.tail6.pivotY = 0.0F;
-            this.tail7.pivotY = 0.0F;
-
-            // wings
-            this.wingLeft.roll = -0.6981F + 0.0236F * MathHelper.wrap(limbAngle, 40.0F) * limbDistance;
-            this.wingTipLeft.roll = 2.618F;
-            this.wingRight.roll = 0.6981F - 0.0236F * MathHelper.wrap(limbAngle, 40.0F) * limbDistance;
-            this.wingTipRight.roll = -2.618F;
-
-            // Jaw
-            if (!isFireBreathing) {
-                this.jaw.pitch = 0.0F;
-            }
-        } else// if (entity.isInSittingPose())
-
-        // Sitting Position Animation
-        {
+            float wingSway = 0.0236f * MathHelper.wrap(limbAngle, 40f) * limbDistance;
+            this.wingLeft.roll = -0.6981f + wingSway;
+            this.wingTipLeft.roll = 2.618f;
+            this.wingRight.roll = 0.6981f - wingSway;
+            this.wingTipRight.roll = -2.618f;
+        } else {
+            // Sitting
             this.tail.pitch = -0.1309F;
             this.tail2.pitch = -0.1309F;
             this.tail3.pitch = -0.1309F;
@@ -524,42 +302,152 @@ public class DragonModel<T extends DragonEntity> extends CompositeEntityModel<T>
             this.wingRight.roll = 0.6981F;
             this.wingTipRight.roll = -2.618F;
 
-            // Random Yaw Fire
-            Float yawPitch = Math.abs(MathHelper.cos(6.2831853071F * slowlyIncreasingFloat) * 0.3F);
-            if (entity.getSize() == 3 && !this.randomYawFire && yawPitch <= 0.01F && entity.getWorld().getRandom().nextInt(16) == 0 && !isFireBreathing) {
-                this.randomYawFire = true;
+            if (entity.isYawning()) {
+                this.jaw.pitch = entity.getYawnPitch(tickDelta);
             }
-            if (this.randomYawFire) {
-                this.randomYawFireTick++;
-                Float yawler = this.head.yaw + this.neck.yaw + this.neck2.yaw + this.neck3.yaw + this.neck4.yaw;
-                Float pitcher = this.head.pitch + this.neck.pitch + this.neck2.pitch + this.neck3.pitch + this.neck4.pitch;
-                yawler = (yawler / (float) (Math.PI)) * 1.5F;
-                pitcher = pitcher * 3F;
-                entity.getWorld().addParticle(ParticleTypes.FLAME, true, entity.getX() + Math.sin((entity.bodyYaw / 360F) * 2F * Math.PI + (Math.PI) + yawler) * 6D, entity.getY() - pitcher + 1.95D,
-                        entity.getZ() - Math.cos((entity.bodyYaw / 360F) * 2F * Math.PI + (Math.PI) + yawler) * 6D, 0.0D, 0.0D, 0.0D);
-
-                this.jaw.pitch = yawPitch;
-                if ((this.randomYawFireTick > 10 && yawPitch <= 0.01F) || isFireBreathing) {
-                    this.randomYawFireTick = 0;
-                    this.randomYawFire = false;
-                }
-            }
-
         }
 
+        if (fireBreathing) {
+            this.jaw.pitch = 0.4f;
+        }
+    }
+
+    private void setRestPose() {
+        this.otherEars.pitch = -1.0036f;
+        this.otherEars_r1.pitch = 0.1745f;
+        this.otherEars_r1.roll = 0.2182f;
+        this.otherEars_r2.pitch = 0.1745f;
+        this.otherEars_r2.roll = -0.2182f;
+        this.otherTail_r1.yaw = 0.7418f;
+        this.otherTail_r2.yaw = -0.7418f;
+        this.otherTail_r3.yaw = 0.6109f;
+        this.otherTail_r4.yaw = -0.7418f;
+
+        this.rearLegRight.pitch = -0.9599f;
+        this.rearLegRightTip.pitch = 1.309f;
+        this.rearLegRightTip_r1.pitch = 0.9599f;
+        this.rearFootRight.pitch = -0.3491f;
+        this.rearLegLeft.pitch = -0.9599f;
+        this.rearLegLefttip.pitch = 1.309f;
+        this.rearLegLefttip_r1.pitch = 0.9599f;
+        this.rearFootLeft.pitch = -0.3491f;
+        this.frontLegRight.pitch = 0.3491f;
+        this.frontLegRight_r1.pitch = 0.2618f;
+        this.frontLegRighttip.pitch = -1.5708f;
+        this.frontLegRighttip_r1.pitch = 0.2618f;
+        this.frontFootRight.pitch = 1.2217f;
+        this.frontLegLeft.pitch = 0.3491f;
+        this.frontLegLeft_r1.pitch = 0.2618f;
+        this.frontLegLefttip.pitch = -1.5708f;
+        this.frontLegLefttip_r1.pitch = 0.2618f;
+        this.frontFootLeft.pitch = 1.2217f;
+    }
+
+    private void setLookAngles(float headYaw, float headPitch) {
+        this.head.yaw = headYaw * (0.017453292F / 6.0F); // 0.0049453292F
+        this.head.pitch = headPitch * 0.0037453292F;
+        this.neck.yaw = headYaw * (0.017453292F / 5.0F);
+        this.neck2.yaw = headYaw * (0.017453292F / 5.0F);
+        this.neck3.yaw = headYaw * (0.017453292F / 4.0F);
+        this.neck4.yaw = headYaw * (0.017453292F / 4.0F);
+
+        this.neck.pitch = headPitch * 0.0017453292F;
+        this.neck2.pitch = headPitch * 0.0017453292F;
+        this.neck3.pitch = headPitch * 0.0017453292F;
+        this.neck4.pitch = headPitch * 0.0017453292F;
+    }
+
+    private void setTailPose() {
+        this.tail.pitch = -0.1309F;
+        this.tail2.pitch = -0.1309F;
+        this.tail3.pitch = -0.1309F;
+        this.tail4.pitch = -0.1745F;
+        this.tail5.pitch = 0.1309F;
+        this.tail6.pitch = 0.1745F;
+        this.tail7.pitch = 0.2618F;
+    }
+
+    private void animateWalking(float limbAngle, float limbDistance) {
+        float swing = 0.3f * MathHelper.wrap(limbAngle, 32f) * limbDistance * 1.3f;
+        this.rearLegRight.pitch = -0.9599f + swing;
+        this.rearLegLeft.pitch = -0.9599f - swing;
+
+        this.rearFootRight.pitch = -0.3491f - swing * 0.9f;
+        this.rearFootLeft.pitch = -0.3491f + swing * 0.9f;
+
+        this.frontLegRight.pitch = 0.3491f - swing;
+        this.frontLegLeft.pitch = 0.3491f + swing;
+
+        this.frontLegRighttip.pitch = -1.5708f + swing * 0.8f;
+        this.frontLegLefttip.pitch = -1.5708f - swing * 0.8f;
+
+        this.frontFootRight.pitch = 1.2217f + swing * 0.2f;
+        this.frontFootLeft.pitch = 1.2217f - swing * 0.2f;
+    }
+
+    private void setFlapPose(float flap) {
+        this.wingRight.roll = flap * 0.8f;
+        this.wingTipRight.roll = this.wingRight.roll * 0.8f;
+        this.wingLeft.roll = -this.wingRight.roll;
+        this.wingTipLeft.roll = -this.wingTipRight.roll;
+    }
+
+    private void setFlightFloat(float flap, float cycle) {
+        float bodyFloating = -flap - 4f;
+        this.body.pivotY = bodyFloating;
+
+        this.wingLeft.pivotY = bodyFloating - 10f;
+        this.wingRight.pivotY = bodyFloating - 10f;
+        this.rearLegLeft.pivotY = bodyFloating;
+        this.rearLegRight.pivotY = bodyFloating;
+        this.frontLegLeft.pivotY = bodyFloating;
+        this.frontLegRight.pivotY = bodyFloating;
+        this.neck.pivotY = bodyFloating;
+        this.tail.pivotY = bodyFloating;
+
+        float headFloat = MathHelper.cos(bodyFloating / 2f);
+        this.neck2.pivotY = -headFloat;
+        this.neck3.pivotY = -headFloat;
+        this.neck4.pivotY = -headFloat * 0.9f;
+        this.head.pivotY = -headFloat * 0.8f;
+        this.jaw.pitch = -headFloat * 0.3f;
+
+        float wave = 6.2831f * cycle;
+        this.tail2.pivotY = MathHelper.cos(wave - 6.2831f / 3f);
+        this.tail3.pivotY = MathHelper.cos(wave - 6.2831f / 3f);
+        this.tail4.pivotY = MathHelper.cos(wave - 6.2831f / 4f);
+        this.tail5.pivotY = MathHelper.cos(wave - 6.2831f / 5f);
+        this.tail6.pivotY = MathHelper.cos(wave - 6.2831f / 5f);
+        this.tail7.pivotY = MathHelper.cos(wave - 6.2831f / 6f) * 0.5f;
+    }
+
+    private void setFlyingLegPose() {
+        this.rearLegRight.pitch = 0.5672f;
+        this.rearLegRightTip.pitch = -0.2182f;
+        this.rearLegRightTip_r1.pitch = 0.9599f;
+        this.rearFootRight.pitch = 1.4835f;
+
+        this.rearLegLeft.pitch = 0.5672f;
+        this.rearLegLefttip.pitch = -0.2182f;
+        this.rearLegLefttip_r1.pitch = 0.9599f;
+        this.rearFootLeft.pitch = 1.4835f;
+
+        this.frontLegRight.pitch = 0.7418f;
+        this.frontLegRight_r1.pitch = 0.2618f;
+        this.frontLegRighttip.pitch = -1.0472f;
+        this.frontLegRighttip_r1.pitch = 0.2618f;
+        this.frontFootRight.pitch = 1.4835f;
+
+        this.frontLegLeft.pitch = 0.7418f;
+        this.frontLegLeft_r1.pitch = 0.2618f;
+        this.frontLegLefttip.pitch = -1.0472f;
+        this.frontLegLefttip_r1.pitch = 0.2618f;
+        this.frontFootLeft.pitch = 1.4835f;
     }
 
     private void renderExtras(Entity entity) {
-        if (entity.getDataTracker().get(DragonEntity.HAS_SADDLE)) {
-            this.spike.visible = false;
-        } else {
-            this.spike.visible = true;
-        }
-        if (entity.getDataTracker().get(DragonEntity.HAS_CHEST)) {
-            this.chest.visible = true;
-        } else {
-            this.chest.visible = false;
-        }
+        this.spike.visible = !entity.getDataTracker().get(DragonEntity.HAS_SADDLE);
+        this.chest.visible = entity.getDataTracker().get(DragonEntity.HAS_CHEST);
         if (entity.getDataTracker().get(DragonEntity.OTHER_EARS)) {
             this.otherEars.visible = true;
             this.ears.visible = false;
