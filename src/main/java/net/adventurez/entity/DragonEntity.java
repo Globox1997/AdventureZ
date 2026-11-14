@@ -1038,7 +1038,7 @@ public class DragonEntity extends PathAwareEntity implements InventoryChangedLis
     }
 
     public float getYawnPitch(float tickDelta) {
-        float progress = MathHelper.clamp((this.yawnTicks - 1 + tickDelta) / 50, 0.0f, 0.0f);
+        float progress = MathHelper.clamp((this.yawnTicks - 1 + tickDelta) / 50, 0.0f, 1.0f);
         return MathHelper.sin(MathHelper.PI * progress) * 0.3f;
     }
 
