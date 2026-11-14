@@ -122,12 +122,12 @@ public class PiglinFlag extends Block implements BlockEntityProvider {
 
     static {
         FACING = HorizontalFacingBlock.FACING;
-        BASE = createCuboidShape(6D, 0D, 6D, 10D, 11D, 10D);
-        POLE = VoxelShapes.union(BASE, createCuboidShape(7D, 11D, 7D, 9D, 40D, 9D));
-        BAR_1 = Block.createCuboidShape(6D, 40D, -8D, 10D, 44D, 10D);
-        BAR_2 = Block.createCuboidShape(6D, 40D, 6D, 24D, 44D, 10D);
-        BAR_3 = Block.createCuboidShape(6D, 40D, 6D, 10D, 44D, 24D);
-        BAR_4 = Block.createCuboidShape(-8D, 40D, 6D, 10D, 44D, 10D);
+        BASE = createCuboidShape(6, 0, 6, 10, 10, 10);
+        POLE = VoxelShapes.union(BASE, createCuboidShape(7, 10, 7, 9, 27, 9));
+        BAR_1 = Block.createCuboidShape(6, 27, -10, 10, 32, 10);
+        BAR_2 = Block.createCuboidShape(6, 27, 6, 26, 32, 10);
+        BAR_3 = Block.createCuboidShape(6, 27, 6, 10, 32, 26);
+        BAR_4 = Block.createCuboidShape(-10, 27, 6, 10, 32, 10);
         NORTH_FLAG = VoxelShapes.union(POLE, BAR_1);
         EAST_FLAG = VoxelShapes.union(POLE, BAR_2);
         SOUTH_FLAG = VoxelShapes.union(POLE, BAR_3);
