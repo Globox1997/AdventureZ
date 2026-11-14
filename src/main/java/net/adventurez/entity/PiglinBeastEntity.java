@@ -23,6 +23,7 @@ import net.minecraft.nbt.NbtCompound;
 import net.minecraft.predicate.entity.EntityPredicates;
 import net.minecraft.sound.SoundCategory;
 import net.minecraft.sound.SoundEvent;
+import net.minecraft.util.Hand;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.Difficulty;
@@ -34,9 +35,7 @@ import java.util.List;
 import java.util.Optional;
 
 public class PiglinBeastEntity extends HostileEntity {
-    public static final TrackedData<Float> ATTACK_TICK_VISUAL = DataTracker.registerData(PiglinBeastEntity.class, TrackedDataHandlerRegistry.FLOAT);
     public static final TrackedData<Float> LEAD_ARM = DataTracker.registerData(PiglinBeastEntity.class, TrackedDataHandlerRegistry.FLOAT);
-    private float attackTick;
     public float armTick;
     private int makePiglinsAngry = 0;
     private static final Identifier LEAD_ARM_IDENTIFIER = AdventureMain.identifierOf("lead_arm_movement");
@@ -72,10 +71,6 @@ public class PiglinBeastEntity extends HostileEntity {
 
     @Override
     public void mobTick() {
-        if (attackTick > 0F) {
-            attackTick = attackTick - 0.08F;
-            dataTracker.set(ATTACK_TICK_VISUAL, attackTick);
-        }
         if (this.getTarget() instanceof PlayerEntity) {
             makePiglinsAngry++;
             if (makePiglinsAngry == 600) {
@@ -102,21 +97,18 @@ public class PiglinBeastEntity extends HostileEntity {
     @Override
     public void writeCustomDataToNbt(NbtCompound tag) {
         super.writeCustomDataToNbt(tag);
-        tag.putFloat("AttackTick", this.attackTick);
         tag.putFloat("LeadArm", 0F);
     }
 
     @Override
     public void readCustomDataFromNbt(NbtCompound tag) {
         super.readCustomDataFromNbt(tag);
-        this.attackTick = tag.getFloat("AttackTick");
         this.armTick = tag.getFloat("LeadArm");
     }
 
     @Override
     protected void initDataTracker(Builder builder) {
         super.initDataTracker(builder);
-        builder.add(ATTACK_TICK_VISUAL, 0F);
         builder.add(LEAD_ARM, 0F);
     }
 
@@ -170,11 +162,12 @@ public class PiglinBeastEntity extends HostileEntity {
 
         @Override
         protected void attack(LivingEntity target) {
-            if (canAttack(target) && attackTick <= 0F) {
-                this.mob.getWorld().playSoundFromEntity(null, PiglinBeastEntity.this, SoundInit.PIGLIN_BEAST_CLUBSWING_EVENT, SoundCategory.HOSTILE, 1.0F, 1.0F);
+            if (this.canAttack(target)) {
                 this.resetCooldown();
+                this.mob.getWorld().playSoundFromEntity(null, PiglinBeastEntity.this, SoundInit.PIGLIN_BEAST_CLUBSWING_EVENT, SoundCategory.HOSTILE, 1.0F, 1.0F);
+
+                this.mob.swingHand(Hand.MAIN_HAND);
                 this.mob.tryAttack(target);
-                attackTick = 1F;
             }
         }
     }
