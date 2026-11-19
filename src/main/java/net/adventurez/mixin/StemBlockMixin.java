@@ -5,23 +5,23 @@ import com.llamalad7.mixinextras.injector.wrapoperation.WrapOperation;
 import net.adventurez.entity.DubiousPumpkinEntity;
 import net.adventurez.init.ConfigInit;
 import net.adventurez.init.EntityInit;
-import net.minecraft.block.BlockState;
-import net.minecraft.block.Blocks;
-import net.minecraft.block.StemBlock;
-import net.minecraft.server.world.ServerWorld;
-import net.minecraft.util.math.BlockPos;
+import net.minecraft.core.BlockPos;
+import net.minecraft.server.level.ServerLevel;
+import net.minecraft.world.level.block.Blocks;
+import net.minecraft.world.level.block.StemBlock;
+import net.minecraft.world.level.block.state.BlockState;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
 
 @Mixin(StemBlock.class)
 public class StemBlockMixin {
 
-    @WrapOperation(method = "randomTick", at = @At(value = "INVOKE", target = "Lnet/minecraft/server/world/ServerWorld;setBlockState(Lnet/minecraft/util/math/BlockPos;Lnet/minecraft/block/BlockState;)Z", ordinal = 0))
-    private boolean randomTickMixin(ServerWorld instance, BlockPos blockPos, BlockState blockState, Operation<Boolean> original) {
-        if (blockState.isOf(Blocks.PUMPKIN) && instance.getRandom().nextFloat() < ((float) ConfigInit.CONFIG.dubious_pumpkin_spawn_chance / 100f)) {
+    @WrapOperation(method = "randomTick", at = @At(value = "INVOKE", target = "Lnet/minecraft/server/level/ServerLevel;setBlockAndUpdate(Lnet/minecraft/core/BlockPos;Lnet/minecraft/world/level/block/state/BlockState;)Z", ordinal = 0))
+    private boolean randomTickMixin(ServerLevel instance, BlockPos blockPos, BlockState blockState, Operation<Boolean> original) {
+        if (blockState.is(Blocks.PUMPKIN) && instance.getRandom().nextFloat() < ((float) ConfigInit.CONFIG.dubious_pumpkin_spawn_chance / 100f)) {
             DubiousPumpkinEntity dubiousPumpkinEntity = EntityInit.DUBIOUS_PUMPKIN.create(instance);
-            dubiousPumpkinEntity.refreshPositionAndAngles(blockPos, instance.getRandom().nextFloat() * 360F, 0.0F);
-            instance.spawnEntity(dubiousPumpkinEntity);
+            dubiousPumpkinEntity.moveTo(blockPos, instance.getRandom().nextFloat() * 360F, 0.0F);
+            instance.addFreshEntity(dubiousPumpkinEntity);
             return false;
         } else {
             return original.call(instance, blockPos, blockState);

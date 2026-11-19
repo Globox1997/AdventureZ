@@ -7,21 +7,21 @@ import net.adventurez.entity.render.feature.EnderwarthogEyesFeatureRenderer;
 import net.adventurez.init.RenderInit;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
-import net.minecraft.client.render.entity.EntityRendererFactory;
-import net.minecraft.client.render.entity.MobEntityRenderer;
-import net.minecraft.util.Identifier;
+import net.minecraft.client.renderer.entity.EntityRendererProvider;
+import net.minecraft.client.renderer.entity.MobRenderer;
+import net.minecraft.resources.ResourceLocation;
 
 @Environment(EnvType.CLIENT)
-public class EnderwarthogRenderer extends MobEntityRenderer<EnderwarthogEntity, EnderwarthogModel<EnderwarthogEntity>> {
-    private static final Identifier TEXTURE = AdventureMain.identifierOf("textures/entity/enderwarthog.png");
+public class EnderwarthogRenderer extends MobRenderer<EnderwarthogEntity, EnderwarthogModel<EnderwarthogEntity>> {
+    private static final ResourceLocation TEXTURE = AdventureMain.identifierOf("textures/entity/enderwarthog.png");
 
-    public EnderwarthogRenderer(EntityRendererFactory.Context context) {
-        super(context, new EnderwarthogModel<>(context.getPart(RenderInit.ENDERWARTHOG_LAYER)), 1.5F);
-        this.addFeature(new EnderwarthogEyesFeatureRenderer(this));
+    public EnderwarthogRenderer(EntityRendererProvider.Context context) {
+        super(context, new EnderwarthogModel<>(context.bakeLayer(RenderInit.ENDERWARTHOG_LAYER)), 1.5F);
+        this.addLayer(new EnderwarthogEyesFeatureRenderer(this));
     }
 
     @Override
-    public Identifier getTexture(EnderwarthogEntity enderwarthogEntity) {
+    public ResourceLocation getTextureLocation(EnderwarthogEntity enderwarthogEntity) {
         return TEXTURE;
     }
 }

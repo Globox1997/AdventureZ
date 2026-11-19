@@ -1,48 +1,48 @@
 package net.adventurez.effect;
 
-import net.minecraft.entity.LivingEntity;
-import net.minecraft.entity.attribute.AttributeContainer;
-import net.minecraft.entity.attribute.EntityAttributeInstance;
-import net.minecraft.entity.attribute.EntityAttributeModifier;
-import net.minecraft.entity.attribute.EntityAttributes;
-import net.minecraft.entity.effect.StatusEffect;
-import net.minecraft.entity.effect.StatusEffectCategory;
-import net.minecraft.util.Identifier;
+import net.minecraft.resources.ResourceLocation;
+import net.minecraft.world.effect.MobEffect;
+import net.minecraft.world.effect.MobEffectCategory;
+import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.entity.ai.attributes.AttributeInstance;
+import net.minecraft.world.entity.ai.attributes.AttributeMap;
+import net.minecraft.world.entity.ai.attributes.AttributeModifier;
+import net.minecraft.world.entity.ai.attributes.Attributes;
 
-public class WitheringEffect extends StatusEffect {
+public class WitheringEffect extends MobEffect {
 
-    private static final EntityAttributeModifier WITHERING = new EntityAttributeModifier(Identifier.of("adventurez:withering"), -0.15D, EntityAttributeModifier.Operation.ADD_MULTIPLIED_TOTAL);
+    private static final AttributeModifier WITHERING = new AttributeModifier(ResourceLocation.parse("adventurez:withering"), -0.15D, AttributeModifier.Operation.ADD_MULTIPLIED_TOTAL);
 
-    public WitheringEffect(StatusEffectCategory type, int color) {
+    public WitheringEffect(MobEffectCategory type, int color) {
         super(type, color);
     }
 
     @Override
-    public boolean applyUpdateEffect(LivingEntity entity, int amplifier) {
-        entity.damage(entity.getDamageSources().wither(), 0.5F);
+    public boolean applyEffectTick(LivingEntity entity, int amplifier) {
+        entity.hurt(entity.damageSources().wither(), 0.5F);
         return true;
     }
 
     @Override
-    public boolean canApplyUpdateEffect(int duration, int amplifier) {
+    public boolean shouldApplyEffectTickThisTick(int duration, int amplifier) {
         return duration % 80 == 0;
     }
 
     @Override
-    public void onApplied(AttributeContainer attributeContainer, int amplifier) {
-        super.onApplied(attributeContainer, amplifier);
-        EntityAttributeInstance entityAttributeInstance = attributeContainer.getCustomInstance((EntityAttributes.GENERIC_MOVEMENT_SPEED));
+    public void addAttributeModifiers(AttributeMap attributeContainer, int amplifier) {
+        super.addAttributeModifiers(attributeContainer, amplifier);
+        AttributeInstance entityAttributeInstance = attributeContainer.getInstance((Attributes.MOVEMENT_SPEED));
         if (entityAttributeInstance != null) {
             entityAttributeInstance.removeModifier(WITHERING);
-            entityAttributeInstance.addPersistentModifier(WITHERING);
+            entityAttributeInstance.addPermanentModifier(WITHERING);
         }
 
     }
 
     @Override
-    public void onRemoved(AttributeContainer attributeContainer) {
-        super.onRemoved(attributeContainer);
-        EntityAttributeInstance entityAttributeInstance = attributeContainer.getCustomInstance(EntityAttributes.GENERIC_MOVEMENT_SPEED);
+    public void removeAttributeModifiers(AttributeMap attributeContainer) {
+        super.removeAttributeModifiers(attributeContainer);
+        AttributeInstance entityAttributeInstance = attributeContainer.getInstance(Attributes.MOVEMENT_SPEED);
         if (entityAttributeInstance != null) {
             entityAttributeInstance.removeModifier(WITHERING);
         }

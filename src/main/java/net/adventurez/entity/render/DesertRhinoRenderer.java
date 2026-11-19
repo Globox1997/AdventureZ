@@ -6,20 +6,20 @@ import net.adventurez.entity.model.DesertRhinoModel;
 import net.adventurez.init.RenderInit;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
-import net.minecraft.client.render.entity.EntityRendererFactory;
-import net.minecraft.client.render.entity.MobEntityRenderer;
-import net.minecraft.util.Identifier;
+import net.minecraft.client.renderer.entity.EntityRendererProvider;
+import net.minecraft.client.renderer.entity.MobRenderer;
+import net.minecraft.resources.ResourceLocation;
 
 @Environment(EnvType.CLIENT)
-public class DesertRhinoRenderer extends MobEntityRenderer<DesertRhinoEntity, DesertRhinoModel<DesertRhinoEntity>> {
-    private static final Identifier TEXTURE = AdventureMain.identifierOf("textures/entity/desert_rhino.png");
+public class DesertRhinoRenderer extends MobRenderer<DesertRhinoEntity, DesertRhinoModel<DesertRhinoEntity>> {
+    private static final ResourceLocation TEXTURE = AdventureMain.identifierOf("textures/entity/desert_rhino.png");
 
-    public DesertRhinoRenderer(EntityRendererFactory.Context context) {
-        super(context, new DesertRhinoModel<>(context.getPart(RenderInit.DESERT_RHINO_LAYER)), 1.5F);
+    public DesertRhinoRenderer(EntityRendererProvider.Context context) {
+        super(context, new DesertRhinoModel<>(context.bakeLayer(RenderInit.DESERT_RHINO_LAYER)), 1.5F);
     }
 
     @Override
-    public Identifier getTexture(DesertRhinoEntity desertRhinoEntity) {
+    public ResourceLocation getTextureLocation(DesertRhinoEntity desertRhinoEntity) {
         return TEXTURE;
     }
 }

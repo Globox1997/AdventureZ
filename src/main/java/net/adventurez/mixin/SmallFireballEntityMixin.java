@@ -7,22 +7,22 @@ import org.spongepowered.asm.mixin.injection.At;
 
 import net.adventurez.entity.BlazeGuardianEntity;
 import net.adventurez.entity.nonliving.BlazeGuardianShieldEntity;
-import net.minecraft.entity.EntityType;
-import net.minecraft.entity.projectile.AbstractFireballEntity;
-import net.minecraft.entity.projectile.SmallFireballEntity;
-import net.minecraft.util.hit.EntityHitResult;
-import net.minecraft.util.hit.HitResult;
-import net.minecraft.util.math.Vec3d;
-import net.minecraft.world.World;
+import net.minecraft.world.entity.EntityType;
+import net.minecraft.world.entity.projectile.Fireball;
+import net.minecraft.world.entity.projectile.SmallFireball;
+import net.minecraft.world.level.Level;
+import net.minecraft.world.phys.EntityHitResult;
+import net.minecraft.world.phys.HitResult;
+import net.minecraft.world.phys.Vec3;
 
-@Mixin(SmallFireballEntity.class)
-public abstract class SmallFireballEntityMixin extends AbstractFireballEntity {
+@Mixin(SmallFireball.class)
+public abstract class SmallFireballEntityMixin extends Fireball {
 
-    public SmallFireballEntityMixin(EntityType<? extends AbstractFireballEntity> entityType, double d, double e, double f, Vec3d vec3d, World world) {
+    public SmallFireballEntityMixin(EntityType<? extends Fireball> entityType, double d, double e, double f, Vec3 vec3d, Level world) {
         super(entityType, d, e, f, vec3d, world);
     }
 
-    @Inject(method = "onCollision", at = @At(value = "HEAD"), cancellable = true)
+    @Inject(method = "onHit", at = @At(value = "HEAD"), cancellable = true)
     protected void onCollision(HitResult hitResult, CallbackInfo info) {
         if (this.getOwner() != null && this.getOwner() instanceof BlazeGuardianEntity && hitResult.getType() == HitResult.Type.ENTITY
                 && ((EntityHitResult) hitResult).getEntity() instanceof BlazeGuardianShieldEntity) {

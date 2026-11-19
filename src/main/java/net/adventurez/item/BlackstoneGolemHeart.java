@@ -3,58 +3,57 @@ package net.adventurez.item;
 import net.adventurez.init.ConfigInit;
 import net.adventurez.init.EffectInit;
 import net.adventurez.init.SoundInit;
-import net.minecraft.client.gui.screen.Screen;
-import net.minecraft.entity.Entity;
-import net.minecraft.entity.effect.StatusEffectInstance;
-import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.item.Item;
-import net.minecraft.item.ItemStack;
-import net.minecraft.item.tooltip.TooltipType;
-import net.minecraft.sound.SoundCategory;
-import net.minecraft.text.Text;
-import net.minecraft.util.Hand;
-import net.minecraft.util.TypedActionResult;
-import net.minecraft.world.World;
-
+import net.minecraft.client.gui.screens.Screen;
+import net.minecraft.network.chat.Component;
+import net.minecraft.sounds.SoundSource;
+import net.minecraft.world.InteractionHand;
+import net.minecraft.world.InteractionResultHolder;
+import net.minecraft.world.effect.MobEffectInstance;
+import net.minecraft.world.entity.Entity;
+import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.item.Item;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.TooltipFlag;
+import net.minecraft.world.level.Level;
 import java.util.List;
 
 public class BlackstoneGolemHeart extends Item {
 
-    public BlackstoneGolemHeart(Settings settings) {
+    public BlackstoneGolemHeart(Properties settings) {
         super(settings);
     }
 
     @Override
-    public void appendTooltip(ItemStack stack, TooltipContext context, List<Text> tooltip, TooltipType type) {
-        super.appendTooltip(stack, context, tooltip, type);
+    public void appendHoverText(ItemStack stack, TooltipContext context, List<Component> tooltip, TooltipFlag type) {
+        super.appendHoverText(stack, context, tooltip, type);
         if (ConfigInit.CONFIG.allow_extra_tooltips) {
-            tooltip.add(Text.translatable("item.adventurez.moreinfo.tooltip"));
+            tooltip.add(Component.translatable("item.adventurez.moreinfo.tooltip"));
             if (Screen.hasShiftDown()) {
-                tooltip.remove(Text.translatable("item.adventurez.moreinfo.tooltip"));
-                tooltip.add(Text.translatable("item.adventurez.blackstone_golem_heart.tooltip"));
+                tooltip.remove(Component.translatable("item.adventurez.moreinfo.tooltip"));
+                tooltip.add(Component.translatable("item.adventurez.blackstone_golem_heart.tooltip"));
             }
         }
     }
 
     @Override
-    public void inventoryTick(ItemStack stack, World world, Entity entity, int slot, boolean selected) {
-        if ((int) world.getTime() % 100 == 0) {
-            world.playSound(null, entity.getBlockPos(), SoundInit.HEART_BEAT_EVENT, SoundCategory.AMBIENT, 1F, 1F);
+    public void inventoryTick(ItemStack stack, Level world, Entity entity, int slot, boolean selected) {
+        if ((int) world.getGameTime() % 100 == 0) {
+            world.playSound(null, entity.blockPosition(), SoundInit.HEART_BEAT_EVENT, SoundSource.AMBIENT, 1F, 1F);
         }
     }
 
     @Override
-    public TypedActionResult<ItemStack> use(World world, PlayerEntity user, Hand hand) {
-        ItemStack itemStack = user.getStackInHand(hand);
-        if (user.isSneaking()) {
-            world.playSound(null, user.getX(), user.getY(), user.getZ(), SoundInit.BLACKSTONE_GOLEM_AWAKENS_EVENT, SoundCategory.PLAYERS, 1.4F, 1.0F);
-            if (!world.isClient()) {
-                user.addStatusEffect(new StatusEffectInstance(EffectInit.BLACKSTONED_HEART, ConfigInit.CONFIG.stoned_heart_duration, ConfigInit.CONFIG.stoned_heart_amplifier, false, false, true));
-                itemStack.decrement(1);
+    public InteractionResultHolder<ItemStack> use(Level world, Player user, InteractionHand hand) {
+        ItemStack itemStack = user.getItemInHand(hand);
+        if (user.isShiftKeyDown()) {
+            world.playSound(null, user.getX(), user.getY(), user.getZ(), SoundInit.BLACKSTONE_GOLEM_AWAKENS_EVENT, SoundSource.PLAYERS, 1.4F, 1.0F);
+            if (!world.isClientSide()) {
+                user.addEffect(new MobEffectInstance(EffectInit.BLACKSTONED_HEART, ConfigInit.CONFIG.stoned_heart_duration, ConfigInit.CONFIG.stoned_heart_amplifier, false, false, true));
+                itemStack.shrink(1);
             }
-            return TypedActionResult.success(itemStack, world.isClient());
+            return InteractionResultHolder.sidedSuccess(itemStack, world.isClientSide());
         } else {
-            return TypedActionResult.pass(itemStack);
+            return InteractionResultHolder.pass(itemStack);
         }
     }
 }

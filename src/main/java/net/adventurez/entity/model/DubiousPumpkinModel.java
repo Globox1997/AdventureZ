@@ -6,11 +6,17 @@ import net.adventurez.entity.DubiousPumpkinEntity;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
 import net.minecraft.client.model.*;
-import net.minecraft.client.render.entity.model.CompositeEntityModel;
-import net.minecraft.util.math.MathHelper;
+import net.minecraft.client.model.geom.ModelPart;
+import net.minecraft.client.model.geom.PartPose;
+import net.minecraft.client.model.geom.builders.CubeDeformation;
+import net.minecraft.client.model.geom.builders.CubeListBuilder;
+import net.minecraft.client.model.geom.builders.LayerDefinition;
+import net.minecraft.client.model.geom.builders.MeshDefinition;
+import net.minecraft.client.model.geom.builders.PartDefinition;
+import net.minecraft.util.Mth;
 
 @Environment(EnvType.CLIENT)
-public class DubiousPumpkinModel<T extends DubiousPumpkinEntity> extends CompositeEntityModel<T> {
+public class DubiousPumpkinModel<T extends DubiousPumpkinEntity> extends ListModel<T> {
     private final ModelPart root;
     private final ModelPart waist;
     private final ModelPart body;
@@ -29,42 +35,42 @@ public class DubiousPumpkinModel<T extends DubiousPumpkinEntity> extends Composi
         this.rightLeg = waist.getChild("rightLeg");
     }
 
-    public static TexturedModelData getTexturedModelData() {
-        ModelData modelData = new ModelData();
-        ModelPartData modelPartData = modelData.getRoot();
-        ModelPartData root = modelPartData.addChild("root", ModelPartBuilder.create(), ModelTransform.pivot(0.0F, 24.0F, 0.0F));
+    public static LayerDefinition getTexturedModelData() {
+        MeshDefinition modelData = new MeshDefinition();
+        PartDefinition modelPartData = modelData.getRoot();
+        PartDefinition root = modelPartData.addOrReplaceChild("root", CubeListBuilder.create(), PartPose.offset(0.0F, 24.0F, 0.0F));
 
-        ModelPartData waist = root.addChild("waist", ModelPartBuilder.create(), ModelTransform.pivot(0.0F, -3.0F, 0.0F));
+        PartDefinition waist = root.addOrReplaceChild("waist", CubeListBuilder.create(), PartPose.offset(0.0F, -3.0F, 0.0F));
 
-        ModelPartData body = waist.addChild("body", ModelPartBuilder.create().uv(1, 1).cuboid(-6.0F, -6.0F, -6.0F, 12.0F, 12.0F, 12.0F, new Dilation(0.0F)), ModelTransform.pivot(0.0F, -6.0F, 0.0F));
+        PartDefinition body = waist.addOrReplaceChild("body", CubeListBuilder.create().texOffs(1, 1).addBox(-6.0F, -6.0F, -6.0F, 12.0F, 12.0F, 12.0F, new CubeDeformation(0.0F)), PartPose.offset(0.0F, -6.0F, 0.0F));
 
-        ModelPartData cube_r1 = body.addChild("cube_r1", ModelPartBuilder.create().uv(37, 0).cuboid(-6.0F, -12.0F, 0.0F, 12.0F, 12.0F, 0.0F, new Dilation(0.0F)), ModelTransform.of(0.0F, -6.0F, 0.0F, 0.0F, -0.7854F, 0.0F));
+        PartDefinition cube_r1 = body.addOrReplaceChild("cube_r1", CubeListBuilder.create().texOffs(37, 0).addBox(-6.0F, -12.0F, 0.0F, 12.0F, 12.0F, 0.0F, new CubeDeformation(0.0F)), PartPose.offsetAndRotation(0.0F, -6.0F, 0.0F, 0.0F, -0.7854F, 0.0F));
 
-        ModelPartData leftArm = body.addChild("leftArm", ModelPartBuilder.create().uv(15, 27).cuboid(0.0F, -1.5F, 1.5F, 4.0F, 3.0F, 1.0F, new Dilation(0.0F)), ModelTransform.pivot(6.0F, 2.5F, -2.0F));
+        PartDefinition leftArm = body.addOrReplaceChild("leftArm", CubeListBuilder.create().texOffs(15, 27).addBox(0.0F, -1.5F, 1.5F, 4.0F, 3.0F, 1.0F, new CubeDeformation(0.0F)), PartPose.offset(6.0F, 2.5F, -2.0F));
 
-        ModelPartData rightArm = body.addChild("rightArm", ModelPartBuilder.create().uv(15, 27).mirrored().cuboid(-4.0F, -1.5F, 1.5F, 4.0F, 3.0F, 1.0F, new Dilation(0.0F)).mirrored(false), ModelTransform.pivot(-6.0F, 2.5F, -2.0F));
+        PartDefinition rightArm = body.addOrReplaceChild("rightArm", CubeListBuilder.create().texOffs(15, 27).mirror().addBox(-4.0F, -1.5F, 1.5F, 4.0F, 3.0F, 1.0F, new CubeDeformation(0.0F)).mirror(false), PartPose.offset(-6.0F, 2.5F, -2.0F));
 
-        ModelPartData leftLeg = waist.addChild("leftLeg", ModelPartBuilder.create().uv(1, 26).cuboid(-2.0F, 0.0F, -1.0F, 4.0F, 3.0F, 2.0F, new Dilation(0.0F)), ModelTransform.pivot(3.0F, 0.0F, 0.0F));
+        PartDefinition leftLeg = waist.addOrReplaceChild("leftLeg", CubeListBuilder.create().texOffs(1, 26).addBox(-2.0F, 0.0F, -1.0F, 4.0F, 3.0F, 2.0F, new CubeDeformation(0.0F)), PartPose.offset(3.0F, 0.0F, 0.0F));
 
-        ModelPartData rightLeg = waist.addChild("rightLeg", ModelPartBuilder.create().uv(1, 26).mirrored().cuboid(-2.0F, 0.0F, -1.0F, 4.0F, 3.0F, 2.0F, new Dilation(0.0F)).mirrored(false), ModelTransform.pivot(-3.0F, 0.0F, 0.0F));
-        return TexturedModelData.of(modelData, 64, 64);
+        PartDefinition rightLeg = waist.addOrReplaceChild("rightLeg", CubeListBuilder.create().texOffs(1, 26).mirror().addBox(-2.0F, 0.0F, -1.0F, 4.0F, 3.0F, 2.0F, new CubeDeformation(0.0F)).mirror(false), PartPose.offset(-3.0F, 0.0F, 0.0F));
+        return LayerDefinition.create(modelData, 64, 64);
     }
 
     @Override
-    public Iterable<ModelPart> getParts() {
+    public Iterable<ModelPart> parts() {
         return ImmutableList.of(this.root);
     }
 
     @Override
-    public void setAngles(T fungus, float limbAngle, float limbDistance, float animationProgress, float headYaw, float headPitch) {
+    public void setupAnim(T fungus, float limbAngle, float limbDistance, float animationProgress, float headYaw, float headPitch) {
 //        this.tail.pitch = -1.0F;
 //        this.head.pitch = headPitch * 0.010453292F;
 //        this.head.yaw = headYaw * 0.010453292F;
-        this.body.roll = MathHelper.cos(limbAngle * 0.6662F) * 1.4F * limbDistance*0.04f;
-        this.rightLeg.pitch = MathHelper.cos(limbAngle * 0.6662F) * 1.4F * limbDistance;
-        this.leftLeg.pitch = MathHelper.cos(limbAngle * 0.6662F + 3.1415927F) * 1.4F * limbDistance;
-        this.rightArm.roll = MathHelper.cos(limbAngle * 0.6662F + 3.1415927F) * 1.4F * limbDistance * 0.2f;
-        this.leftArm.roll = MathHelper.cos(limbAngle * 0.6662F+ 3.1415927F) * 1.4F * limbDistance * 0.2f;
+        this.body.zRot = Mth.cos(limbAngle * 0.6662F) * 1.4F * limbDistance*0.04f;
+        this.rightLeg.xRot = Mth.cos(limbAngle * 0.6662F) * 1.4F * limbDistance;
+        this.leftLeg.xRot = Mth.cos(limbAngle * 0.6662F + 3.1415927F) * 1.4F * limbDistance;
+        this.rightArm.zRot = Mth.cos(limbAngle * 0.6662F + 3.1415927F) * 1.4F * limbDistance * 0.2f;
+        this.leftArm.zRot = Mth.cos(limbAngle * 0.6662F+ 3.1415927F) * 1.4F * limbDistance * 0.2f;
 
 //        float k = MathHelper.sin(this.handSwingProgress * 3.1415927F);
 //

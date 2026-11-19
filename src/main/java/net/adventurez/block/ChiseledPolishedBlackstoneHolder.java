@@ -4,108 +4,106 @@ import java.util.List;
 
 import net.adventurez.init.BlockInit;
 import net.adventurez.init.ConfigInit;
-import net.minecraft.block.entity.BlockEntityTicker;
-import net.minecraft.block.entity.BlockEntityType;
-import net.minecraft.client.gui.screen.Screen;
 import org.jetbrains.annotations.Nullable;
 
 import net.adventurez.block.entity.ChiseledPolishedBlackstoneHolderEntity;
 import net.adventurez.init.TagInit;
-import net.minecraft.block.Block;
-import net.minecraft.block.BlockEntityProvider;
-import net.minecraft.block.BlockState;
-import net.minecraft.block.ShapeContext;
-import net.minecraft.block.entity.BlockEntity;
-import net.minecraft.client.MinecraftClient;
-import net.minecraft.client.util.InputUtil;
-import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.inventory.Inventory;
-import net.minecraft.item.ItemStack;
-import net.minecraft.item.Item.TooltipContext;
-import net.minecraft.item.tooltip.TooltipType;
-import net.minecraft.text.Text;
-import net.minecraft.util.ActionResult;
-import net.minecraft.util.ItemScatterer;
-import net.minecraft.util.hit.BlockHitResult;
-import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.shape.VoxelShape;
-import net.minecraft.util.shape.VoxelShapes;
-import net.minecraft.world.BlockView;
-import net.minecraft.world.World;
+import net.minecraft.client.gui.screens.Screen;
+import net.minecraft.core.BlockPos;
+import net.minecraft.network.chat.Component;
+import net.minecraft.world.Container;
+import net.minecraft.world.Containers;
+import net.minecraft.world.InteractionResult;
+import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.item.Item.TooltipContext;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.TooltipFlag;
+import net.minecraft.world.level.BlockGetter;
+import net.minecraft.world.level.Level;
+import net.minecraft.world.level.block.Block;
+import net.minecraft.world.level.block.EntityBlock;
+import net.minecraft.world.level.block.entity.BlockEntity;
+import net.minecraft.world.level.block.entity.BlockEntityTicker;
+import net.minecraft.world.level.block.entity.BlockEntityType;
+import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.phys.BlockHitResult;
+import net.minecraft.world.phys.shapes.CollisionContext;
+import net.minecraft.world.phys.shapes.Shapes;
+import net.minecraft.world.phys.shapes.VoxelShape;
 
-public class ChiseledPolishedBlackstoneHolder extends Block implements BlockEntityProvider {
+public class ChiseledPolishedBlackstoneHolder extends Block implements EntityBlock {
     private static final VoxelShape SHAPE;
 
-    public ChiseledPolishedBlackstoneHolder(Settings settings) {
+    public ChiseledPolishedBlackstoneHolder(Properties settings) {
         super(settings);
     }
 
     @Override
-    public BlockEntity createBlockEntity(BlockPos pos, BlockState state) {
+    public BlockEntity newBlockEntity(BlockPos pos, BlockState state) {
         return new ChiseledPolishedBlackstoneHolderEntity(pos, state);
     }
 
     @Nullable
     @Override
-    public <T extends BlockEntity> BlockEntityTicker<T> getTicker(World world, BlockState state, BlockEntityType<T> type) {
+    public <T extends BlockEntity> BlockEntityTicker<T> getTicker(Level world, BlockState state, BlockEntityType<T> type) {
         return checkType(type, BlockInit.CHISELED_POLISHED_BLACKSTONE_HOLDER_ENTITY,
-                world.isClient() ? ChiseledPolishedBlackstoneHolderEntity::clientTick : ChiseledPolishedBlackstoneHolderEntity::serverTick);
+                world.isClientSide() ? ChiseledPolishedBlackstoneHolderEntity::clientTick : ChiseledPolishedBlackstoneHolderEntity::serverTick);
     }
 
     @Override
-    public void appendTooltip(ItemStack stack, TooltipContext context, List<Text> tooltip, TooltipType options) {
-        super.appendTooltip(stack, context, tooltip, options);
+    public void appendHoverText(ItemStack stack, TooltipContext context, List<Component> tooltip, TooltipFlag options) {
+        super.appendHoverText(stack, context, tooltip, options);
         if (ConfigInit.CONFIG.allow_extra_tooltips) {
-            tooltip.add(Text.translatable("item.adventurez.moreinfo.tooltip"));
+            tooltip.add(Component.translatable("item.adventurez.moreinfo.tooltip"));
             if (Screen.hasShiftDown()) {
-                tooltip.remove(Text.translatable("item.adventurez.moreinfo.tooltip"));
-                tooltip.add(Text.translatable("block.adventurez.chiseled_polished_blackstone_holder.tooltip"));
-                tooltip.add(Text.translatable("block.adventurez.chiseled_polished_blackstone_holder.tooltip2"));
-                tooltip.add(Text.translatable("block.adventurez.chiseled_polished_blackstone_holder.tooltip3"));
+                tooltip.remove(Component.translatable("item.adventurez.moreinfo.tooltip"));
+                tooltip.add(Component.translatable("block.adventurez.chiseled_polished_blackstone_holder.tooltip"));
+                tooltip.add(Component.translatable("block.adventurez.chiseled_polished_blackstone_holder.tooltip2"));
+                tooltip.add(Component.translatable("block.adventurez.chiseled_polished_blackstone_holder.tooltip3"));
             }
         }
     }
 
     @Override
-    public ActionResult onUse(BlockState state, World world, BlockPos pos, PlayerEntity player, BlockHitResult hit) {
-        ItemStack itemStack = player.getMainHandStack();
-        Inventory blockEntity = (Inventory) world.getBlockEntity(pos);
-        ItemStack blockStack = blockEntity.getStack(0);
+    public InteractionResult useWithoutItem(BlockState state, Level world, BlockPos pos, Player player, BlockHitResult hit) {
+        ItemStack itemStack = player.getMainHandItem();
+        Container blockEntity = (Container) world.getBlockEntity(pos);
+        ItemStack blockStack = blockEntity.getItem(0);
         if (blockStack.isEmpty()) {
-            if ((itemStack.isIn(TagInit.HOLDER_ITEMS) || ConfigInit.CONFIG.allow_all_items_on_holder) && world.getBlockState(pos.up()).isAir()) {
-                if (!world.isClient()) {
-                    blockEntity.setStack(0, itemStack);
-                    itemStack.decrementUnlessCreative(1, player);
+            if ((itemStack.is(TagInit.HOLDER_ITEMS) || ConfigInit.CONFIG.allow_all_items_on_holder) && world.getBlockState(pos.above()).isAir()) {
+                if (!world.isClientSide()) {
+                    blockEntity.setItem(0, itemStack);
+                    itemStack.consume(1, player);
                 }
-                return ActionResult.success(world.isClient());
+                return InteractionResult.sidedSuccess(world.isClientSide());
             } else {
-                return ActionResult.CONSUME;
+                return InteractionResult.CONSUME;
             }
         } else {
-            if (!world.isClient() && !player.getInventory().insertStack(blockStack)) {
-                player.dropItem(blockStack, false);
+            if (!world.isClientSide() && !player.getInventory().add(blockStack)) {
+                player.drop(blockStack, false);
             }
 
-            blockEntity.clear();
-            return ActionResult.success(world.isClient());
+            blockEntity.clearContent();
+            return InteractionResult.sidedSuccess(world.isClientSide());
         }
 
     }
 
     @Override
-    public VoxelShape getOutlineShape(BlockState state, BlockView world, BlockPos pos, ShapeContext context) {
+    public VoxelShape getShape(BlockState state, BlockGetter world, BlockPos pos, CollisionContext context) {
         return SHAPE;
     }
 
     @Override
-    public void onStateReplaced(BlockState state, World world, BlockPos pos, BlockState newState, boolean moved) {
-        if (!state.isOf(newState.getBlock())) {
+    public void onRemove(BlockState state, Level world, BlockPos pos, BlockState newState, boolean moved) {
+        if (!state.is(newState.getBlock())) {
             BlockEntity blockEntity = world.getBlockEntity(pos);
-            if (blockEntity instanceof Inventory) {
-                ItemScatterer.spawn(world, pos, (Inventory) blockEntity);
-                world.updateComparators(pos, this);
+            if (blockEntity instanceof Container) {
+                Containers.dropContents(world, pos, (Container) blockEntity);
+                world.updateNeighbourForOutputSignal(pos, this);
             }
-            super.onStateReplaced(state, world, pos, newState, moved);
+            super.onRemove(state, world, pos, newState, moved);
         }
     }
 
@@ -116,8 +114,8 @@ public class ChiseledPolishedBlackstoneHolder extends Block implements BlockEnti
     }
 
     static {
-        SHAPE = VoxelShapes.union(createCuboidShape(0D, 0D, 0D, 16D, 14D, 16D), createCuboidShape(0D, 14D, 0D, 16D, 16D, 3D), createCuboidShape(0D, 14D, 13D, 16D, 16D, 16D),
-                createCuboidShape(13D, 14D, 3D, 16D, 16D, 13D), createCuboidShape(0D, 14D, 3D, 3D, 16D, 13D));
+        SHAPE = Shapes.or(box(0D, 0D, 0D, 16D, 14D, 16D), box(0D, 14D, 0D, 16D, 16D, 3D), box(0D, 14D, 13D, 16D, 16D, 16D),
+                box(13D, 14D, 3D, 16D, 16D, 13D), box(0D, 14D, 3D, 3D, 16D, 13D));
     }
 
 }

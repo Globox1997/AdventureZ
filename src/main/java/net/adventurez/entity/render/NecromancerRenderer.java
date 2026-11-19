@@ -6,20 +6,20 @@ import net.adventurez.entity.model.NecromancerModel;
 import net.adventurez.init.RenderInit;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
-import net.minecraft.client.render.entity.EntityRendererFactory;
-import net.minecraft.client.render.entity.MobEntityRenderer;
-import net.minecraft.util.Identifier;
+import net.minecraft.client.renderer.entity.EntityRendererProvider;
+import net.minecraft.client.renderer.entity.MobRenderer;
+import net.minecraft.resources.ResourceLocation;
 
 @Environment(EnvType.CLIENT)
-public class NecromancerRenderer extends MobEntityRenderer<NecromancerEntity, NecromancerModel<NecromancerEntity>> {
-    private static final Identifier TEXTURE = AdventureMain.identifierOf("textures/entity/necromancer.png");
+public class NecromancerRenderer extends MobRenderer<NecromancerEntity, NecromancerModel<NecromancerEntity>> {
+    private static final ResourceLocation TEXTURE = AdventureMain.identifierOf("textures/entity/necromancer.png");
 
-    public NecromancerRenderer(EntityRendererFactory.Context context) {
-        super(context, new NecromancerModel<>(context.getPart(RenderInit.NECROMANCER_LAYER)), 0.7F);
+    public NecromancerRenderer(EntityRendererProvider.Context context) {
+        super(context, new NecromancerModel<>(context.bakeLayer(RenderInit.NECROMANCER_LAYER)), 0.7F);
     }
 
     @Override
-    public Identifier getTexture(NecromancerEntity necromancerEntity) {
+    public ResourceLocation getTextureLocation(NecromancerEntity necromancerEntity) {
         return TEXTURE;
     }
 }

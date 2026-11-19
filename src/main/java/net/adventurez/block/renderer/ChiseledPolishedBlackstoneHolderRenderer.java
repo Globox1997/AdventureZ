@@ -1,33 +1,33 @@
 package net.adventurez.block.renderer;
 
+import com.mojang.blaze3d.vertex.PoseStack;
+import com.mojang.math.Axis;
 import net.adventurez.block.entity.ChiseledPolishedBlackstoneHolderEntity;
 
 import net.fabricmc.api.Environment;
+import net.minecraft.client.Minecraft;
+import net.minecraft.client.renderer.MultiBufferSource;
+import net.minecraft.client.renderer.blockentity.BlockEntityRenderer;
+import net.minecraft.client.renderer.blockentity.BlockEntityRendererProvider;
+import net.minecraft.world.item.ItemDisplayContext;
 import net.fabricmc.api.EnvType;
-import net.minecraft.client.MinecraftClient;
-import net.minecraft.client.render.VertexConsumerProvider;
-import net.minecraft.client.render.block.entity.BlockEntityRenderer;
-import net.minecraft.client.render.block.entity.BlockEntityRendererFactory;
-import net.minecraft.client.render.model.json.ModelTransformationMode;
-import net.minecraft.client.util.math.MatrixStack;
-import net.minecraft.util.math.RotationAxis;
 
 @Environment(EnvType.CLIENT)
 public class ChiseledPolishedBlackstoneHolderRenderer implements BlockEntityRenderer<ChiseledPolishedBlackstoneHolderEntity> {
 
-    public ChiseledPolishedBlackstoneHolderRenderer(BlockEntityRendererFactory.Context ctx) {
+    public ChiseledPolishedBlackstoneHolderRenderer(BlockEntityRendererProvider.Context ctx) {
     }
 
     @Override
-    public void render(ChiseledPolishedBlackstoneHolderEntity blockEntity, float tickDelta, MatrixStack matrices, VertexConsumerProvider vertexConsumers, int light, int overlay) {
+    public void render(ChiseledPolishedBlackstoneHolderEntity blockEntity, float tickDelta, PoseStack matrices, MultiBufferSource vertexConsumers, int light, int overlay) {
         if (!blockEntity.isEmpty()) {
-            matrices.push();
-            double offset = Math.sin((blockEntity.getWorld().getTime() + tickDelta) / 8.0D) / 4.5D;
+            matrices.pushPose();
+            double offset = Math.sin((blockEntity.getLevel().getGameTime() + tickDelta) / 8.0D) / 4.5D;
             matrices.translate(0.5D, 1.3D + offset, 0.5D);
-            matrices.multiply(RotationAxis.POSITIVE_Y.rotationDegrees((blockEntity.getWorld().getTime() + tickDelta) * 4F));
-            MinecraftClient.getInstance().getItemRenderer().renderItem(blockEntity.getStack(0), ModelTransformationMode.GROUND, light, overlay, matrices, vertexConsumers, blockEntity.getWorld(),
-                    (int) blockEntity.getPos().asLong());
-            matrices.pop();
+            matrices.mulPose(Axis.YP.rotationDegrees((blockEntity.getLevel().getGameTime() + tickDelta) * 4F));
+            Minecraft.getInstance().getItemRenderer().renderStatic(blockEntity.getItem(0), ItemDisplayContext.GROUND, light, overlay, matrices, vertexConsumers, blockEntity.getLevel(),
+                    (int) blockEntity.getBlockPos().asLong());
+            matrices.popPose();
         }
     }
 }

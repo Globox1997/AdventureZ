@@ -5,74 +5,74 @@ import java.util.UUID;
 import org.jetbrains.annotations.Nullable;
 
 import net.adventurez.init.SoundInit;
-import net.minecraft.block.BlockState;
-import net.minecraft.block.Blocks;
-import net.minecraft.entity.Entity;
-import net.minecraft.entity.EntityType;
-import net.minecraft.entity.LivingEntity;
-import net.minecraft.entity.SpawnReason;
-import net.minecraft.entity.ai.goal.ActiveTargetGoal;
-import net.minecraft.entity.ai.goal.LookAroundGoal;
-import net.minecraft.entity.ai.goal.LookAtEntityGoal;
-import net.minecraft.entity.ai.goal.MeleeAttackGoal;
-import net.minecraft.entity.ai.goal.RevengeGoal;
-import net.minecraft.entity.ai.goal.SwimGoal;
-import net.minecraft.entity.ai.goal.TemptGoal;
-import net.minecraft.entity.ai.goal.UniversalAngerGoal;
-import net.minecraft.entity.ai.goal.WanderAroundFarGoal;
-import net.minecraft.entity.attribute.DefaultAttributeContainer;
-import net.minecraft.entity.attribute.EntityAttributes;
-import net.minecraft.entity.damage.DamageSource;
-import net.minecraft.entity.effect.StatusEffectInstance;
-import net.minecraft.entity.effect.StatusEffects;
-import net.minecraft.entity.mob.Angerable;
-import net.minecraft.entity.mob.MobEntity;
-import net.minecraft.entity.mob.PathAwareEntity;
-import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.item.Items;
-import net.minecraft.nbt.NbtCompound;
-import net.minecraft.recipe.Ingredient;
-import net.minecraft.registry.tag.BlockTags;
-import net.minecraft.server.world.ServerWorld;
-import net.minecraft.sound.SoundEvent;
-import net.minecraft.sound.SoundEvents;
-import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.math.intprovider.UniformIntProvider;
-import net.minecraft.util.math.random.Random;
-import net.minecraft.util.TimeHelper;
-import net.minecraft.world.World;
-import net.minecraft.world.WorldAccess;
+import net.minecraft.core.BlockPos;
+import net.minecraft.nbt.CompoundTag;
+import net.minecraft.server.level.ServerLevel;
+import net.minecraft.sounds.SoundEvent;
+import net.minecraft.sounds.SoundEvents;
+import net.minecraft.tags.BlockTags;
+import net.minecraft.util.RandomSource;
+import net.minecraft.util.TimeUtil;
+import net.minecraft.util.valueproviders.UniformInt;
+import net.minecraft.world.damagesource.DamageSource;
+import net.minecraft.world.effect.MobEffectInstance;
+import net.minecraft.world.effect.MobEffects;
+import net.minecraft.world.entity.Entity;
+import net.minecraft.world.entity.EntityType;
+import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.entity.Mob;
+import net.minecraft.world.entity.MobSpawnType;
+import net.minecraft.world.entity.NeutralMob;
+import net.minecraft.world.entity.PathfinderMob;
+import net.minecraft.world.entity.ai.attributes.AttributeSupplier;
+import net.minecraft.world.entity.ai.attributes.Attributes;
+import net.minecraft.world.entity.ai.goal.FloatGoal;
+import net.minecraft.world.entity.ai.goal.LookAtPlayerGoal;
+import net.minecraft.world.entity.ai.goal.MeleeAttackGoal;
+import net.minecraft.world.entity.ai.goal.RandomLookAroundGoal;
+import net.minecraft.world.entity.ai.goal.TemptGoal;
+import net.minecraft.world.entity.ai.goal.WaterAvoidingRandomStrollGoal;
+import net.minecraft.world.entity.ai.goal.target.HurtByTargetGoal;
+import net.minecraft.world.entity.ai.goal.target.NearestAttackableTargetGoal;
+import net.minecraft.world.entity.ai.goal.target.ResetUniversalAngerTargetGoal;
+import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.item.Items;
+import net.minecraft.world.item.crafting.Ingredient;
+import net.minecraft.world.level.Level;
+import net.minecraft.world.level.LevelAccessor;
+import net.minecraft.world.level.block.Blocks;
+import net.minecraft.world.level.block.state.BlockState;
 
-public class RedFungusEntity extends PathAwareEntity implements Angerable {
-    private static final UniformIntProvider ANGER_TIME_RANGE;
+public class RedFungusEntity extends PathfinderMob implements NeutralMob {
+    private static final UniformInt ANGER_TIME_RANGE;
     private int angerTime;
     private UUID angryAt;
 
-    public RedFungusEntity(EntityType<? extends PathAwareEntity> entityType, World world) {
+    public RedFungusEntity(EntityType<? extends PathfinderMob> entityType, Level world) {
         super(entityType, world);
-        this.experiencePoints = 2;
+        this.xpReward = 2;
     }
 
     @Override
-    public void initGoals() {
-        this.goalSelector.add(0, new SwimGoal(this));
-        this.goalSelector.add(1, new MeleeAttackGoal(this, 1.0D, true));
-        this.goalSelector.add(3, new TemptGoal(this, 1.25D, Ingredient.ofItems(Items.SEAGRASS), true));
-        this.goalSelector.add(5, new WanderAroundFarGoal(this, 1.0D));
-        this.goalSelector.add(6, new LookAtEntityGoal(this, PlayerEntity.class, 6.0F));
-        this.goalSelector.add(7, new LookAroundGoal(this));
-        this.targetSelector.add(1, new UniversalAngerGoal<>(this, true));
-        this.targetSelector.add(2, new ActiveTargetGoal<>(this, PlayerEntity.class, 10, true, false, this::shouldAngerAt));
-        this.targetSelector.add(3, (new RevengeGoal(this, new Class[0])).setGroupRevenge());
+    public void registerGoals() {
+        this.goalSelector.addGoal(0, new FloatGoal(this));
+        this.goalSelector.addGoal(1, new MeleeAttackGoal(this, 1.0D, true));
+        this.goalSelector.addGoal(3, new TemptGoal(this, 1.25D, Ingredient.of(Items.SEAGRASS), true));
+        this.goalSelector.addGoal(5, new WaterAvoidingRandomStrollGoal(this, 1.0D));
+        this.goalSelector.addGoal(6, new LookAtPlayerGoal(this, Player.class, 6.0F));
+        this.goalSelector.addGoal(7, new RandomLookAroundGoal(this));
+        this.targetSelector.addGoal(1, new ResetUniversalAngerTargetGoal<>(this, true));
+        this.targetSelector.addGoal(2, new NearestAttackableTargetGoal<>(this, Player.class, 10, true, false, this::isAngryAt));
+        this.targetSelector.addGoal(3, (new HurtByTargetGoal(this, new Class[0])).setAlertOthers());
     }
 
-    public static DefaultAttributeContainer.Builder createRedFungusAttributes() {
-        return MobEntity.createMobAttributes().add(EntityAttributes.GENERIC_MAX_HEALTH, 10.0D).add(EntityAttributes.GENERIC_MOVEMENT_SPEED, 0.2D).add(EntityAttributes.GENERIC_ATTACK_DAMAGE, 1.0D)
-                .add(EntityAttributes.GENERIC_FOLLOW_RANGE, 38.0D);
+    public static AttributeSupplier.Builder createRedFungusAttributes() {
+        return Mob.createMobAttributes().add(Attributes.MAX_HEALTH, 10.0D).add(Attributes.MOVEMENT_SPEED, 0.2D).add(Attributes.ATTACK_DAMAGE, 1.0D)
+                .add(Attributes.FOLLOW_RANGE, 38.0D);
     }
 
-    public static boolean canSpawn(EntityType<RedFungusEntity> type, WorldAccess world, SpawnReason spawnReason, BlockPos pos, Random random) {
-        return world.getBlockState(pos.down()).isIn(BlockTags.MOOSHROOMS_SPAWNABLE_ON) && world.getBaseLightLevel(pos, 0) > 8;
+    public static boolean canSpawn(EntityType<RedFungusEntity> type, LevelAccessor world, MobSpawnType spawnReason, BlockPos pos, RandomSource random) {
+        return world.getBlockState(pos.below()).is(BlockTags.MOOSHROOMS_SPAWNABLE_ON) && world.getRawBrightness(pos, 0) > 8;
     }
 
     @Override
@@ -92,88 +92,88 @@ public class RedFungusEntity extends PathAwareEntity implements Angerable {
 
     @Override
     protected void playStepSound(BlockPos pos, BlockState state) {
-        this.playSound(SoundEvents.ENTITY_WOLF_STEP, 0.15F, 1.0F);
+        this.playSound(SoundEvents.WOLF_STEP, 0.15F, 1.0F);
     }
 
     @Override
-    public void writeCustomDataToNbt(NbtCompound nbt) {
-        super.writeCustomDataToNbt(nbt);
-        this.writeAngerToNbt(nbt);
+    public void addAdditionalSaveData(CompoundTag nbt) {
+        super.addAdditionalSaveData(nbt);
+        this.addPersistentAngerSaveData(nbt);
     }
 
     @Override
-    public void readCustomDataFromNbt(NbtCompound nbt) {
-        super.readCustomDataFromNbt(nbt);
-        this.readAngerFromNbt(this.getWorld(), nbt);
+    public void readAdditionalSaveData(CompoundTag nbt) {
+        super.readAdditionalSaveData(nbt);
+        this.readPersistentAngerSaveData(this.level(), nbt);
     }
 
     @Override
-    public void tickMovement() {
-        super.tickMovement();
-        if (!this.getWorld().isClient()) {
-            this.tickAngerLogic((ServerWorld) this.getWorld(), true);
-            int randomMushroom = this.getWorld().getRandom().nextInt(22000);
+    public void aiStep() {
+        super.aiStep();
+        if (!this.level().isClientSide()) {
+            this.updatePersistentAnger((ServerLevel) this.level(), true);
+            int randomMushroom = this.level().getRandom().nextInt(22000);
             if (randomMushroom == 1997
-                    && (this.getWorld().getBlockState(this.getBlockPos().down()).isOf(Blocks.MYCELIUM) || this.getWorld().getBlockState(this.getBlockPos().down()).isOf(Blocks.GRASS_BLOCK))
-                    && this.getWorld().getBlockState(this.getBlockPos()).isAir()) {
-                this.getWorld().setBlockState(this.getBlockPos(), Blocks.RED_MUSHROOM.getDefaultState());
+                    && (this.level().getBlockState(this.blockPosition().below()).is(Blocks.MYCELIUM) || this.level().getBlockState(this.blockPosition().below()).is(Blocks.GRASS_BLOCK))
+                    && this.level().getBlockState(this.blockPosition()).isAir()) {
+                this.level().setBlockAndUpdate(this.blockPosition(), Blocks.RED_MUSHROOM.defaultBlockState());
             }
         }
     }
 
     @Override
-    public boolean damage(DamageSource source, float amount) {
-        if (source.getSource() != null && source.getSource() instanceof PlayerEntity attacker) {
-            this.setAngryAt(attacker.getUuid());
+    public boolean hurt(DamageSource source, float amount) {
+        if (source.getDirectEntity() != null && source.getDirectEntity() instanceof Player attacker) {
+            this.setPersistentAngerTarget(attacker.getUUID());
         }
-        return !this.isInvulnerableTo(source) && super.damage(source, amount);
+        return !this.isInvulnerableTo(source) && super.hurt(source, amount);
 
     }
 
     @Override
-    public void chooseRandomAngerTime() {
-        this.setAngerTime(ANGER_TIME_RANGE.get(this.random));
+    public void startPersistentAngerTimer() {
+        this.setRemainingPersistentAngerTime(ANGER_TIME_RANGE.sample(this.random));
     }
 
     @Override
-    public void setAngerTime(int ticks) {
+    public void setRemainingPersistentAngerTime(int ticks) {
         this.angerTime = ticks;
     }
 
     @Override
-    public int getAngerTime() {
+    public int getRemainingPersistentAngerTime() {
         return this.angerTime;
     }
 
     @Override
-    public void setAngryAt(@Nullable UUID uuid) {
+    public void setPersistentAngerTarget(@Nullable UUID uuid) {
         this.angryAt = uuid;
     }
 
     @Override
-    public UUID getAngryAt() {
+    public UUID getPersistentAngerTarget() {
         return this.angryAt;
     }
 
     @Override
-    public int getLimitPerChunk() {
+    public int getMaxSpawnClusterSize() {
         return 4;
     }
 
     @Override
-    public boolean tryAttack(Entity target) {
-        if (!super.tryAttack(target)) {
+    public boolean doHurtTarget(Entity target) {
+        if (!super.doHurtTarget(target)) {
             return false;
         } else {
-            if (!this.getWorld().isClient() && target instanceof LivingEntity livingEntity && this.getWorld().getRandom().nextInt(160) > 140) {
-                livingEntity.addStatusEffect(new StatusEffectInstance(StatusEffects.POISON, 120 + this.getWorld().getRandom().nextInt(160), 0, false, false), this);
+            if (!this.level().isClientSide() && target instanceof LivingEntity livingEntity && this.level().getRandom().nextInt(160) > 140) {
+                livingEntity.addEffect(new MobEffectInstance(MobEffects.POISON, 120 + this.level().getRandom().nextInt(160), 0, false, false), this);
             }
             return true;
         }
     }
 
     static {
-        ANGER_TIME_RANGE = TimeHelper.betweenSeconds(20, 60);
+        ANGER_TIME_RANGE = TimeUtil.rangeOfSeconds(20, 60);
     }
 
 }

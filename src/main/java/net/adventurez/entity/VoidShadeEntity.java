@@ -5,90 +5,90 @@ import java.util.EnumSet;
 import net.adventurez.entity.nonliving.ThrownRockEntity;
 import net.adventurez.entity.nonliving.VoidBulletEntity;
 import net.adventurez.init.SoundInit;
-import net.minecraft.entity.Entity;
-import net.minecraft.entity.EntityType;
-import net.minecraft.entity.LivingEntity;
-import net.minecraft.entity.ai.control.MoveControl;
-import net.minecraft.entity.ai.goal.ActiveTargetGoal;
-import net.minecraft.entity.ai.goal.Goal;
-import net.minecraft.entity.ai.goal.LookAroundGoal;
-import net.minecraft.entity.attribute.DefaultAttributeContainer;
-import net.minecraft.entity.attribute.EntityAttributes;
-import net.minecraft.entity.damage.DamageSource;
-import net.minecraft.entity.effect.StatusEffectInstance;
-import net.minecraft.entity.mob.FlyingEntity;
-import net.minecraft.entity.mob.HostileEntity;
-import net.minecraft.entity.mob.Monster;
-import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.server.world.ServerWorld;
-import net.minecraft.sound.SoundCategory;
-import net.minecraft.util.math.MathHelper;
-import net.minecraft.util.math.Vec3d;
+import net.minecraft.server.level.ServerLevel;
+import net.minecraft.sounds.SoundSource;
+import net.minecraft.util.Mth;
 import net.minecraft.world.Difficulty;
-import net.minecraft.world.World;
+import net.minecraft.world.damagesource.DamageSource;
+import net.minecraft.world.effect.MobEffectInstance;
+import net.minecraft.world.entity.Entity;
+import net.minecraft.world.entity.EntityType;
+import net.minecraft.world.entity.FlyingMob;
+import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.entity.ai.attributes.AttributeSupplier;
+import net.minecraft.world.entity.ai.attributes.Attributes;
+import net.minecraft.world.entity.ai.control.MoveControl;
+import net.minecraft.world.entity.ai.goal.Goal;
+import net.minecraft.world.entity.ai.goal.RandomLookAroundGoal;
+import net.minecraft.world.entity.ai.goal.target.NearestAttackableTargetGoal;
+import net.minecraft.world.entity.monster.Enemy;
+import net.minecraft.world.entity.monster.Monster;
+import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.level.Level;
+import net.minecraft.world.phys.Vec3;
 
-public class VoidShadeEntity extends FlyingEntity implements Monster {
+public class VoidShadeEntity extends FlyingMob implements Enemy {
 
-    public VoidShadeEntity(EntityType<? extends FlyingEntity> entityType, World world) {
+    public VoidShadeEntity(EntityType<? extends FlyingMob> entityType, Level world) {
         super(entityType, world);
         this.moveControl = new VoidShadeEntity.VoidShadeMoveControl(this);
-        this.experiencePoints = 0;
+        this.xpReward = 0;
     }
 
-    public static DefaultAttributeContainer.Builder createVoidShadeAttributes() {
-        return HostileEntity.createHostileAttributes().add(EntityAttributes.GENERIC_MAX_HEALTH, 20.0D).add(EntityAttributes.GENERIC_MOVEMENT_SPEED, 0.15D)
-                .add(EntityAttributes.GENERIC_ATTACK_DAMAGE, 7.0D).add(EntityAttributes.GENERIC_ATTACK_KNOCKBACK, 0.5D).add(EntityAttributes.GENERIC_KNOCKBACK_RESISTANCE, 10.0D)
-                .add(EntityAttributes.GENERIC_FOLLOW_RANGE, 80.0D);
-    }
-
-    @Override
-    public void initGoals() {
-        super.initGoals();
-        this.goalSelector.add(3, new VoidShadeEntity.LookAtTargetGoal(this));
-        this.goalSelector.add(7, new LookAroundGoal(this));
-        this.goalSelector.add(3, new VoidShadeEntity.MoveGoal(this));
-        this.goalSelector.add(5, new VoidShadeEntity.ShootBulletGoal(this));
-        this.targetSelector.add(1, new ActiveTargetGoal<>(this, PlayerEntity.class, true));
+    public static AttributeSupplier.Builder createVoidShadeAttributes() {
+        return Monster.createMonsterAttributes().add(Attributes.MAX_HEALTH, 20.0D).add(Attributes.MOVEMENT_SPEED, 0.15D)
+                .add(Attributes.ATTACK_DAMAGE, 7.0D).add(Attributes.ATTACK_KNOCKBACK, 0.5D).add(Attributes.KNOCKBACK_RESISTANCE, 10.0D)
+                .add(Attributes.FOLLOW_RANGE, 80.0D);
     }
 
     @Override
-    public boolean damage(DamageSource source, float amount) {
-        if (this.isInvulnerableTo(source) || source.getSource() instanceof ThrownRockEntity) {
+    public void registerGoals() {
+        super.registerGoals();
+        this.goalSelector.addGoal(3, new VoidShadeEntity.LookAtTargetGoal(this));
+        this.goalSelector.addGoal(7, new RandomLookAroundGoal(this));
+        this.goalSelector.addGoal(3, new VoidShadeEntity.MoveGoal(this));
+        this.goalSelector.addGoal(5, new VoidShadeEntity.ShootBulletGoal(this));
+        this.targetSelector.addGoal(1, new NearestAttackableTargetGoal<>(this, Player.class, true));
+    }
+
+    @Override
+    public boolean hurt(DamageSource source, float amount) {
+        if (this.isInvulnerableTo(source) || source.getDirectEntity() instanceof ThrownRockEntity) {
             return false;
         } else {
-            return super.damage(source, amount);
+            return super.hurt(source, amount);
         }
     }
 
     @Override
     public void checkDespawn() {
-        if (this.getWorld().getDifficulty() == Difficulty.PEACEFUL) {
+        if (this.level().getDifficulty() == Difficulty.PEACEFUL) {
             this.discard();
         }
     }
 
     @Override
-    public boolean handleFallDamage(float fallDistance, float damageMultiplier, DamageSource damageSource) {
+    public boolean causeFallDamage(float fallDistance, float damageMultiplier, DamageSource damageSource) {
         return false;
     }
 
     @Override
-    public boolean addStatusEffect(StatusEffectInstance effect, Entity entity) {
+    public boolean addEffect(MobEffectInstance effect, Entity entity) {
         return false;
     }
 
     @Override
-    public boolean canStartRiding(Entity entity) {
+    public boolean canRide(Entity entity) {
         return false;
     }
 
     @Override
-    public boolean canUsePortals(boolean allowVehicles) {
+    public boolean canUsePortal(boolean allowVehicles) {
         return false;
     }
 
     @Override
-    public boolean canHaveStatusEffect(StatusEffectInstance effect) {
+    public boolean canBeAffected(MobEffectInstance effect) {
         return false;
     }
 
@@ -101,9 +101,9 @@ public class VoidShadeEntity extends FlyingEntity implements Monster {
         }
 
         @Override
-        public boolean canStart() {
+        public boolean canUse() {
             LivingEntity livingEntity = this.voidShadeEntity.getTarget();
-            return livingEntity != null && this.voidShadeEntity.canSee(livingEntity);
+            return livingEntity != null && this.voidShadeEntity.hasLineOfSight(livingEntity);
         }
 
         @Override
@@ -115,19 +115,19 @@ public class VoidShadeEntity extends FlyingEntity implements Monster {
         public void tick() {
             LivingEntity livingEntity = this.voidShadeEntity.getTarget();
             if (livingEntity.distanceTo(this.voidShadeEntity) < 12.0D) {
-                World world = this.voidShadeEntity.getWorld();
+                Level world = this.voidShadeEntity.level();
                 ++this.cooldown;
                 if (this.cooldown == 20) {
-                    ((ServerWorld) world).playSoundFromEntity(null, this.voidShadeEntity, SoundInit.VOID_SHADOW_CAST_EVENT, SoundCategory.HOSTILE, 1.0F, 1.0F);
-                    Vec3d vec3d = this.voidShadeEntity.getRotationVec(1.0F);
+                    ((ServerLevel) world).playSound(null, this.voidShadeEntity, SoundInit.VOID_SHADOW_CAST_EVENT, SoundSource.HOSTILE, 1.0F, 1.0F);
+                    Vec3 vec3d = this.voidShadeEntity.getViewVector(1.0F);
                     vec3d.add(world.random.nextFloat() * 0.5F - 0.25F, 0, world.random.nextFloat() * 0.5F - 0.25F);
                     VoidBulletEntity voidBulletEntity = new VoidBulletEntity(this.voidShadeEntity, vec3d, world);
-                    world.spawnEntity(voidBulletEntity);
+                    world.addFreshEntity(voidBulletEntity);
 
                     this.cooldown = -40;
                 }
                 if (livingEntity.distanceTo(this.voidShadeEntity) < 1.0D) {
-                    this.voidShadeEntity.tryAttack(livingEntity);
+                    this.voidShadeEntity.doHurtTarget(livingEntity);
                 }
             } else if (this.cooldown > 0) {
                 --this.cooldown;
@@ -140,27 +140,27 @@ public class VoidShadeEntity extends FlyingEntity implements Monster {
 
         public LookAtTargetGoal(VoidShadeEntity voidShadeEntity) {
             this.voidShadeEntity = voidShadeEntity;
-            this.setControls(EnumSet.of(Goal.Control.LOOK));
+            this.setFlags(EnumSet.of(Goal.Flag.LOOK));
         }
 
         @Override
-        public boolean canStart() {
+        public boolean canUse() {
             return true;
         }
 
         @Override
         public void tick() {
             if (this.voidShadeEntity.getTarget() == null) {
-                Vec3d vec3d = this.voidShadeEntity.getVelocity();
-                this.voidShadeEntity.setYaw(-((float) MathHelper.atan2(vec3d.x, vec3d.z)) * 57.295776F);
-                this.voidShadeEntity.bodyYaw = this.voidShadeEntity.getYaw();
+                Vec3 vec3d = this.voidShadeEntity.getDeltaMovement();
+                this.voidShadeEntity.setYRot(-((float) Mth.atan2(vec3d.x, vec3d.z)) * 57.295776F);
+                this.voidShadeEntity.yBodyRot = this.voidShadeEntity.getYRot();
             } else {
                 LivingEntity livingEntity = this.voidShadeEntity.getTarget();
-                if (livingEntity.squaredDistanceTo(this.voidShadeEntity) < 4096.0D) {
+                if (livingEntity.distanceToSqr(this.voidShadeEntity) < 4096.0D) {
                     double e = livingEntity.getX() - this.voidShadeEntity.getX();
                     double f = livingEntity.getZ() - this.voidShadeEntity.getZ();
-                    this.voidShadeEntity.setYaw(-((float) MathHelper.atan2(e, f)) * 57.295776F);
-                    this.voidShadeEntity.bodyYaw = this.voidShadeEntity.getYaw();
+                    this.voidShadeEntity.setYRot(-((float) Mth.atan2(e, f)) * 57.295776F);
+                    this.voidShadeEntity.yBodyRot = this.voidShadeEntity.getYRot();
                 }
             }
 
@@ -172,11 +172,11 @@ public class VoidShadeEntity extends FlyingEntity implements Monster {
 
         public MoveGoal(VoidShadeEntity voidShadeEntity) {
             this.voidShadeEntity = voidShadeEntity;
-            this.setControls(EnumSet.of(Goal.Control.MOVE));
+            this.setFlags(EnumSet.of(Goal.Flag.MOVE));
         }
 
         @Override
-        public boolean canStart() {
+        public boolean canUse() {
             if (this.voidShadeEntity.getTarget() != null) {
                 return true;
             } else
@@ -184,7 +184,7 @@ public class VoidShadeEntity extends FlyingEntity implements Monster {
         }
 
         @Override
-        public boolean shouldContinue() {
+        public boolean canContinueToUse() {
             return false;
         }
 
@@ -192,7 +192,7 @@ public class VoidShadeEntity extends FlyingEntity implements Monster {
         public void start() {
             if (this.voidShadeEntity.getTarget() != null) {
                 LivingEntity livingEntity = this.voidShadeEntity.getTarget();
-                this.voidShadeEntity.getMoveControl().moveTo(livingEntity.getX(), livingEntity.getY(), livingEntity.getZ(), 1.0D);
+                this.voidShadeEntity.getMoveControl().setWantedPosition(livingEntity.getX(), livingEntity.getY(), livingEntity.getZ(), 1.0D);
 
             }
         }
@@ -208,12 +208,12 @@ public class VoidShadeEntity extends FlyingEntity implements Monster {
 
         @Override
         public void tick() {
-            if (this.state == MoveControl.State.MOVE_TO) {
-                Vec3d vec3d = new Vec3d(this.targetX - this.voidShadeEntity.getX(), this.targetY - this.voidShadeEntity.getY(), this.targetZ - this.voidShadeEntity.getZ());
+            if (this.operation == MoveControl.Operation.MOVE_TO) {
+                Vec3 vec3d = new Vec3(this.wantedX - this.voidShadeEntity.getX(), this.wantedY - this.voidShadeEntity.getY(), this.wantedZ - this.voidShadeEntity.getZ());
                 vec3d = vec3d.normalize();
-                this.voidShadeEntity.setVelocity(this.voidShadeEntity.getVelocity().add(vec3d.multiply(0.012D)));
+                this.voidShadeEntity.setDeltaMovement(this.voidShadeEntity.getDeltaMovement().add(vec3d.scale(0.012D)));
                 if (this.voidShadeEntity.getTarget() == null) {
-                    this.state = MoveControl.State.WAIT;
+                    this.operation = MoveControl.Operation.WAIT;
                 }
 
             }

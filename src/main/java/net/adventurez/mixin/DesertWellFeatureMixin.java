@@ -8,23 +8,23 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 import net.adventurez.entity.DesertRhinoEntity;
 import net.adventurez.init.ConfigInit;
 import net.adventurez.init.EntityInit;
-import net.minecraft.entity.SpawnReason;
-import net.minecraft.entity.SpawnRestriction;
-import net.minecraft.util.math.BlockPos;
-import net.minecraft.world.gen.feature.DefaultFeatureConfig;
-import net.minecraft.world.gen.feature.DesertWellFeature;
-import net.minecraft.world.gen.feature.util.FeatureContext;
+import net.minecraft.core.BlockPos;
+import net.minecraft.world.entity.MobSpawnType;
+import net.minecraft.world.entity.SpawnPlacements;
+import net.minecraft.world.level.levelgen.feature.DesertWellFeature;
+import net.minecraft.world.level.levelgen.feature.FeaturePlaceContext;
+import net.minecraft.world.level.levelgen.feature.configurations.NoneFeatureConfiguration;
 
 @Mixin(DesertWellFeature.class)
 public class DesertWellFeatureMixin {
 
-    @Inject(method = "generate", at = @At(value = "RETURN"))
-    private void generateMixin(FeatureContext<DefaultFeatureConfig> context, CallbackInfoReturnable<Boolean> info) {
+    @Inject(method = "place(Lnet/minecraft/world/level/levelgen/feature/FeaturePlaceContext;)Z", at = @At(value = "RETURN"))
+    private void generateMixin(FeaturePlaceContext<NoneFeatureConfiguration> context, CallbackInfoReturnable<Boolean> info) {
         if (info.getReturnValue()) {
             int rhinoSpawnChance = ConfigInit.CONFIG.desert_rhino_well_spawn_chance;
-            if (!context.getWorld().isClient() && rhinoSpawnChance != 0) {
-                int spawnChanceInt = context.getRandom().nextInt(rhinoSpawnChance) + 1;
-                BlockPos spawnPos = context.getOrigin().south(3).west();
+            if (!context.level().isClientSide() && rhinoSpawnChance != 0) {
+                int spawnChanceInt = context.random().nextInt(rhinoSpawnChance) + 1;
+                BlockPos spawnPos = context.origin().south(3).west();
                 if (spawnChanceInt == 1) {
                     for (int i = 0; i < 4; i++) {
                         if (i == 1) {
@@ -36,11 +36,11 @@ public class DesertWellFeatureMixin {
                         if (i == 3) {
                             spawnPos = spawnPos.north(5).east(3);
                         }
-                        if (context.getWorld().isAir(spawnPos)
-                                && SpawnRestriction.canSpawn(EntityInit.DESERT_RHINO, context.getWorld(), SpawnReason.CHUNK_GENERATION, spawnPos, context.getRandom())) {
-                            DesertRhinoEntity desertRhinoEntity = EntityInit.DESERT_RHINO.create(context.getWorld().toServerWorld());
-                            desertRhinoEntity.refreshPositionAndAngles(spawnPos, context.getRandom().nextFloat() * 360F, 0.0F);
-                            context.getWorld().spawnEntity(desertRhinoEntity);
+                        if (context.level().isEmptyBlock(spawnPos)
+                                && SpawnPlacements.checkSpawnRules(EntityInit.DESERT_RHINO, context.level(), MobSpawnType.CHUNK_GENERATION, spawnPos, context.random())) {
+                            DesertRhinoEntity desertRhinoEntity = EntityInit.DESERT_RHINO.create(context.level().getLevel());
+                            desertRhinoEntity.moveTo(spawnPos, context.random().nextFloat() * 360F, 0.0F);
+                            context.level().addFreshEntity(desertRhinoEntity);
                             break;
                         }
                     }

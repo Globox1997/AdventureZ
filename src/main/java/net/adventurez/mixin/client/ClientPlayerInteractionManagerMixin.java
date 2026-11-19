@@ -9,21 +9,21 @@ import org.spongepowered.asm.mixin.injection.At;
 
 import net.adventurez.entity.DragonEntity;
 import net.fabricmc.api.Environment;
+import net.minecraft.client.Minecraft;
+import net.minecraft.client.multiplayer.MultiPlayerGameMode;
 import net.fabricmc.api.EnvType;
-import net.minecraft.client.MinecraftClient;
-import net.minecraft.client.network.ClientPlayerInteractionManager;
 
 @Environment(EnvType.CLIENT)
-@Mixin(ClientPlayerInteractionManager.class)
+@Mixin(MultiPlayerGameMode.class)
 public class ClientPlayerInteractionManagerMixin {
 
     @Shadow
     @Final
-    private MinecraftClient client;
+    private Minecraft minecraft;
 
-    @Inject(method = "hasRidingInventory", at = @At(value = "HEAD"), cancellable = true)
+    @Inject(method = "isServerControlledInventory", at = @At(value = "HEAD"), cancellable = true)
     public void hasRidingInventoryMixin(CallbackInfoReturnable<Boolean> info) {
-        if (this.client.player.hasVehicle() && this.client.player.getVehicle() instanceof DragonEntity dragonEntity && dragonEntity.hasChest()) {
+        if (this.minecraft.player.isPassenger() && this.minecraft.player.getVehicle() instanceof DragonEntity dragonEntity && dragonEntity.hasChest()) {
             info.setReturnValue(true);
         }
     }

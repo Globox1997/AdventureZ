@@ -6,20 +6,20 @@ import net.adventurez.entity.model.DeerModel;
 import net.adventurez.init.RenderInit;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
-import net.minecraft.client.render.entity.EntityRendererFactory;
-import net.minecraft.client.render.entity.MobEntityRenderer;
-import net.minecraft.util.Identifier;
+import net.minecraft.client.renderer.entity.EntityRendererProvider;
+import net.minecraft.client.renderer.entity.MobRenderer;
+import net.minecraft.resources.ResourceLocation;
 
 @Environment(EnvType.CLIENT)
-public class DeerRenderer extends MobEntityRenderer<DeerEntity, DeerModel<DeerEntity>> {
-    private static final Identifier TEXTURE = AdventureMain.identifierOf("textures/entity/deer.png");
+public class DeerRenderer extends MobRenderer<DeerEntity, DeerModel<DeerEntity>> {
+    private static final ResourceLocation TEXTURE = AdventureMain.identifierOf("textures/entity/deer.png");
 
-    public DeerRenderer(EntityRendererFactory.Context context) {
-        super(context, new DeerModel<>(context.getPart(RenderInit.DEER_LAYER)), 0.7F);
+    public DeerRenderer(EntityRendererProvider.Context context) {
+        super(context, new DeerModel<>(context.bakeLayer(RenderInit.DEER_LAYER)), 0.7F);
     }
 
     @Override
-    public Identifier getTexture(DeerEntity deerEntity) {
+    public ResourceLocation getTextureLocation(DeerEntity deerEntity) {
         return TEXTURE;
     }
 }

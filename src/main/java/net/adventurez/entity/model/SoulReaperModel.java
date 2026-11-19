@@ -1,145 +1,145 @@
 package net.adventurez.entity.model;
 
+import com.mojang.blaze3d.vertex.PoseStack;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
-import net.minecraft.client.model.Dilation;
-import net.minecraft.client.model.ModelData;
-import net.minecraft.client.model.ModelPart;
-import net.minecraft.client.model.ModelPartBuilder;
-import net.minecraft.client.model.ModelPartData;
-import net.minecraft.client.model.ModelTransform;
-import net.minecraft.client.model.TexturedModelData;
-import net.minecraft.client.render.entity.model.BipedEntityModel;
-import net.minecraft.client.util.math.MatrixStack;
-import net.minecraft.entity.ai.RangedAttackMob;
-import net.minecraft.entity.mob.MobEntity;
-import net.minecraft.item.ItemStack;
-import net.minecraft.item.Items;
-import net.minecraft.util.Arm;
-import net.minecraft.util.Hand;
-import net.minecraft.util.math.MathHelper;
+import net.minecraft.client.model.HumanoidModel;
+import net.minecraft.client.model.geom.ModelPart;
+import net.minecraft.client.model.geom.PartPose;
+import net.minecraft.client.model.geom.builders.CubeDeformation;
+import net.minecraft.client.model.geom.builders.CubeListBuilder;
+import net.minecraft.client.model.geom.builders.LayerDefinition;
+import net.minecraft.client.model.geom.builders.MeshDefinition;
+import net.minecraft.client.model.geom.builders.PartDefinition;
+import net.minecraft.util.Mth;
+import net.minecraft.world.InteractionHand;
+import net.minecraft.world.entity.HumanoidArm;
+import net.minecraft.world.entity.Mob;
+import net.minecraft.world.entity.monster.RangedAttackMob;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.Items;
 
 @Environment(EnvType.CLIENT)
-public class SoulReaperModel<T extends MobEntity & RangedAttackMob> extends BipedEntityModel<T> {
+public class SoulReaperModel<T extends Mob & RangedAttackMob> extends HumanoidModel<T> {
 
     public SoulReaperModel(ModelPart modelPart) {
         super(modelPart);
     }
 
-    public static TexturedModelData getTexturedModelData() {
-        ModelData modelData = BipedEntityModel.getModelData(Dilation.NONE, 0.0F);
-        ModelPartData modelPartData = modelData.getRoot();
-        modelPartData.addChild("body", ModelPartBuilder.create().uv(0, 16).cuboid(-4.0F, 0.0F, -2.0F, 8.0F, 12.0F, 4.0F), ModelTransform.pivot(0.0F, 0.0F, 0.0F));
-        modelPartData.addChild("head", ModelPartBuilder.create().uv(0, 0).cuboid(-4.0F, -8.0F, -4.0F, 8.0F, 8.0F, 8.0F), ModelTransform.pivot(0.0F, 0.0F, 0.0F));
-        modelPartData.addChild("right_arm",
-                ModelPartBuilder.create().uv(8, 32).cuboid(-1.0F, -2.0F, -1.0F, 2.0F, 12.0F, 2.0F).uv(47, 11).cuboid(-2.0F, -2.0F, -1.0F, 1.0F, 5.0F, 2.0F).uv(47, 20)
-                        .cuboid(-2.0F, 3.0F, -1.0F, 1.0F, 1.0F, 1.0F).uv(28, 16).cuboid(-2.0F, -1.0F, 1.0F, 3.0F, 3.0F, 1.0F).uv(35, 41).cuboid(-3.0F, -1.0F, 1.0F, 1.0F, 2.0F, 1.0F).uv(32, 8)
-                        .cuboid(-3.0F, -2.0F, -1.0F, 1.0F, 3.0F, 2.0F).uv(32, 25).cuboid(-4.0F, -5.0F, 0.0F, 1.0F, 5.0F, 1.0F).uv(36, 16).cuboid(-4.0F, -4.0F, -1.0F, 1.0F, 4.0F, 1.0F).uv(40, 37)
-                        .cuboid(-3.0F, -2.0F, -2.0F, 1.0F, 2.0F, 1.0F).uv(20, 16).cuboid(-3.0F, -3.0F, -2.0F, 1.0F, 1.0F, 3.0F).uv(52, 20).cuboid(-3.0F, -4.0F, 0.0F, 1.0F, 1.0F, 1.0F).uv(32, 13)
-                        .cuboid(-2.0F, -3.0F, -1.0F, 1.0F, 1.0F, 2.0F).uv(59, 20).cuboid(-3.0F, 1.0F, 0.0F, 1.0F, 1.0F, 1.0F).uv(38, 21).cuboid(-2.0F, -2.0F, 1.0F, 2.0F, 1.0F, 1.0F).uv(41, 26)
-                        .cuboid(-1.0F, 2.0F, 1.0F, 1.0F, 1.0F, 1.0F).uv(24, 20).cuboid(-2.0F, -1.0F, -2.0F, 3.0F, 3.0F, 1.0F).uv(38, 29).cuboid(-2.0F, -2.0F, -2.0F, 2.0F, 1.0F, 1.0F).uv(40, 33)
-                        .cuboid(-1.0F, 2.0F, -2.0F, 1.0F, 1.0F, 1.0F),
-                ModelTransform.pivot(-5.0F, 2.0F, 0.0F));
-        modelPartData.addChild("left_arm",
-                ModelPartBuilder.create().uv(16, 32).cuboid(-1.0F, -2.0F, -1.0F, 2.0F, 12.0F, 2.0F).uv(49, 1).cuboid(1.0F, -2.0F, -1.0F, 1.0F, 5.0F, 2.0F).uv(42, 42)
-                        .cuboid(1.0F, 3.0F, 0.0F, 1.0F, 1.0F, 1.0F).uv(32, 20).cuboid(2.0F, -2.0F, -1.0F, 1.0F, 3.0F, 2.0F).uv(41, 7).cuboid(2.0F, -1.0F, 1.0F, 1.0F, 2.0F, 1.0F).uv(42, 2)
-                        .cuboid(2.0F, 1.0F, 0.0F, 1.0F, 1.0F, 1.0F).uv(32, 36).cuboid(3.0F, -5.0F, 0.0F, 1.0F, 5.0F, 1.0F).uv(37, 24).cuboid(3.0F, -4.0F, -1.0F, 1.0F, 4.0F, 1.0F).uv(41, 23)
-                        .cuboid(2.0F, -2.0F, -2.0F, 1.0F, 2.0F, 1.0F).uv(56, 4).cuboid(2.0F, -3.0F, -2.0F, 1.0F, 1.0F, 3.0F).uv(42, 0).cuboid(2.0F, -4.0F, 0.0F, 1.0F, 1.0F, 1.0F).uv(34, 29)
-                        .cuboid(1.0F, -3.0F, -1.0F, 1.0F, 1.0F, 2.0F).uv(32, 32).cuboid(-1.0F, -1.0F, -2.0F, 3.0F, 3.0F, 1.0F).uv(39, 31).cuboid(0.0F, -2.0F, -2.0F, 2.0F, 1.0F, 1.0F).uv(28, 42)
-                        .cuboid(0.0F, 2.0F, -2.0F, 1.0F, 1.0F, 1.0F).uv(56, 11).cuboid(-1.0F, -1.0F, 1.0F, 3.0F, 3.0F, 1.0F).uv(39, 35).cuboid(0.0F, -2.0F, 1.0F, 2.0F, 1.0F, 1.0F).uv(24, 42)
-                        .cuboid(0.0F, 2.0F, 1.0F, 1.0F, 1.0F, 1.0F),
-                ModelTransform.pivot(5.0F, 2.0F, 0.0F));
-        modelPartData.addChild("right_leg",
-                ModelPartBuilder.create().uv(24, 24).cuboid(-1.0F, 0.0F, -1.0F, 2.0F, 12.0F, 2.0F).uv(39, 40).cuboid(0.0F, 0.0F, 1.0F, 1.0F, 2.0F, 1.0F).uv(32, 4)
-                        .cuboid(0.0F, 0.0F, -2.0F, 1.0F, 2.0F, 1.0F).uv(28, 38).cuboid(-1.0F, 0.0F, 1.0F, 1.0F, 3.0F, 1.0F).uv(24, 38).cuboid(-1.0F, 0.0F, -2.0F, 1.0F, 3.0F, 1.0F).uv(49, 24)
-                        .cuboid(-2.0F, 0.0F, -1.0F, 1.0F, 3.0F, 1.0F).uv(36, 36).cuboid(-2.0F, 0.0F, 0.0F, 1.0F, 4.0F, 1.0F),
-                ModelTransform.pivot(-2.0F, 12.0F, 0.0F));
-        modelPartData.addChild("left_leg",
-                ModelPartBuilder.create().uv(0, 32).cuboid(-1.0F, 0.0F, -1.0F, 2.0F, 12.0F, 2.0F).uv(36, 4).cuboid(1.0F, 0.0F, 0.0F, 1.0F, 4.0F, 1.0F).uv(39, 13)
-                        .cuboid(1.0F, 0.0F, -1.0F, 1.0F, 3.0F, 1.0F).uv(38, 9).cuboid(0.0F, 0.0F, -2.0F, 1.0F, 3.0F, 1.0F).uv(38, 0).cuboid(0.0F, 0.0F, 1.0F, 1.0F, 3.0F, 1.0F).uv(40, 17)
-                        .cuboid(-1.0F, 0.0F, -2.0F, 1.0F, 2.0F, 1.0F).uv(40, 4).cuboid(-1.0F, 0.0F, 1.0F, 1.0F, 2.0F, 1.0F),
-                ModelTransform.pivot(2.0F, 12.0F, 0.0F));
-        modelPartData.addChild("hat", ModelPartBuilder.create().cuboid(0F, 0F, 0F, 0F, 0F, 0F), ModelTransform.pivot(0.0F, 0.0F, 0.0F));
+    public static LayerDefinition getTexturedModelData() {
+        MeshDefinition modelData = HumanoidModel.createMesh(CubeDeformation.NONE, 0.0F);
+        PartDefinition modelPartData = modelData.getRoot();
+        modelPartData.addOrReplaceChild("body", CubeListBuilder.create().texOffs(0, 16).addBox(-4.0F, 0.0F, -2.0F, 8.0F, 12.0F, 4.0F), PartPose.offset(0.0F, 0.0F, 0.0F));
+        modelPartData.addOrReplaceChild("head", CubeListBuilder.create().texOffs(0, 0).addBox(-4.0F, -8.0F, -4.0F, 8.0F, 8.0F, 8.0F), PartPose.offset(0.0F, 0.0F, 0.0F));
+        modelPartData.addOrReplaceChild("right_arm",
+                CubeListBuilder.create().texOffs(8, 32).addBox(-1.0F, -2.0F, -1.0F, 2.0F, 12.0F, 2.0F).texOffs(47, 11).addBox(-2.0F, -2.0F, -1.0F, 1.0F, 5.0F, 2.0F).texOffs(47, 20)
+                        .addBox(-2.0F, 3.0F, -1.0F, 1.0F, 1.0F, 1.0F).texOffs(28, 16).addBox(-2.0F, -1.0F, 1.0F, 3.0F, 3.0F, 1.0F).texOffs(35, 41).addBox(-3.0F, -1.0F, 1.0F, 1.0F, 2.0F, 1.0F).texOffs(32, 8)
+                        .addBox(-3.0F, -2.0F, -1.0F, 1.0F, 3.0F, 2.0F).texOffs(32, 25).addBox(-4.0F, -5.0F, 0.0F, 1.0F, 5.0F, 1.0F).texOffs(36, 16).addBox(-4.0F, -4.0F, -1.0F, 1.0F, 4.0F, 1.0F).texOffs(40, 37)
+                        .addBox(-3.0F, -2.0F, -2.0F, 1.0F, 2.0F, 1.0F).texOffs(20, 16).addBox(-3.0F, -3.0F, -2.0F, 1.0F, 1.0F, 3.0F).texOffs(52, 20).addBox(-3.0F, -4.0F, 0.0F, 1.0F, 1.0F, 1.0F).texOffs(32, 13)
+                        .addBox(-2.0F, -3.0F, -1.0F, 1.0F, 1.0F, 2.0F).texOffs(59, 20).addBox(-3.0F, 1.0F, 0.0F, 1.0F, 1.0F, 1.0F).texOffs(38, 21).addBox(-2.0F, -2.0F, 1.0F, 2.0F, 1.0F, 1.0F).texOffs(41, 26)
+                        .addBox(-1.0F, 2.0F, 1.0F, 1.0F, 1.0F, 1.0F).texOffs(24, 20).addBox(-2.0F, -1.0F, -2.0F, 3.0F, 3.0F, 1.0F).texOffs(38, 29).addBox(-2.0F, -2.0F, -2.0F, 2.0F, 1.0F, 1.0F).texOffs(40, 33)
+                        .addBox(-1.0F, 2.0F, -2.0F, 1.0F, 1.0F, 1.0F),
+                PartPose.offset(-5.0F, 2.0F, 0.0F));
+        modelPartData.addOrReplaceChild("left_arm",
+                CubeListBuilder.create().texOffs(16, 32).addBox(-1.0F, -2.0F, -1.0F, 2.0F, 12.0F, 2.0F).texOffs(49, 1).addBox(1.0F, -2.0F, -1.0F, 1.0F, 5.0F, 2.0F).texOffs(42, 42)
+                        .addBox(1.0F, 3.0F, 0.0F, 1.0F, 1.0F, 1.0F).texOffs(32, 20).addBox(2.0F, -2.0F, -1.0F, 1.0F, 3.0F, 2.0F).texOffs(41, 7).addBox(2.0F, -1.0F, 1.0F, 1.0F, 2.0F, 1.0F).texOffs(42, 2)
+                        .addBox(2.0F, 1.0F, 0.0F, 1.0F, 1.0F, 1.0F).texOffs(32, 36).addBox(3.0F, -5.0F, 0.0F, 1.0F, 5.0F, 1.0F).texOffs(37, 24).addBox(3.0F, -4.0F, -1.0F, 1.0F, 4.0F, 1.0F).texOffs(41, 23)
+                        .addBox(2.0F, -2.0F, -2.0F, 1.0F, 2.0F, 1.0F).texOffs(56, 4).addBox(2.0F, -3.0F, -2.0F, 1.0F, 1.0F, 3.0F).texOffs(42, 0).addBox(2.0F, -4.0F, 0.0F, 1.0F, 1.0F, 1.0F).texOffs(34, 29)
+                        .addBox(1.0F, -3.0F, -1.0F, 1.0F, 1.0F, 2.0F).texOffs(32, 32).addBox(-1.0F, -1.0F, -2.0F, 3.0F, 3.0F, 1.0F).texOffs(39, 31).addBox(0.0F, -2.0F, -2.0F, 2.0F, 1.0F, 1.0F).texOffs(28, 42)
+                        .addBox(0.0F, 2.0F, -2.0F, 1.0F, 1.0F, 1.0F).texOffs(56, 11).addBox(-1.0F, -1.0F, 1.0F, 3.0F, 3.0F, 1.0F).texOffs(39, 35).addBox(0.0F, -2.0F, 1.0F, 2.0F, 1.0F, 1.0F).texOffs(24, 42)
+                        .addBox(0.0F, 2.0F, 1.0F, 1.0F, 1.0F, 1.0F),
+                PartPose.offset(5.0F, 2.0F, 0.0F));
+        modelPartData.addOrReplaceChild("right_leg",
+                CubeListBuilder.create().texOffs(24, 24).addBox(-1.0F, 0.0F, -1.0F, 2.0F, 12.0F, 2.0F).texOffs(39, 40).addBox(0.0F, 0.0F, 1.0F, 1.0F, 2.0F, 1.0F).texOffs(32, 4)
+                        .addBox(0.0F, 0.0F, -2.0F, 1.0F, 2.0F, 1.0F).texOffs(28, 38).addBox(-1.0F, 0.0F, 1.0F, 1.0F, 3.0F, 1.0F).texOffs(24, 38).addBox(-1.0F, 0.0F, -2.0F, 1.0F, 3.0F, 1.0F).texOffs(49, 24)
+                        .addBox(-2.0F, 0.0F, -1.0F, 1.0F, 3.0F, 1.0F).texOffs(36, 36).addBox(-2.0F, 0.0F, 0.0F, 1.0F, 4.0F, 1.0F),
+                PartPose.offset(-2.0F, 12.0F, 0.0F));
+        modelPartData.addOrReplaceChild("left_leg",
+                CubeListBuilder.create().texOffs(0, 32).addBox(-1.0F, 0.0F, -1.0F, 2.0F, 12.0F, 2.0F).texOffs(36, 4).addBox(1.0F, 0.0F, 0.0F, 1.0F, 4.0F, 1.0F).texOffs(39, 13)
+                        .addBox(1.0F, 0.0F, -1.0F, 1.0F, 3.0F, 1.0F).texOffs(38, 9).addBox(0.0F, 0.0F, -2.0F, 1.0F, 3.0F, 1.0F).texOffs(38, 0).addBox(0.0F, 0.0F, 1.0F, 1.0F, 3.0F, 1.0F).texOffs(40, 17)
+                        .addBox(-1.0F, 0.0F, -2.0F, 1.0F, 2.0F, 1.0F).texOffs(40, 4).addBox(-1.0F, 0.0F, 1.0F, 1.0F, 2.0F, 1.0F),
+                PartPose.offset(2.0F, 12.0F, 0.0F));
+        modelPartData.addOrReplaceChild("hat", CubeListBuilder.create().addBox(0F, 0F, 0F, 0F, 0F, 0F), PartPose.offset(0.0F, 0.0F, 0.0F));
 
-        return TexturedModelData.of(modelData, 64, 64);
+        return LayerDefinition.create(modelData, 64, 64);
     }
 
     @Override
-    public void animateModel(T mobEntity, float f, float g, float h) {
-        this.rightArmPose = BipedEntityModel.ArmPose.EMPTY;
-        this.leftArmPose = BipedEntityModel.ArmPose.EMPTY;
-        ItemStack itemStack = mobEntity.getStackInHand(Hand.MAIN_HAND);
-        if (itemStack.getItem() == Items.BOW && mobEntity.isAttacking() && !this.riding) {
-            this.rightArmPose = BipedEntityModel.ArmPose.BOW_AND_ARROW;
+    public void prepareMobModel(T mobEntity, float f, float g, float h) {
+        this.rightArmPose = HumanoidModel.ArmPose.EMPTY;
+        this.leftArmPose = HumanoidModel.ArmPose.EMPTY;
+        ItemStack itemStack = mobEntity.getItemInHand(InteractionHand.MAIN_HAND);
+        if (itemStack.getItem() == Items.BOW && mobEntity.isAggressive() && !this.riding) {
+            this.rightArmPose = HumanoidModel.ArmPose.BOW_AND_ARROW;
         }
-        super.animateModel((T) mobEntity, f, g, h);
+        super.prepareMobModel((T) mobEntity, f, g, h);
     }
 
     @Override
-    public void setAngles(T mobEntity, float f, float g, float h, float i, float j) {
-        super.setAngles((T) mobEntity, f, g, h, i, j);
-        ItemStack itemStack = mobEntity.getMainHandStack();
-        if (mobEntity.isAttacking() && (itemStack.isEmpty() || itemStack.getItem() != Items.BOW) && !this.riding) {
-            float k = MathHelper.sin(this.handSwingProgress * 3.1415927F);
-            float l = MathHelper.sin((1.0F - (1.0F - this.handSwingProgress) * (1.0F - this.handSwingProgress)) * 3.1415927F);
-            this.rightArm.roll = 0.0F;
-            this.leftArm.roll = 0.0F;
-            this.rightArm.yaw = -(0.1F - k * 0.6F);
-            this.leftArm.yaw = 0.1F - k * 0.6F;
-            this.rightArm.pitch = -1.2707964F;
-            this.leftArm.pitch = MathHelper.cos(f * 0.6662F) * g * 0.5F;
+    public void setupAnim(T mobEntity, float f, float g, float h, float i, float j) {
+        super.setupAnim((T) mobEntity, f, g, h, i, j);
+        ItemStack itemStack = mobEntity.getMainHandItem();
+        if (mobEntity.isAggressive() && (itemStack.isEmpty() || itemStack.getItem() != Items.BOW) && !this.riding) {
+            float k = Mth.sin(this.attackTime * 3.1415927F);
+            float l = Mth.sin((1.0F - (1.0F - this.attackTime) * (1.0F - this.attackTime)) * 3.1415927F);
+            this.rightArm.zRot = 0.0F;
+            this.leftArm.zRot = 0.0F;
+            this.rightArm.yRot = -(0.1F - k * 0.6F);
+            this.leftArm.yRot = 0.1F - k * 0.6F;
+            this.rightArm.xRot = -1.2707964F;
+            this.leftArm.xRot = Mth.cos(f * 0.6662F) * g * 0.5F;
             ModelPart var10000 = this.rightArm;
-            var10000.pitch -= k * 1.2F - l * 0.4F;
+            var10000.xRot -= k * 1.2F - l * 0.4F;
         }
         if (this.riding) {
-            this.rightArm.pitch = 0.3F;
-            this.leftArm.pitch = 0.3F;
-            if (mobEntity.isAttacking()) {
+            this.rightArm.xRot = 0.3F;
+            this.leftArm.xRot = 0.3F;
+            if (mobEntity.isAggressive()) {
                 if (itemStack.getItem() == Items.BOW) {
-                    this.rightArm.yaw = -0.1F + this.head.yaw - 0.4F;
-                    this.leftArm.yaw = 0.1F + this.head.yaw;
-                    this.rightArm.pitch = -1.0F + this.head.pitch;
-                    this.leftArm.pitch = -1.0F + this.head.pitch;
+                    this.rightArm.yRot = -0.1F + this.head.yRot - 0.4F;
+                    this.leftArm.yRot = 0.1F + this.head.yRot;
+                    this.rightArm.xRot = -1.0F + this.head.xRot;
+                    this.leftArm.xRot = -1.0F + this.head.xRot;
                 } else {
-                    float k = MathHelper.sin(this.handSwingProgress * 3.1415927F);
-                    float l = MathHelper.sin((1.0F - (1.0F - this.handSwingProgress) * (1.0F - this.handSwingProgress)) * 3.1415927F);
-                    this.rightArm.roll = 0.0F;
-                    this.leftArm.roll = 0.0F;
-                    this.rightArm.yaw = -(0.1F - k * 0.6F);
-                    this.leftArm.yaw = 0.1F - k * 0.6F;
-                    this.rightArm.pitch = -0.7F;
-                    this.leftArm.pitch = 0.3F;
+                    float k = Mth.sin(this.attackTime * 3.1415927F);
+                    float l = Mth.sin((1.0F - (1.0F - this.attackTime) * (1.0F - this.attackTime)) * 3.1415927F);
+                    this.rightArm.zRot = 0.0F;
+                    this.leftArm.zRot = 0.0F;
+                    this.rightArm.yRot = -(0.1F - k * 0.6F);
+                    this.leftArm.yRot = 0.1F - k * 0.6F;
+                    this.rightArm.xRot = -0.7F;
+                    this.leftArm.xRot = 0.3F;
                     ModelPart var10000 = this.rightArm;
-                    var10000.pitch -= k * 1.2F - l * 0.4F;
+                    var10000.xRot -= k * 1.2F - l * 0.4F;
                 }
             }
-            this.body.pivotY = 5.2F;
-            this.head.pivotY = 5.2F;
-            this.rightArm.pivotY = 5.2F;
-            this.leftArm.pivotY = 5.2F;
-            this.rightLeg.pivotY = rightLeg.pivotY + 4F;
-            this.leftLeg.pivotY = leftLeg.pivotY + 4F;
+            this.body.y = 5.2F;
+            this.head.y = 5.2F;
+            this.rightArm.y = 5.2F;
+            this.leftArm.y = 5.2F;
+            this.rightLeg.y = rightLeg.y + 4F;
+            this.leftLeg.y = leftLeg.y + 4F;
             ModelPart var10000 = this.rightArm;
             var10000 = this.rightArm;
-            var10000.pitch += -0.62831855F;
+            var10000.xRot += -0.62831855F;
             var10000 = this.leftArm;
-            var10000.pitch += -0.62831855F;
-            this.rightLeg.pitch = -1.4137167F;
-            this.rightLeg.yaw = 0.31415927F;
-            this.rightLeg.roll = 0.07853982F;
-            this.leftLeg.pitch = -1.4137167F;
-            this.leftLeg.yaw = -0.31415927F;
-            this.leftLeg.roll = -0.07853982F;
+            var10000.xRot += -0.62831855F;
+            this.rightLeg.xRot = -1.4137167F;
+            this.rightLeg.yRot = 0.31415927F;
+            this.rightLeg.zRot = 0.07853982F;
+            this.leftLeg.xRot = -1.4137167F;
+            this.leftLeg.yRot = -0.31415927F;
+            this.leftLeg.zRot = -0.07853982F;
         }
 
     }
 
     @Override
-    public void setArmAngle(Arm arm, MatrixStack matrices) {
-        float f = arm == Arm.RIGHT ? 1.0F : -1.0F;
+    public void translateToHand(HumanoidArm arm, PoseStack matrices) {
+        float f = arm == HumanoidArm.RIGHT ? 1.0F : -1.0F;
         ModelPart modelPart = this.getArm(arm);
-        modelPart.pivotX += f;
-        modelPart.rotate(matrices);
-        modelPart.pivotX -= f;
+        modelPart.x += f;
+        modelPart.translateAndRotate(matrices);
+        modelPart.x -= f;
     }
 }

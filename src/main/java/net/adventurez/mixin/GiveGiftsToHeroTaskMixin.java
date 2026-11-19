@@ -6,15 +6,15 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 import org.spongepowered.asm.mixin.injection.At;
 
 import net.adventurez.init.EffectInit;
-import net.minecraft.entity.ai.brain.task.GiveGiftsToHeroTask;
-import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.world.entity.ai.behavior.GiveGiftToHero;
+import net.minecraft.world.entity.player.Player;
 
-@Mixin(GiveGiftsToHeroTask.class)
+@Mixin(GiveGiftToHero.class)
 public class GiveGiftsToHeroTaskMixin {
 
     @Inject(method = "isHero", at = @At(value = "HEAD"), cancellable = true)
-    private void isHeroMixin(PlayerEntity player, CallbackInfoReturnable<Boolean> info) {
-        if (player.hasStatusEffect(EffectInit.FAME)) {
+    private void isHeroMixin(Player player, CallbackInfoReturnable<Boolean> info) {
+        if (player.hasEffect(EffectInit.FAME)) {
             info.setReturnValue(true);
         }
     }

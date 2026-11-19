@@ -1,53 +1,51 @@
 package net.adventurez.entity;
 
 import java.util.EnumSet;
-
+import net.minecraft.core.particles.ColorParticleOption;
+import net.minecraft.core.particles.ParticleTypes;
+import net.minecraft.nbt.CompoundTag;
+import net.minecraft.network.syncher.EntityDataAccessor;
+import net.minecraft.network.syncher.EntityDataSerializers;
+import net.minecraft.network.syncher.SynchedEntityData;
+import net.minecraft.network.syncher.SynchedEntityData.Builder;
+import net.minecraft.sounds.SoundEvent;
+import net.minecraft.util.Mth;
+import net.minecraft.world.entity.EntityType;
+import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.entity.ai.goal.Goal;
+import net.minecraft.world.entity.monster.Monster;
+import net.minecraft.world.level.Level;
 import org.jetbrains.annotations.Nullable;
 
-import net.minecraft.entity.EntityType;
-import net.minecraft.entity.LivingEntity;
-import net.minecraft.entity.ai.goal.Goal;
-import net.minecraft.entity.data.DataTracker;
-import net.minecraft.entity.data.TrackedData;
-import net.minecraft.entity.data.TrackedDataHandlerRegistry;
-import net.minecraft.entity.data.DataTracker.Builder;
-import net.minecraft.entity.mob.HostileEntity;
-import net.minecraft.nbt.NbtCompound;
-import net.minecraft.particle.EntityEffectParticleEffect;
-import net.minecraft.particle.ParticleTypes;
-import net.minecraft.sound.SoundEvent;
-import net.minecraft.util.math.MathHelper;
-import net.minecraft.world.World;
-
-public abstract class SpellCastingEntity extends HostileEntity {
-    public SpellCastingEntity(EntityType<? extends HostileEntity> entityType, World world) {
+public abstract class SpellCastingEntity extends Monster {
+    public SpellCastingEntity(EntityType<? extends Monster> entityType, Level world) {
         super(entityType, world);
         this.spell = SpellCastingEntity.Spell.NONE;
     }
 
-    private static final TrackedData<Byte> SPELL;
+    private static final EntityDataAccessor<Byte> SPELL;
     protected int spellTicks;
     private SpellCastingEntity.Spell spell;
 
     @Override
-    protected void initDataTracker(Builder builder) {
-        super.initDataTracker(builder);
-        builder.add(SPELL, (byte) 0);
+    protected void defineSynchedData(Builder builder) {
+        super.defineSynchedData(builder);
+        builder.define(SPELL, (byte) 0);
     }
 
-    public void readCustomDataFromNbt(NbtCompound tag) {
-        super.readCustomDataFromNbt(tag);
+    public void readAdditionalSaveData(CompoundTag tag) {
+        super.readAdditionalSaveData(tag);
         this.spellTicks = tag.getInt("SpellTicks");
     }
 
-    public void writeCustomDataToNbt(NbtCompound tag) {
-        super.writeCustomDataToNbt(tag);
+    public void addAdditionalSaveData(CompoundTag tag) {
+        super.addAdditionalSaveData(tag);
         tag.putInt("SpellTicks", this.spellTicks);
     }
 
     public boolean isSpellcasting() {
-        if (this.getWorld().isClient()) {
-            return (Byte) this.dataTracker.get(SPELL) > 0;
+        if (this.level().isClientSide()) {
+            return (Byte) this.entityData.get(SPELL) > 0;
         } else {
             return this.spellTicks > 0;
         }
@@ -55,15 +53,15 @@ public abstract class SpellCastingEntity extends HostileEntity {
 
     public void setSpell(SpellCastingEntity.Spell spell) {
         this.spell = spell;
-        this.dataTracker.set(SPELL, (byte) spell.id);
+        this.entityData.set(SPELL, (byte) spell.id);
     }
 
     protected SpellCastingEntity.Spell getSpell() {
-        return !this.getWorld().isClient() ? this.spell : SpellCastingEntity.Spell.byId((Byte) this.dataTracker.get(SPELL));
+        return !this.level().isClientSide() ? this.spell : SpellCastingEntity.Spell.byId((Byte) this.entityData.get(SPELL));
     }
 
-    protected void mobTick() {
-        super.mobTick();
+    protected void customServerAiStep() {
+        super.customServerAiStep();
         if (this.spellTicks > 0) {
             --this.spellTicks;
         }
@@ -72,15 +70,15 @@ public abstract class SpellCastingEntity extends HostileEntity {
 
     public void tick() {
         super.tick();
-        if (this.getWorld().isClient() && this.isSpellcasting() && !(this instanceof ShamanEntity)) {
+        if (this.level().isClientSide() && this.isSpellcasting() && !(this instanceof ShamanEntity)) {
             SpellCastingEntity.Spell spell = this.getSpell();
             float d = (float) spell.particleVelocity[0];
             float e = (float) spell.particleVelocity[1];
             float f = (float) spell.particleVelocity[2];
-            float g = this.bodyYaw * 0.017453292F + MathHelper.cos((float) this.age * 0.6662F) * 0.25F;
-            float h = MathHelper.cos(g);
-            float i = MathHelper.sin(g);
-            this.getWorld().addParticle(EntityEffectParticleEffect.create(ParticleTypes.ENTITY_EFFECT, d, e, f), (float) this.getX() + (float) h * 0.92f, this.getY() + 2.32f,
+            float g = this.yBodyRot * 0.017453292F + Mth.cos((float) this.tickCount * 0.6662F) * 0.25F;
+            float h = Mth.cos(g);
+            float i = Mth.sin(g);
+            this.level().addParticle(ColorParticleOption.create(ParticleTypes.ENTITY_EFFECT, d, e, f), (float) this.getX() + (float) h * 0.92f, this.getY() + 2.32f,
                     this.getZ() + (float) i * 0.92f, 0.0, 0.0, 0.0);
         }
 
@@ -93,7 +91,7 @@ public abstract class SpellCastingEntity extends HostileEntity {
     protected abstract SoundEvent getCastSpellSound();
 
     static {
-        SPELL = DataTracker.registerData(SpellCastingEntity.class, TrackedDataHandlerRegistry.BYTE);
+        SPELL = SynchedEntityData.defineId(SpellCastingEntity.class, EntityDataSerializers.BYTE);
     }
 
     public static enum Spell {
@@ -130,20 +128,20 @@ public abstract class SpellCastingEntity extends HostileEntity {
         protected CastSpellGoal() {
         }
 
-        public boolean canStart() {
+        public boolean canUse() {
             LivingEntity livingEntity = SpellCastingEntity.this.getTarget();
             if (livingEntity != null && livingEntity.isAlive()) {
                 if (SpellCastingEntity.this.isSpellcasting()) {
                     return false;
                 } else {
-                    return SpellCastingEntity.this.age >= this.startTime;
+                    return SpellCastingEntity.this.tickCount >= this.startTime;
                 }
             } else {
                 return false;
             }
         }
 
-        public boolean shouldContinue() {
+        public boolean canContinueToUse() {
             LivingEntity livingEntity = SpellCastingEntity.this.getTarget();
             return livingEntity != null && livingEntity.isAlive() && this.spellCooldown > 0;
         }
@@ -151,7 +149,7 @@ public abstract class SpellCastingEntity extends HostileEntity {
         public void start() {
             this.spellCooldown = this.getInitialCooldown();
             SpellCastingEntity.this.spellTicks = this.getSpellTicks();
-            this.startTime = SpellCastingEntity.this.age + this.startTimeDelay();
+            this.startTime = SpellCastingEntity.this.tickCount + this.startTimeDelay();
             SoundEvent soundEvent = this.getSoundPrepare();
             if (soundEvent != null) {
                 SpellCastingEntity.this.playSound(soundEvent, 1.0F, 1.0F);
@@ -187,10 +185,10 @@ public abstract class SpellCastingEntity extends HostileEntity {
 
     public class LookAtTargetGoal extends Goal {
         public LookAtTargetGoal() {
-            this.setControls(EnumSet.of(Goal.Control.MOVE, Goal.Control.LOOK));
+            this.setFlags(EnumSet.of(Goal.Flag.MOVE, Goal.Flag.LOOK));
         }
 
-        public boolean canStart() {
+        public boolean canUse() {
             return SpellCastingEntity.this.getSpellTicks() > 0;
         }
 
@@ -206,8 +204,8 @@ public abstract class SpellCastingEntity extends HostileEntity {
 
         public void tick() {
             if (SpellCastingEntity.this.getTarget() != null) {
-                SpellCastingEntity.this.getLookControl().lookAt(SpellCastingEntity.this.getTarget(), (float) SpellCastingEntity.this.getMaxHeadRotation(),
-                        (float) SpellCastingEntity.this.getMaxLookPitchChange());
+                SpellCastingEntity.this.getLookControl().setLookAt(SpellCastingEntity.this.getTarget(), (float) SpellCastingEntity.this.getMaxHeadYRot(),
+                        (float) SpellCastingEntity.this.getMaxHeadXRot());
             }
 
         }

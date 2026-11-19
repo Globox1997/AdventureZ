@@ -1,58 +1,57 @@
 package net.adventurez.item;
 
 import net.adventurez.init.ConfigInit;
-import net.minecraft.client.gui.screen.Screen;
-import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.entity.projectile.thrown.EnderPearlEntity;
-import net.minecraft.item.Item;
-import net.minecraft.item.ItemStack;
-import net.minecraft.item.tooltip.TooltipType;
-import net.minecraft.sound.SoundCategory;
-import net.minecraft.sound.SoundEvents;
-import net.minecraft.stat.Stats;
-import net.minecraft.text.Text;
-import net.minecraft.util.Hand;
-import net.minecraft.util.TypedActionResult;
-import net.minecraft.world.World;
-
+import net.minecraft.client.gui.screens.Screen;
+import net.minecraft.network.chat.Component;
+import net.minecraft.sounds.SoundEvents;
+import net.minecraft.sounds.SoundSource;
+import net.minecraft.stats.Stats;
+import net.minecraft.world.InteractionHand;
+import net.minecraft.world.InteractionResultHolder;
+import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.entity.projectile.ThrownEnderpearl;
+import net.minecraft.world.item.Item;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.TooltipFlag;
+import net.minecraft.world.level.Level;
 import java.util.List;
 
 public class PrimeEyeItem extends Item {
-    public PrimeEyeItem(Settings settings) {
+    public PrimeEyeItem(Properties settings) {
         super(settings);
     }
 
     @Override
-    public void appendTooltip(ItemStack stack, TooltipContext context, List<Text> tooltip, TooltipType type) {
-        super.appendTooltip(stack, context, tooltip, type);
+    public void appendHoverText(ItemStack stack, TooltipContext context, List<Component> tooltip, TooltipFlag type) {
+        super.appendHoverText(stack, context, tooltip, type);
         if (ConfigInit.CONFIG.allow_extra_tooltips) {
-            tooltip.add(Text.translatable("item.adventurez.moreinfo.tooltip"));
+            tooltip.add(Component.translatable("item.adventurez.moreinfo.tooltip"));
             if (Screen.hasShiftDown()) {
-                tooltip.remove(Text.translatable("item.adventurez.moreinfo.tooltip"));
-                tooltip.add(Text.translatable("item.adventurez.prime_eye.tooltip"));
+                tooltip.remove(Component.translatable("item.adventurez.moreinfo.tooltip"));
+                tooltip.add(Component.translatable("item.adventurez.prime_eye.tooltip"));
             }
         }
     }
 
     @Override
-    public TypedActionResult<ItemStack> use(World world, PlayerEntity user, Hand hand) {
-        ItemStack itemStack = user.getStackInHand(hand);
-        if (itemStack.getDamage() <= itemStack.getMaxDamage() - 1) {
-            world.playSound((PlayerEntity) null, user.getX(), user.getY(), user.getZ(), SoundEvents.ENTITY_ENDER_PEARL_THROW, SoundCategory.NEUTRAL, 0.5F,
+    public InteractionResultHolder<ItemStack> use(Level world, Player user, InteractionHand hand) {
+        ItemStack itemStack = user.getItemInHand(hand);
+        if (itemStack.getDamageValue() <= itemStack.getMaxDamage() - 1) {
+            world.playSound((Player) null, user.getX(), user.getY(), user.getZ(), SoundEvents.ENDER_PEARL_THROW, SoundSource.NEUTRAL, 0.5F,
                     0.4F / (world.getRandom().nextFloat() * 0.4F + 0.8F));
-            user.getItemCooldownManager().set(this, 20);
-            if (!world.isClient()) {
-                EnderPearlEntity enderPearlEntity = new EnderPearlEntity(world, user);
+            user.getCooldowns().addCooldown(this, 20);
+            if (!world.isClientSide()) {
+                ThrownEnderpearl enderPearlEntity = new ThrownEnderpearl(world, user);
                 enderPearlEntity.setItem(itemStack);
-                enderPearlEntity.setVelocity(user, user.getPitch(), user.getYaw(), 0.0F, 1.5F, 1.0F);
-                world.spawnEntity(enderPearlEntity);
-                itemStack.setDamage(itemStack.getDamage() + 1);
+                enderPearlEntity.shootFromRotation(user, user.getXRot(), user.getYRot(), 0.0F, 1.5F, 1.0F);
+                world.addFreshEntity(enderPearlEntity);
+                itemStack.setDamageValue(itemStack.getDamageValue() + 1);
             }
 
-            user.incrementStat(Stats.USED.getOrCreateStat(this));
-            return TypedActionResult.success(itemStack, world.isClient());
+            user.awardStat(Stats.ITEM_USED.get(this));
+            return InteractionResultHolder.sidedSuccess(itemStack, world.isClientSide());
         } else
-            return TypedActionResult.pass(itemStack);
+            return InteractionResultHolder.pass(itemStack);
     }
 
 }

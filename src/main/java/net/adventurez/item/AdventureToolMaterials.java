@@ -1,15 +1,15 @@
 package net.adventurez.item;
 
 import net.adventurez.init.ItemInit;
-import net.minecraft.block.Block;
-import net.minecraft.item.ToolMaterial;
-import net.minecraft.recipe.Ingredient;
-import net.minecraft.registry.tag.BlockTags;
-import net.minecraft.registry.tag.TagKey;
+import net.minecraft.tags.BlockTags;
+import net.minecraft.tags.TagKey;
+import net.minecraft.world.item.Tier;
+import net.minecraft.world.item.crafting.Ingredient;
+import net.minecraft.world.level.block.Block;
 
-public class AdventureToolMaterials implements ToolMaterial {
+public class AdventureToolMaterials implements Tier {
 
-    public static final ToolMaterial GILDED_NETHERITE = new AdventureToolMaterials(BlockTags.INCORRECT_FOR_WOODEN_TOOL, 2331, 9.0F, 4.0F, 15, Ingredient.ofItems(ItemInit.GILDED_NETHERITE_FRAGMENT),
+    public static final Tier GILDED_NETHERITE = new AdventureToolMaterials(BlockTags.INCORRECT_FOR_WOODEN_TOOL, 2331, 9.0F, 4.0F, 15, Ingredient.of(ItemInit.GILDED_NETHERITE_FRAGMENT),
             "gilded_netherite");
 
     private final TagKey<Block> inverseTag;
@@ -31,27 +31,27 @@ public class AdventureToolMaterials implements ToolMaterial {
     }
 
     @Override
-    public int getDurability() {
+    public int getUses() {
         return this.itemDurability;
     }
 
     @Override
-    public float getMiningSpeedMultiplier() {
+    public float getSpeed() {
         return this.miningSpeed;
     }
 
     @Override
-    public float getAttackDamage() {
+    public float getAttackDamageBonus() {
         return this.attackDamage;
     }
 
     @Override
-    public TagKey<Block> getInverseTag() {
+    public TagKey<Block> getIncorrectBlocksForDrops() {
         return this.inverseTag;
     }
 
     @Override
-    public int getEnchantability() {
+    public int getEnchantmentValue() {
         return this.enchantability;
     }
 

@@ -3,30 +3,35 @@ package net.adventurez.block;
 import net.adventurez.block.entity.PiglinFlagEntity;
 import net.adventurez.init.BlockInit;
 import net.adventurez.init.ConfigInit;
-import net.minecraft.block.*;
-import net.minecraft.block.entity.BlockEntity;
-import net.minecraft.block.entity.BlockEntityTicker;
-import net.minecraft.block.entity.BlockEntityType;
-import net.minecraft.client.gui.screen.Screen;
-import net.minecraft.entity.ai.pathing.NavigationType;
-import net.minecraft.item.Item.TooltipContext;
-import net.minecraft.item.ItemPlacementContext;
-import net.minecraft.item.ItemStack;
-import net.minecraft.item.tooltip.TooltipType;
-import net.minecraft.state.StateManager;
-import net.minecraft.state.property.DirectionProperty;
-import net.minecraft.text.Text;
-import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.math.Direction;
-import net.minecraft.util.shape.VoxelShape;
-import net.minecraft.util.shape.VoxelShapes;
-import net.minecraft.world.BlockView;
-import net.minecraft.world.World;
+import net.minecraft.client.gui.screens.Screen;
+import net.minecraft.core.BlockPos;
+import net.minecraft.core.Direction;
+import net.minecraft.network.chat.Component;
+import net.minecraft.world.item.Item.TooltipContext;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.TooltipFlag;
+import net.minecraft.world.item.context.BlockPlaceContext;
+import net.minecraft.world.level.BlockGetter;
+import net.minecraft.world.level.Level;
+import net.minecraft.world.level.block.Block;
+import net.minecraft.world.level.block.EntityBlock;
+import net.minecraft.world.level.block.HorizontalDirectionalBlock;
+import net.minecraft.world.level.block.RenderShape;
+import net.minecraft.world.level.block.entity.BlockEntity;
+import net.minecraft.world.level.block.entity.BlockEntityTicker;
+import net.minecraft.world.level.block.entity.BlockEntityType;
+import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.level.block.state.StateDefinition;
+import net.minecraft.world.level.block.state.properties.DirectionProperty;
+import net.minecraft.world.level.pathfinder.PathComputationType;
+import net.minecraft.world.phys.shapes.CollisionContext;
+import net.minecraft.world.phys.shapes.Shapes;
+import net.minecraft.world.phys.shapes.VoxelShape;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.List;
 
-public class PiglinFlag extends Block implements BlockEntityProvider {
+public class PiglinFlag extends Block implements EntityBlock {
     public static final DirectionProperty FACING;
     private static final VoxelShape BASE;
     private static final VoxelShape POLE;
@@ -39,68 +44,68 @@ public class PiglinFlag extends Block implements BlockEntityProvider {
     private static final VoxelShape SOUTH_FLAG;
     private static final VoxelShape WEST_FLAG;
 
-    public PiglinFlag(Settings settings) {
+    public PiglinFlag(Properties settings) {
         super(settings);
-        this.setDefaultState(this.stateManager.getDefaultState().with(FACING, Direction.NORTH));
+        this.registerDefaultState(this.stateDefinition.any().setValue(FACING, Direction.NORTH));
     }
 
     @Override
-    public BlockEntity createBlockEntity(BlockPos pos, BlockState state) {
+    public BlockEntity newBlockEntity(BlockPos pos, BlockState state) {
         return new PiglinFlagEntity(pos, state);
     }
 
     @Nullable
     @Override
-    public <T extends BlockEntity> BlockEntityTicker<T> getTicker(World world, BlockState state, BlockEntityType<T> type) {
-        return checkType(type, BlockInit.PIGLIN_FLAG_ENTITY, world.isClient() ? PiglinFlagEntity::clientTick : PiglinFlagEntity::serverTick);
+    public <T extends BlockEntity> BlockEntityTicker<T> getTicker(Level world, BlockState state, BlockEntityType<T> type) {
+        return checkType(type, BlockInit.PIGLIN_FLAG_ENTITY, world.isClientSide() ? PiglinFlagEntity::clientTick : PiglinFlagEntity::serverTick);
     }
 
     @Override
-    public void appendTooltip(ItemStack stack, TooltipContext context, List<Text> tooltip, TooltipType options) {
-        super.appendTooltip(stack, context, tooltip, options);
+    public void appendHoverText(ItemStack stack, TooltipContext context, List<Component> tooltip, TooltipFlag options) {
+        super.appendHoverText(stack, context, tooltip, options);
         if (ConfigInit.CONFIG.allow_extra_tooltips) {
-            tooltip.add(Text.translatable("item.adventurez.moreinfo.tooltip"));
+            tooltip.add(Component.translatable("item.adventurez.moreinfo.tooltip"));
             if (Screen.hasShiftDown()) {
-                tooltip.remove(Text.translatable("item.adventurez.moreinfo.tooltip"));
-                tooltip.add(Text.translatable("block.adventurez.piglin_flag.tooltip"));
-                tooltip.add(Text.translatable("block.adventurez.piglin_flag.tooltip2"));
-                tooltip.add(Text.translatable("block.adventurez.piglin_flag.tooltip3"));
+                tooltip.remove(Component.translatable("item.adventurez.moreinfo.tooltip"));
+                tooltip.add(Component.translatable("block.adventurez.piglin_flag.tooltip"));
+                tooltip.add(Component.translatable("block.adventurez.piglin_flag.tooltip2"));
+                tooltip.add(Component.translatable("block.adventurez.piglin_flag.tooltip3"));
             }
         }
     }
 
     @Override
-    public BlockState getPlacementState(ItemPlacementContext ctx) {
-        return this.getDefaultState().with(FACING, ctx.getHorizontalPlayerFacing().rotateYClockwise());
+    public BlockState getStateForPlacement(BlockPlaceContext ctx) {
+        return this.defaultBlockState().setValue(FACING, ctx.getHorizontalDirection().getClockWise());
     }
 
     @Override
-    public void appendProperties(StateManager.Builder<Block, BlockState> builder) {
+    public void createBlockStateDefinition(StateDefinition.Builder<Block, BlockState> builder) {
         builder.add(FACING);
     }
 
     @Override
-    public VoxelShape getOutlineShape(BlockState state, BlockView world, BlockPos pos, ShapeContext context) {
+    public VoxelShape getShape(BlockState state, BlockGetter world, BlockPos pos, CollisionContext context) {
         return this.getShape(state);
     }
 
     @Override
-    public VoxelShape getCollisionShape(BlockState state, BlockView world, BlockPos pos, ShapeContext context) {
+    public VoxelShape getCollisionShape(BlockState state, BlockGetter world, BlockPos pos, CollisionContext context) {
         return BASE;
     }
 
     @Override
-    public BlockRenderType getRenderType(BlockState state) {
-        return BlockRenderType.MODEL;
+    public RenderShape getRenderShape(BlockState state) {
+        return RenderShape.MODEL;
     }
 
     @Override
-    protected boolean canPathfindThrough(BlockState state, NavigationType type) {
+    protected boolean isPathfindable(BlockState state, PathComputationType type) {
         return false;
     }
 
     private VoxelShape getShape(BlockState state) {
-        Direction direction = state.get(FACING);
+        Direction direction = state.getValue(FACING);
         if (direction == Direction.NORTH) {
             return NORTH_FLAG;
         } else if (direction == Direction.EAST) {
@@ -121,17 +126,17 @@ public class PiglinFlag extends Block implements BlockEntityProvider {
     }
 
     static {
-        FACING = HorizontalFacingBlock.FACING;
-        BASE = createCuboidShape(6, 0, 6, 10, 10, 10);
-        POLE = VoxelShapes.union(BASE, createCuboidShape(7, 10, 7, 9, 27, 9));
-        BAR_1 = Block.createCuboidShape(6, 27, -10, 10, 32, 10);
-        BAR_2 = Block.createCuboidShape(6, 27, 6, 26, 32, 10);
-        BAR_3 = Block.createCuboidShape(6, 27, 6, 10, 32, 26);
-        BAR_4 = Block.createCuboidShape(-10, 27, 6, 10, 32, 10);
-        NORTH_FLAG = VoxelShapes.union(POLE, BAR_1);
-        EAST_FLAG = VoxelShapes.union(POLE, BAR_2);
-        SOUTH_FLAG = VoxelShapes.union(POLE, BAR_3);
-        WEST_FLAG = VoxelShapes.union(POLE, BAR_4);
+        FACING = HorizontalDirectionalBlock.FACING;
+        BASE = box(6, 0, 6, 10, 10, 10);
+        POLE = Shapes.or(BASE, box(7, 10, 7, 9, 27, 9));
+        BAR_1 = Block.box(6, 27, -10, 10, 32, 10);
+        BAR_2 = Block.box(6, 27, 6, 26, 32, 10);
+        BAR_3 = Block.box(6, 27, 6, 10, 32, 26);
+        BAR_4 = Block.box(-10, 27, 6, 10, 32, 10);
+        NORTH_FLAG = Shapes.or(POLE, BAR_1);
+        EAST_FLAG = Shapes.or(POLE, BAR_2);
+        SOUTH_FLAG = Shapes.or(POLE, BAR_3);
+        WEST_FLAG = Shapes.or(POLE, BAR_4);
     }
 
 }

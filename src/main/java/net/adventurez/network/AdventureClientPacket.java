@@ -14,8 +14,8 @@ public class AdventureClientPacket {
             int entityId = payload.entityId();
             float velocity = payload.velocity();
             context.client().execute(() -> {
-                if (context.client().world != null && context.client().world.getEntityById(entityId) != null) {
-                    context.client().world.getEntityById(entityId).addVelocity(0.0D, velocity, 0.0D);
+                if (context.client().level != null && context.client().level.getEntity(entityId) != null) {
+                    context.client().level.getEntity(entityId).push(0.0D, velocity, 0.0D);
                 }
             });
         });

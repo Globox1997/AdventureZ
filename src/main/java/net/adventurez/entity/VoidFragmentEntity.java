@@ -1,190 +1,189 @@
 package net.adventurez.entity;
 
 import java.util.List;
-
-import net.minecraft.registry.tag.DamageTypeTags;
 import org.jetbrains.annotations.Nullable;
 
 import net.adventurez.entity.nonliving.ThrownRockEntity;
 import net.adventurez.entity.nonliving.VoidBulletEntity;
-import net.minecraft.entity.Entity;
-import net.minecraft.entity.EntityData;
-import net.minecraft.entity.EntityDimensions;
-import net.minecraft.entity.EntityPose;
-import net.minecraft.entity.EntityType;
-import net.minecraft.entity.SpawnReason;
-import net.minecraft.entity.ai.TargetPredicate;
-import net.minecraft.entity.attribute.DefaultAttributeContainer;
-import net.minecraft.entity.attribute.EntityAttributes;
-import net.minecraft.entity.damage.DamageSource;
-import net.minecraft.entity.data.DataTracker;
-import net.minecraft.entity.data.TrackedData;
-import net.minecraft.entity.data.TrackedDataHandlerRegistry;
-import net.minecraft.entity.data.DataTracker.Builder;
-import net.minecraft.entity.effect.StatusEffectInstance;
-import net.minecraft.entity.mob.FlyingEntity;
-import net.minecraft.entity.mob.HostileEntity;
-import net.minecraft.entity.mob.Monster;
-import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.nbt.NbtCompound;
-import net.minecraft.particle.ParticleTypes;
-import net.minecraft.predicate.entity.EntityPredicates;
-import net.minecraft.util.math.Box;
+import net.minecraft.core.particles.ParticleTypes;
+import net.minecraft.nbt.CompoundTag;
+import net.minecraft.network.syncher.EntityDataAccessor;
+import net.minecraft.network.syncher.EntityDataSerializers;
+import net.minecraft.network.syncher.SynchedEntityData;
+import net.minecraft.network.syncher.SynchedEntityData.Builder;
+import net.minecraft.tags.DamageTypeTags;
 import net.minecraft.world.Difficulty;
-import net.minecraft.world.LocalDifficulty;
-import net.minecraft.world.ServerWorldAccess;
-import net.minecraft.world.World;
-import net.minecraft.world.World.ExplosionSourceType;
+import net.minecraft.world.DifficultyInstance;
+import net.minecraft.world.damagesource.DamageSource;
+import net.minecraft.world.effect.MobEffectInstance;
+import net.minecraft.world.entity.Entity;
+import net.minecraft.world.entity.EntityDimensions;
+import net.minecraft.world.entity.EntitySelector;
+import net.minecraft.world.entity.EntityType;
+import net.minecraft.world.entity.FlyingMob;
+import net.minecraft.world.entity.MobSpawnType;
+import net.minecraft.world.entity.Pose;
+import net.minecraft.world.entity.SpawnGroupData;
+import net.minecraft.world.entity.ai.attributes.AttributeSupplier;
+import net.minecraft.world.entity.ai.attributes.Attributes;
+import net.minecraft.world.entity.ai.targeting.TargetingConditions;
+import net.minecraft.world.entity.monster.Enemy;
+import net.minecraft.world.entity.monster.Monster;
+import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.level.Level;
+import net.minecraft.world.level.Level.ExplosionInteraction;
+import net.minecraft.world.level.ServerLevelAccessor;
+import net.minecraft.world.phys.AABB;
 
-public class VoidFragmentEntity extends FlyingEntity implements Monster {
+public class VoidFragmentEntity extends FlyingMob implements Enemy {
 
-    public static final TrackedData<Boolean> IS_VOID_ORB = DataTracker.registerData(VoidFragmentEntity.class, TrackedDataHandlerRegistry.BOOLEAN);
+    public static final EntityDataAccessor<Boolean> IS_VOID_ORB = SynchedEntityData.defineId(VoidFragmentEntity.class, EntityDataSerializers.BOOLEAN);
     public boolean isVoidOrb;
     private int deathTick;
 
-    public VoidFragmentEntity(EntityType<? extends FlyingEntity> entityType, World world) {
+    public VoidFragmentEntity(EntityType<? extends FlyingMob> entityType, Level world) {
         super(entityType, world);
     }
 
-    public static DefaultAttributeContainer.Builder createVoidFragmentAttributes() {
-        return HostileEntity.createHostileAttributes().add(EntityAttributes.GENERIC_MAX_HEALTH, 10.0D).add(EntityAttributes.GENERIC_MOVEMENT_SPEED, 0.0D)
-                .add(EntityAttributes.GENERIC_KNOCKBACK_RESISTANCE, 10.0D);
+    public static AttributeSupplier.Builder createVoidFragmentAttributes() {
+        return Monster.createMonsterAttributes().add(Attributes.MAX_HEALTH, 10.0D).add(Attributes.MOVEMENT_SPEED, 0.0D)
+                .add(Attributes.KNOCKBACK_RESISTANCE, 10.0D);
     }
 
     @Override
-    public EntityData initialize(ServerWorldAccess world, LocalDifficulty difficulty, SpawnReason spawnReason, @Nullable EntityData entityData) {
-        if (spawnReason == SpawnReason.SPAWN_EGG) {
+    public SpawnGroupData finalizeSpawn(ServerLevelAccessor world, DifficultyInstance difficulty, MobSpawnType spawnReason, @Nullable SpawnGroupData entityData) {
+        if (spawnReason == MobSpawnType.SPAWN_EGG) {
             this.setVoidOrb(true);
         }
 
-        return super.initialize(world, difficulty, spawnReason, entityData);
+        return super.finalizeSpawn(world, difficulty, spawnReason, entityData);
     }
 
     @Override
-    protected void initDataTracker(Builder builder) {
-        super.initDataTracker(builder);
-        builder.add(IS_VOID_ORB, false);
+    protected void defineSynchedData(Builder builder) {
+        super.defineSynchedData(builder);
+        builder.define(IS_VOID_ORB, false);
     }
 
     @Override
-    public void writeCustomDataToNbt(NbtCompound tag) {
-        super.writeCustomDataToNbt(tag);
+    public void addAdditionalSaveData(CompoundTag tag) {
+        super.addAdditionalSaveData(tag);
         tag.putBoolean("IsVoidOrb", this.isVoidOrb);
 
     }
 
     @Override
-    public void readCustomDataFromNbt(NbtCompound tag) {
-        super.readCustomDataFromNbt(tag);
+    public void readAdditionalSaveData(CompoundTag tag) {
+        super.readAdditionalSaveData(tag);
         this.isVoidOrb = tag.getBoolean("IsVoidOrb");
         this.setVoidOrb(this.isVoidOrb);
     }
 
     public void setVoidOrb(boolean orb) {
         this.isVoidOrb = orb;
-        dataTracker.set(IS_VOID_ORB, orb);
-        this.refreshPosition();
-        this.calculateDimensions();
+        entityData.set(IS_VOID_ORB, orb);
+        this.reapplyPosition();
+        this.refreshDimensions();
     }
 
     @Override
-    protected EntityDimensions getBaseDimensions(EntityPose pose) {
-        return super.getBaseDimensions(pose).scaled(1.0F, (this.isVoidOrb || this.dataTracker.get(IS_VOID_ORB)) ? 2.1F : 1.2F);
+    protected EntityDimensions getDefaultDimensions(Pose pose) {
+        return super.getDefaultDimensions(pose).scale(1.0F, (this.isVoidOrb || this.entityData.get(IS_VOID_ORB)) ? 2.1F : 1.2F);
     }
 
     @Override
-    public void onTrackedDataSet(TrackedData<?> data) {
+    public void onSyncedDataUpdated(EntityDataAccessor<?> data) {
         if (IS_VOID_ORB.equals(data)) {
-            this.refreshPosition();
-            this.calculateDimensions();
-            this.setYaw(this.headYaw);
-            this.bodyYaw = this.headYaw;
+            this.reapplyPosition();
+            this.refreshDimensions();
+            this.setYRot(this.yHeadRot);
+            this.yBodyRot = this.yHeadRot;
         }
 
-        super.onTrackedDataSet(data);
+        super.onSyncedDataUpdated(data);
     }
 
     @Override
-    public void updatePostDeath() {
-        if (this.getWorld().isClient()) {
+    public void tickDeath() {
+        if (this.level().isClientSide()) {
             for (int i = 0; i < 10; ++i) {
                 double d = this.random.nextGaussian() * 0.05D;
                 double e = this.random.nextGaussian() * 0.05D;
                 double f = this.random.nextGaussian() * 0.05D;
-                this.getWorld().addParticle(ParticleTypes.END_ROD, this.getParticleX(1.0D), this.getRandomBodyY(), this.getParticleZ(1.0D), d, e, f);
+                this.level().addParticle(ParticleTypes.END_ROD, this.getRandomX(1.0D), this.getRandomY(), this.getRandomZ(1.0D), d, e, f);
             }
         }
         ++this.deathTick;
-        if (this.deathTick >= 20 && !this.getWorld().isClient()) {
+        if (this.deathTick >= 20 && !this.level().isClientSide()) {
             this.remove(Entity.RemovalReason.KILLED);
         }
     }
 
     @Override
-    public void onDeath(DamageSource source) {
-        if (!this.getWorld().isClient() && this.isVoidOrb) {
-            Box box = new Box(this.getBlockPos());
-            List<VoidShadowEntity> list = this.getWorld().getEntitiesByClass(VoidShadowEntity.class, box.expand(120D), EntityPredicates.EXCEPT_SPECTATOR);
+    public void die(DamageSource source) {
+        if (!this.level().isClientSide() && this.isVoidOrb) {
+            AABB box = new AABB(this.blockPosition());
+            List<VoidShadowEntity> list = this.level().getEntitiesOfClass(VoidShadowEntity.class, box.inflate(120D), EntitySelector.NO_SPECTATORS);
             for (int i = 0; i < list.size(); ++i) {
-                list.get(i).damage(this.getDamageSources().magic(), 40f);
+                list.get(i).hurt(this.damageSources().magic(), 40f);
             }
         }
-        super.onDeath(source);
+        super.die(source);
     }
 
     @Override
-    public void mobTick() {
-        super.mobTick();
-        if (!this.getWorld().isClient() && this.getWorld().getClosestPlayer(TargetPredicate.createAttackable().setBaseMaxDistance(0.8D), this) != null) {
+    public void customServerAiStep() {
+        super.customServerAiStep();
+        if (!this.level().isClientSide() && this.level().getNearestPlayer(TargetingConditions.forCombat().range(0.8D), this) != null) {
             this.dead = true;
-            this.getWorld().createExplosion(this, this.getX(), this.getY(), this.getZ(), this.isVoidOrb ? 4.0F : 3.0F, ExplosionSourceType.NONE);
+            this.level().explode(this, this.getX(), this.getY(), this.getZ(), this.isVoidOrb ? 4.0F : 3.0F, ExplosionInteraction.NONE);
             this.discard();
         }
     }
 
     @Override
-    public boolean damage(DamageSource source, float amount) {
-        if (source.isIn(DamageTypeTags.BYPASSES_INVULNERABILITY)) {
-            return super.damage(source, amount);
-        } else if ((source.getAttacker() != null && source.getAttacker() instanceof PlayerEntity && ((PlayerEntity) source.getAttacker()).isCreative())) {
-            return super.damage(source, amount);
+    public boolean hurt(DamageSource source, float amount) {
+        if (source.is(DamageTypeTags.BYPASSES_INVULNERABILITY)) {
+            return super.hurt(source, amount);
+        } else if ((source.getEntity() != null && source.getEntity() instanceof Player && ((Player) source.getEntity()).isCreative())) {
+            return super.hurt(source, amount);
         }
-        if (this.isInvulnerableTo(source) || source.getSource() instanceof ThrownRockEntity || (this.isVoidOrb && !(source.getSource() instanceof VoidBulletEntity))) {
+        if (this.isInvulnerableTo(source) || source.getDirectEntity() instanceof ThrownRockEntity || (this.isVoidOrb && !(source.getDirectEntity() instanceof VoidBulletEntity))) {
             return false;
         } else {
-            return super.damage(source, source.getSource() instanceof VoidBulletEntity ? this.getHealth() : amount);
+            return super.hurt(source, source.getDirectEntity() instanceof VoidBulletEntity ? this.getHealth() : amount);
         }
     }
 
     @Override
     public void checkDespawn() {
-        if (this.getWorld().getDifficulty() == Difficulty.PEACEFUL) {
+        if (this.level().getDifficulty() == Difficulty.PEACEFUL) {
             this.discard();
         }
     }
 
     @Override
-    public boolean handleFallDamage(float fallDistance, float damageMultiplier, DamageSource damageSource) {
+    public boolean causeFallDamage(float fallDistance, float damageMultiplier, DamageSource damageSource) {
         return false;
     }
 
     @Override
-    public boolean addStatusEffect(StatusEffectInstance effect, Entity entity) {
+    public boolean addEffect(MobEffectInstance effect, Entity entity) {
         return false;
     }
 
     @Override
-    public boolean canStartRiding(Entity entity) {
+    public boolean canRide(Entity entity) {
         return false;
     }
 
     @Override
-    public boolean canUsePortals(boolean allowVehicles) {
+    public boolean canUsePortal(boolean allowVehicles) {
         return false;
     }
 
     @Override
-    public boolean canHaveStatusEffect(StatusEffectInstance effect) {
+    public boolean canBeAffected(MobEffectInstance effect) {
         return false;
     }
 
@@ -194,7 +193,7 @@ public class VoidFragmentEntity extends FlyingEntity implements Monster {
     }
 
     @Override
-    public boolean isPushedByFluids() {
+    public boolean isPushedByFluid() {
         return false;
     }
 

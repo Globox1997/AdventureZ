@@ -3,84 +3,84 @@ package net.adventurez.entity;
 import java.util.List;
 
 import net.adventurez.init.SoundInit;
-import net.minecraft.block.BlockState;
-import net.minecraft.entity.EntityType;
-import net.minecraft.entity.LightningEntity;
-import net.minecraft.entity.LivingEntity;
-import net.minecraft.entity.SpawnReason;
-import net.minecraft.entity.SpawnRestriction;
-import net.minecraft.entity.ai.goal.FleeEntityGoal;
-import net.minecraft.entity.ai.goal.ActiveTargetGoal;
-import net.minecraft.entity.ai.goal.LookAtEntityGoal;
-import net.minecraft.entity.ai.goal.MeleeAttackGoal;
-import net.minecraft.entity.ai.goal.RevengeGoal;
-import net.minecraft.entity.ai.goal.SwimGoal;
-import net.minecraft.entity.ai.goal.WanderAroundGoal;
-import net.minecraft.entity.attribute.DefaultAttributeContainer;
-import net.minecraft.entity.attribute.EntityAttributes;
-import net.minecraft.entity.damage.DamageSource;
-import net.minecraft.entity.effect.StatusEffect;
-import net.minecraft.entity.effect.StatusEffectInstance;
-import net.minecraft.entity.effect.StatusEffects;
-import net.minecraft.entity.mob.CaveSpiderEntity;
-import net.minecraft.entity.mob.HostileEntity;
-import net.minecraft.entity.mob.MobEntity;
-import net.minecraft.entity.mob.PathAwareEntity;
-import net.minecraft.entity.mob.SkeletonEntity;
-import net.minecraft.entity.mob.SpiderEntity;
-import net.minecraft.entity.mob.WitchEntity;
-import net.minecraft.entity.mob.ZombieEntity;
-import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.item.RangedWeaponItem;
-import net.minecraft.predicate.entity.EntityPredicates;
-import net.minecraft.registry.entry.RegistryEntry;
-import net.minecraft.server.world.ServerWorld;
-import net.minecraft.sound.SoundEvent;
-import net.minecraft.sound.SoundEvents;
-import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.math.random.Random;
-import net.minecraft.world.World;
-import net.minecraft.world.ServerWorldAccess;
+import net.minecraft.core.BlockPos;
+import net.minecraft.core.Holder;
+import net.minecraft.server.level.ServerLevel;
+import net.minecraft.sounds.SoundEvent;
+import net.minecraft.sounds.SoundEvents;
+import net.minecraft.util.RandomSource;
+import net.minecraft.world.damagesource.DamageSource;
+import net.minecraft.world.effect.MobEffect;
+import net.minecraft.world.effect.MobEffectInstance;
+import net.minecraft.world.effect.MobEffects;
+import net.minecraft.world.entity.EntitySelector;
+import net.minecraft.world.entity.EntityType;
+import net.minecraft.world.entity.LightningBolt;
+import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.entity.Mob;
+import net.minecraft.world.entity.MobSpawnType;
+import net.minecraft.world.entity.PathfinderMob;
+import net.minecraft.world.entity.SpawnPlacements;
+import net.minecraft.world.entity.ai.attributes.AttributeSupplier;
+import net.minecraft.world.entity.ai.attributes.Attributes;
+import net.minecraft.world.entity.ai.goal.AvoidEntityGoal;
+import net.minecraft.world.entity.ai.goal.FloatGoal;
+import net.minecraft.world.entity.ai.goal.LookAtPlayerGoal;
+import net.minecraft.world.entity.ai.goal.MeleeAttackGoal;
+import net.minecraft.world.entity.ai.goal.RandomStrollGoal;
+import net.minecraft.world.entity.ai.goal.target.HurtByTargetGoal;
+import net.minecraft.world.entity.ai.goal.target.NearestAttackableTargetGoal;
+import net.minecraft.world.entity.monster.CaveSpider;
+import net.minecraft.world.entity.monster.Monster;
+import net.minecraft.world.entity.monster.Skeleton;
+import net.minecraft.world.entity.monster.Spider;
+import net.minecraft.world.entity.monster.Witch;
+import net.minecraft.world.entity.monster.Zombie;
+import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.item.ProjectileWeaponItem;
+import net.minecraft.world.level.Level;
+import net.minecraft.world.level.ServerLevelAccessor;
+import net.minecraft.world.level.block.state.BlockState;
 
 public class ShamanEntity extends SpellCastingEntity {
 
-    public ShamanEntity(EntityType<? extends HostileEntity> entityType, World world) {
+    public ShamanEntity(EntityType<? extends Monster> entityType, Level world) {
         super(entityType, world);
     }
 
-    public static DefaultAttributeContainer.Builder createShamanAttributes() {
-        return HostileEntity.createHostileAttributes().add(EntityAttributes.GENERIC_MAX_HEALTH, 40.0D).add(EntityAttributes.GENERIC_MOVEMENT_SPEED, 0.3D)
-                .add(EntityAttributes.GENERIC_ATTACK_DAMAGE, 6.0D).add(EntityAttributes.GENERIC_ATTACK_KNOCKBACK, 1.0D).add(EntityAttributes.GENERIC_FOLLOW_RANGE, 35.0D);
+    public static AttributeSupplier.Builder createShamanAttributes() {
+        return Monster.createMonsterAttributes().add(Attributes.MAX_HEALTH, 40.0D).add(Attributes.MOVEMENT_SPEED, 0.3D)
+                .add(Attributes.ATTACK_DAMAGE, 6.0D).add(Attributes.ATTACK_KNOCKBACK, 1.0D).add(Attributes.FOLLOW_RANGE, 35.0D);
     }
 
     @Override
-    public void initGoals() {
-        super.initGoals();
-        this.goalSelector.add(0, new SwimGoal(this));
-        this.goalSelector.add(1, new LookAtTargetGoalShaman());
-        this.goalSelector.add(2, new NormalAttack(this, 1.0D, false));
-        this.goalSelector.add(2, new FleeEntityGoal<>(this, PlayerEntity.class, 8.0F, 0.7D, 0.9D));
-        this.goalSelector.add(4, new SummonCompanionsGoal());
-        this.goalSelector.add(5, new ThunderboltSpellGoal());
-        this.goalSelector.add(7, new EffectSpellGoal());
-        this.goalSelector.add(8, new LookAtEntityGoal(this, PlayerEntity.class, 7.0F, 1.0F));
-        this.goalSelector.add(9, new WanderAroundGoal(this, 0.9D));
-        this.goalSelector.add(10, new LookAtEntityGoal(this, MobEntity.class, 8.0F));
-        this.targetSelector.add(1, (new RevengeGoal(this, new Class[]{WitchEntity.class})));
-        this.targetSelector.add(2, (new RevengeGoal(this, new Class[]{ZombieEntity.class})));
-        this.targetSelector.add(3, (new RevengeGoal(this, new Class[]{SkeletonEntity.class})));
-        this.targetSelector.add(3, (new RevengeGoal(this, new Class[]{SpiderEntity.class})));
-        this.targetSelector.add(3, (new RevengeGoal(this, new Class[]{CaveSpiderEntity.class})));
-        this.targetSelector.add(4, (new ActiveTargetGoal<>(this, PlayerEntity.class, true)).setMaxTimeWithoutVisibility(300));
+    public void registerGoals() {
+        super.registerGoals();
+        this.goalSelector.addGoal(0, new FloatGoal(this));
+        this.goalSelector.addGoal(1, new LookAtTargetGoalShaman());
+        this.goalSelector.addGoal(2, new NormalAttack(this, 1.0D, false));
+        this.goalSelector.addGoal(2, new AvoidEntityGoal<>(this, Player.class, 8.0F, 0.7D, 0.9D));
+        this.goalSelector.addGoal(4, new SummonCompanionsGoal());
+        this.goalSelector.addGoal(5, new ThunderboltSpellGoal());
+        this.goalSelector.addGoal(7, new EffectSpellGoal());
+        this.goalSelector.addGoal(8, new LookAtPlayerGoal(this, Player.class, 7.0F, 1.0F));
+        this.goalSelector.addGoal(9, new RandomStrollGoal(this, 0.9D));
+        this.goalSelector.addGoal(10, new LookAtPlayerGoal(this, Mob.class, 8.0F));
+        this.targetSelector.addGoal(1, (new HurtByTargetGoal(this, new Class[]{Witch.class})));
+        this.targetSelector.addGoal(2, (new HurtByTargetGoal(this, new Class[]{Zombie.class})));
+        this.targetSelector.addGoal(3, (new HurtByTargetGoal(this, new Class[]{Skeleton.class})));
+        this.targetSelector.addGoal(3, (new HurtByTargetGoal(this, new Class[]{Spider.class})));
+        this.targetSelector.addGoal(3, (new HurtByTargetGoal(this, new Class[]{CaveSpider.class})));
+        this.targetSelector.addGoal(4, (new NearestAttackableTargetGoal<>(this, Player.class, true)).setUnseenMemoryTicks(300));
     }
 
-    public static boolean canSpawn(EntityType<ShamanEntity> type, ServerWorldAccess world, SpawnReason spawnReason, BlockPos pos, Random random) {
-        return (canSpawnInDark(type, world, spawnReason, pos, random) && world.isSkyVisible(pos)) || spawnReason == SpawnReason.SPAWNER;
+    public static boolean canSpawn(EntityType<ShamanEntity> type, ServerLevelAccessor world, MobSpawnType spawnReason, BlockPos pos, RandomSource random) {
+        return (checkMonsterSpawnRules(type, world, spawnReason, pos, random) && world.canSeeSky(pos)) || spawnReason == MobSpawnType.SPAWNER;
 
     }
 
     @Override
-    public int getLimitPerChunk() {
+    public int getMaxSpawnClusterSize() {
         return 1;
     }
 
@@ -106,11 +106,11 @@ public class ShamanEntity extends SpellCastingEntity {
 
     @Override
     public SoundEvent getCastSpellSound() {
-        return SoundEvents.ENTITY_EVOKER_CAST_SPELL;
+        return SoundEvents.EVOKER_CAST_SPELL;
     }
 
     private boolean tooManyCompanions() {
-        List<LivingEntity> list = this.getWorld().getEntitiesByClass(LivingEntity.class, this.getBoundingBox().expand(40D), EntityPredicates.EXCEPT_SPECTATOR);
+        List<LivingEntity> list = this.level().getEntitiesOfClass(LivingEntity.class, this.getBoundingBox().inflate(40D), EntitySelector.NO_SPECTATORS);
         if (!list.isEmpty()) {
             int spiders = 0;
             int othermobs = 0;
@@ -149,10 +149,10 @@ public class ShamanEntity extends SpellCastingEntity {
         }
 
         @Override
-        public boolean canStart() {
-            LivingEntity attacker = ShamanEntity.this.getAttacker();
-            if (super.canStart() && attacker != null && attacker.getMainHandStack().getItem() instanceof RangedWeaponItem && ShamanEntity.this.squaredDistanceTo(attacker) > 12
-                    && ShamanEntity.this.getWorld().isRaining()) {
+        public boolean canUse() {
+            LivingEntity attacker = ShamanEntity.this.getLastHurtByMob();
+            if (super.canUse() && attacker != null && attacker.getMainHandItem().getItem() instanceof ProjectileWeaponItem && ShamanEntity.this.distanceToSqr(attacker) > 12
+                    && ShamanEntity.this.level().isRaining()) {
                 return true;
             } else {
                 return false;
@@ -161,22 +161,22 @@ public class ShamanEntity extends SpellCastingEntity {
 
         @Override
         public void castSpell() {
-            LivingEntity attacker = ShamanEntity.this.getAttacker();
+            LivingEntity attacker = ShamanEntity.this.getLastHurtByMob();
             if (attacker != null) {
-                ServerWorld serverWorld = (ServerWorld) attacker.getWorld();
-                double posX = attacker.getX() + ShamanEntity.this.getWorld().getRandom().nextInt(3);
+                ServerLevel serverWorld = (ServerLevel) attacker.level();
+                double posX = attacker.getX() + ShamanEntity.this.level().getRandom().nextInt(3);
                 double posY = attacker.getY();
-                double posZ = attacker.getZ() + ShamanEntity.this.getWorld().getRandom().nextInt(3);
-                BlockPos pos = BlockPos.ofFloored(posX, posY, posZ);
-                LightningEntity lightningEntity = EntityType.LIGHTNING_BOLT.create(attacker.getWorld());
-                lightningEntity.refreshPositionAndAngles(pos, 0.0F, 0.0F);
-                serverWorld.spawnEntity(lightningEntity);
+                double posZ = attacker.getZ() + ShamanEntity.this.level().getRandom().nextInt(3);
+                BlockPos pos = BlockPos.containing(posX, posY, posZ);
+                LightningBolt lightningEntity = EntityType.LIGHTNING_BOLT.create(attacker.level());
+                lightningEntity.moveTo(pos, 0.0F, 0.0F);
+                serverWorld.addFreshEntity(lightningEntity);
             }
         }
 
         @Override
         public SoundEvent getSoundPrepare() {
-            return SoundEvents.ENTITY_EVOKER_PREPARE_SUMMON;
+            return SoundEvents.EVOKER_PREPARE_SUMMON;
         }
 
         @Override
@@ -206,28 +206,28 @@ public class ShamanEntity extends SpellCastingEntity {
         }
 
         @Override
-        public boolean canStart() {
-            return super.canStart();
+        public boolean canUse() {
+            return super.canUse();
         }
 
         @Override
         public void castSpell() {
             LivingEntity livingEntity = ShamanEntity.this.getTarget();
             if (livingEntity != null) {
-                RegistryEntry<StatusEffect> statusEffect;
+                Holder<MobEffect> statusEffect;
                 if (ShamanEntity.this.getRandom().nextFloat() <= 0.5F) {
-                    statusEffect = StatusEffects.WEAKNESS;
+                    statusEffect = MobEffects.WEAKNESS;
                 } else {
-                    statusEffect = StatusEffects.POISON;
+                    statusEffect = MobEffects.POISON;
                 }
-                livingEntity.addStatusEffect(new StatusEffectInstance(statusEffect, 120 + ShamanEntity.this.getRandom().nextInt(80), 1, false, false, true));
+                livingEntity.addEffect(new MobEffectInstance(statusEffect, 120 + ShamanEntity.this.getRandom().nextInt(80), 1, false, false, true));
             }
 
         }
 
         @Override
         public SoundEvent getSoundPrepare() {
-            return SoundEvents.ENTITY_EVOKER_PREPARE_SUMMON;
+            return SoundEvents.EVOKER_PREPARE_SUMMON;
         }
 
         @Override
@@ -242,8 +242,8 @@ public class ShamanEntity extends SpellCastingEntity {
         }
 
         @Override
-        public boolean canStart() {
-            return super.canStart() && !tooManyCompanions();
+        public boolean canUse() {
+            return super.canUse() && !tooManyCompanions();
         }
 
         @Override
@@ -258,20 +258,20 @@ public class ShamanEntity extends SpellCastingEntity {
 
         @Override
         public void castSpell() {
-            ServerWorld serverWorld = (ServerWorld) ShamanEntity.this.getWorld();
+            ServerLevel serverWorld = (ServerLevel) ShamanEntity.this.level();
             int spellCount = 0;
             for (int i = 0; i < 20; ++i) {
-                BlockPos blockPos = ShamanEntity.this.getBlockPos().add(-3 + ShamanEntity.this.getRandom().nextInt(6), ShamanEntity.this.getRandom().nextInt(3),
+                BlockPos blockPos = ShamanEntity.this.blockPosition().offset(-3 + ShamanEntity.this.getRandom().nextInt(6), ShamanEntity.this.getRandom().nextInt(3),
                         -3 + ShamanEntity.this.getRandom().nextInt(6));
-                if (SpawnRestriction.canSpawn(EntityType.ZOMBIE, serverWorld, SpawnReason.EVENT, blockPos, serverWorld.getRandom())) {
+                if (SpawnPlacements.checkSpawnRules(EntityType.ZOMBIE, serverWorld, MobSpawnType.EVENT, blockPos, serverWorld.getRandom())) {
                     spellCount++;
                     if (ShamanEntity.this.getRandom().nextFloat() < 0.6F) {
-                        CaveSpiderEntity caveSpiderEntity = EntityType.CAVE_SPIDER.create(serverWorld);
-                        caveSpiderEntity.refreshPositionAndAngles(blockPos, serverWorld.getRandom().nextFloat() * 360F, 0.0F);
-                        caveSpiderEntity.initialize(serverWorld, serverWorld.getLocalDifficulty(blockPos), SpawnReason.EVENT, null);
-                        serverWorld.spawnEntityAndPassengers(caveSpiderEntity);
+                        CaveSpider caveSpiderEntity = EntityType.CAVE_SPIDER.create(serverWorld);
+                        caveSpiderEntity.moveTo(blockPos, serverWorld.getRandom().nextFloat() * 360F, 0.0F);
+                        caveSpiderEntity.finalizeSpawn(serverWorld, serverWorld.getCurrentDifficultyAt(blockPos), MobSpawnType.EVENT, null);
+                        serverWorld.addFreshEntityWithPassengers(caveSpiderEntity);
                     } else {
-                        MobEntity mobEntity;
+                        Mob mobEntity;
                         int randomInt = ShamanEntity.this.getRandom().nextInt(3);
                         if (randomInt == 0) {
                             mobEntity = EntityType.ZOMBIE.create(serverWorld);
@@ -280,9 +280,9 @@ public class ShamanEntity extends SpellCastingEntity {
                         } else {
                             mobEntity = EntityType.SPIDER.create(serverWorld);
                         }
-                        mobEntity.refreshPositionAndAngles(blockPos, serverWorld.getRandom().nextFloat() * 360F, 0.0F);
-                        mobEntity.initialize(serverWorld, serverWorld.getLocalDifficulty(blockPos), SpawnReason.EVENT, null);
-                        serverWorld.spawnEntityAndPassengers(mobEntity);
+                        mobEntity.moveTo(blockPos, serverWorld.getRandom().nextFloat() * 360F, 0.0F);
+                        mobEntity.finalizeSpawn(serverWorld, serverWorld.getCurrentDifficultyAt(blockPos), MobSpawnType.EVENT, null);
+                        serverWorld.addFreshEntityWithPassengers(mobEntity);
                     }
                 }
                 if (spellCount >= 3) {
@@ -294,7 +294,7 @@ public class ShamanEntity extends SpellCastingEntity {
 
         @Override
         public SoundEvent getSoundPrepare() {
-            return SoundEvents.ENTITY_EVOKER_PREPARE_SUMMON;
+            return SoundEvents.EVOKER_PREPARE_SUMMON;
         }
 
         @Override
@@ -311,7 +311,7 @@ public class ShamanEntity extends SpellCastingEntity {
         @Override
         public void tick() {
             if (ShamanEntity.this.getTarget() != null) {
-                ShamanEntity.this.getLookControl().lookAt(ShamanEntity.this.getTarget(), (float) ShamanEntity.this.getMaxHeadRotation(), (float) ShamanEntity.this.getMaxLookPitchChange());
+                ShamanEntity.this.getLookControl().setLookAt(ShamanEntity.this.getTarget(), (float) ShamanEntity.this.getMaxHeadYRot(), (float) ShamanEntity.this.getMaxHeadXRot());
             }
 
         }
@@ -320,28 +320,28 @@ public class ShamanEntity extends SpellCastingEntity {
     private static class NormalAttack extends MeleeAttackGoal {
         private final ShamanEntity summonerEntity;
 
-        public NormalAttack(PathAwareEntity mob, double speed, boolean pauseWhenMobIdle) {
+        public NormalAttack(PathfinderMob mob, double speed, boolean pauseWhenMobIdle) {
             super(mob, speed, pauseWhenMobIdle);
             this.summonerEntity = (ShamanEntity) mob;
         }
 
         @Override
-        public boolean canStart() {
+        public boolean canUse() {
             LivingEntity livingEntity = this.summonerEntity.getTarget();
-            return livingEntity != null && livingEntity.isAlive() && this.summonerEntity.canTarget(livingEntity) && this.summonerEntity.squaredDistanceTo(livingEntity) < 7.0D && super.canStart();
+            return livingEntity != null && livingEntity.isAlive() && this.summonerEntity.canAttack(livingEntity) && this.summonerEntity.distanceToSqr(livingEntity) < 7.0D && super.canUse();
         }
 
         @Override
-        public boolean shouldContinue() {
+        public boolean canContinueToUse() {
             LivingEntity livingEntity = this.mob.getTarget();
-            if (livingEntity == null || this.summonerEntity.squaredDistanceTo(livingEntity) > 5D) {
+            if (livingEntity == null || this.summonerEntity.distanceToSqr(livingEntity) > 5D) {
                 return false;
             } else if (!livingEntity.isAlive()) {
                 return false;
-            } else if (!this.mob.isInWalkTargetRange(livingEntity.getBlockPos())) {
+            } else if (!this.mob.isWithinRestriction(livingEntity.blockPosition())) {
                 return false;
             } else {
-                return !(livingEntity instanceof PlayerEntity) || !livingEntity.isSpectator() && !((PlayerEntity) livingEntity).isCreative();
+                return !(livingEntity instanceof Player) || !livingEntity.isSpectator() && !((Player) livingEntity).isCreative();
             }
         }
 

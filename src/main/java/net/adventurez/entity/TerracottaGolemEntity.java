@@ -1,98 +1,107 @@
 package net.adventurez.entity;
 
 import net.adventurez.init.SoundInit;
-import net.minecraft.block.BlockState;
-import net.minecraft.entity.*;
-import net.minecraft.entity.ai.goal.*;
-import net.minecraft.entity.attribute.DefaultAttributeContainer;
-import net.minecraft.entity.attribute.EntityAttributes;
-import net.minecraft.entity.damage.DamageSource;
-import net.minecraft.entity.data.DataTracker;
-import net.minecraft.entity.data.DataTracker.Builder;
-import net.minecraft.entity.data.TrackedData;
-import net.minecraft.entity.data.TrackedDataHandlerRegistry;
-import net.minecraft.entity.mob.HostileEntity;
-import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.nbt.NbtCompound;
-import net.minecraft.particle.ParticleTypes;
-import net.minecraft.registry.tag.BlockTags;
-import net.minecraft.server.world.ServerWorld;
-import net.minecraft.sound.SoundCategory;
-import net.minecraft.sound.SoundEvent;
-import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.math.random.Random;
+import net.minecraft.core.BlockPos;
+import net.minecraft.core.particles.ParticleTypes;
+import net.minecraft.nbt.CompoundTag;
+import net.minecraft.network.syncher.EntityDataAccessor;
+import net.minecraft.network.syncher.EntityDataSerializers;
+import net.minecraft.network.syncher.SynchedEntityData;
+import net.minecraft.network.syncher.SynchedEntityData.Builder;
+import net.minecraft.server.level.ServerLevel;
+import net.minecraft.sounds.SoundEvent;
+import net.minecraft.sounds.SoundSource;
+import net.minecraft.tags.BlockTags;
+import net.minecraft.util.RandomSource;
 import net.minecraft.world.Difficulty;
-import net.minecraft.world.LocalDifficulty;
-import net.minecraft.world.ServerWorldAccess;
-import net.minecraft.world.World;
+import net.minecraft.world.DifficultyInstance;
+import net.minecraft.world.damagesource.DamageSource;
+import net.minecraft.world.entity.Entity;
+import net.minecraft.world.entity.EntityDimensions;
+import net.minecraft.world.entity.EntityType;
+import net.minecraft.world.entity.MobSpawnType;
+import net.minecraft.world.entity.Pose;
+import net.minecraft.world.entity.SpawnGroupData;
+import net.minecraft.world.entity.ai.attributes.AttributeSupplier;
+import net.minecraft.world.entity.ai.attributes.Attributes;
+import net.minecraft.world.entity.ai.goal.LookAtPlayerGoal;
+import net.minecraft.world.entity.ai.goal.MeleeAttackGoal;
+import net.minecraft.world.entity.ai.goal.RandomLookAroundGoal;
+import net.minecraft.world.entity.ai.goal.RandomStrollGoal;
+import net.minecraft.world.entity.ai.goal.target.NearestAttackableTargetGoal;
+import net.minecraft.world.entity.monster.Monster;
+import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.level.Level;
+import net.minecraft.world.level.ServerLevelAccessor;
+import net.minecraft.world.level.block.state.BlockState;
 import org.jetbrains.annotations.Nullable;
 
-public class TerracottaGolemEntity extends HostileEntity {
+public class TerracottaGolemEntity extends Monster {
 
-    public static final TrackedData<Boolean> BLOCK_VARIANT = DataTracker.registerData(TerracottaGolemEntity.class, TrackedDataHandlerRegistry.BOOLEAN);
+    public static final EntityDataAccessor<Boolean> BLOCK_VARIANT = SynchedEntityData.defineId(TerracottaGolemEntity.class, EntityDataSerializers.BOOLEAN);
 
     private int blockTimer = 200;
 
-    public TerracottaGolemEntity(EntityType<? extends HostileEntity> entityType, World world) {
+    public TerracottaGolemEntity(EntityType<? extends Monster> entityType, Level world) {
         super(entityType, world);
     }
 
-    public static DefaultAttributeContainer.Builder createTerracottaGolemAttributes() {
-        return HostileEntity.createHostileAttributes().add(EntityAttributes.GENERIC_MAX_HEALTH, 60.0D).add(EntityAttributes.GENERIC_ATTACK_DAMAGE, 8.0D)
-                .add(EntityAttributes.GENERIC_MOVEMENT_SPEED, 0.24D).add(EntityAttributes.GENERIC_FOLLOW_RANGE, 30.0D).add(EntityAttributes.GENERIC_ARMOR, 1.5D);
+    public static AttributeSupplier.Builder createTerracottaGolemAttributes() {
+        return Monster.createMonsterAttributes().add(Attributes.MAX_HEALTH, 60.0D).add(Attributes.ATTACK_DAMAGE, 8.0D)
+                .add(Attributes.MOVEMENT_SPEED, 0.24D).add(Attributes.FOLLOW_RANGE, 30.0D).add(Attributes.ARMOR, 1.5D);
     }
 
     @Override
-    public void initGoals() {
-        super.initGoals();
-        this.goalSelector.add(1, new MeleeAttackGoal(this, 0.85D, false));
-        this.goalSelector.add(5, new LookAtEntityGoal(this, PlayerEntity.class, 8.0F));
-        this.goalSelector.add(6, new LookAroundGoal(this));
-        this.goalSelector.add(7, new WanderAroundGoal(this, 0.9D));
-        this.targetSelector.add(1, new ActiveTargetGoal<>(this, PlayerEntity.class, true));
+    public void registerGoals() {
+        super.registerGoals();
+        this.goalSelector.addGoal(1, new MeleeAttackGoal(this, 0.85D, false));
+        this.goalSelector.addGoal(5, new LookAtPlayerGoal(this, Player.class, 8.0F));
+        this.goalSelector.addGoal(6, new RandomLookAroundGoal(this));
+        this.goalSelector.addGoal(7, new RandomStrollGoal(this, 0.9D));
+        this.targetSelector.addGoal(1, new NearestAttackableTargetGoal<>(this, Player.class, true));
     }
 
-    public static boolean canSpawn(EntityType<TerracottaGolemEntity> type, ServerWorldAccess world, SpawnReason spawnReason, BlockPos pos, Random random) {
-        return (canSpawnInDark(type, world, spawnReason, pos, random) && world.getBlockState(pos.down()).isIn(BlockTags.TERRACOTTA)) || spawnReason == SpawnReason.SPAWNER;
-    }
-
-    @Override
-    protected void initDataTracker(Builder builder) {
-        super.initDataTracker(builder);
-        builder.add(BLOCK_VARIANT, false);
+    public static boolean canSpawn(EntityType<TerracottaGolemEntity> type, ServerLevelAccessor world, MobSpawnType spawnReason, BlockPos pos, RandomSource random) {
+        return (checkMonsterSpawnRules(type, world, spawnReason, pos, random) && world.getBlockState(pos.below()).is(BlockTags.TERRACOTTA)) || spawnReason == MobSpawnType.SPAWNER;
     }
 
     @Override
-    public void readCustomDataFromNbt(NbtCompound tag) {
-        super.readCustomDataFromNbt(tag);
-        this.dataTracker.set(BLOCK_VARIANT, tag.getBoolean("BlockVariant"));
+    protected void defineSynchedData(Builder builder) {
+        super.defineSynchedData(builder);
+        builder.define(BLOCK_VARIANT, false);
+    }
+
+    @Override
+    public void readAdditionalSaveData(CompoundTag tag) {
+        super.readAdditionalSaveData(tag);
+        this.entityData.set(BLOCK_VARIANT, tag.getBoolean("BlockVariant"));
         this.blockTimer = tag.getInt("BlockTimer");
     }
 
     @Override
-    public void writeCustomDataToNbt(NbtCompound tag) {
-        super.writeCustomDataToNbt(tag);
-        tag.putBoolean("BlockVariant", this.dataTracker.get(BLOCK_VARIANT));
+    public void addAdditionalSaveData(CompoundTag tag) {
+        super.addAdditionalSaveData(tag);
+        tag.putBoolean("BlockVariant", this.entityData.get(BLOCK_VARIANT));
         tag.putInt("BlockTimer", this.blockTimer);
     }
 
     @Override
     public void tick() {
         super.tick();
-        if (!this.getWorld().isClient()) {
+        if (!this.level().isClientSide()) {
             if (this.getTarget() != null) {
-                if (this.getDataTracker().get(BLOCK_VARIANT)) {
+                if (this.getEntityData().get(BLOCK_VARIANT)) {
                     setBlockVariant(false);
                 }
-            } else if (!this.getDataTracker().get(BLOCK_VARIANT)) {
+            } else if (!this.getEntityData().get(BLOCK_VARIANT)) {
                 this.blockTimer--;
                 if (this.blockTimer <= 0) {
                     setBlockVariant(true);
                 }
-            } else if (this.getHealth() < this.getMaxHealth() && this.getWorld().getTime() % 40 == 0) {
+            } else if (this.getHealth() < this.getMaxHealth() && this.level().getGameTime() % 40 == 0) {
                 this.heal(2f);
-            } else if (this.getWorld().getTime() % 40 == 0) {
-                if (this.getWorld().getClosestPlayer(this.getX(), this.getY(), this.getZ(), 8D, true) != null) {
+            } else if (this.level().getGameTime() % 40 == 0) {
+                if (this.level().getNearestPlayer(this.getX(), this.getY(), this.getZ(), 8D, true) != null) {
                     setBlockVariant(false);
                 }
             }
@@ -101,55 +110,55 @@ public class TerracottaGolemEntity extends HostileEntity {
 
     private void setBlockVariant(boolean blockVariant) {
         if (blockVariant) {
-            this.getDataTracker().set(BLOCK_VARIANT, true);
-            this.getWorld().playSound(null, this.getX(), this.getY(), this.getZ(), SoundInit.TERRACOTTA_GOLEM_BUILD_DOWN_EVENT, SoundCategory.BLOCKS, 0.8F, this.getWorld().getRandom().nextFloat() * 0.4F + 0.8F, this.getWorld().getRandom().nextLong());
-            ((ServerWorld) this.getWorld()).spawnParticles(ParticleTypes.EXPLOSION, this.getX() + this.getRandom().nextFloat(), this.getY() + this.getRandom().nextFloat() + 0.2f, this.getZ() + this.getRandom().nextFloat(), 4, 0.0f, 0.0f, 0.0f, 1.0D);
+            this.getEntityData().set(BLOCK_VARIANT, true);
+            this.level().playSeededSound(null, this.getX(), this.getY(), this.getZ(), SoundInit.TERRACOTTA_GOLEM_BUILD_DOWN_EVENT, SoundSource.BLOCKS, 0.8F, this.level().getRandom().nextFloat() * 0.4F + 0.8F, this.level().getRandom().nextLong());
+            ((ServerLevel) this.level()).sendParticles(ParticleTypes.EXPLOSION, this.getX() + this.getRandom().nextFloat(), this.getY() + this.getRandom().nextFloat() + 0.2f, this.getZ() + this.getRandom().nextFloat(), 4, 0.0f, 0.0f, 0.0f, 1.0D);
         } else {
-            if (this.getDataTracker().get(BLOCK_VARIANT)) {
-                this.getDataTracker().set(BLOCK_VARIANT, false);
-                this.getWorld().playSound(null, this.getX(), this.getY(), this.getZ(), SoundInit.TERRACOTTA_GOLEM_BUILD_UP_EVENT, SoundCategory.BLOCKS, 1.2F, this.getWorld().getRandom().nextFloat() * 0.4F + 0.8F, this.getWorld().getRandom().nextLong());
-                ((ServerWorld) this.getWorld()).spawnParticles(ParticleTypes.EXPLOSION, this.getX() + this.getRandom().nextFloat(), this.getY() + this.getRandom().nextFloat() + 0.2f, this.getZ() + this.getRandom().nextFloat(), 4, 0.0f, 0.0f, 0.0f, 1.0D);
+            if (this.getEntityData().get(BLOCK_VARIANT)) {
+                this.getEntityData().set(BLOCK_VARIANT, false);
+                this.level().playSeededSound(null, this.getX(), this.getY(), this.getZ(), SoundInit.TERRACOTTA_GOLEM_BUILD_UP_EVENT, SoundSource.BLOCKS, 1.2F, this.level().getRandom().nextFloat() * 0.4F + 0.8F, this.level().getRandom().nextLong());
+                ((ServerLevel) this.level()).sendParticles(ParticleTypes.EXPLOSION, this.getX() + this.getRandom().nextFloat(), this.getY() + this.getRandom().nextFloat() + 0.2f, this.getZ() + this.getRandom().nextFloat(), 4, 0.0f, 0.0f, 0.0f, 1.0D);
             }
         }
-        this.blockTimer = this.getWorld().getRandom().nextInt(100) + 200;
-        this.refreshPosition();
-        this.calculateDimensions();
+        this.blockTimer = this.level().getRandom().nextInt(100) + 200;
+        this.reapplyPosition();
+        this.refreshDimensions();
     }
 
     @Override
-    protected EntityDimensions getBaseDimensions(EntityPose pose) {
-        if (this.getDataTracker().get(BLOCK_VARIANT)) {
-            return super.getBaseDimensions(pose).scaled(1f / 2.7f, 1f / 3.2f);
+    protected EntityDimensions getDefaultDimensions(Pose pose) {
+        if (this.getEntityData().get(BLOCK_VARIANT)) {
+            return super.getDefaultDimensions(pose).scale(1f / 2.7f, 1f / 3.2f);
         }
-        return super.getBaseDimensions(pose);
+        return super.getDefaultDimensions(pose);
     }
 
     @Override
     public void playAmbientSound() {
-        if (this.getDataTracker().get(BLOCK_VARIANT)) {
+        if (this.getEntityData().get(BLOCK_VARIANT)) {
             return;
         }
         super.playAmbientSound();
     }
 
     @Override
-    public EntityData initialize(ServerWorldAccess world, LocalDifficulty difficulty, SpawnReason spawnReason, @Nullable EntityData entityData) {
-        if (spawnReason.equals(SpawnReason.CHUNK_GENERATION) || spawnReason.equals(SpawnReason.STRUCTURE)) {
-            this.dataTracker.set(BLOCK_VARIANT, true);
-            this.refreshPosition();
-            this.calculateDimensions();
+    public SpawnGroupData finalizeSpawn(ServerLevelAccessor world, DifficultyInstance difficulty, MobSpawnType spawnReason, @Nullable SpawnGroupData entityData) {
+        if (spawnReason.equals(MobSpawnType.CHUNK_GENERATION) || spawnReason.equals(MobSpawnType.STRUCTURE)) {
+            this.entityData.set(BLOCK_VARIANT, true);
+            this.reapplyPosition();
+            this.refreshDimensions();
         }
-        return super.initialize(world, difficulty, spawnReason, entityData);
+        return super.finalizeSpawn(world, difficulty, spawnReason, entityData);
     }
 
     @Override
-    public boolean canImmediatelyDespawn(double distanceSquared) {
+    public boolean removeWhenFarAway(double distanceSquared) {
         return false;
     }
 
     @Override
     public void checkDespawn() {
-        if (this.getWorld().getDifficulty() == Difficulty.PEACEFUL) {
+        if (this.level().getDifficulty() == Difficulty.PEACEFUL) {
             this.discard();
         }
     }
@@ -175,39 +184,39 @@ public class TerracottaGolemEntity extends HostileEntity {
     }
 
     @Override
-    public boolean damage(DamageSource source, float amount) {
-        if (!this.getWorld().isClient()) {
+    public boolean hurt(DamageSource source, float amount) {
+        if (!this.level().isClientSide()) {
             setBlockVariant(false);
         }
-        return super.damage(source, amount);
+        return super.hurt(source, amount);
     }
 
     @Override
-    public boolean canSee(Entity entity) {
-        if (this.getDataTracker().get(BLOCK_VARIANT)) {
+    public boolean hasLineOfSight(Entity entity) {
+        if (this.getEntityData().get(BLOCK_VARIANT)) {
             return false;
         }
-        return super.canSee(entity);
+        return super.hasLineOfSight(entity);
     }
 
     @Override
     protected boolean isImmobile() {
-        if (this.getDataTracker().get(BLOCK_VARIANT)) {
+        if (this.getEntityData().get(BLOCK_VARIANT)) {
             return true;
         }
         return super.isImmobile();
     }
 
     @Override
-    public int getLimitPerChunk() {
+    public int getMaxSpawnClusterSize() {
         return 1;
     }
 
     @Override
-    public void onTrackedDataSet(TrackedData<?> data) {
+    public void onSyncedDataUpdated(EntityDataAccessor<?> data) {
         if (BLOCK_VARIANT.equals(data)) {
-            this.calculateDimensions();
+            this.refreshDimensions();
         }
-        super.onTrackedDataSet(data);
+        super.onSyncedDataUpdated(data);
     }
 }

@@ -3,28 +3,28 @@ package net.adventurez.entity.goal;
 import java.util.EnumSet;
 
 import net.adventurez.entity.DragonEntity;
-import net.minecraft.entity.ai.goal.Goal;
+import net.minecraft.world.entity.ai.goal.Goal;
 
 public class DragonSitGoal extends Goal {
     private final DragonEntity dragonEntity;
 
     public DragonSitGoal(DragonEntity dragonEntity) {
         this.dragonEntity = dragonEntity;
-        this.setControls(EnumSet.of(Goal.Control.JUMP, Goal.Control.MOVE));
+        this.setFlags(EnumSet.of(Goal.Flag.JUMP, Goal.Flag.MOVE));
     }
 
     @Override
-    public boolean shouldContinue() {
+    public boolean canContinueToUse() {
         return this.dragonEntity.isInSittingPose();
     }
 
     @Override
-    public boolean canStart() {
+    public boolean canUse() {
         if (!this.dragonEntity.isTamed()) {
             return false;
-        } else if (this.dragonEntity.isInsideWaterOrBubbleColumn()) {
+        } else if (this.dragonEntity.isInWaterOrBubble()) {
             return false;
-        } else if (!this.dragonEntity.isOnGround()) {
+        } else if (!this.dragonEntity.onGround()) {
             return false;
         } else {
             if (this.dragonEntity.getOwner() == null) {

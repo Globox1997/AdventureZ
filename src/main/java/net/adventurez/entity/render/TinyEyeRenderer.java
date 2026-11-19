@@ -1,49 +1,49 @@
 package net.adventurez.entity.render;
 
+import com.mojang.blaze3d.vertex.PoseStack;
+import com.mojang.blaze3d.vertex.VertexConsumer;
 import net.adventurez.AdventureMain;
 import net.adventurez.entity.model.TinyEyeModel;
 import net.adventurez.entity.nonliving.TinyEyeEntity;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
-import net.minecraft.client.render.OverlayTexture;
-import net.minecraft.client.render.VertexConsumer;
-import net.minecraft.client.render.VertexConsumerProvider;
-import net.minecraft.client.render.entity.EntityRenderer;
-import net.minecraft.client.render.entity.EntityRendererFactory;
-import net.minecraft.client.util.math.MatrixStack;
-import net.minecraft.util.Identifier;
-import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.math.MathHelper;
+import net.minecraft.client.renderer.MultiBufferSource;
+import net.minecraft.client.renderer.entity.EntityRenderer;
+import net.minecraft.client.renderer.entity.EntityRendererProvider;
+import net.minecraft.client.renderer.texture.OverlayTexture;
+import net.minecraft.core.BlockPos;
+import net.minecraft.resources.ResourceLocation;
+import net.minecraft.util.Mth;
 
 @Environment(EnvType.CLIENT)
 public class TinyEyeRenderer extends EntityRenderer<TinyEyeEntity> {
-    private static final Identifier TEXTURE = AdventureMain.identifierOf("textures/entity/the_eye.png");
-    private final TinyEyeModel<TinyEyeEntity> model = new TinyEyeModel<>(TinyEyeModel.getTexturedModelData().createModel());
+    private static final ResourceLocation TEXTURE = AdventureMain.identifierOf("textures/entity/the_eye.png");
+    private final TinyEyeModel<TinyEyeEntity> model = new TinyEyeModel<>(TinyEyeModel.getTexturedModelData().bakeRoot());
 
-    public TinyEyeRenderer(EntityRendererFactory.Context context) {
+    public TinyEyeRenderer(EntityRendererProvider.Context context) {
         super(context);
     }
 
     @Override
-    public int getBlockLight(TinyEyeEntity tinyEyeEntity, BlockPos blockPos) {
-        return tinyEyeEntity.getWorld().getLightLevel(blockPos);
+    public int getBlockLightLevel(TinyEyeEntity tinyEyeEntity, BlockPos blockPos) {
+        return tinyEyeEntity.level().getMaxLocalRawBrightness(blockPos);
     }
 
     @Override
-    public void render(TinyEyeEntity tinyEyeEntity, float f, float g, MatrixStack matrixStack, VertexConsumerProvider vertexConsumerProvider, int i) {
-        matrixStack.push();
-        float h = MathHelper.lerpAngleDegrees(g, tinyEyeEntity.prevYaw, tinyEyeEntity.getYaw());
+    public void render(TinyEyeEntity tinyEyeEntity, float f, float g, PoseStack matrixStack, MultiBufferSource vertexConsumerProvider, int i) {
+        matrixStack.pushPose();
+        float h = Mth.rotLerp(g, tinyEyeEntity.yRotO, tinyEyeEntity.getYRot());
         matrixStack.scale(-0.5F, -0.5F, 0.5F);
         matrixStack.translate(0.0D, -1.4D, 0.0D);
-        this.model.setAngles(tinyEyeEntity, 0.0F, 0.0F, 0.0F, h, 0.0F);
-        VertexConsumer vertexConsumer = vertexConsumerProvider.getBuffer(this.model.getLayer(TEXTURE));
-        this.model.render(matrixStack, vertexConsumer, i, OverlayTexture.DEFAULT_UV);
-        matrixStack.pop();
+        this.model.setupAnim(tinyEyeEntity, 0.0F, 0.0F, 0.0F, h, 0.0F);
+        VertexConsumer vertexConsumer = vertexConsumerProvider.getBuffer(this.model.renderType(TEXTURE));
+        this.model.renderToBuffer(matrixStack, vertexConsumer, i, OverlayTexture.NO_OVERLAY);
+        matrixStack.popPose();
         super.render(tinyEyeEntity, f, g, matrixStack, vertexConsumerProvider, i);
     }
 
     @Override
-    public Identifier getTexture(TinyEyeEntity eye) {
+    public ResourceLocation getTextureLocation(TinyEyeEntity eye) {
         return TEXTURE;
     }
 

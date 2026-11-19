@@ -3,40 +3,40 @@ package net.adventurez.mixin;
 import org.spongepowered.asm.mixin.Mixin;
 
 import net.adventurez.entity.DragonEntity;
-import net.minecraft.block.BlockState;
-import net.minecraft.block.BlockWithEntity;
-import net.minecraft.block.EndPortalBlock;
-import net.minecraft.block.Portal;
-import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.registry.RegistryKey;
-import net.minecraft.server.world.ServerWorld;
-import net.minecraft.util.ActionResult;
-import net.minecraft.util.hit.BlockHitResult;
-import net.minecraft.util.math.BlockPos;
-import net.minecraft.world.World;
+import net.minecraft.core.BlockPos;
+import net.minecraft.resources.ResourceKey;
+import net.minecraft.server.level.ServerLevel;
+import net.minecraft.world.InteractionResult;
+import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.level.Level;
+import net.minecraft.world.level.block.BaseEntityBlock;
+import net.minecraft.world.level.block.EndPortalBlock;
+import net.minecraft.world.level.block.Portal;
+import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.phys.BlockHitResult;
 
 @Mixin(EndPortalBlock.class)
-public abstract class EndPortalBlockMixin extends BlockWithEntity {
+public abstract class EndPortalBlockMixin extends BaseEntityBlock {
 
-    public EndPortalBlockMixin(Settings settings) {
+    public EndPortalBlockMixin(Properties settings) {
         super(settings);
     }
 
     @Override
-    public ActionResult onUse(BlockState state, World world, BlockPos pos, PlayerEntity player, BlockHitResult hit) {
-        if (player.hasVehicle() && player.getVehicle() instanceof DragonEntity dragonEntity && player.canUsePortals(true)) {
+    public InteractionResult useWithoutItem(BlockState state, Level world, BlockPos pos, Player player, BlockHitResult hit) {
+        if (player.isPassenger() && player.getVehicle() instanceof DragonEntity dragonEntity && player.canUsePortal(true)) {
             player.stopRiding();
-            if (world instanceof ServerWorld) {
-                RegistryKey<World> registryKey = world.getRegistryKey() == World.END ? World.OVERWORLD : World.END;
-                ServerWorld serverWorld = ((ServerWorld) world).getServer().getWorld(registryKey);
+            if (world instanceof ServerLevel) {
+                ResourceKey<Level> registryKey = world.dimension() == Level.END ? Level.OVERWORLD : Level.END;
+                ServerLevel serverWorld = ((ServerLevel) world).getServer().getLevel(registryKey);
                 if (serverWorld == null) {
-                    return ActionResult.PASS;
+                    return InteractionResult.PASS;
                 }
-                dragonEntity.tryUsePortal((Portal) (Object) this, pos);
+                dragonEntity.setAsInsidePortal((Portal) (Object) this, pos);
             }
-            return ActionResult.SUCCESS;
+            return InteractionResult.SUCCESS;
         }
-        return ActionResult.PASS;
+        return InteractionResult.PASS;
 
     }
 

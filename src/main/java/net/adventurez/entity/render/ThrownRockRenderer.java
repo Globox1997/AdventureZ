@@ -1,48 +1,48 @@
 package net.adventurez.entity.render;
 
+import com.mojang.blaze3d.vertex.PoseStack;
+import com.mojang.blaze3d.vertex.VertexConsumer;
 import net.adventurez.AdventureMain;
 import net.adventurez.entity.model.RockModel;
 import net.adventurez.entity.nonliving.ThrownRockEntity;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
-import net.minecraft.client.render.OverlayTexture;
-import net.minecraft.client.render.VertexConsumer;
-import net.minecraft.client.render.VertexConsumerProvider;
-import net.minecraft.client.render.entity.EntityRenderer;
-import net.minecraft.client.render.entity.EntityRendererFactory;
-import net.minecraft.client.util.math.MatrixStack;
-import net.minecraft.entity.FlyingItemEntity;
-import net.minecraft.util.Identifier;
-import net.minecraft.util.math.BlockPos;
+import net.minecraft.client.renderer.MultiBufferSource;
+import net.minecraft.client.renderer.entity.EntityRenderer;
+import net.minecraft.client.renderer.entity.EntityRendererProvider;
+import net.minecraft.client.renderer.texture.OverlayTexture;
+import net.minecraft.core.BlockPos;
+import net.minecraft.resources.ResourceLocation;
+import net.minecraft.world.entity.projectile.ItemSupplier;
 
 @Environment(EnvType.CLIENT)
 public class ThrownRockRenderer extends EntityRenderer<ThrownRockEntity> {
-    private static final Identifier GOLEM_TEXTURE = AdventureMain.identifierOf("textures/entity/thrown_golem_rock.png");
-    private static final Identifier VOID_TEXTURE = AdventureMain.identifierOf("textures/entity/thrown_void_rock.png");
-    private final RockModel model = new RockModel(RockModel.getTexturedModelData().createModel());
+    private static final ResourceLocation GOLEM_TEXTURE = AdventureMain.identifierOf("textures/entity/thrown_golem_rock.png");
+    private static final ResourceLocation VOID_TEXTURE = AdventureMain.identifierOf("textures/entity/thrown_void_rock.png");
+    private final RockModel model = new RockModel(RockModel.getTexturedModelData().bakeRoot());
 
-    public ThrownRockRenderer(EntityRendererFactory.Context context) {
+    public ThrownRockRenderer(EntityRendererProvider.Context context) {
         super(context);
     }
 
     @Override
-    public int getBlockLight(ThrownRockEntity ThrownRockEntity, BlockPos blockPos) {
-        return ThrownRockEntity.getWorld().getLightLevel(blockPos);
+    public int getBlockLightLevel(ThrownRockEntity ThrownRockEntity, BlockPos blockPos) {
+        return ThrownRockEntity.level().getMaxLocalRawBrightness(blockPos);
     }
 
     @Override
-    public void render(ThrownRockEntity thrownRockEntity, float f, float g, MatrixStack matrixStack, VertexConsumerProvider vertexConsumerProvider, int i) {
-        matrixStack.push();
-        VertexConsumer vertexConsumer = vertexConsumerProvider.getBuffer(this.model.getLayer(this.getTexture(thrownRockEntity)));
-        model.render(matrixStack, vertexConsumer, i, OverlayTexture.DEFAULT_UV);
+    public void render(ThrownRockEntity thrownRockEntity, float f, float g, PoseStack matrixStack, MultiBufferSource vertexConsumerProvider, int i) {
+        matrixStack.pushPose();
+        VertexConsumer vertexConsumer = vertexConsumerProvider.getBuffer(this.model.renderType(this.getTextureLocation(thrownRockEntity)));
+        model.renderToBuffer(matrixStack, vertexConsumer, i, OverlayTexture.NO_OVERLAY);
         matrixStack.scale(1.5F, 1.5F, 1.5F);
-        matrixStack.pop();
+        matrixStack.popPose();
         super.render(thrownRockEntity, f, g, matrixStack, vertexConsumerProvider, i);
     }
 
     @Override
-    public Identifier getTexture(ThrownRockEntity thrownRockEntity) {
-        if (((FlyingItemEntity) thrownRockEntity).getStack().getItem() == thrownRockEntity.getDefaultItem()) {
+    public ResourceLocation getTextureLocation(ThrownRockEntity thrownRockEntity) {
+        if (((ItemSupplier) thrownRockEntity).getItem().getItem() == thrownRockEntity.getDefaultItem()) {
             return GOLEM_TEXTURE;
         } else
             return VOID_TEXTURE;

@@ -17,30 +17,30 @@ import org.spongepowered.asm.mixin.injection.At;
 
 import net.adventurez.entity.BlazeGuardianEntity;
 import net.adventurez.entity.VoidFragmentEntity;
-import net.minecraft.entity.Entity;
-import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.util.math.BlockPos;
-import net.minecraft.world.explosion.Explosion;
+import net.minecraft.core.BlockPos;
+import net.minecraft.world.entity.Entity;
+import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.level.Explosion;
 
 @Mixin(Explosion.class)
 public class ExplosionMixin {
     @Shadow
     @Mutable
     @Final
-    private Entity entity;
+    private Entity source;
 
     public ExplosionMixin(@Nullable Entity entity) {
-        this.entity = entity;
+        this.source = entity;
     }
 
-    @Inject(method = "collectBlocksAndDamageEntities", at = @At(value = "INVOKE_ASSIGN", target = "Lnet/minecraft/world/World;getOtherEntities(Lnet/minecraft/entity/Entity;Lnet/minecraft/util/math/Box;)Ljava/util/List;", shift = Shift.AFTER), locals = LocalCapture.CAPTURE_FAILSOFT)
+    @Inject(method = "explode", at = @At(value = "INVOKE_ASSIGN", target = "Lnet/minecraft/world/level/Level;getEntities(Lnet/minecraft/world/entity/Entity;Lnet/minecraft/world/phys/AABB;)Ljava/util/List;", shift = Shift.AFTER), locals = LocalCapture.CAPTURE_FAILSOFT)
     public void collectBlocksAndDamageEntitiesMixin(CallbackInfo info, Set<BlockPos> set, int i, float q, int k, int l, int r, int s, int t, int u, List<Entity> list) {
-        if (this.entity != null) {
-            if (this.entity instanceof BlazeGuardianEntity || this.entity instanceof VoidFragmentEntity) {
+        if (this.source != null) {
+            if (this.source instanceof BlazeGuardianEntity || this.source instanceof VoidFragmentEntity) {
                 List<Entity> removeList = new ArrayList<Entity>();
                 for (int o = 0; o < list.size(); ++o) {
                     Entity entityFromList = (Entity) list.get(o);
-                    if (!(entityFromList instanceof PlayerEntity)) {
+                    if (!(entityFromList instanceof Player)) {
                         removeList.add(entityFromList);
                     }
                 }

@@ -9,17 +9,17 @@ import org.spongepowered.asm.mixin.injection.callback.LocalCapture;
 import org.spongepowered.asm.mixin.injection.At;
 
 import net.adventurez.init.TagInit;
-import net.minecraft.entity.LivingEntity;
-import net.minecraft.entity.mob.PiglinBrain;
-import net.minecraft.item.Item;
-import net.minecraft.item.ItemStack;
+import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.entity.monster.piglin.PiglinAi;
+import net.minecraft.world.item.Item;
+import net.minecraft.world.item.ItemStack;
 
-@Mixin(PiglinBrain.class)
+@Mixin(PiglinAi.class)
 public class PiglinBrainMixin {
 
-    @Inject(method = "wearsGoldArmor(Lnet/minecraft/entity/LivingEntity;)Z", at = @At(value = "INVOKE_ASSIGN", target = "Lnet/minecraft/item/ItemStack;getItem()Lnet/minecraft/item/Item;"), cancellable = true, locals = LocalCapture.CAPTURE_FAILSOFT)
+    @Inject(method = "isWearingGold(Lnet/minecraft/world/entity/LivingEntity;)Z", at = @At(value = "INVOKE_ASSIGN", target = "Lnet/minecraft/world/item/ItemStack;getItem()Lnet/minecraft/world/item/Item;"), cancellable = true, locals = LocalCapture.CAPTURE_FAILSOFT)
     private static void wearsGoldArmorMixin(LivingEntity entity, CallbackInfoReturnable<Boolean> info, Iterable<ItemStack> iterable, Iterator<ItemStack> iterator, ItemStack stack, Item item) {
-        if (stack.isIn(TagInit.PIGLIN_NOT_ATTACK_ITEMS))
+        if (stack.is(TagInit.PIGLIN_NOT_ATTACK_ITEMS))
             info.setReturnValue(true);
     }
 

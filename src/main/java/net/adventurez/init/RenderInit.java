@@ -16,62 +16,62 @@ import net.fabricmc.fabric.api.client.rendering.v1.EntityModelLayerRegistry;
 import net.fabricmc.fabric.api.client.rendering.v1.EntityRendererRegistry;
 import net.fabricmc.fabric.api.client.rendering.v1.HudRenderCallback;
 import net.fabricmc.loader.api.FabricLoader;
-import net.minecraft.client.MinecraftClient;
-import net.minecraft.client.render.RenderLayer;
-import net.minecraft.client.render.block.entity.BlockEntityRendererFactories;
-import net.minecraft.client.render.block.entity.ChestBlockEntityRenderer;
-import net.minecraft.client.render.entity.EmptyEntityRenderer;
-import net.minecraft.client.render.entity.model.EntityModelLayer;
-import net.minecraft.entity.EquipmentSlot;
-import net.minecraft.item.ItemStack;
-import net.minecraft.util.Identifier;
+import net.minecraft.client.Minecraft;
+import net.minecraft.client.model.geom.ModelLayerLocation;
+import net.minecraft.client.renderer.RenderType;
+import net.minecraft.client.renderer.blockentity.BlockEntityRenderers;
+import net.minecraft.client.renderer.blockentity.ChestRenderer;
+import net.minecraft.client.renderer.entity.NoopRenderer;
+import net.minecraft.resources.ResourceLocation;
+import net.minecraft.world.entity.EquipmentSlot;
+import net.minecraft.world.item.ItemStack;
 
 @Environment(EnvType.CLIENT)
 public class RenderInit {
 
-    private static final Identifier WITHERED_TEXTURE = AdventureMain.identifierOf("textures/misc/withered.png");
-    private static final Identifier ACTIVE_ARMOR_TEXTURE = AdventureMain.identifierOf("textures/misc/active_armor.png");
+    private static final ResourceLocation WITHERED_TEXTURE = AdventureMain.identifierOf("textures/misc/withered.png");
+    private static final ResourceLocation ACTIVE_ARMOR_TEXTURE = AdventureMain.identifierOf("textures/misc/active_armor.png");
 
     public static final boolean isCanvasLoaded = FabricLoader.getInstance().isModLoaded("canvas");
     public static final boolean isIrisLoaded = FabricLoader.getInstance().isModLoaded("iris");
     public static final boolean isSodiumLoaded = FabricLoader.getInstance().isModLoaded("sodium");
 
-    public static final EntityModelLayer BLACKSTONE_GOLEM_LAYER = new EntityModelLayer(AdventureMain.identifierOf("blackstone_golem_render_layer"), "blackstone_golem_render_layer");
-    public static final EntityModelLayer THROWN_ROCK_LAYER = new EntityModelLayer(AdventureMain.identifierOf("thrown_rock_render_layer"), "thrown_rock_render_layer");
-    public static final EntityModelLayer GILDED_STONE_LAYER = new EntityModelLayer(AdventureMain.identifierOf("gilded_stone_render_layer"), "gilded_stone_render_layer");
-    public static final EntityModelLayer MINI_BLACKSTONE_GOLEM_LAYER = new EntityModelLayer(AdventureMain.identifierOf("mini_blackstone_golem_render_layer"), "mini_blackstone_golem_render_layer");
-    public static final EntityModelLayer PIGLIN_BEAST_LAYER = new EntityModelLayer(AdventureMain.identifierOf("piglin_beast_render_layer"), "piglin_beast_render_layer");
-    public static final EntityModelLayer NIGHTMARE_LAYER = new EntityModelLayer(AdventureMain.identifierOf("nightmare_render_layer"), "nightmare_render_layer");
-    public static final EntityModelLayer SOUL_REAPER_LAYER = new EntityModelLayer(AdventureMain.identifierOf("soul_reaper_render_layer"), "soul_reaper_render_layer");
-    public static final EntityModelLayer NECROMANCER_LAYER = new EntityModelLayer(AdventureMain.identifierOf("necromancer_render_layer"), "necromancer_render_layer");
-    public static final EntityModelLayer WITHER_PUPPET_LAYER = new EntityModelLayer(AdventureMain.identifierOf("wither_puppet_render_layer"), "wither_puppet_render_layer");
-    public static final EntityModelLayer SKELETON_VANGUARD_LAYER = new EntityModelLayer(AdventureMain.identifierOf("skeleton_vanguard_render_layer"), "skeleton_vanguard_render_layer");
-    public static final EntityModelLayer SUMMONER_LAYER = new EntityModelLayer(AdventureMain.identifierOf("summoner_render_layer"), "summoner_render_layer");
-    public static final EntityModelLayer BLAZE_GUARDIAN_LAYER = new EntityModelLayer(AdventureMain.identifierOf("blaze_guardian_render_layer"), "blaze_guardian_render_layer");
-    public static final EntityModelLayer THE_EYE_LAYER = new EntityModelLayer(AdventureMain.identifierOf("the_eye_render_layer"), "the_eye_render_layer");
-    public static final EntityModelLayer VOID_SHADOW_LAYER = new EntityModelLayer(AdventureMain.identifierOf("void_shadow_render_layer"), "void_shadow_render_layer");
-    public static final EntityModelLayer TINY_EYE_LAYER = new EntityModelLayer(AdventureMain.identifierOf("tiny_eye_render_layer"), "tiny_eye_render_layer");
-    public static final EntityModelLayer RED_FUNGUS_LAYER = new EntityModelLayer(AdventureMain.identifierOf("red_fungus_render_layer"), "red_fungus_render_layer");
-    public static final EntityModelLayer BROWN_FUNGUS_LAYER = new EntityModelLayer(AdventureMain.identifierOf("brown_fungus_render_layer"), "brown_fungus_render_layer");
-    public static final EntityModelLayer ORC_LAYER = new EntityModelLayer(AdventureMain.identifierOf("orc_render_layer"), "orc_render_layer");
-    public static final EntityModelLayer DRAGON_LAYER = new EntityModelLayer(AdventureMain.identifierOf("dragon_render_layer"), "dragon_render_layer");
-    public static final EntityModelLayer MAMMOTH_LAYER = new EntityModelLayer(AdventureMain.identifierOf("mammoth_render_layer"), "mammoth_render_layer");
-    public static final EntityModelLayer VOID_FRAGMENT_LAYER = new EntityModelLayer(AdventureMain.identifierOf("void_fragment_render_layer"), "void_fragment_render_layer");
-    public static final EntityModelLayer VOID_SHADE_LAYER = new EntityModelLayer(AdventureMain.identifierOf("void_shade_render_layer"), "void_shade_render_layer");
-    public static final EntityModelLayer VOID_BULLET_LAYER = new EntityModelLayer(AdventureMain.identifierOf("void_bullet_render_layer"), "void_bullet_render_layer");
-    public static final EntityModelLayer PIGLIN_FLAG_LAYER = new EntityModelLayer(AdventureMain.identifierOf("piglin_flag_render_layer"), "piglin_flag_render_layer");
-    public static final EntityModelLayer ENDER_WHALE_LAYER = new EntityModelLayer(AdventureMain.identifierOf("ender_whale_render_layer"), "ender_whale_render_layer");
-    public static final EntityModelLayer IGUANA_LAYER = new EntityModelLayer(AdventureMain.identifierOf("iguana_render_layer"), "iguana_render_layer");
-    public static final EntityModelLayer AMETHYST_GOLEM_LAYER = new EntityModelLayer(AdventureMain.identifierOf("amethyst_golem_render_layer"), "amethyst_golem_render_layer");
-    public static final EntityModelLayer AMETHYST_SHARD_LAYER = new EntityModelLayer(AdventureMain.identifierOf("amethyst_shard_render_layer"), "amethyst_shard_render_layer");
-    public static final EntityModelLayer DESERT_RHINO_LAYER = new EntityModelLayer(AdventureMain.identifierOf("desert_rhino_render_layer"), "desert_rhino_render_layer");
-    public static final EntityModelLayer SHAMAN_LAYER = new EntityModelLayer(AdventureMain.identifierOf("shaman_render_layer"), "shaman_render_layer");
-    public static final EntityModelLayer DEER_LAYER = new EntityModelLayer(AdventureMain.identifierOf("deer_render_layer"), "deer_render_layer");
-    public static final EntityModelLayer SKUNK_LAYER = new EntityModelLayer(AdventureMain.identifierOf("skunk_render_layer"), "skunk_render_layer");
-    public static final EntityModelLayer ENDERWARTHOG_LAYER = new EntityModelLayer(AdventureMain.identifierOf("enderwarthog_render_layer"), "enderwarthog_render_layer");
-    public static final EntityModelLayer DUBIOUS_PUMPKIN_LAYER = new EntityModelLayer(AdventureMain.identifierOf("dubious_pumpkin_render_layer"), "dubious_pumpkin_render_layer");
-    public static final EntityModelLayer CRYSTAL_BEETLE_LAYER = new EntityModelLayer(AdventureMain.identifierOf("crystal_beetle_render_layer"), "crystal_beetle_render_layer");
-    public static final EntityModelLayer TERRACOTTA_GOLEM_LAYER = new EntityModelLayer(AdventureMain.identifierOf("terracotta_golem_render_layer"), "terracotta_golem_render_layer");
+    public static final ModelLayerLocation BLACKSTONE_GOLEM_LAYER = new ModelLayerLocation(AdventureMain.identifierOf("blackstone_golem_render_layer"), "blackstone_golem_render_layer");
+    public static final ModelLayerLocation THROWN_ROCK_LAYER = new ModelLayerLocation(AdventureMain.identifierOf("thrown_rock_render_layer"), "thrown_rock_render_layer");
+    public static final ModelLayerLocation GILDED_STONE_LAYER = new ModelLayerLocation(AdventureMain.identifierOf("gilded_stone_render_layer"), "gilded_stone_render_layer");
+    public static final ModelLayerLocation MINI_BLACKSTONE_GOLEM_LAYER = new ModelLayerLocation(AdventureMain.identifierOf("mini_blackstone_golem_render_layer"), "mini_blackstone_golem_render_layer");
+    public static final ModelLayerLocation PIGLIN_BEAST_LAYER = new ModelLayerLocation(AdventureMain.identifierOf("piglin_beast_render_layer"), "piglin_beast_render_layer");
+    public static final ModelLayerLocation NIGHTMARE_LAYER = new ModelLayerLocation(AdventureMain.identifierOf("nightmare_render_layer"), "nightmare_render_layer");
+    public static final ModelLayerLocation SOUL_REAPER_LAYER = new ModelLayerLocation(AdventureMain.identifierOf("soul_reaper_render_layer"), "soul_reaper_render_layer");
+    public static final ModelLayerLocation NECROMANCER_LAYER = new ModelLayerLocation(AdventureMain.identifierOf("necromancer_render_layer"), "necromancer_render_layer");
+    public static final ModelLayerLocation WITHER_PUPPET_LAYER = new ModelLayerLocation(AdventureMain.identifierOf("wither_puppet_render_layer"), "wither_puppet_render_layer");
+    public static final ModelLayerLocation SKELETON_VANGUARD_LAYER = new ModelLayerLocation(AdventureMain.identifierOf("skeleton_vanguard_render_layer"), "skeleton_vanguard_render_layer");
+    public static final ModelLayerLocation SUMMONER_LAYER = new ModelLayerLocation(AdventureMain.identifierOf("summoner_render_layer"), "summoner_render_layer");
+    public static final ModelLayerLocation BLAZE_GUARDIAN_LAYER = new ModelLayerLocation(AdventureMain.identifierOf("blaze_guardian_render_layer"), "blaze_guardian_render_layer");
+    public static final ModelLayerLocation THE_EYE_LAYER = new ModelLayerLocation(AdventureMain.identifierOf("the_eye_render_layer"), "the_eye_render_layer");
+    public static final ModelLayerLocation VOID_SHADOW_LAYER = new ModelLayerLocation(AdventureMain.identifierOf("void_shadow_render_layer"), "void_shadow_render_layer");
+    public static final ModelLayerLocation TINY_EYE_LAYER = new ModelLayerLocation(AdventureMain.identifierOf("tiny_eye_render_layer"), "tiny_eye_render_layer");
+    public static final ModelLayerLocation RED_FUNGUS_LAYER = new ModelLayerLocation(AdventureMain.identifierOf("red_fungus_render_layer"), "red_fungus_render_layer");
+    public static final ModelLayerLocation BROWN_FUNGUS_LAYER = new ModelLayerLocation(AdventureMain.identifierOf("brown_fungus_render_layer"), "brown_fungus_render_layer");
+    public static final ModelLayerLocation ORC_LAYER = new ModelLayerLocation(AdventureMain.identifierOf("orc_render_layer"), "orc_render_layer");
+    public static final ModelLayerLocation DRAGON_LAYER = new ModelLayerLocation(AdventureMain.identifierOf("dragon_render_layer"), "dragon_render_layer");
+    public static final ModelLayerLocation MAMMOTH_LAYER = new ModelLayerLocation(AdventureMain.identifierOf("mammoth_render_layer"), "mammoth_render_layer");
+    public static final ModelLayerLocation VOID_FRAGMENT_LAYER = new ModelLayerLocation(AdventureMain.identifierOf("void_fragment_render_layer"), "void_fragment_render_layer");
+    public static final ModelLayerLocation VOID_SHADE_LAYER = new ModelLayerLocation(AdventureMain.identifierOf("void_shade_render_layer"), "void_shade_render_layer");
+    public static final ModelLayerLocation VOID_BULLET_LAYER = new ModelLayerLocation(AdventureMain.identifierOf("void_bullet_render_layer"), "void_bullet_render_layer");
+    public static final ModelLayerLocation PIGLIN_FLAG_LAYER = new ModelLayerLocation(AdventureMain.identifierOf("piglin_flag_render_layer"), "piglin_flag_render_layer");
+    public static final ModelLayerLocation ENDER_WHALE_LAYER = new ModelLayerLocation(AdventureMain.identifierOf("ender_whale_render_layer"), "ender_whale_render_layer");
+    public static final ModelLayerLocation IGUANA_LAYER = new ModelLayerLocation(AdventureMain.identifierOf("iguana_render_layer"), "iguana_render_layer");
+    public static final ModelLayerLocation AMETHYST_GOLEM_LAYER = new ModelLayerLocation(AdventureMain.identifierOf("amethyst_golem_render_layer"), "amethyst_golem_render_layer");
+    public static final ModelLayerLocation AMETHYST_SHARD_LAYER = new ModelLayerLocation(AdventureMain.identifierOf("amethyst_shard_render_layer"), "amethyst_shard_render_layer");
+    public static final ModelLayerLocation DESERT_RHINO_LAYER = new ModelLayerLocation(AdventureMain.identifierOf("desert_rhino_render_layer"), "desert_rhino_render_layer");
+    public static final ModelLayerLocation SHAMAN_LAYER = new ModelLayerLocation(AdventureMain.identifierOf("shaman_render_layer"), "shaman_render_layer");
+    public static final ModelLayerLocation DEER_LAYER = new ModelLayerLocation(AdventureMain.identifierOf("deer_render_layer"), "deer_render_layer");
+    public static final ModelLayerLocation SKUNK_LAYER = new ModelLayerLocation(AdventureMain.identifierOf("skunk_render_layer"), "skunk_render_layer");
+    public static final ModelLayerLocation ENDERWARTHOG_LAYER = new ModelLayerLocation(AdventureMain.identifierOf("enderwarthog_render_layer"), "enderwarthog_render_layer");
+    public static final ModelLayerLocation DUBIOUS_PUMPKIN_LAYER = new ModelLayerLocation(AdventureMain.identifierOf("dubious_pumpkin_render_layer"), "dubious_pumpkin_render_layer");
+    public static final ModelLayerLocation CRYSTAL_BEETLE_LAYER = new ModelLayerLocation(AdventureMain.identifierOf("crystal_beetle_render_layer"), "crystal_beetle_render_layer");
+    public static final ModelLayerLocation TERRACOTTA_GOLEM_LAYER = new ModelLayerLocation(AdventureMain.identifierOf("terracotta_golem_render_layer"), "terracotta_golem_render_layer");
 
     public static void init() {
         // Entity Renderer
@@ -98,14 +98,14 @@ public class RenderInit {
         EntityRendererRegistry.register(EntityInit.VOID_FRAGMENT, VoidFragmentRenderer::new);
         EntityRendererRegistry.register(EntityInit.VOID_SHADE, VoidShadeRenderer::new);
         EntityRendererRegistry.register(EntityInit.VOID_BULLET, VoidBulletRenderer::new);
-        EntityRendererRegistry.register(EntityInit.FIRE_BREATH, EmptyEntityRenderer::new);
-        EntityRendererRegistry.register(EntityInit.BLAZE_GUARDIAN_SHIELD, EmptyEntityRenderer::new);
+        EntityRendererRegistry.register(EntityInit.FIRE_BREATH, NoopRenderer::new);
+        EntityRendererRegistry.register(EntityInit.BLAZE_GUARDIAN_SHIELD, NoopRenderer::new);
         EntityRendererRegistry.register(EntityInit.ENDER_WHALE, EnderWhaleRenderer::new);
         EntityRendererRegistry.register(EntityInit.IGUANA, IguanaRenderer::new);
         EntityRendererRegistry.register(EntityInit.AMETHYST_GOLEM, AmethystGolemRenderer::new);
         EntityRendererRegistry.register(EntityInit.AMETHYST_SHARD, AmethystShardRenderer::new);
         EntityRendererRegistry.register(EntityInit.DESERT_RHINO, DesertRhinoRenderer::new);
-        EntityRendererRegistry.register(EntityInit.VOID_CLOUD, EmptyEntityRenderer::new);
+        EntityRendererRegistry.register(EntityInit.VOID_CLOUD, NoopRenderer::new);
         EntityRendererRegistry.register(EntityInit.SHAMAN, ShamanRenderer::new);
         EntityRendererRegistry.register(EntityInit.DEER, DeerRenderer::new);
         EntityRendererRegistry.register(EntityInit.SKUNK, SkunkRenderer::new);
@@ -152,11 +152,11 @@ public class RenderInit {
         EntityModelLayerRegistry.registerModelLayer(TERRACOTTA_GOLEM_LAYER, TerracottaGolemModel::getTexturedModelData);
 
         // Blocks
-        BlockEntityRendererFactories.register(BlockInit.CHISELED_POLISHED_BLACKSTONE_HOLDER_ENTITY, ChiseledPolishedBlackstoneHolderRenderer::new);
-        BlockRenderLayerMap.INSTANCE.putBlock(BlockInit.CHISELED_POLISHED_BLACKSTONE_HOLDER, RenderLayer.getCutout());
-        BlockEntityRendererFactories.register(BlockInit.PIGLIN_FLAG_ENTITY, PiglinFlagRenderer::new);
-        BlockRenderLayerMap.INSTANCE.putBlock(BlockInit.PIGLIN_FLAG, RenderLayer.getCutout());
-        BlockEntityRendererFactories.register(BlockInit.SHADOW_CHEST_ENTITY, ChestBlockEntityRenderer::new);
+        BlockEntityRenderers.register(BlockInit.CHISELED_POLISHED_BLACKSTONE_HOLDER_ENTITY, ChiseledPolishedBlackstoneHolderRenderer::new);
+        BlockRenderLayerMap.INSTANCE.putBlock(BlockInit.CHISELED_POLISHED_BLACKSTONE_HOLDER, RenderType.cutout());
+        BlockEntityRenderers.register(BlockInit.PIGLIN_FLAG_ENTITY, PiglinFlagRenderer::new);
+        BlockRenderLayerMap.INSTANCE.putBlock(BlockInit.PIGLIN_FLAG, RenderType.cutout());
+        BlockEntityRenderers.register(BlockInit.SHADOW_CHEST_ENTITY, ChestRenderer::new);
 
         // Particles
         ParticleFactoryRegistry.getInstance().register(ParticleInit.AMETHYST_SHARD_PARTICLE, ShardParticle.ShardFactory::new);
@@ -165,17 +165,17 @@ public class RenderInit {
         ParticleFactoryRegistry.getInstance().register(ParticleInit.FART_PARTICLE, FartParticle.Factory::new);
 
         HudRenderCallback.EVENT.register((drawContext, tickDelta) -> {
-            MinecraftClient client = MinecraftClient.getInstance();
-            if (!client.options.hudHidden&& !client.player.isCreative()&& !client.player.isSpectator()) {
-                ItemStack itemStack = client.player.getEquippedStack(EquipmentSlot.CHEST);
-                if (!itemStack.isEmpty() && itemStack.isOf(ItemInit.GILDED_NETHERITE_CHESTPLATE)) {
+            Minecraft client = Minecraft.getInstance();
+            if (!client.options.hideGui&& !client.player.isCreative()&& !client.player.isSpectator()) {
+                ItemStack itemStack = client.player.getItemBySlot(EquipmentSlot.CHEST);
+                if (!itemStack.isEmpty() && itemStack.is(ItemInit.GILDED_NETHERITE_CHESTPLATE)) {
                     if (itemStack.get(ItemInit.GILDED_DATA) != null && itemStack.get(ItemInit.GILDED_DATA).activated()) {
-                        int scaledWidth = client.getWindow().getScaledWidth();
-                        int scaledHeight = client.getWindow().getScaledHeight();
-                        int worldTime = (int) client.player.getWorld().getTime();
+                        int scaledWidth = client.getWindow().getGuiScaledWidth();
+                        int scaledHeight = client.getWindow().getGuiScaledHeight();
+                        int worldTime = (int) client.player.level().getGameTime();
                         int savedTagInt = itemStack.get(ItemInit.GILDED_DATA).time();
                         float effectDuration = ConfigInit.CONFIG.gilded_netherite_armor_effect_duration;
-                        drawContext.getMatrices().push();
+                        drawContext.pose().pushPose();
                         if (savedTagInt + effectDuration > worldTime) {
                             int multiplier = 2;
                             if (savedTagInt + Math.max(effectDuration - 100, 0) < worldTime) {
@@ -183,23 +183,23 @@ public class RenderInit {
                             }
 
                             float pulsating = (float) Math.sin((float) ((worldTime * multiplier) - (savedTagInt - 1)) / 6.2831855F);
-                            drawContext.setShaderColor(1.0F, 1.0F, 1.0F, pulsating + 0.5F);
-                            drawContext.drawTexture(ACTIVE_ARMOR_TEXTURE, (scaledWidth / 2) - 5, scaledHeight - 49, 10, 10, 0, 0, 16, 16, 16, 16);
+                            drawContext.setColor(1.0F, 1.0F, 1.0F, pulsating + 0.5F);
+                            drawContext.blit(ACTIVE_ARMOR_TEXTURE, (scaledWidth / 2) - 5, scaledHeight - 49, 10, 10, 0, 0, 16, 16, 16, 16);
                         } else {
                             float fading = (1F - (((float) (worldTime - (savedTagInt + (effectDuration - 1f))) / effectDuration) - 0.4F));
-                            drawContext.setShaderColor(1.0F, 0.65F, 0.65F, fading);
-                            drawContext.drawTexture(ACTIVE_ARMOR_TEXTURE, (scaledWidth / 2) - 5, scaledHeight - 49, 10, 10, 0, 0, 16, 16, 16, 16);
+                            drawContext.setColor(1.0F, 0.65F, 0.65F, fading);
+                            drawContext.blit(ACTIVE_ARMOR_TEXTURE, (scaledWidth / 2) - 5, scaledHeight - 49, 10, 10, 0, 0, 16, 16, 16, 16);
                         }
-                        drawContext.getMatrices().pop();
-                        drawContext.setShaderColor(1.0F, 1.0F, 1.0F, 1.0F);
+                        drawContext.pose().popPose();
+                        drawContext.setColor(1.0F, 1.0F, 1.0F, 1.0F);
                     }
                 }
-                if (client.player.hasStatusEffect(EffectInit.WITHERING)) {
-                    drawContext.setShaderColor(1.0F, 1.0F, 1.0F, client.player.getStatusEffect(EffectInit.WITHERING).getDuration() / 280F);
-                    int scaledWidth = client.getWindow().getScaledWidth();
-                    int scaledHeight = client.getWindow().getScaledHeight();
-                    drawContext.drawTexture(WITHERED_TEXTURE, scaledWidth / 2 - 64, scaledHeight / 2 - 64, 0.0F, 0.0F, 128, 128, 128, 128);
-                    drawContext.setShaderColor(1.0F, 1.0F, 1.0F, 1.0F);
+                if (client.player.hasEffect(EffectInit.WITHERING)) {
+                    drawContext.setColor(1.0F, 1.0F, 1.0F, client.player.getEffect(EffectInit.WITHERING).getDuration() / 280F);
+                    int scaledWidth = client.getWindow().getGuiScaledWidth();
+                    int scaledHeight = client.getWindow().getGuiScaledHeight();
+                    drawContext.blit(WITHERED_TEXTURE, scaledWidth / 2 - 64, scaledHeight / 2 - 64, 0.0F, 0.0F, 128, 128, 128, 128);
+                    drawContext.setColor(1.0F, 1.0F, 1.0F, 1.0F);
                 }
             }
         });

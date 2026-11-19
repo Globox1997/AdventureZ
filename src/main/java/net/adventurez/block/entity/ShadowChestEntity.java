@@ -6,74 +6,73 @@ import net.adventurez.init.ItemInit;
 import net.adventurez.init.SoundInit;
 import net.adventurez.mixin.accessor.ChestLidAnimatorAccessor;
 import net.fabricmc.loader.api.FabricLoader;
-import net.minecraft.block.BlockState;
-import net.minecraft.block.entity.ChestLidAnimator;
-import net.minecraft.block.entity.LidOpenable;
-import net.minecraft.block.entity.LootableContainerBlockEntity;
-import net.minecraft.block.entity.ViewerCountManager;
-import net.minecraft.enchantment.Enchantment;
-import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.entity.player.PlayerInventory;
-import net.minecraft.inventory.Inventories;
-import net.minecraft.inventory.Inventory;
-import net.minecraft.item.ItemStack;
-import net.minecraft.item.Items;
-import net.minecraft.loot.LootTables;
-import net.minecraft.loot.context.LootContextParameterSet;
-import net.minecraft.loot.context.LootContextParameters;
-import net.minecraft.loot.context.LootContextTypes;
-import net.minecraft.nbt.NbtCompound;
-import net.minecraft.particle.ParticleTypes;
-import net.minecraft.registry.DynamicRegistryManager;
-import net.minecraft.registry.Registries;
-import net.minecraft.registry.RegistryKeys;
-import net.minecraft.registry.RegistryWrapper.WrapperLookup;
-import net.minecraft.registry.entry.RegistryEntry;
-import net.minecraft.screen.GenericContainerScreenHandler;
-import net.minecraft.screen.ScreenHandler;
-import net.minecraft.server.world.ServerWorld;
-import net.minecraft.sound.SoundCategory;
-import net.minecraft.text.Text;
-import net.minecraft.util.Identifier;
-import net.minecraft.util.collection.DefaultedList;
-import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.math.Vec3d;
-import net.minecraft.world.World;
-
+import net.minecraft.core.BlockPos;
+import net.minecraft.core.Holder;
+import net.minecraft.core.HolderLookup.Provider;
+import net.minecraft.core.NonNullList;
+import net.minecraft.core.RegistryAccess;
+import net.minecraft.core.particles.ParticleTypes;
+import net.minecraft.core.registries.BuiltInRegistries;
+import net.minecraft.core.registries.Registries;
+import net.minecraft.nbt.CompoundTag;
+import net.minecraft.network.chat.Component;
+import net.minecraft.resources.ResourceLocation;
+import net.minecraft.server.level.ServerLevel;
+import net.minecraft.sounds.SoundSource;
+import net.minecraft.world.Container;
+import net.minecraft.world.ContainerHelper;
+import net.minecraft.world.entity.player.Inventory;
+import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.inventory.AbstractContainerMenu;
+import net.minecraft.world.inventory.ChestMenu;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.Items;
+import net.minecraft.world.item.enchantment.Enchantment;
+import net.minecraft.world.level.Level;
+import net.minecraft.world.level.block.entity.ChestLidController;
+import net.minecraft.world.level.block.entity.ContainerOpenersCounter;
+import net.minecraft.world.level.block.entity.LidBlockEntity;
+import net.minecraft.world.level.block.entity.RandomizableContainerBlockEntity;
+import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.level.storage.loot.BuiltInLootTables;
+import net.minecraft.world.level.storage.loot.LootParams;
+import net.minecraft.world.level.storage.loot.parameters.LootContextParamSets;
+import net.minecraft.world.level.storage.loot.parameters.LootContextParams;
+import net.minecraft.world.phys.Vec3;
 import java.util.List;
 import java.util.Optional;
 
-public class ShadowChestEntity extends LootableContainerBlockEntity implements LidOpenable {
+public class ShadowChestEntity extends RandomizableContainerBlockEntity implements LidBlockEntity {
 
-    private final ChestLidAnimator lidAnimator = new ChestLidAnimator();
-    private DefaultedList<ItemStack> inventory;
-    private ViewerCountManager stateManager;
+    private final ChestLidController lidAnimator = new ChestLidController();
+    private NonNullList<ItemStack> inventory;
+    private ContainerOpenersCounter stateManager;
 
     public ShadowChestEntity(BlockPos pos, BlockState state) {
         super(BlockInit.SHADOW_CHEST_ENTITY, pos, state);
-        this.inventory = DefaultedList.ofSize(27, ItemStack.EMPTY);
-        this.stateManager = new ViewerCountManager() {
+        this.inventory = NonNullList.withSize(27, ItemStack.EMPTY);
+        this.stateManager = new ContainerOpenersCounter() {
             @Override
-            protected void onContainerOpen(World world, BlockPos pos, BlockState state) {
-                world.playSound(null, (double) pos.getX() + 0.5D, (double) pos.getY() + 0.5D, (double) pos.getZ() + 0.5D, SoundInit.OPEN_SHADOW_CHEST_EVENT, SoundCategory.BLOCKS, 0.5F,
+            protected void onOpen(Level world, BlockPos pos, BlockState state) {
+                world.playSound(null, (double) pos.getX() + 0.5D, (double) pos.getY() + 0.5D, (double) pos.getZ() + 0.5D, SoundInit.OPEN_SHADOW_CHEST_EVENT, SoundSource.BLOCKS, 0.5F,
                         world.getRandom().nextFloat() * 0.1F + 0.9F);
             }
 
             @Override
-            protected void onContainerClose(World world, BlockPos pos, BlockState state) {
-                world.playSound(null, (double) pos.getX() + 0.5D, (double) pos.getY() + 0.5D, (double) pos.getZ() + 0.5D, SoundInit.CLOSE_SHADOW_CHEST_EVENT, SoundCategory.BLOCKS,
+            protected void onClose(Level world, BlockPos pos, BlockState state) {
+                world.playSound(null, (double) pos.getX() + 0.5D, (double) pos.getY() + 0.5D, (double) pos.getZ() + 0.5D, SoundInit.CLOSE_SHADOW_CHEST_EVENT, SoundSource.BLOCKS,
                         0.5F, world.getRandom().nextFloat() * 0.1F + 0.9F);
             }
 
             @Override
-            protected void onViewerCountUpdate(World world, BlockPos pos, BlockState state, int oldViewerCount, int newViewerCount) {
-                world.addSyncedBlockEvent(ShadowChestEntity.this.pos, BlockInit.SHADOW_CHEST, 1, newViewerCount);
+            protected void openerCountChanged(Level world, BlockPos pos, BlockState state, int oldViewerCount, int newViewerCount) {
+                world.blockEvent(ShadowChestEntity.this.worldPosition, BlockInit.SHADOW_CHEST, 1, newViewerCount);
             }
 
             @Override
-            protected boolean isPlayerViewing(PlayerEntity player) {
-                if (player.currentScreenHandler instanceof GenericContainerScreenHandler) {
-                    Inventory inventory = ((GenericContainerScreenHandler) player.currentScreenHandler).getInventory();
+            protected boolean isOwnContainer(Player player) {
+                if (player.containerMenu instanceof ChestMenu) {
+                    Container inventory = ((ChestMenu) player.containerMenu).getContainer();
                     return inventory == ShadowChestEntity.this;
                 } else {
                     return false;
@@ -82,8 +81,8 @@ public class ShadowChestEntity extends LootableContainerBlockEntity implements L
         };
     }
 
-    public static void clientTick(World world, BlockPos pos, BlockState state, ShadowChestEntity blockEntity) {
-        blockEntity.lidAnimator.step();
+    public static void clientTick(Level world, BlockPos pos, BlockState state, ShadowChestEntity blockEntity) {
+        blockEntity.lidAnimator.tickLid();
         if (((ChestLidAnimatorAccessor) blockEntity.lidAnimator).getOpen()) {
             for (int i = 0; i < 3; ++i) {
                 int j = world.getRandom().nextInt(2) * 2 - 1;
@@ -100,101 +99,101 @@ public class ShadowChestEntity extends LootableContainerBlockEntity implements L
     }
 
     @Override
-    protected void writeNbt(NbtCompound nbt, WrapperLookup registryLookup) {
-        super.writeNbt(nbt, registryLookup);
-        Inventories.writeNbt(nbt, this.inventory, registryLookup);
+    protected void saveAdditional(CompoundTag nbt, Provider registryLookup) {
+        super.saveAdditional(nbt, registryLookup);
+        ContainerHelper.saveAllItems(nbt, this.inventory, registryLookup);
     }
 
     @Override
-    protected void readNbt(NbtCompound nbt, WrapperLookup registryLookup) {
-        super.readNbt(nbt, registryLookup);
-        this.inventory = DefaultedList.ofSize(this.size(), ItemStack.EMPTY);
-        Inventories.readNbt(nbt, this.inventory, registryLookup);
+    protected void loadAdditional(CompoundTag nbt, Provider registryLookup) {
+        super.loadAdditional(nbt, registryLookup);
+        this.inventory = NonNullList.withSize(this.getContainerSize(), ItemStack.EMPTY);
+        ContainerHelper.loadAllItems(nbt, this.inventory, registryLookup);
     }
 
     @Override
-    public boolean onSyncedBlockEvent(int type, int data) {
+    public boolean triggerEvent(int type, int data) {
         if (type == 1) {
-            this.lidAnimator.setOpen(data > 0);
+            this.lidAnimator.shouldBeOpen(data > 0);
             return true;
         } else {
-            return super.onSyncedBlockEvent(type, data);
+            return super.triggerEvent(type, data);
         }
     }
 
     @Override
-    public void onOpen(PlayerEntity player) {
-        if (!this.removed && !player.isSpectator()) {
-            this.stateManager.openContainer(player, this.getWorld(), this.getPos(), this.getCachedState());
+    public void startOpen(Player player) {
+        if (!this.remove && !player.isSpectator()) {
+            this.stateManager.incrementOpeners(player, this.getLevel(), this.getBlockPos(), this.getBlockState());
         }
 
     }
 
     @Override
-    public void onClose(PlayerEntity player) {
-        if (!this.removed && !player.isSpectator()) {
-            this.stateManager.closeContainer(player, this.getWorld(), this.getPos(), this.getCachedState());
+    public void stopOpen(Player player) {
+        if (!this.remove && !player.isSpectator()) {
+            this.stateManager.decrementOpeners(player, this.getLevel(), this.getBlockPos(), this.getBlockState());
         }
         if (this.isEmpty()) {
-            this.getWorld().breakBlock(pos, true);
+            this.getLevel().destroyBlock(worldPosition, true);
         }
 
     }
 
     @Override
-    public boolean canPlayerUse(PlayerEntity player) {
-        if (this.getWorld().getBlockEntity(this.pos) != this) {
+    public boolean stillValid(Player player) {
+        if (this.getLevel().getBlockEntity(this.worldPosition) != this) {
             return false;
         } else {
-            return !(player.squaredDistanceTo((double) this.pos.getX() + 0.5D, (double) this.pos.getY() + 0.5D, (double) this.pos.getZ() + 0.5D) > 64.0D);
+            return !(player.distanceToSqr((double) this.worldPosition.getX() + 0.5D, (double) this.worldPosition.getY() + 0.5D, (double) this.worldPosition.getZ() + 0.5D) > 64.0D);
         }
     }
 
     public void onScheduledTick() {
-        if (!this.removed) {
-            this.stateManager.updateViewerCount(this.getWorld(), this.getPos(), this.getCachedState());
+        if (!this.remove) {
+            this.stateManager.recheckOpeners(this.getLevel(), this.getBlockPos(), this.getBlockState());
         }
 
     }
 
     @Override
-    public float getAnimationProgress(float tickDelta) {
-        return this.lidAnimator.getProgress(tickDelta);
+    public float getOpenNess(float tickDelta) {
+        return this.lidAnimator.getOpenness(tickDelta);
     }
 
     @Override
-    protected Text getContainerName() {
-        return Text.translatable("adventurez.container.shadowchest");
+    protected Component getDefaultName() {
+        return Component.translatable("adventurez.container.shadowchest");
     }
 
     @Override
-    protected ScreenHandler createScreenHandler(int syncId, PlayerInventory playerInventory) {
-        return GenericContainerScreenHandler.createGeneric9x3(syncId, playerInventory, this);
+    protected AbstractContainerMenu createMenu(int syncId, Inventory playerInventory) {
+        return ChestMenu.threeRows(syncId, playerInventory, this);
     }
 
     @Override
-    public int size() {
+    public int getContainerSize() {
         return 27;
     }
 
     @Override
-    protected DefaultedList<ItemStack> getHeldStacks() {
+    protected NonNullList<ItemStack> getItems() {
         return this.inventory;
     }
 
     @Override
-    protected void setHeldStacks(DefaultedList<ItemStack> inventory) {
+    protected void setItems(NonNullList<ItemStack> inventory) {
         this.inventory = inventory;
     }
 
     public void setRandomLoot() {
-        if (!this.getWorld().isClient()) {
-            List<ItemStack> tableList = this.getWorld().getServer().getReloadableRegistries().getLootTable(LootTables.END_CITY_TREASURE_CHEST)
-                    .generateLoot(new LootContextParameterSet.Builder((ServerWorld) this.getWorld()).add(LootContextParameters.ORIGIN, Vec3d.ofCenter(this.pos)).build(LootContextTypes.CHEST));
+        if (!this.getLevel().isClientSide()) {
+            List<ItemStack> tableList = this.getLevel().getServer().reloadableRegistries().getLootTable(BuiltInLootTables.END_CITY_TREASURE)
+                    .getRandomItems(new LootParams.Builder((ServerLevel) this.getLevel()).withParameter(LootContextParams.ORIGIN, Vec3.atCenterOf(this.worldPosition)).create(LootContextParamSets.CHEST));
 
             for (int i = 0; i < 27; i++) {
-                if (i == 20 && this.getWorld().getRandom().nextFloat() < 0.2F && FabricLoader.getInstance().isModLoaded("medievalweapons")) {
-                    this.inventory.set(i, new ItemStack(Registries.ITEM.get(Identifier.of("medievalweapons", "thalleous_sword"))));
+                if (i == 20 && this.getLevel().getRandom().nextFloat() < 0.2F && FabricLoader.getInstance().isModLoaded("medievalweapons")) {
+                    this.inventory.set(i, new ItemStack(BuiltInRegistries.ITEM.get(ResourceLocation.fromNamespaceAndPath("medievalweapons", "thalleous_sword"))));
                     continue;
                 }
                 if (i == 13)
@@ -202,29 +201,29 @@ public class ShadowChestEntity extends LootableContainerBlockEntity implements L
                 else if (i == 1)
                     this.inventory.set(i, new ItemStack(Items.DRAGON_EGG));
                 else {
-                    switch (this.getWorld().getRandom().nextInt(10)) {
+                    switch (this.getLevel().getRandom().nextInt(10)) {
                         case 0:
-                            this.inventory.set(i, new ItemStack(Items.ENDER_PEARL, this.getWorld().getRandom().nextInt(5) + 1));
+                            this.inventory.set(i, new ItemStack(Items.ENDER_PEARL, this.getLevel().getRandom().nextInt(5) + 1));
                             break;
                         case 4:
                             this.inventory.set(i, new ItemStack(Items.GOLDEN_APPLE, 1));
                             break;
                         case 5:
-                            this.inventory.set(i, new ItemStack(Items.EXPERIENCE_BOTTLE, this.getWorld().getRandom().nextInt(12) + 1));
+                            this.inventory.set(i, new ItemStack(Items.EXPERIENCE_BOTTLE, this.getLevel().getRandom().nextInt(12) + 1));
                             break;
                         case 6:
                             ItemStack stack = new ItemStack(Items.ENCHANTED_BOOK);
-                            DynamicRegistryManager dynamicRegistryManager = this.getWorld().getRegistryManager();
-                            Optional<RegistryEntry.Reference<Enchantment>> optional = dynamicRegistryManager.get(RegistryKeys.ENCHANTMENT).getRandom(this.getWorld().getRandom());
+                            RegistryAccess dynamicRegistryManager = this.getLevel().registryAccess();
+                            Optional<Holder.Reference<Enchantment>> optional = dynamicRegistryManager.registryOrThrow(Registries.ENCHANTMENT).getRandom(this.getLevel().getRandom());
                             if (optional.isPresent()) {
-                                stack.addEnchantment(optional.get(), optional.get().value().getMaxLevel() + (ConfigInit.CONFIG.allow_special_enchant_loot ? 1 : 0));
+                                stack.enchant(optional.get(), optional.get().value().getMaxLevel() + (ConfigInit.CONFIG.allow_special_enchant_loot ? 1 : 0));
                             }
                             stack.set(ItemInit.VOID_DROP, true);
 
                             this.inventory.set(i, stack);
                             break;
                         case 7:
-                            this.inventory.set(i, tableList.get(this.getWorld().getRandom().nextInt(tableList.size())));
+                            this.inventory.set(i, tableList.get(this.getLevel().getRandom().nextInt(tableList.size())));
                             break;
                         default:
                             break;

@@ -11,32 +11,32 @@ import net.adventurez.init.ItemInit;
 import net.adventurez.item.GildedNetheriteArmor;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
-import net.minecraft.entity.EntityType;
-import net.minecraft.entity.EquipmentSlot;
-import net.minecraft.entity.LivingEntity;
-import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.item.ItemStack;
-import net.minecraft.registry.tag.DamageTypeTags;
-import net.minecraft.entity.damage.DamageSource;
-import net.minecraft.world.World;
+import net.minecraft.tags.DamageTypeTags;
+import net.minecraft.world.damagesource.DamageSource;
+import net.minecraft.world.entity.EntityType;
+import net.minecraft.world.entity.EquipmentSlot;
+import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.level.Level;
 
-@Mixin(PlayerEntity.class)
+@Mixin(Player.class)
 public abstract class PlayerEntityMixin extends LivingEntity {
 
     @Shadow
-    public abstract ItemStack getEquippedStack(EquipmentSlot slot);
+    public abstract ItemStack getItemBySlot(EquipmentSlot slot);
 
-    public PlayerEntityMixin(EntityType<PlayerEntity> type, World world) {
+    public PlayerEntityMixin(EntityType<Player> type, Level world) {
         super(type, world);
     }
 
-    @Inject(method = "damage", at = @At(value = "INVOKE", target = "Lnet/minecraft/entity/damage/DamageSource;isScaledWithDifficulty()Z"), cancellable = true)
+    @Inject(method = "hurt", at = @At(value = "INVOKE", target = "Lnet/minecraft/world/damagesource/DamageSource;scalesWithDifficulty()Z"), cancellable = true)
     private void damageMixin(DamageSource source, float amount, CallbackInfoReturnable<Boolean> info) {
-        if (this.getEquippedStack(EquipmentSlot.CHEST).getItem() == ItemInit.GILDED_NETHERITE_CHESTPLATE && GildedNetheriteArmor.fullGolemArmor((PlayerEntity) (Object) this)) {
-            if (source.isIn(DamageTypeTags.IS_FIRE) && !GildedNetheriteArmor.isStoneGolemArmorActive(this.getEquippedStack(EquipmentSlot.CHEST)) && GildedNetheriteArmor.activateStoneGolemArmor((PlayerEntity) (Object) this, this.getEquippedStack(EquipmentSlot.CHEST))) {
-                GildedNetheriteArmor.activateStoneGolemArmor((PlayerEntity) (Object) this, this.getEquippedStack(EquipmentSlot.CHEST));
+        if (this.getItemBySlot(EquipmentSlot.CHEST).getItem() == ItemInit.GILDED_NETHERITE_CHESTPLATE && GildedNetheriteArmor.fullGolemArmor((Player) (Object) this)) {
+            if (source.is(DamageTypeTags.IS_FIRE) && !GildedNetheriteArmor.isStoneGolemArmorActive(this.getItemBySlot(EquipmentSlot.CHEST)) && GildedNetheriteArmor.activateStoneGolemArmor((Player) (Object) this, this.getItemBySlot(EquipmentSlot.CHEST))) {
+                GildedNetheriteArmor.activateStoneGolemArmor((Player) (Object) this, this.getItemBySlot(EquipmentSlot.CHEST));
                 info.setReturnValue(false);
-            } else if (!source.isIn(DamageTypeTags.BYPASSES_INVULNERABILITY) && this.getWorld().getRandom().nextFloat() <= ConfigInit.CONFIG.gilded_netherite_armor_dodge_chance) {
+            } else if (!source.is(DamageTypeTags.BYPASSES_INVULNERABILITY) && this.level().getRandom().nextFloat() <= ConfigInit.CONFIG.gilded_netherite_armor_dodge_chance) {
                 info.setReturnValue(false);
             }
         }
@@ -44,8 +44,8 @@ public abstract class PlayerEntityMixin extends LivingEntity {
 
     @Environment(EnvType.CLIENT)
     @Override
-    public boolean doesRenderOnFire() {
-        ItemStack golemChestplate = this.getEquippedStack(EquipmentSlot.CHEST);
+    public boolean displayFireAnimation() {
+        ItemStack golemChestplate = this.getItemBySlot(EquipmentSlot.CHEST);
         boolean fireActivated = golemChestplate.getItem().equals(ItemInit.GILDED_NETHERITE_CHESTPLATE) && GildedNetheriteArmor.isStoneGolemArmorActive(golemChestplate);
         return this.isOnFire() && !this.isSpectator() && !fireActivated;
     }

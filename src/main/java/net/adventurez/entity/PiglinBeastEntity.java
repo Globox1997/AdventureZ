@@ -3,134 +3,143 @@ package net.adventurez.entity;
 import com.google.common.collect.ImmutableList;
 import net.adventurez.AdventureMain;
 import net.adventurez.init.SoundInit;
-import net.minecraft.block.BlockState;
-import net.minecraft.entity.EntityType;
-import net.minecraft.entity.LivingEntity;
-import net.minecraft.entity.ai.brain.MemoryModuleType;
-import net.minecraft.entity.ai.goal.*;
-import net.minecraft.entity.ai.pathing.PathNodeType;
-import net.minecraft.entity.attribute.DefaultAttributeContainer;
-import net.minecraft.entity.attribute.EntityAttributeModifier;
-import net.minecraft.entity.attribute.EntityAttributes;
-import net.minecraft.entity.damage.DamageSource;
-import net.minecraft.entity.data.DataTracker;
-import net.minecraft.entity.data.DataTracker.Builder;
-import net.minecraft.entity.data.TrackedData;
-import net.minecraft.entity.data.TrackedDataHandlerRegistry;
-import net.minecraft.entity.mob.*;
-import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.nbt.NbtCompound;
-import net.minecraft.predicate.entity.EntityPredicates;
-import net.minecraft.sound.SoundCategory;
-import net.minecraft.sound.SoundEvent;
-import net.minecraft.util.Hand;
-import net.minecraft.util.Identifier;
-import net.minecraft.util.math.BlockPos;
+import net.minecraft.core.BlockPos;
+import net.minecraft.nbt.CompoundTag;
+import net.minecraft.network.syncher.EntityDataAccessor;
+import net.minecraft.network.syncher.EntityDataSerializers;
+import net.minecraft.network.syncher.SynchedEntityData;
+import net.minecraft.network.syncher.SynchedEntityData.Builder;
+import net.minecraft.resources.ResourceLocation;
+import net.minecraft.sounds.SoundEvent;
+import net.minecraft.sounds.SoundSource;
 import net.minecraft.world.Difficulty;
-import net.minecraft.world.GameRules;
-import net.minecraft.world.World;
-import net.minecraft.world.WorldView;
-
+import net.minecraft.world.InteractionHand;
+import net.minecraft.world.damagesource.DamageSource;
+import net.minecraft.world.entity.EntitySelector;
+import net.minecraft.world.entity.EntityType;
+import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.entity.Mob;
+import net.minecraft.world.entity.ai.attributes.AttributeModifier;
+import net.minecraft.world.entity.ai.attributes.AttributeSupplier;
+import net.minecraft.world.entity.ai.attributes.Attributes;
+import net.minecraft.world.entity.ai.goal.FloatGoal;
+import net.minecraft.world.entity.ai.goal.LookAtPlayerGoal;
+import net.minecraft.world.entity.ai.goal.MeleeAttackGoal;
+import net.minecraft.world.entity.ai.goal.RandomLookAroundGoal;
+import net.minecraft.world.entity.ai.goal.WaterAvoidingRandomStrollGoal;
+import net.minecraft.world.entity.ai.goal.target.HurtByTargetGoal;
+import net.minecraft.world.entity.ai.goal.target.NearestAttackableTargetGoal;
+import net.minecraft.world.entity.ai.memory.MemoryModuleType;
+import net.minecraft.world.entity.monster.Monster;
+import net.minecraft.world.entity.monster.WitherSkeleton;
+import net.minecraft.world.entity.monster.piglin.AbstractPiglin;
+import net.minecraft.world.entity.monster.piglin.Piglin;
+import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.level.GameRules;
+import net.minecraft.world.level.Level;
+import net.minecraft.world.level.LevelReader;
+import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.level.pathfinder.PathType;
 import java.util.List;
 import java.util.Optional;
 
-public class PiglinBeastEntity extends HostileEntity {
-    public static final TrackedData<Float> LEAD_ARM = DataTracker.registerData(PiglinBeastEntity.class, TrackedDataHandlerRegistry.FLOAT);
+public class PiglinBeastEntity extends Monster {
+    public static final EntityDataAccessor<Float> LEAD_ARM = SynchedEntityData.defineId(PiglinBeastEntity.class, EntityDataSerializers.FLOAT);
     public float armTick;
     private int makePiglinsAngry = 0;
-    private static final Identifier LEAD_ARM_IDENTIFIER = AdventureMain.identifierOf("lead_arm_movement");
-    private static final EntityAttributeModifier LEAD_ARM_MOVEMENT = new EntityAttributeModifier(
-            LEAD_ARM_IDENTIFIER, -0.225F, EntityAttributeModifier.Operation.ADD_VALUE);
+    private static final ResourceLocation LEAD_ARM_IDENTIFIER = AdventureMain.identifierOf("lead_arm_movement");
+    private static final AttributeModifier LEAD_ARM_MOVEMENT = new AttributeModifier(
+            LEAD_ARM_IDENTIFIER, -0.225F, AttributeModifier.Operation.ADD_VALUE);
 
-    public PiglinBeastEntity(EntityType<? extends HostileEntity> entityType, World world) {
+    public PiglinBeastEntity(EntityType<? extends Monster> entityType, Level world) {
         super(entityType, world);
-        this.experiencePoints = 30;
-        this.setPathfindingPenalty(PathNodeType.LAVA, 8.0F);
+        this.xpReward = 30;
+        this.setPathfindingMalus(PathType.LAVA, 8.0F);
     }
 
-    public static DefaultAttributeContainer.Builder createPiglinBeastAttributes() {
-        return HostileEntity.createHostileAttributes().add(EntityAttributes.GENERIC_MAX_HEALTH, 80.0D).add(EntityAttributes.GENERIC_MOVEMENT_SPEED, 0.225D)
-                .add(EntityAttributes.GENERIC_KNOCKBACK_RESISTANCE, 0.5D).add(EntityAttributes.GENERIC_ATTACK_DAMAGE, 9.0D).add(EntityAttributes.GENERIC_ATTACK_KNOCKBACK, 2D)
-                .add(EntityAttributes.GENERIC_FOLLOW_RANGE, 38.0D);
-    }
-
-    @Override
-    public void initGoals() {
-        super.initGoals();
-        this.goalSelector.add(0, new SwimGoal(this));
-        this.goalSelector.add(1, new AttackGoal());
-        this.goalSelector.add(4, new WanderAroundFarGoal(this, 1.0D));
-        this.goalSelector.add(5, new LookAtEntityGoal(this, PlayerEntity.class, 12.0F));
-        this.goalSelector.add(6, new LookAroundGoal(this));
-        this.goalSelector.add(7, new LookAtEntityGoal(this, MobEntity.class, 8.0F));
-        this.targetSelector.add(1, new ActiveTargetGoal<>(this, WitherSkeletonEntity.class, true));
-        this.targetSelector.add(2, new ActiveTargetGoal<>(this, PlayerEntity.class, true));
-        this.targetSelector.add(3, new ActiveTargetGoal<>(this, BlazeGuardianEntity.class, true));
-        this.targetSelector.add(4, (new RevengeGoal(this, new Class[]{PiglinEntity.class})));
+    public static AttributeSupplier.Builder createPiglinBeastAttributes() {
+        return Monster.createMonsterAttributes().add(Attributes.MAX_HEALTH, 80.0D).add(Attributes.MOVEMENT_SPEED, 0.225D)
+                .add(Attributes.KNOCKBACK_RESISTANCE, 0.5D).add(Attributes.ATTACK_DAMAGE, 9.0D).add(Attributes.ATTACK_KNOCKBACK, 2D)
+                .add(Attributes.FOLLOW_RANGE, 38.0D);
     }
 
     @Override
-    public void mobTick() {
-        if (this.getTarget() instanceof PlayerEntity) {
+    public void registerGoals() {
+        super.registerGoals();
+        this.goalSelector.addGoal(0, new FloatGoal(this));
+        this.goalSelector.addGoal(1, new AttackGoal());
+        this.goalSelector.addGoal(4, new WaterAvoidingRandomStrollGoal(this, 1.0D));
+        this.goalSelector.addGoal(5, new LookAtPlayerGoal(this, Player.class, 12.0F));
+        this.goalSelector.addGoal(6, new RandomLookAroundGoal(this));
+        this.goalSelector.addGoal(7, new LookAtPlayerGoal(this, Mob.class, 8.0F));
+        this.targetSelector.addGoal(1, new NearestAttackableTargetGoal<>(this, WitherSkeleton.class, true));
+        this.targetSelector.addGoal(2, new NearestAttackableTargetGoal<>(this, Player.class, true));
+        this.targetSelector.addGoal(3, new NearestAttackableTargetGoal<>(this, BlazeGuardianEntity.class, true));
+        this.targetSelector.addGoal(4, (new HurtByTargetGoal(this, new Class[]{Piglin.class})));
+    }
+
+    @Override
+    public void customServerAiStep() {
+        if (this.getTarget() instanceof Player) {
             makePiglinsAngry++;
             if (makePiglinsAngry == 600) {
-                dataTracker.set(LEAD_ARM, 1F);
+                entityData.set(LEAD_ARM, 1F);
                 angerNearbyPiglins();
-                this.getWorld().playSoundFromEntity(null, this, SoundInit.PIGLIN_BEAST_SHOUT_EVENT, SoundCategory.HOSTILE, 1.0F, 1.0F);
-                this.getAttributeInstance(EntityAttributes.GENERIC_MOVEMENT_SPEED).addTemporaryModifier(LEAD_ARM_MOVEMENT);
+                this.level().playSound(null, this, SoundInit.PIGLIN_BEAST_SHOUT_EVENT, SoundSource.HOSTILE, 1.0F, 1.0F);
+                this.getAttribute(Attributes.MOVEMENT_SPEED).addTransientModifier(LEAD_ARM_MOVEMENT);
             }
             if (makePiglinsAngry > 600) {
-                dataTracker.set(LEAD_ARM, dataTracker.get(LEAD_ARM) - 0.02F);
+                entityData.set(LEAD_ARM, entityData.get(LEAD_ARM) - 0.02F);
             }
             if (makePiglinsAngry == 650) {
-                this.getAttributeInstance(EntityAttributes.GENERIC_MOVEMENT_SPEED).removeModifier(LEAD_ARM_IDENTIFIER);
+                this.getAttribute(Attributes.MOVEMENT_SPEED).removeModifier(LEAD_ARM_IDENTIFIER);
                 makePiglinsAngry = 0;
             }
         } else if (makePiglinsAngry > 0) {
             makePiglinsAngry--;
-            if (this.getAttributeInstance(EntityAttributes.GENERIC_MOVEMENT_SPEED).hasModifier(LEAD_ARM_IDENTIFIER)) {
-                this.getAttributeInstance(EntityAttributes.GENERIC_MOVEMENT_SPEED).removeModifier(LEAD_ARM_IDENTIFIER);
+            if (this.getAttribute(Attributes.MOVEMENT_SPEED).hasModifier(LEAD_ARM_IDENTIFIER)) {
+                this.getAttribute(Attributes.MOVEMENT_SPEED).removeModifier(LEAD_ARM_IDENTIFIER);
             }
         }
     }
 
     @Override
-    public void writeCustomDataToNbt(NbtCompound tag) {
-        super.writeCustomDataToNbt(tag);
+    public void addAdditionalSaveData(CompoundTag tag) {
+        super.addAdditionalSaveData(tag);
         tag.putFloat("LeadArm", 0F);
     }
 
     @Override
-    public void readCustomDataFromNbt(NbtCompound tag) {
-        super.readCustomDataFromNbt(tag);
+    public void readAdditionalSaveData(CompoundTag tag) {
+        super.readAdditionalSaveData(tag);
         this.armTick = tag.getFloat("LeadArm");
     }
 
     @Override
-    protected void initDataTracker(Builder builder) {
-        super.initDataTracker(builder);
-        builder.add(LEAD_ARM, 0F);
+    protected void defineSynchedData(Builder builder) {
+        super.defineSynchedData(builder);
+        builder.define(LEAD_ARM, 0F);
     }
 
     @Override
-    public boolean canSpawn(WorldView world) {
-        return !world.containsFluid(this.getBoundingBox());
+    public boolean checkSpawnObstruction(LevelReader world) {
+        return !world.containsAnyLiquid(this.getBoundingBox());
     }
 
     @Override
-    public boolean canImmediatelyDespawn(double num) {
+    public boolean removeWhenFarAway(double num) {
         return false;
     }
 
     @Override
     public void checkDespawn() {
-        if (this.getWorld().getDifficulty() == Difficulty.PEACEFUL) {
+        if (this.level().getDifficulty() == Difficulty.PEACEFUL) {
             this.discard();
         }
     }
 
     @Override
-    public boolean canUsePortals(boolean allowVehicles) {
+    public boolean canUsePortal(boolean allowVehicles) {
         return false;
     }
 
@@ -161,19 +170,19 @@ public class PiglinBeastEntity extends HostileEntity {
         }
 
         @Override
-        protected void attack(LivingEntity target) {
-            if (this.canAttack(target)) {
-                this.resetCooldown();
-                this.mob.getWorld().playSoundFromEntity(null, PiglinBeastEntity.this, SoundInit.PIGLIN_BEAST_CLUBSWING_EVENT, SoundCategory.HOSTILE, 1.0F, 1.0F);
+        protected void checkAndPerformAttack(LivingEntity target) {
+            if (this.canPerformAttack(target)) {
+                this.resetAttackCooldown();
+                this.mob.level().playSound(null, PiglinBeastEntity.this, SoundInit.PIGLIN_BEAST_CLUBSWING_EVENT, SoundSource.HOSTILE, 1.0F, 1.0F);
 
-                this.mob.swingHand(Hand.MAIN_HAND);
-                this.mob.tryAttack(target);
+                this.mob.swing(InteractionHand.MAIN_HAND);
+                this.mob.doHurtTarget(target);
             }
         }
     }
 
     private void angerNearbyPiglins() {
-        List<PiglinEntity> list = this.getWorld().getEntitiesByClass(PiglinEntity.class, this.getBoundingBox().expand(40D), EntityPredicates.EXCEPT_SPECTATOR);
+        List<Piglin> list = this.level().getEntitiesOfClass(Piglin.class, this.getBoundingBox().inflate(40D), EntitySelector.NO_SPECTATORS);
         if (!list.isEmpty()) {
             getNearbyPiglins(list.getFirst()).forEach((abstractPiglinEntity) -> {
                 getNearestDetectedPlayer(abstractPiglinEntity).ifPresent((playerEntity) -> {
@@ -183,27 +192,27 @@ public class PiglinBeastEntity extends HostileEntity {
         }
     }
 
-    public static Optional<PlayerEntity> getNearestDetectedPlayer(AbstractPiglinEntity piglin) {
-        return piglin.getBrain().hasMemoryModule(MemoryModuleType.NEAREST_VISIBLE_TARGETABLE_PLAYER) ? piglin.getBrain().getOptionalMemory(MemoryModuleType.NEAREST_VISIBLE_TARGETABLE_PLAYER)
+    public static Optional<Player> getNearestDetectedPlayer(AbstractPiglin piglin) {
+        return piglin.getBrain().hasMemoryValue(MemoryModuleType.NEAREST_VISIBLE_ATTACKABLE_PLAYER) ? piglin.getBrain().getMemoryInternal(MemoryModuleType.NEAREST_VISIBLE_ATTACKABLE_PLAYER)
                 : Optional.empty();
     }
 
-    public static void becomeAngryWith(AbstractPiglinEntity piglin, LivingEntity target) {
-        piglin.getBrain().forget(MemoryModuleType.CANT_REACH_WALK_TARGET_SINCE);
-        piglin.getBrain().remember(MemoryModuleType.ANGRY_AT, target.getUuid(), 600L);
+    public static void becomeAngryWith(AbstractPiglin piglin, LivingEntity target) {
+        piglin.getBrain().eraseMemory(MemoryModuleType.CANT_REACH_WALK_TARGET_SINCE);
+        piglin.getBrain().setMemoryWithExpiry(MemoryModuleType.ANGRY_AT, target.getUUID(), 600L);
 
-        if (target.getType() == EntityType.PLAYER && piglin.getWorld().getGameRules().getBoolean(GameRules.UNIVERSAL_ANGER)) {
-            piglin.getBrain().remember(MemoryModuleType.UNIVERSAL_ANGER, true, 600L);
+        if (target.getType() == EntityType.PLAYER && piglin.level().getGameRules().getBoolean(GameRules.RULE_UNIVERSAL_ANGER)) {
+            piglin.getBrain().setMemoryWithExpiry(MemoryModuleType.UNIVERSAL_ANGER, true, 600L);
         }
-        if (!piglin.getWorld().isClient()) {
-            piglin.getAttributeInstance(EntityAttributes.GENERIC_ATTACK_DAMAGE).setBaseValue(piglin.getAttributeValue(EntityAttributes.GENERIC_ATTACK_DAMAGE) + 3.0D);
+        if (!piglin.level().isClientSide()) {
+            piglin.getAttribute(Attributes.ATTACK_DAMAGE).setBaseValue(piglin.getAttributeValue(Attributes.ATTACK_DAMAGE) + 3.0D);
             piglin.heal(piglin.getMaxHealth());
         }
 
     }
 
-    private static List<AbstractPiglinEntity> getNearbyPiglins(AbstractPiglinEntity piglin) {
-        return piglin.getBrain().getOptionalMemory(MemoryModuleType.NEARBY_ADULT_PIGLINS).orElse(ImmutableList.of());
+    private static List<AbstractPiglin> getNearbyPiglins(AbstractPiglin piglin) {
+        return piglin.getBrain().getMemoryInternal(MemoryModuleType.NEARBY_ADULT_PIGLINS).orElse(ImmutableList.of());
     }
 
 }

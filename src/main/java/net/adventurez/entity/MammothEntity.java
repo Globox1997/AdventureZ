@@ -4,122 +4,122 @@ import java.util.UUID;
 
 import net.adventurez.init.EntityInit;
 import net.adventurez.init.SoundInit;
-import net.minecraft.block.BlockState;
-import net.minecraft.entity.EntityData;
-import net.minecraft.entity.EntityType;
-import net.minecraft.entity.LivingEntity;
-import net.minecraft.entity.SpawnReason;
-import net.minecraft.entity.ai.goal.ActiveTargetGoal;
-import net.minecraft.entity.ai.goal.AnimalMateGoal;
-import net.minecraft.entity.ai.goal.FollowParentGoal;
-import net.minecraft.entity.ai.goal.LookAroundGoal;
-import net.minecraft.entity.ai.goal.LookAtEntityGoal;
-import net.minecraft.entity.ai.goal.MeleeAttackGoal;
-import net.minecraft.entity.ai.goal.RevengeGoal;
-import net.minecraft.entity.ai.goal.SwimGoal;
-import net.minecraft.entity.ai.goal.UniversalAngerGoal;
-import net.minecraft.entity.ai.goal.WanderAroundGoal;
-import net.minecraft.entity.attribute.DefaultAttributeContainer;
-import net.minecraft.entity.attribute.EntityAttributes;
-import net.minecraft.entity.damage.DamageSource;
-import net.minecraft.entity.data.DataTracker;
-import net.minecraft.entity.data.TrackedData;
-import net.minecraft.entity.data.TrackedDataHandlerRegistry;
-import net.minecraft.entity.data.DataTracker.Builder;
-import net.minecraft.entity.mob.Angerable;
-import net.minecraft.entity.mob.MobEntity;
-import net.minecraft.entity.passive.AnimalEntity;
-import net.minecraft.entity.passive.PassiveEntity;
-import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.item.ItemStack;
-import net.minecraft.item.Items;
-import net.minecraft.nbt.NbtCompound;
-import net.minecraft.server.world.ServerWorld;
-import net.minecraft.sound.SoundEvent;
-import net.minecraft.sound.SoundEvents;
-import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.math.intprovider.UniformIntProvider;
-import net.minecraft.util.TimeHelper;
-import net.minecraft.world.LocalDifficulty;
-import net.minecraft.world.ServerWorldAccess;
-import net.minecraft.world.World;
+import net.minecraft.core.BlockPos;
+import net.minecraft.nbt.CompoundTag;
+import net.minecraft.network.syncher.EntityDataAccessor;
+import net.minecraft.network.syncher.EntityDataSerializers;
+import net.minecraft.network.syncher.SynchedEntityData;
+import net.minecraft.network.syncher.SynchedEntityData.Builder;
+import net.minecraft.server.level.ServerLevel;
+import net.minecraft.sounds.SoundEvent;
+import net.minecraft.sounds.SoundEvents;
+import net.minecraft.util.TimeUtil;
+import net.minecraft.util.valueproviders.UniformInt;
+import net.minecraft.world.DifficultyInstance;
+import net.minecraft.world.damagesource.DamageSource;
+import net.minecraft.world.entity.AgeableMob;
+import net.minecraft.world.entity.EntityType;
+import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.entity.Mob;
+import net.minecraft.world.entity.MobSpawnType;
+import net.minecraft.world.entity.NeutralMob;
+import net.minecraft.world.entity.SpawnGroupData;
+import net.minecraft.world.entity.ai.attributes.AttributeSupplier;
+import net.minecraft.world.entity.ai.attributes.Attributes;
+import net.minecraft.world.entity.ai.goal.BreedGoal;
+import net.minecraft.world.entity.ai.goal.FloatGoal;
+import net.minecraft.world.entity.ai.goal.FollowParentGoal;
+import net.minecraft.world.entity.ai.goal.LookAtPlayerGoal;
+import net.minecraft.world.entity.ai.goal.MeleeAttackGoal;
+import net.minecraft.world.entity.ai.goal.RandomLookAroundGoal;
+import net.minecraft.world.entity.ai.goal.RandomStrollGoal;
+import net.minecraft.world.entity.ai.goal.target.HurtByTargetGoal;
+import net.minecraft.world.entity.ai.goal.target.NearestAttackableTargetGoal;
+import net.minecraft.world.entity.ai.goal.target.ResetUniversalAngerTargetGoal;
+import net.minecraft.world.entity.animal.Animal;
+import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.Items;
+import net.minecraft.world.level.Level;
+import net.minecraft.world.level.ServerLevelAccessor;
+import net.minecraft.world.level.block.state.BlockState;
 import org.jetbrains.annotations.Nullable;
 
-public class MammothEntity extends AnimalEntity implements Angerable {
-    private static final UniformIntProvider ANGER_TIME_RANGE;
-    public static final TrackedData<Integer> ATTACK_TICKS;
+public class MammothEntity extends Animal implements NeutralMob {
+    private static final UniformInt ANGER_TIME_RANGE;
+    public static final EntityDataAccessor<Integer> ATTACK_TICKS;
     private int angerTime;
     private UUID targetUuid;
     private int attackTicksLeft;
 
-    public MammothEntity(EntityType<? extends MammothEntity> entityType, World world) {
+    public MammothEntity(EntityType<? extends MammothEntity> entityType, Level world) {
         super(entityType, world);
     }
 
-    public static DefaultAttributeContainer.Builder createMammothAttributes() {
-        return AnimalEntity.createLivingAttributes().add(EntityAttributes.GENERIC_MAX_HEALTH, 40.0D).add(EntityAttributes.GENERIC_MOVEMENT_SPEED, 0.25D)
-                .add(EntityAttributes.GENERIC_FOLLOW_RANGE, 26.0D).add(EntityAttributes.GENERIC_ATTACK_DAMAGE, 7.0D).add(EntityAttributes.GENERIC_ATTACK_KNOCKBACK, 0.5D);
+    public static AttributeSupplier.Builder createMammothAttributes() {
+        return Animal.createLivingAttributes().add(Attributes.MAX_HEALTH, 40.0D).add(Attributes.MOVEMENT_SPEED, 0.25D)
+                .add(Attributes.FOLLOW_RANGE, 26.0D).add(Attributes.ATTACK_DAMAGE, 7.0D).add(Attributes.ATTACK_KNOCKBACK, 0.5D);
     }
 
     @Override
-    public PassiveEntity createChild(ServerWorld world, PassiveEntity entity) {
-        return (PassiveEntity) EntityInit.MAMMOTH.create(world);
+    public AgeableMob getBreedOffspring(ServerLevel world, AgeableMob entity) {
+        return (AgeableMob) EntityInit.MAMMOTH.create(world);
     }
 
     @Override
-    public boolean isBreedingItem(ItemStack stack) {
+    public boolean isFood(ItemStack stack) {
         return stack.getItem() == Items.SHORT_GRASS || stack.getItem() == Items.FERN || stack.getItem() == Items.TALL_GRASS;
     }
 
     @Override
-    protected void initGoals() {
-        super.initGoals();
-        this.goalSelector.add(0, new SwimGoal(this));
-        this.goalSelector.add(1, new AnimalMateGoal(this, 1.0D));
-        this.goalSelector.add(2, new FollowParentGoal(this, 1.1D));
-        this.goalSelector.add(3, new MammothEntity.AttackGoal());
-        this.goalSelector.add(4, new WanderAroundGoal(this, 1.0D));
-        this.goalSelector.add(5, new LookAroundGoal(this));
-        this.goalSelector.add(6, new LookAtEntityGoal(this, PlayerEntity.class, 6.0F));
-        this.targetSelector.add(1, new MammothEntity.MammothRevengeGoal());
-        this.targetSelector.add(2, new ActiveTargetGoal<>(this, PlayerEntity.class, 10, true, false, this::shouldAngerAt));
-        this.targetSelector.add(3, new UniversalAngerGoal<>(this, false));
+    protected void registerGoals() {
+        super.registerGoals();
+        this.goalSelector.addGoal(0, new FloatGoal(this));
+        this.goalSelector.addGoal(1, new BreedGoal(this, 1.0D));
+        this.goalSelector.addGoal(2, new FollowParentGoal(this, 1.1D));
+        this.goalSelector.addGoal(3, new MammothEntity.AttackGoal());
+        this.goalSelector.addGoal(4, new RandomStrollGoal(this, 1.0D));
+        this.goalSelector.addGoal(5, new RandomLookAroundGoal(this));
+        this.goalSelector.addGoal(6, new LookAtPlayerGoal(this, Player.class, 6.0F));
+        this.targetSelector.addGoal(1, new MammothEntity.MammothRevengeGoal());
+        this.targetSelector.addGoal(2, new NearestAttackableTargetGoal<>(this, Player.class, 10, true, false, this::isAngryAt));
+        this.targetSelector.addGoal(3, new ResetUniversalAngerTargetGoal<>(this, false));
     }
 
     @Override
-    public void writeCustomDataToNbt(NbtCompound nbt) {
-        super.writeCustomDataToNbt(nbt);
-        this.writeAngerToNbt(nbt);
+    public void addAdditionalSaveData(CompoundTag nbt) {
+        super.addAdditionalSaveData(nbt);
+        this.addPersistentAngerSaveData(nbt);
     }
 
     @Override
-    public void readCustomDataFromNbt(NbtCompound nbt) {
-        super.readCustomDataFromNbt(nbt);
-        this.readAngerFromNbt(this.getWorld(), nbt);
+    public void readAdditionalSaveData(CompoundTag nbt) {
+        super.readAdditionalSaveData(nbt);
+        this.readPersistentAngerSaveData(this.level(), nbt);
     }
 
     @Override
-    public void chooseRandomAngerTime() {
-        this.setAngerTime(ANGER_TIME_RANGE.get(this.random));
+    public void startPersistentAngerTimer() {
+        this.setRemainingPersistentAngerTime(ANGER_TIME_RANGE.sample(this.random));
     }
 
     @Override
-    public void setAngerTime(int ticks) {
+    public void setRemainingPersistentAngerTime(int ticks) {
         this.angerTime = ticks;
     }
 
     @Override
-    public int getAngerTime() {
+    public int getRemainingPersistentAngerTime() {
         return this.angerTime;
     }
 
     @Override
-    public void setAngryAt(@Nullable UUID uuid) {
+    public void setPersistentAngerTarget(@Nullable UUID uuid) {
         this.targetUuid = uuid;
     }
 
     @Override
-    public UUID getAngryAt() {
+    public UUID getPersistentAngerTarget() {
         return this.targetUuid;
     }
 
@@ -140,44 +140,44 @@ public class MammothEntity extends AnimalEntity implements Angerable {
 
     @Override
     protected void playStepSound(BlockPos pos, BlockState state) {
-        this.playSound(SoundEvents.ENTITY_POLAR_BEAR_STEP, 0.15F, 1.0F);
+        this.playSound(SoundEvents.POLAR_BEAR_STEP, 0.15F, 1.0F);
     }
 
     @Override
-    protected void initDataTracker(Builder builder) {
-        super.initDataTracker(builder);
-        builder.add(ATTACK_TICKS, this.attackTicksLeft);
+    protected void defineSynchedData(Builder builder) {
+        super.defineSynchedData(builder);
+        builder.define(ATTACK_TICKS, this.attackTicksLeft);
     }
 
     @Override
     public void tick() {
         super.tick();
-        if (!this.getWorld().isClient()) {
-            this.tickAngerLogic((ServerWorld) this.getWorld(), true);
+        if (!this.level().isClientSide()) {
+            this.updatePersistentAnger((ServerLevel) this.level(), true);
         }
         if (this.attackTicksLeft > 0) {
             --this.attackTicksLeft;
-            this.getDataTracker().set(ATTACK_TICKS, this.attackTicksLeft);
+            this.getEntityData().set(ATTACK_TICKS, this.attackTicksLeft);
         }
 
     }
 
     @Override
-    protected float getBaseMovementSpeedMultiplier() {
+    protected float getWaterSlowDown() {
         return 0.98F;
     }
 
     @Override
-    public EntityData initialize(ServerWorldAccess world, LocalDifficulty difficulty, SpawnReason spawnReason, @Nullable EntityData entityData) {
+    public SpawnGroupData finalizeSpawn(ServerLevelAccessor world, DifficultyInstance difficulty, MobSpawnType spawnReason, @Nullable SpawnGroupData entityData) {
         if (entityData == null) {
-            entityData = new PassiveEntity.PassiveData(1.0F);
+            entityData = new AgeableMob.AgeableMobGroupData(1.0F);
         }
-        return super.initialize(world, difficulty, spawnReason, entityData);
+        return super.finalizeSpawn(world, difficulty, spawnReason, entityData);
     }
 
     static {
-        ATTACK_TICKS = DataTracker.registerData(MammothEntity.class, TrackedDataHandlerRegistry.INTEGER);
-        ANGER_TIME_RANGE = TimeHelper.betweenSeconds(20, 39);
+        ATTACK_TICKS = SynchedEntityData.defineId(MammothEntity.class, EntityDataSerializers.INT);
+        ANGER_TIME_RANGE = TimeUtil.rangeOfSeconds(20, 39);
     }
 
     private class AttackGoal extends MeleeAttackGoal {
@@ -186,7 +186,7 @@ public class MammothEntity extends AnimalEntity implements Angerable {
         }
     }
 
-    private class MammothRevengeGoal extends RevengeGoal {
+    private class MammothRevengeGoal extends HurtByTargetGoal {
 
         public MammothRevengeGoal() {
             super(MammothEntity.this);
@@ -196,16 +196,16 @@ public class MammothEntity extends AnimalEntity implements Angerable {
         public void start() {
             super.start();
             if (MammothEntity.this.isBaby()) {
-                this.callSameTypeForRevenge();
+                this.alertOthers();
                 this.stop();
             }
 
         }
 
         @Override
-        public void setMobEntityTarget(MobEntity mob, LivingEntity target) {
+        public void alertOther(Mob mob, LivingEntity target) {
             if (mob instanceof MammothEntity && !mob.isBaby()) {
-                super.setMobEntityTarget(mob, target);
+                super.alertOther(mob, target);
             }
 
         }

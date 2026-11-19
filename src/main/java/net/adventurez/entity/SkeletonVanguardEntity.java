@@ -1,79 +1,79 @@
 package net.adventurez.entity;
 
-import net.minecraft.block.BlockState;
-import net.minecraft.entity.EntityType;
-import net.minecraft.entity.ai.goal.ActiveTargetGoal;
-import net.minecraft.entity.ai.goal.LookAtEntityGoal;
-import net.minecraft.entity.ai.goal.MeleeAttackGoal;
-import net.minecraft.entity.ai.goal.RevengeGoal;
-import net.minecraft.entity.ai.goal.SwimGoal;
-import net.minecraft.entity.ai.goal.WanderAroundFarGoal;
-import net.minecraft.entity.ai.goal.WanderAroundGoal;
-import net.minecraft.entity.attribute.DefaultAttributeContainer;
-import net.minecraft.entity.attribute.EntityAttributes;
-import net.minecraft.entity.damage.DamageSource;
-import net.minecraft.entity.data.DataTracker;
-import net.minecraft.entity.data.TrackedData;
-import net.minecraft.entity.data.TrackedDataHandlerRegistry;
-import net.minecraft.entity.data.DataTracker.Builder;
-import net.minecraft.entity.mob.HostileEntity;
-import net.minecraft.entity.mob.MobEntity;
-import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.registry.tag.DamageTypeTags;
-import net.minecraft.sound.SoundCategory;
-import net.minecraft.sound.SoundEvent;
-import net.minecraft.sound.SoundEvents;
-import net.minecraft.util.math.BlockPos;
-import net.minecraft.world.World;
+import net.minecraft.core.BlockPos;
+import net.minecraft.network.syncher.EntityDataAccessor;
+import net.minecraft.network.syncher.EntityDataSerializers;
+import net.minecraft.network.syncher.SynchedEntityData;
+import net.minecraft.network.syncher.SynchedEntityData.Builder;
+import net.minecraft.sounds.SoundEvent;
+import net.minecraft.sounds.SoundEvents;
+import net.minecraft.sounds.SoundSource;
+import net.minecraft.tags.DamageTypeTags;
+import net.minecraft.world.damagesource.DamageSource;
+import net.minecraft.world.entity.EntityType;
+import net.minecraft.world.entity.Mob;
+import net.minecraft.world.entity.ai.attributes.AttributeSupplier;
+import net.minecraft.world.entity.ai.attributes.Attributes;
+import net.minecraft.world.entity.ai.goal.FloatGoal;
+import net.minecraft.world.entity.ai.goal.LookAtPlayerGoal;
+import net.minecraft.world.entity.ai.goal.MeleeAttackGoal;
+import net.minecraft.world.entity.ai.goal.RandomStrollGoal;
+import net.minecraft.world.entity.ai.goal.WaterAvoidingRandomStrollGoal;
+import net.minecraft.world.entity.ai.goal.target.HurtByTargetGoal;
+import net.minecraft.world.entity.ai.goal.target.NearestAttackableTargetGoal;
+import net.minecraft.world.entity.monster.Monster;
+import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.level.Level;
+import net.minecraft.world.level.block.state.BlockState;
 
-public class SkeletonVanguardEntity extends HostileEntity {
+public class SkeletonVanguardEntity extends Monster {
 
-    public static final TrackedData<Float> SHIELD_SWING = DataTracker.registerData(SkeletonVanguardEntity.class, TrackedDataHandlerRegistry.FLOAT);
+    public static final EntityDataAccessor<Float> SHIELD_SWING = SynchedEntityData.defineId(SkeletonVanguardEntity.class, EntityDataSerializers.FLOAT);
 
-    public SkeletonVanguardEntity(EntityType<? extends HostileEntity> entityType, World world) {
+    public SkeletonVanguardEntity(EntityType<? extends Monster> entityType, Level world) {
         super(entityType, world);
     }
 
-    public static DefaultAttributeContainer.Builder createSkeletonVanguardAttributes() {
-        return HostileEntity.createHostileAttributes().add(EntityAttributes.GENERIC_MAX_HEALTH, 24.0D).add(EntityAttributes.GENERIC_MOVEMENT_SPEED, 0.225D)
-                .add(EntityAttributes.GENERIC_ATTACK_DAMAGE, 7.0D).add(EntityAttributes.GENERIC_FOLLOW_RANGE, 38.0D);
+    public static AttributeSupplier.Builder createSkeletonVanguardAttributes() {
+        return Monster.createMonsterAttributes().add(Attributes.MAX_HEALTH, 24.0D).add(Attributes.MOVEMENT_SPEED, 0.225D)
+                .add(Attributes.ATTACK_DAMAGE, 7.0D).add(Attributes.FOLLOW_RANGE, 38.0D);
     }
 
     @Override
-    public void initGoals() {
-        super.initGoals();
-        this.goalSelector.add(0, new SwimGoal(this));
-        this.goalSelector.add(1, new MeleeAttackGoal(this, 1.0D, false));
-        this.goalSelector.add(6, new WanderAroundGoal(this, 0.9D));
-        this.goalSelector.add(7, new LookAtEntityGoal(this, PlayerEntity.class, 3.0F, 1.0F));
-        this.goalSelector.add(8, new LookAtEntityGoal(this, MobEntity.class, 8.0F));
-        this.goalSelector.add(7, new WanderAroundFarGoal(this, 0.9D));
-        this.targetSelector.add(1, (new RevengeGoal(this, new Class[]{SkeletonVanguardEntity.class})));
-        this.targetSelector.add(2, (new RevengeGoal(this, new Class[]{SummonerEntity.class})));
-        this.targetSelector.add(3, new ActiveTargetGoal<>(this, PlayerEntity.class, true));
+    public void registerGoals() {
+        super.registerGoals();
+        this.goalSelector.addGoal(0, new FloatGoal(this));
+        this.goalSelector.addGoal(1, new MeleeAttackGoal(this, 1.0D, false));
+        this.goalSelector.addGoal(6, new RandomStrollGoal(this, 0.9D));
+        this.goalSelector.addGoal(7, new LookAtPlayerGoal(this, Player.class, 3.0F, 1.0F));
+        this.goalSelector.addGoal(8, new LookAtPlayerGoal(this, Mob.class, 8.0F));
+        this.goalSelector.addGoal(7, new WaterAvoidingRandomStrollGoal(this, 0.9D));
+        this.targetSelector.addGoal(1, (new HurtByTargetGoal(this, new Class[]{SkeletonVanguardEntity.class})));
+        this.targetSelector.addGoal(2, (new HurtByTargetGoal(this, new Class[]{SummonerEntity.class})));
+        this.targetSelector.addGoal(3, new NearestAttackableTargetGoal<>(this, Player.class, true));
     }
 
     @Override
     public void tick() {
         super.tick();
-        if (dataTracker.get(SHIELD_SWING) > 0.0F) {
-            dataTracker.set(SHIELD_SWING, dataTracker.get(SHIELD_SWING) - 0.01F);
+        if (entityData.get(SHIELD_SWING) > 0.0F) {
+            entityData.set(SHIELD_SWING, entityData.get(SHIELD_SWING) - 0.01F);
         }
     }
 
     @Override
-    protected void initDataTracker(Builder builder) {
-        super.initDataTracker(builder);
-        builder.add(SHIELD_SWING, 0.0F);
+    protected void defineSynchedData(Builder builder) {
+        super.defineSynchedData(builder);
+        builder.define(SHIELD_SWING, 0.0F);
     }
 
     @Override
-    public boolean canImmediatelyDespawn(double distanceSquared) {
+    public boolean removeWhenFarAway(double distanceSquared) {
         return false;
     }
 
     @Override
-    public boolean canUsePortals(boolean allowVehicles) {
+    public boolean canUsePortal(boolean allowVehicles) {
         return false;
     }
 
@@ -84,40 +84,40 @@ public class SkeletonVanguardEntity extends HostileEntity {
 
     @Override
     protected SoundEvent getAmbientSound() {
-        return SoundEvents.ENTITY_SKELETON_AMBIENT;
+        return SoundEvents.SKELETON_AMBIENT;
     }
 
     @Override
     protected SoundEvent getHurtSound(DamageSource source) {
-        return SoundEvents.ENTITY_SKELETON_HURT;
+        return SoundEvents.SKELETON_HURT;
     }
 
     @Override
     protected SoundEvent getDeathSound() {
-        return SoundEvents.ENTITY_SKELETON_DEATH;
+        return SoundEvents.SKELETON_DEATH;
     }
 
     @Override
     protected void playStepSound(BlockPos pos, BlockState state) {
-        this.playSound(SoundEvents.ENTITY_SKELETON_STEP, 0.5F, 1.0F);
+        this.playSound(SoundEvents.SKELETON_STEP, 0.5F, 1.0F);
     }
 
     @Override
-    public boolean damage(DamageSource source, float amount) {
+    public boolean hurt(DamageSource source, float amount) {
         int chance = 0;
-        if (source.isIn(DamageTypeTags.IS_PROJECTILE)) {
-            chance = this.getWorld().getRandom().nextInt(2);
-        } else if (!source.isIn(DamageTypeTags.BYPASSES_INVULNERABILITY) && this.getHealth() < this.getMaxHealth() / 2) {
-            chance = this.getWorld().getRandom().nextInt(5);
+        if (source.is(DamageTypeTags.IS_PROJECTILE)) {
+            chance = this.level().getRandom().nextInt(2);
+        } else if (!source.is(DamageTypeTags.BYPASSES_INVULNERABILITY) && this.getHealth() < this.getMaxHealth() / 2) {
+            chance = this.level().getRandom().nextInt(5);
         } else {
-            chance = this.getWorld().getRandom().nextInt(10);
+            chance = this.level().getRandom().nextInt(10);
         }
-        if (!source.isIn(DamageTypeTags.BYPASSES_INVULNERABILITY) && chance == 1) {
-            dataTracker.set(SHIELD_SWING, 0.1F);
-            this.getWorld().playSoundFromEntity(null, this, SoundEvents.ITEM_SHIELD_BLOCK, SoundCategory.HOSTILE, 1.0F, 1.0F);
+        if (!source.is(DamageTypeTags.BYPASSES_INVULNERABILITY) && chance == 1) {
+            entityData.set(SHIELD_SWING, 0.1F);
+            this.level().playSound(null, this, SoundEvents.SHIELD_BLOCK, SoundSource.HOSTILE, 1.0F, 1.0F);
             return false;
         } else {
-            return !this.isInvulnerableTo(source) && super.damage(source, amount);
+            return !this.isInvulnerableTo(source) && super.hurt(source, amount);
         }
     }
 

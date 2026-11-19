@@ -5,17 +5,17 @@ import com.google.common.collect.ImmutableList;
 import net.adventurez.entity.VoidShadowEntity;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
-import net.minecraft.client.model.ModelData;
-import net.minecraft.client.model.ModelPart;
-import net.minecraft.client.model.ModelPartBuilder;
-import net.minecraft.client.model.ModelPartData;
-import net.minecraft.client.model.ModelTransform;
-import net.minecraft.client.model.TexturedModelData;
-import net.minecraft.client.render.entity.model.CompositeEntityModel;
-import net.minecraft.util.math.MathHelper;
+import net.minecraft.client.model.ListModel;
+import net.minecraft.client.model.geom.ModelPart;
+import net.minecraft.client.model.geom.PartPose;
+import net.minecraft.client.model.geom.builders.CubeListBuilder;
+import net.minecraft.client.model.geom.builders.LayerDefinition;
+import net.minecraft.client.model.geom.builders.MeshDefinition;
+import net.minecraft.client.model.geom.builders.PartDefinition;
+import net.minecraft.util.Mth;
 
 @Environment(EnvType.CLIENT)
-public class VoidShadowModel<T extends VoidShadowEntity> extends CompositeEntityModel<T> {
+public class VoidShadowModel<T extends VoidShadowEntity> extends ListModel<T> {
 
     private final ModelPart rightArm;
     private final ModelPart leftArm;
@@ -57,97 +57,97 @@ public class VoidShadowModel<T extends VoidShadowEntity> extends CompositeEntity
         this.bone = this.rightParticle.getChild("bone");
     }
 
-    public static TexturedModelData getTexturedModelData() {
-        ModelData modelData = new ModelData();
-        ModelPartData modelPartData = modelData.getRoot();
-        modelPartData.addChild("rightArm",
-                ModelPartBuilder.create().uv(44, 58).cuboid(1.0F, 6.0F, -2.0F, 2.0F, 2.0F, 4.0F).uv(0, 50).cuboid(-3.0F, 8.0F, -2.0F, 6.0F, 2.0F, 4.0F).uv(20, 62)
-                        .cuboid(-1.0F, 8.0F, -4.0F, 4.0F, 2.0F, 2.0F).uv(0, 20).cuboid(-1.0F, 14.0F, -4.0F, 2.0F, 2.0F, 2.0F).uv(0, 16).cuboid(-1.0F, 14.0F, 2.0F, 2.0F, 2.0F, 2.0F).uv(8, 62)
-                        .cuboid(-1.0F, 8.0F, 2.0F, 4.0F, 2.0F, 2.0F).uv(0, 28).cuboid(-1.0F, 10.0F, -4.0F, 6.0F, 4.0F, 8.0F).uv(48, 28).cuboid(-3.0F, 14.0F, -2.0F, 6.0F, 2.0F, 4.0F).uv(32, 58)
-                        .cuboid(1.0F, 16.0F, -2.0F, 2.0F, 2.0F, 4.0F).uv(24, 56).cuboid(-3.0F, 16.0F, -2.0F, 2.0F, 2.0F, 4.0F).uv(0, 56).cuboid(-1.0F, 18.0F, -2.0F, 2.0F, 2.0F, 4.0F).uv(12, 56)
-                        .cuboid(-5.0F, 18.0F, -2.0F, 2.0F, 2.0F, 4.0F).uv(26, 16).cuboid(-5.0F, 10.0F, -2.0F, 2.0F, 2.0F, 2.0F),
-                ModelTransform.pivot(11.0F, 1.0F, 0.0F));
-        modelPartData.addChild("leftArm",
-                ModelPartBuilder.create().uv(26, 20).cuboid(3.0F, 10.0F, -2.0F, 2.0F, 2.0F, 2.0F).uv(36, 52).cuboid(-3.0F, 8.0F, -2.0F, 6.0F, 2.0F, 4.0F).uv(60, 60)
-                        .cuboid(-3.0F, 8.0F, 2.0F, 4.0F, 2.0F, 2.0F).uv(16, 40).cuboid(-3.0F, 8.0F, -4.0F, 4.0F, 2.0F, 2.0F).uv(0, 4).cuboid(-1.0F, 14.0F, -4.0F, 2.0F, 2.0F, 2.0F).uv(0, 0)
-                        .cuboid(-1.0F, 14.0F, 2.0F, 2.0F, 2.0F, 2.0F).uv(0, 62).cuboid(-5.0F, 6.0F, -2.0F, 2.0F, 2.0F, 4.0F).uv(28, 28).cuboid(-5.0F, 10.0F, -4.0F, 6.0F, 4.0F, 8.0F).uv(60, 34)
-                        .cuboid(1.0F, 16.0F, -2.0F, 2.0F, 2.0F, 4.0F).uv(52, 60).cuboid(-1.0F, 18.0F, -2.0F, 2.0F, 2.0F, 4.0F).uv(58, 44).cuboid(-3.0F, 16.0F, -2.0F, 2.0F, 2.0F, 4.0F).uv(20, 50)
-                        .cuboid(-3.0F, 14.0F, -2.0F, 6.0F, 2.0F, 4.0F).uv(58, 0).cuboid(3.0F, 18.0F, -2.0F, 2.0F, 2.0F, 4.0F),
-                ModelTransform.pivot(-11.0F, 1.0F, 0.0F));
-        ModelPartData modelPartData1 = modelPartData.addChild("body",
-                ModelPartBuilder.create().uv(26, 16).cuboid(-6.0F, -11.0F, -4.0F, 6.0F, 2.0F, 8.0F).uv(0, 40).cuboid(2.0F, -11.0F, -4.0F, 4.0F, 2.0F, 8.0F).uv(50, 34)
-                        .cuboid(-8.0F, -9.0F, -3.0F, 2.0F, 4.0F, 6.0F).uv(20, 28).cuboid(8.0F, -9.0F, -3.0F, 2.0F, 2.0F, 6.0F).uv(0, 0).cuboid(-6.0F, -9.0F, -5.0F, 14.0F, 6.0F, 10.0F).uv(0, 16)
-                        .cuboid(-4.0F, -3.0F, -5.0F, 8.0F, 2.0F, 10.0F).uv(38, 0).cuboid(-2.0F, -1.0F, -4.0F, 6.0F, 2.0F, 8.0F).uv(42, 44).cuboid(-2.0F, 1.0F, -3.0F, 5.0F, 2.0F, 6.0F).uv(46, 10)
-                        .cuboid(-1.0F, 3.0F, -3.0F, 5.0F, 2.0F, 6.0F).uv(48, 20).cuboid(-2.0F, 5.0F, -3.0F, 4.0F, 2.0F, 6.0F).uv(24, 40).cuboid(-4.0F, 7.0F, -2.0F, 8.0F, 6.0F, 4.0F).uv(52, 54)
-                        .cuboid(-2.0F, 13.0F, -2.0F, 4.0F, 2.0F, 4.0F),
-                ModelTransform.pivot(0.0F, 8.0F, 0.0F));
-        ModelPartData modelPartData2 = modelPartData1.addChild("rightParticle", ModelPartBuilder.create(), ModelTransform.pivot(8.0F, -9.0F, 0.0F));
-        modelPartData2.addChild("bone", ModelPartBuilder.create().uv(40, 58).cuboid(12.0F, -22.0F, -2.0F, 2.0F, 2.0F, 2.0F), ModelTransform.pivot(-8.0F, 24.0F, 0.0F));
-        modelPartData2.addChild("bone2", ModelPartBuilder.create().uv(8, 56).cuboid(10.0F, -26.0F, 0.0F, 2.0F, 2.0F, 2.0F), ModelTransform.pivot(-8.0F, 24.0F, 0.0F));
-        modelPartData2.addChild("bone3", ModelPartBuilder.create().uv(20, 56).cuboid(8.0F, -28.0F, -2.0F, 2.0F, 2.0F, 2.0F), ModelTransform.pivot(-8.0F, 24.0F, 0.0F));
-        modelPartData2.addChild("bone4", ModelPartBuilder.create().uv(46, 18).cuboid(14.0F, -28.0F, -2.0F, 2.0F, 2.0F, 2.0F), ModelTransform.pivot(-8.0F, 24.0F, 0.0F));
-        modelPartData2.addChild("bone5", ModelPartBuilder.create().uv(62, 10).cuboid(8.0F, -18.0F, 0.0F, 2.0F, 2.0F, 2.0F), ModelTransform.pivot(-8.0F, 24.0F, 0.0F));
-        modelPartData2.addChild("bone6", ModelPartBuilder.create().uv(16, 50).cuboid(10.0F, -30.0F, 0.0F, 2.0F, 2.0F, 2.0F), ModelTransform.pivot(-8.0F, 24.0F, 0.0F));
-        modelPartData2.addChild("bone7", ModelPartBuilder.create().uv(16, 44).cuboid(4.0F, -28.0F, -2.0F, 2.0F, 2.0F, 2.0F), ModelTransform.pivot(-8.0F, 24.0F, 0.0F));
-        ModelPartData modelPartData3 = modelPartData1.addChild("leftParticle", ModelPartBuilder.create(), ModelTransform.pivot(-6.0F, -9.0F, 0.0F));
-        modelPartData3.addChild("bone8", ModelPartBuilder.create().uv(0, 44).cuboid(-4.0F, -28.0F, -2.0F, 2.0F, 2.0F, 2.0F), ModelTransform.pivot(6.0F, 24.0F, 0.0F));
-        modelPartData3.addChild("bone9", ModelPartBuilder.create().uv(0, 40).cuboid(-2.0F, -30.0F, 0.0F, 2.0F, 2.0F, 2.0F), ModelTransform.pivot(6.0F, 24.0F, 0.0F));
-        modelPartData3.addChild("bone10", ModelPartBuilder.create().uv(38, 4).cuboid(-8.0F, -28.0F, -2.0F, 2.0F, 2.0F, 2.0F), ModelTransform.pivot(6.0F, 24.0F, 0.0F));
-        modelPartData3.addChild("bone11", ModelPartBuilder.create().uv(0, 32).cuboid(-12.0F, -24.0F, 0.0F, 2.0F, 2.0F, 2.0F), ModelTransform.pivot(6.0F, 24.0F, 0.0F));
-        modelPartData3.addChild("bone12", ModelPartBuilder.create().uv(0, 28).cuboid(-12.0F, -18.0F, 0.0F, 2.0F, 2.0F, 2.0F), ModelTransform.pivot(6.0F, 24.0F, 0.0F));
-        modelPartData3.addChild("bone13", ModelPartBuilder.create().uv(38, 0).cuboid(-15.0F, -30.0F, 0.0F, 2.0F, 2.0F, 2.0F), ModelTransform.pivot(6.0F, 24.0F, 0.0F));
-        return TexturedModelData.of(modelData, 128, 128);
+    public static LayerDefinition getTexturedModelData() {
+        MeshDefinition modelData = new MeshDefinition();
+        PartDefinition modelPartData = modelData.getRoot();
+        modelPartData.addOrReplaceChild("rightArm",
+                CubeListBuilder.create().texOffs(44, 58).addBox(1.0F, 6.0F, -2.0F, 2.0F, 2.0F, 4.0F).texOffs(0, 50).addBox(-3.0F, 8.0F, -2.0F, 6.0F, 2.0F, 4.0F).texOffs(20, 62)
+                        .addBox(-1.0F, 8.0F, -4.0F, 4.0F, 2.0F, 2.0F).texOffs(0, 20).addBox(-1.0F, 14.0F, -4.0F, 2.0F, 2.0F, 2.0F).texOffs(0, 16).addBox(-1.0F, 14.0F, 2.0F, 2.0F, 2.0F, 2.0F).texOffs(8, 62)
+                        .addBox(-1.0F, 8.0F, 2.0F, 4.0F, 2.0F, 2.0F).texOffs(0, 28).addBox(-1.0F, 10.0F, -4.0F, 6.0F, 4.0F, 8.0F).texOffs(48, 28).addBox(-3.0F, 14.0F, -2.0F, 6.0F, 2.0F, 4.0F).texOffs(32, 58)
+                        .addBox(1.0F, 16.0F, -2.0F, 2.0F, 2.0F, 4.0F).texOffs(24, 56).addBox(-3.0F, 16.0F, -2.0F, 2.0F, 2.0F, 4.0F).texOffs(0, 56).addBox(-1.0F, 18.0F, -2.0F, 2.0F, 2.0F, 4.0F).texOffs(12, 56)
+                        .addBox(-5.0F, 18.0F, -2.0F, 2.0F, 2.0F, 4.0F).texOffs(26, 16).addBox(-5.0F, 10.0F, -2.0F, 2.0F, 2.0F, 2.0F),
+                PartPose.offset(11.0F, 1.0F, 0.0F));
+        modelPartData.addOrReplaceChild("leftArm",
+                CubeListBuilder.create().texOffs(26, 20).addBox(3.0F, 10.0F, -2.0F, 2.0F, 2.0F, 2.0F).texOffs(36, 52).addBox(-3.0F, 8.0F, -2.0F, 6.0F, 2.0F, 4.0F).texOffs(60, 60)
+                        .addBox(-3.0F, 8.0F, 2.0F, 4.0F, 2.0F, 2.0F).texOffs(16, 40).addBox(-3.0F, 8.0F, -4.0F, 4.0F, 2.0F, 2.0F).texOffs(0, 4).addBox(-1.0F, 14.0F, -4.0F, 2.0F, 2.0F, 2.0F).texOffs(0, 0)
+                        .addBox(-1.0F, 14.0F, 2.0F, 2.0F, 2.0F, 2.0F).texOffs(0, 62).addBox(-5.0F, 6.0F, -2.0F, 2.0F, 2.0F, 4.0F).texOffs(28, 28).addBox(-5.0F, 10.0F, -4.0F, 6.0F, 4.0F, 8.0F).texOffs(60, 34)
+                        .addBox(1.0F, 16.0F, -2.0F, 2.0F, 2.0F, 4.0F).texOffs(52, 60).addBox(-1.0F, 18.0F, -2.0F, 2.0F, 2.0F, 4.0F).texOffs(58, 44).addBox(-3.0F, 16.0F, -2.0F, 2.0F, 2.0F, 4.0F).texOffs(20, 50)
+                        .addBox(-3.0F, 14.0F, -2.0F, 6.0F, 2.0F, 4.0F).texOffs(58, 0).addBox(3.0F, 18.0F, -2.0F, 2.0F, 2.0F, 4.0F),
+                PartPose.offset(-11.0F, 1.0F, 0.0F));
+        PartDefinition modelPartData1 = modelPartData.addOrReplaceChild("body",
+                CubeListBuilder.create().texOffs(26, 16).addBox(-6.0F, -11.0F, -4.0F, 6.0F, 2.0F, 8.0F).texOffs(0, 40).addBox(2.0F, -11.0F, -4.0F, 4.0F, 2.0F, 8.0F).texOffs(50, 34)
+                        .addBox(-8.0F, -9.0F, -3.0F, 2.0F, 4.0F, 6.0F).texOffs(20, 28).addBox(8.0F, -9.0F, -3.0F, 2.0F, 2.0F, 6.0F).texOffs(0, 0).addBox(-6.0F, -9.0F, -5.0F, 14.0F, 6.0F, 10.0F).texOffs(0, 16)
+                        .addBox(-4.0F, -3.0F, -5.0F, 8.0F, 2.0F, 10.0F).texOffs(38, 0).addBox(-2.0F, -1.0F, -4.0F, 6.0F, 2.0F, 8.0F).texOffs(42, 44).addBox(-2.0F, 1.0F, -3.0F, 5.0F, 2.0F, 6.0F).texOffs(46, 10)
+                        .addBox(-1.0F, 3.0F, -3.0F, 5.0F, 2.0F, 6.0F).texOffs(48, 20).addBox(-2.0F, 5.0F, -3.0F, 4.0F, 2.0F, 6.0F).texOffs(24, 40).addBox(-4.0F, 7.0F, -2.0F, 8.0F, 6.0F, 4.0F).texOffs(52, 54)
+                        .addBox(-2.0F, 13.0F, -2.0F, 4.0F, 2.0F, 4.0F),
+                PartPose.offset(0.0F, 8.0F, 0.0F));
+        PartDefinition modelPartData2 = modelPartData1.addOrReplaceChild("rightParticle", CubeListBuilder.create(), PartPose.offset(8.0F, -9.0F, 0.0F));
+        modelPartData2.addOrReplaceChild("bone", CubeListBuilder.create().texOffs(40, 58).addBox(12.0F, -22.0F, -2.0F, 2.0F, 2.0F, 2.0F), PartPose.offset(-8.0F, 24.0F, 0.0F));
+        modelPartData2.addOrReplaceChild("bone2", CubeListBuilder.create().texOffs(8, 56).addBox(10.0F, -26.0F, 0.0F, 2.0F, 2.0F, 2.0F), PartPose.offset(-8.0F, 24.0F, 0.0F));
+        modelPartData2.addOrReplaceChild("bone3", CubeListBuilder.create().texOffs(20, 56).addBox(8.0F, -28.0F, -2.0F, 2.0F, 2.0F, 2.0F), PartPose.offset(-8.0F, 24.0F, 0.0F));
+        modelPartData2.addOrReplaceChild("bone4", CubeListBuilder.create().texOffs(46, 18).addBox(14.0F, -28.0F, -2.0F, 2.0F, 2.0F, 2.0F), PartPose.offset(-8.0F, 24.0F, 0.0F));
+        modelPartData2.addOrReplaceChild("bone5", CubeListBuilder.create().texOffs(62, 10).addBox(8.0F, -18.0F, 0.0F, 2.0F, 2.0F, 2.0F), PartPose.offset(-8.0F, 24.0F, 0.0F));
+        modelPartData2.addOrReplaceChild("bone6", CubeListBuilder.create().texOffs(16, 50).addBox(10.0F, -30.0F, 0.0F, 2.0F, 2.0F, 2.0F), PartPose.offset(-8.0F, 24.0F, 0.0F));
+        modelPartData2.addOrReplaceChild("bone7", CubeListBuilder.create().texOffs(16, 44).addBox(4.0F, -28.0F, -2.0F, 2.0F, 2.0F, 2.0F), PartPose.offset(-8.0F, 24.0F, 0.0F));
+        PartDefinition modelPartData3 = modelPartData1.addOrReplaceChild("leftParticle", CubeListBuilder.create(), PartPose.offset(-6.0F, -9.0F, 0.0F));
+        modelPartData3.addOrReplaceChild("bone8", CubeListBuilder.create().texOffs(0, 44).addBox(-4.0F, -28.0F, -2.0F, 2.0F, 2.0F, 2.0F), PartPose.offset(6.0F, 24.0F, 0.0F));
+        modelPartData3.addOrReplaceChild("bone9", CubeListBuilder.create().texOffs(0, 40).addBox(-2.0F, -30.0F, 0.0F, 2.0F, 2.0F, 2.0F), PartPose.offset(6.0F, 24.0F, 0.0F));
+        modelPartData3.addOrReplaceChild("bone10", CubeListBuilder.create().texOffs(38, 4).addBox(-8.0F, -28.0F, -2.0F, 2.0F, 2.0F, 2.0F), PartPose.offset(6.0F, 24.0F, 0.0F));
+        modelPartData3.addOrReplaceChild("bone11", CubeListBuilder.create().texOffs(0, 32).addBox(-12.0F, -24.0F, 0.0F, 2.0F, 2.0F, 2.0F), PartPose.offset(6.0F, 24.0F, 0.0F));
+        modelPartData3.addOrReplaceChild("bone12", CubeListBuilder.create().texOffs(0, 28).addBox(-12.0F, -18.0F, 0.0F, 2.0F, 2.0F, 2.0F), PartPose.offset(6.0F, 24.0F, 0.0F));
+        modelPartData3.addOrReplaceChild("bone13", CubeListBuilder.create().texOffs(38, 0).addBox(-15.0F, -30.0F, 0.0F, 2.0F, 2.0F, 2.0F), PartPose.offset(6.0F, 24.0F, 0.0F));
+        return LayerDefinition.create(modelData, 128, 128);
     }
 
     @Override
-    public Iterable<ModelPart> getParts() {
+    public Iterable<ModelPart> parts() {
         return ImmutableList.of(this.rightArm, this.leftArm, this.body);
     }
 
     @Override
-    public void setAngles(T shadow, float limbAngle, float limbDistance, float animationProgress, float headYaw, float headPitch) {
+    public void setupAnim(T shadow, float limbAngle, float limbDistance, float animationProgress, float headYaw, float headPitch) {
 
-        this.body.pivotY = 8.0F + MathHelper.sin(animationProgress / 12.5663706F) / 2.0F;
-        this.rightArm.pivotY = 1.0F + MathHelper.sin(animationProgress / 12.5663706F) / 1.5F;
-        this.leftArm.pivotY = 1.0F + MathHelper.sin(animationProgress / 12.5663706F) / 1.5F;
-        this.bone.pivotY = 24F + MathHelper.cos(2.6F + animationProgress / 12.5663706F) / 1.1F;
-        this.bone2.pivotY = 24F + MathHelper.sin(2.4F + animationProgress / 12.5663706F) / 1.3F;
-        this.bone3.pivotY = 24F + MathHelper.cos(2.2F + animationProgress / 12.5663706F) / 1.45F;
-        this.bone4.pivotY = 24F + MathHelper.sin(2.0F + animationProgress / 12.5663706F) / 1.6F;
-        this.bone5.pivotY = 24F + MathHelper.cos(1.8F + animationProgress / 12.5663706F) / 1.25F;
-        this.bone6.pivotY = 24F + MathHelper.cos(1.6F + animationProgress / 12.5663706F) / 1.4F;
-        this.bone7.pivotY = 24F + MathHelper.sin(1.4F + animationProgress / 12.5663706F);
-        this.bone8.pivotY = 24F + MathHelper.sin(1.2F + animationProgress / 12.5663706F) / 1.25F;
-        this.bone9.pivotY = 24F + MathHelper.cos(1.0F + animationProgress / 12.5663706F) / 1.35F;
-        this.bone10.pivotY = 24F + MathHelper.cos(0.8F + animationProgress / 12.5663706F) / 1.2F;
-        this.bone11.pivotY = 24F + MathHelper.sin(0.6F + animationProgress / 12.5663706F) / 0.9F;
-        this.bone12.pivotY = 24F + MathHelper.cos(0.4F + animationProgress / 12.5663706F) / 1.15F;
-        this.rightArm.roll = 0.0F;
-        this.leftArm.roll = 0.0F;
+        this.body.y = 8.0F + Mth.sin(animationProgress / 12.5663706F) / 2.0F;
+        this.rightArm.y = 1.0F + Mth.sin(animationProgress / 12.5663706F) / 1.5F;
+        this.leftArm.y = 1.0F + Mth.sin(animationProgress / 12.5663706F) / 1.5F;
+        this.bone.y = 24F + Mth.cos(2.6F + animationProgress / 12.5663706F) / 1.1F;
+        this.bone2.y = 24F + Mth.sin(2.4F + animationProgress / 12.5663706F) / 1.3F;
+        this.bone3.y = 24F + Mth.cos(2.2F + animationProgress / 12.5663706F) / 1.45F;
+        this.bone4.y = 24F + Mth.sin(2.0F + animationProgress / 12.5663706F) / 1.6F;
+        this.bone5.y = 24F + Mth.cos(1.8F + animationProgress / 12.5663706F) / 1.25F;
+        this.bone6.y = 24F + Mth.cos(1.6F + animationProgress / 12.5663706F) / 1.4F;
+        this.bone7.y = 24F + Mth.sin(1.4F + animationProgress / 12.5663706F);
+        this.bone8.y = 24F + Mth.sin(1.2F + animationProgress / 12.5663706F) / 1.25F;
+        this.bone9.y = 24F + Mth.cos(1.0F + animationProgress / 12.5663706F) / 1.35F;
+        this.bone10.y = 24F + Mth.cos(0.8F + animationProgress / 12.5663706F) / 1.2F;
+        this.bone11.y = 24F + Mth.sin(0.6F + animationProgress / 12.5663706F) / 0.9F;
+        this.bone12.y = 24F + Mth.cos(0.4F + animationProgress / 12.5663706F) / 1.15F;
+        this.rightArm.zRot = 0.0F;
+        this.leftArm.zRot = 0.0F;
 
-        if (shadow.getDataTracker().get(VoidShadowEntity.IS_THROWING_BLOCKS)) {
-            throwingBlocksTicker = MathHelper.clamp(throwingBlocksTicker + 0.05817666666666F, 0.0F, 1.7453F);
+        if (shadow.getEntityData().get(VoidShadowEntity.IS_THROWING_BLOCKS)) {
+            throwingBlocksTicker = Mth.clamp(throwingBlocksTicker + 0.05817666666666F, 0.0F, 1.7453F);
         } else {
-            throwingBlocksTicker = MathHelper.clamp(throwingBlocksTicker - 0.05817666666666F, 0.0F, 1.7453F);
+            throwingBlocksTicker = Mth.clamp(throwingBlocksTicker - 0.05817666666666F, 0.0F, 1.7453F);
         }
 
-        this.rightArm.pitch = -throwingBlocksTicker;
-        this.leftArm.pitch = this.rightArm.pitch;
-        this.rightArm.yaw = -throwingBlocksTicker * 0.20002291869F;
-        this.leftArm.yaw = throwingBlocksTicker * 0.20002291869F;
+        this.rightArm.xRot = -throwingBlocksTicker;
+        this.leftArm.xRot = this.rightArm.xRot;
+        this.rightArm.yRot = -throwingBlocksTicker * 0.20002291869F;
+        this.leftArm.yRot = throwingBlocksTicker * 0.20002291869F;
 
-        if (shadow.getDataTracker().get(VoidShadowEntity.HOVERING_MAGIC_HANDS)) {
-            this.rightArm.roll = -2.4871F - MathHelper.cos(animationProgress * 0.3662F) * 0.1F;
-            this.leftArm.roll = 2.4871F + MathHelper.cos(animationProgress * 0.3662F) * 0.1F;
-            this.rightArm.pitch = -MathHelper.cos(animationProgress * 0.1662F) * 0.25F;
-            this.leftArm.pitch = MathHelper.cos(animationProgress * 0.1662F) * 0.25F;
+        if (shadow.getEntityData().get(VoidShadowEntity.HOVERING_MAGIC_HANDS)) {
+            this.rightArm.zRot = -2.4871F - Mth.cos(animationProgress * 0.3662F) * 0.1F;
+            this.leftArm.zRot = 2.4871F + Mth.cos(animationProgress * 0.3662F) * 0.1F;
+            this.rightArm.xRot = -Mth.cos(animationProgress * 0.1662F) * 0.25F;
+            this.leftArm.xRot = Mth.cos(animationProgress * 0.1662F) * 0.25F;
             // this.rightAttackingArm.pitch = MathHelper.cos(animationProgress * 0.6662F) *
             // 0.25F;
             // this.leftAttackingArm.pitch = MathHelper.cos(animationProgress * 0.6662F) *
             // 0.25F;
-        } else if (shadow.getDataTracker().get(VoidShadowEntity.CIRCLING_HANDS)) {
-            this.rightArm.roll = -1.5708F;
-            this.leftArm.roll = 1.5708F;
+        } else if (shadow.getEntityData().get(VoidShadowEntity.CIRCLING_HANDS)) {
+            this.rightArm.zRot = -1.5708F;
+            this.leftArm.zRot = 1.5708F;
         }
 
         // this.rightArm.pitch = this.handSwingProgress;

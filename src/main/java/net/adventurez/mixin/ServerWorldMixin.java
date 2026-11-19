@@ -11,46 +11,46 @@ import org.spongepowered.asm.mixin.injection.At;
 import net.adventurez.entity.SummonerEntity;
 import net.adventurez.init.ConfigInit;
 import net.adventurez.init.EntityInit;
-import net.minecraft.entity.SpawnReason;
-import net.minecraft.entity.SpawnRestriction;
-import net.minecraft.registry.DynamicRegistryManager;
-import net.minecraft.registry.RegistryKey;
-import net.minecraft.registry.entry.RegistryEntry;
-import net.minecraft.server.world.ServerWorld;
-import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.math.ChunkPos;
-import net.minecraft.util.profiler.Profiler;
-import net.minecraft.world.Heightmap;
-import net.minecraft.world.MutableWorldProperties;
-import net.minecraft.world.World;
-import net.minecraft.world.chunk.WorldChunk;
-import net.minecraft.world.dimension.DimensionType;
+import net.minecraft.core.BlockPos;
+import net.minecraft.core.Holder;
+import net.minecraft.core.RegistryAccess;
+import net.minecraft.resources.ResourceKey;
+import net.minecraft.server.level.ServerLevel;
+import net.minecraft.util.profiling.ProfilerFiller;
+import net.minecraft.world.entity.MobSpawnType;
+import net.minecraft.world.entity.SpawnPlacements;
+import net.minecraft.world.level.ChunkPos;
+import net.minecraft.world.level.Level;
+import net.minecraft.world.level.chunk.LevelChunk;
+import net.minecraft.world.level.dimension.DimensionType;
+import net.minecraft.world.level.levelgen.Heightmap;
+import net.minecraft.world.level.storage.WritableLevelData;
 
-@Mixin(ServerWorld.class)
-public abstract class ServerWorldMixin extends World {
+@Mixin(ServerLevel.class)
+public abstract class ServerWorldMixin extends Level {
 
-    public ServerWorldMixin(MutableWorldProperties properties, RegistryKey<World> registryRef, DynamicRegistryManager registryManager, RegistryEntry<DimensionType> dimensionEntry,
-            Supplier<Profiler> profiler, boolean isClient, boolean debugWorld, long biomeAccess, int maxChainedNeighborUpdates) {
+    public ServerWorldMixin(WritableLevelData properties, ResourceKey<Level> registryRef, RegistryAccess registryManager, Holder<DimensionType> dimensionEntry,
+            Supplier<ProfilerFiller> profiler, boolean isClient, boolean debugWorld, long biomeAccess, int maxChainedNeighborUpdates) {
         super(properties, registryRef, registryManager, dimensionEntry, profiler, isClient, debugWorld, biomeAccess, maxChainedNeighborUpdates);
     }
 
-    @Inject(method = "tickChunk", at = @At(value = "INVOKE", target = "Lnet/minecraft/entity/LightningEntity;setCosmetic(Z)V", shift = Shift.AFTER))
-    public void tickChunk(WorldChunk chunk, int randomTickSpeed, CallbackInfo info) {
+    @Inject(method = "tickChunk", at = @At(value = "INVOKE", target = "Lnet/minecraft/world/entity/LightningBolt;setVisualOnly(Z)V", shift = Shift.AFTER))
+    public void tickChunk(LevelChunk chunk, int randomTickSpeed, CallbackInfo info) {
         int summonerSpawnChance = ConfigInit.CONFIG.summoner_thunder_spawn_chance;
         if (summonerSpawnChance != 0) {
             int spawnChanceInt = this.getRandom().nextInt(summonerSpawnChance) + 1;
             if (spawnChanceInt == 1) {
                 ChunkPos chunkPos = chunk.getPos();
-                int i = chunkPos.getStartX();
-                int j = chunkPos.getStartZ();
+                int i = chunkPos.getMinBlockX();
+                int j = chunkPos.getMinBlockZ();
 
-                BlockPos blockPos = this.getTopPosition(Heightmap.Type.MOTION_BLOCKING, this.getRandomPosInChunk(i, 0, j, 15));
-                if (SpawnRestriction.canSpawn(EntityInit.SUMMONER, (ServerWorld) (Object) this, SpawnReason.EVENT, blockPos, this.getRandom())) {
+                BlockPos blockPos = this.getHeightmapPos(Heightmap.Types.MOTION_BLOCKING, this.getBlockRandomPos(i, 0, j, 15));
+                if (SpawnPlacements.checkSpawnRules(EntityInit.SUMMONER, (ServerLevel) (Object) this, MobSpawnType.EVENT, blockPos, this.getRandom())) {
                     SummonerEntity summonerEntity = EntityInit.SUMMONER.create(this);
-                    summonerEntity.updatePosition((double) blockPos.getX(), (double) blockPos.getY(), (double) blockPos.getZ());
-                    summonerEntity.initialize((ServerWorld) (Object) this, this.getLocalDifficulty(blockPos), SpawnReason.EVENT, null);
-                    this.spawnEntity(summonerEntity);
-                    summonerEntity.playSpawnEffects();
+                    summonerEntity.absMoveTo((double) blockPos.getX(), (double) blockPos.getY(), (double) blockPos.getZ());
+                    summonerEntity.finalizeSpawn((ServerLevel) (Object) this, this.getCurrentDifficultyAt(blockPos), MobSpawnType.EVENT, null);
+                    this.addFreshEntity(summonerEntity);
+                    summonerEntity.spawnAnim();
                 }
             }
         }

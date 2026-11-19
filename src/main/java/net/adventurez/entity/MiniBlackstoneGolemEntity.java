@@ -1,52 +1,52 @@
 package net.adventurez.entity;
 
 import net.adventurez.init.SoundInit;
-import net.minecraft.block.BlockState;
-import net.minecraft.entity.EntityType;
-import net.minecraft.entity.SpawnReason;
-import net.minecraft.entity.ai.goal.ActiveTargetGoal;
-import net.minecraft.entity.ai.goal.LookAtEntityGoal;
-import net.minecraft.entity.ai.goal.MeleeAttackGoal;
-import net.minecraft.entity.ai.goal.SwimGoal;
-import net.minecraft.entity.ai.goal.WanderAroundFarGoal;
-import net.minecraft.entity.attribute.DefaultAttributeContainer;
-import net.minecraft.entity.attribute.EntityAttributes;
-import net.minecraft.entity.damage.DamageSource;
-import net.minecraft.entity.mob.HostileEntity;
-import net.minecraft.entity.mob.MobEntity;
-import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.sound.SoundEvent;
-import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.math.random.Random;
-import net.minecraft.world.ServerWorldAccess;
-import net.minecraft.world.World;
-import net.minecraft.world.WorldView;
+import net.minecraft.core.BlockPos;
+import net.minecraft.sounds.SoundEvent;
+import net.minecraft.util.RandomSource;
+import net.minecraft.world.damagesource.DamageSource;
+import net.minecraft.world.entity.EntityType;
+import net.minecraft.world.entity.Mob;
+import net.minecraft.world.entity.MobSpawnType;
+import net.minecraft.world.entity.ai.attributes.AttributeSupplier;
+import net.minecraft.world.entity.ai.attributes.Attributes;
+import net.minecraft.world.entity.ai.goal.FloatGoal;
+import net.minecraft.world.entity.ai.goal.LookAtPlayerGoal;
+import net.minecraft.world.entity.ai.goal.MeleeAttackGoal;
+import net.minecraft.world.entity.ai.goal.WaterAvoidingRandomStrollGoal;
+import net.minecraft.world.entity.ai.goal.target.NearestAttackableTargetGoal;
+import net.minecraft.world.entity.monster.Monster;
+import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.level.Level;
+import net.minecraft.world.level.LevelReader;
+import net.minecraft.world.level.ServerLevelAccessor;
+import net.minecraft.world.level.block.state.BlockState;
 
-public class MiniBlackstoneGolemEntity extends HostileEntity {
+public class MiniBlackstoneGolemEntity extends Monster {
 
-    public MiniBlackstoneGolemEntity(EntityType<? extends MiniBlackstoneGolemEntity> entityType, World world) {
+    public MiniBlackstoneGolemEntity(EntityType<? extends MiniBlackstoneGolemEntity> entityType, Level world) {
         super(entityType, world);
     }
 
     @Override
-    protected void initGoals() {
-        super.initGoals();
-        this.goalSelector.add(0, new SwimGoal(this));
-        this.goalSelector.add(1, new MeleeAttackGoal(this, 0.85D, true));
-        this.goalSelector.add(5, new WanderAroundFarGoal(this, 0.85D));
-        this.goalSelector.add(6, new LookAtEntityGoal(this, PlayerEntity.class, 6.0F));
-        this.goalSelector.add(10, new LookAtEntityGoal(this, MobEntity.class, 8.0F));
-        this.targetSelector.add(3, new ActiveTargetGoal<>(this, PlayerEntity.class, true));
+    protected void registerGoals() {
+        super.registerGoals();
+        this.goalSelector.addGoal(0, new FloatGoal(this));
+        this.goalSelector.addGoal(1, new MeleeAttackGoal(this, 0.85D, true));
+        this.goalSelector.addGoal(5, new WaterAvoidingRandomStrollGoal(this, 0.85D));
+        this.goalSelector.addGoal(6, new LookAtPlayerGoal(this, Player.class, 6.0F));
+        this.goalSelector.addGoal(10, new LookAtPlayerGoal(this, Mob.class, 8.0F));
+        this.targetSelector.addGoal(3, new NearestAttackableTargetGoal<>(this, Player.class, true));
     }
 
-    public static DefaultAttributeContainer.Builder createSmallStoneGolemAttributes() {
-        return HostileEntity.createHostileAttributes().add(EntityAttributes.GENERIC_MAX_HEALTH, 50.0D).add(EntityAttributes.GENERIC_MOVEMENT_SPEED, 0.27D)
-                .add(EntityAttributes.GENERIC_KNOCKBACK_RESISTANCE, 2.5D).add(EntityAttributes.GENERIC_ATTACK_DAMAGE, 6.0D).add(EntityAttributes.GENERIC_ATTACK_KNOCKBACK, 1.0D)
-                .add(EntityAttributes.GENERIC_FOLLOW_RANGE, 38.0D);
+    public static AttributeSupplier.Builder createSmallStoneGolemAttributes() {
+        return Monster.createMonsterAttributes().add(Attributes.MAX_HEALTH, 50.0D).add(Attributes.MOVEMENT_SPEED, 0.27D)
+                .add(Attributes.KNOCKBACK_RESISTANCE, 2.5D).add(Attributes.ATTACK_DAMAGE, 6.0D).add(Attributes.ATTACK_KNOCKBACK, 1.0D)
+                .add(Attributes.FOLLOW_RANGE, 38.0D);
     }
 
-    public static boolean canSpawn(EntityType<MiniBlackstoneGolemEntity> type, ServerWorldAccess world, SpawnReason spawnReason, BlockPos pos, Random random) {
-        return canSpawnInDark(type, world, spawnReason, pos, random) || spawnReason == SpawnReason.SPAWNER;
+    public static boolean canSpawn(EntityType<MiniBlackstoneGolemEntity> type, ServerLevelAccessor world, MobSpawnType spawnReason, BlockPos pos, RandomSource random) {
+        return checkMonsterSpawnRules(type, world, spawnReason, pos, random) || spawnReason == MobSpawnType.SPAWNER;
     }
 
     @Override
@@ -70,13 +70,13 @@ public class MiniBlackstoneGolemEntity extends HostileEntity {
     }
 
     @Override
-    public int getLimitPerChunk() {
+    public int getMaxSpawnClusterSize() {
         return 1;
     }
 
     @Override
-    public boolean canSpawn(WorldView view) {
-        return super.canSpawn(view) && this.getWorld().getBlockState(this.getBlockPos()).getBlock().canMobSpawnInside(this.getWorld().getBlockState(this.getBlockPos()));
+    public boolean checkSpawnObstruction(LevelReader view) {
+        return super.checkSpawnObstruction(view) && this.level().getBlockState(this.blockPosition()).getBlock().isPossibleToRespawnInThis(this.level().getBlockState(this.blockPosition()));
     }
 
 }

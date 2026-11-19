@@ -5,18 +5,18 @@ import com.google.common.collect.ImmutableList;
 import net.adventurez.entity.VoidFragmentEntity;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
-import net.minecraft.client.model.ModelData;
-import net.minecraft.client.model.ModelPart;
-import net.minecraft.client.model.ModelPartBuilder;
-import net.minecraft.client.model.ModelPartData;
-import net.minecraft.client.model.ModelTransform;
-import net.minecraft.client.model.TexturedModelData;
-import net.minecraft.client.render.entity.model.CompositeEntityModel;
-import net.minecraft.entity.Entity;
-import net.minecraft.util.math.MathHelper;
+import net.minecraft.client.model.ListModel;
+import net.minecraft.client.model.geom.ModelPart;
+import net.minecraft.client.model.geom.PartPose;
+import net.minecraft.client.model.geom.builders.CubeListBuilder;
+import net.minecraft.client.model.geom.builders.LayerDefinition;
+import net.minecraft.client.model.geom.builders.MeshDefinition;
+import net.minecraft.client.model.geom.builders.PartDefinition;
+import net.minecraft.util.Mth;
+import net.minecraft.world.entity.Entity;
 
 @Environment(EnvType.CLIENT)
-public class VoidFragmentModel<T extends Entity> extends CompositeEntityModel<T> {
+public class VoidFragmentModel<T extends Entity> extends ListModel<T> {
     private final ModelPart small;
     private final ModelPart small1;
     private final ModelPart small2;
@@ -47,51 +47,51 @@ public class VoidFragmentModel<T extends Entity> extends CompositeEntityModel<T>
         this.big1 = this.big.getChild("big1");
     }
 
-    public static TexturedModelData getTexturedModelData() {
-        ModelData modelData = new ModelData();
-        ModelPartData modelPartData = modelData.getRoot();
-        ModelPartData modelPartData1 = modelPartData.addChild("small", ModelPartBuilder.create().uv(16, 0).cuboid(-1.5F, -7.0F, -1.5F, 3.0F, 13.0F, 3.0F), ModelTransform.pivot(0.0F, 12.0F, 0.0F));
-        modelPartData1.addChild("small1", ModelPartBuilder.create().uv(16, 32).cuboid(3.5F, -16.0F, 1.5F, 1.0F, 4.0F, 1.0F), ModelTransform.pivot(0.0F, 8.0F, 0.0F));
-        modelPartData1.addChild("small2", ModelPartBuilder.create().uv(0, 0).cuboid(1.5F, -11.0F, -2.5F, 1.0F, 3.0F, 1.0F), ModelTransform.pivot(0.0F, 8.0F, 0.0F));
-        modelPartData1.addChild("small3", ModelPartBuilder.create().uv(30, 30).cuboid(-4.5F, -11.0F, 0.5F, 2.0F, 6.0F, 2.0F), ModelTransform.pivot(0.0F, 8.0F, 0.0F));
-        modelPartData1.addChild("small4", ModelPartBuilder.create().uv(32, 15).cuboid(-2.5F, -5.0F, -4.5F, 1.0F, 4.0F, 1.0F), ModelTransform.pivot(0.0F, 8.0F, 0.0F));
-        modelPartData1.addChild("small5", ModelPartBuilder.create().uv(12, 0).cuboid(-1.5F, -7.0F, 2.5F, 1.0F, 2.0F, 1.0F), ModelTransform.pivot(0.0F, 8.0F, 0.0F));
-        modelPartData1.addChild("small6", ModelPartBuilder.create().uv(28, 11).cuboid(3.5F, -6.0F, 0.5F, 2.0F, 2.0F, 2.0F), ModelTransform.pivot(0.0F, 8.0F, 0.0F));
-        ModelPartData modelPartData2 = modelPartData.addChild("big", ModelPartBuilder.create().uv(0, 0).cuboid(-1.0F, -11.0F, -2.0F, 4.0F, 23.0F, 4.0F), ModelTransform.pivot(0.0F, 6.0F, 0.0F));
-        modelPartData2.addChild("big1", ModelPartBuilder.create().uv(24, 16).cuboid(-4.0F, -21.0F, 4.0F, 2.0F, 14.0F, 2.0F), ModelTransform.pivot(0.0F, 16.0F, 0.0F));
-        modelPartData2.addChild("big2", ModelPartBuilder.create().uv(16, 16).cuboid(-6.0F, -25.0F, -3.0F, 2.0F, 14.0F, 2.0F), ModelTransform.pivot(0.0F, 16.0F, 0.0F));
-        modelPartData2.addChild("big3", ModelPartBuilder.create().uv(28, 0).cuboid(5.0F, -11.0F, -6.0F, 2.0F, 9.0F, 2.0F), ModelTransform.pivot(0.0F, 16.0F, 0.0F));
-        modelPartData2.addChild("big4", ModelPartBuilder.create().uv(8, 27).cuboid(-1.0F, -32.0F, -7.0F, 2.0F, 9.0F, 2.0F), ModelTransform.pivot(0.0F, 16.0F, 0.0F));
-        modelPartData2.addChild("big5", ModelPartBuilder.create().uv(0, 27).cuboid(3.0F, -17.0F, 2.0F, 2.0F, 11.0F, 2.0F), ModelTransform.pivot(0.0F, 16.0F, 0.0F));
-        return TexturedModelData.of(modelData, 64, 64);
+    public static LayerDefinition getTexturedModelData() {
+        MeshDefinition modelData = new MeshDefinition();
+        PartDefinition modelPartData = modelData.getRoot();
+        PartDefinition modelPartData1 = modelPartData.addOrReplaceChild("small", CubeListBuilder.create().texOffs(16, 0).addBox(-1.5F, -7.0F, -1.5F, 3.0F, 13.0F, 3.0F), PartPose.offset(0.0F, 12.0F, 0.0F));
+        modelPartData1.addOrReplaceChild("small1", CubeListBuilder.create().texOffs(16, 32).addBox(3.5F, -16.0F, 1.5F, 1.0F, 4.0F, 1.0F), PartPose.offset(0.0F, 8.0F, 0.0F));
+        modelPartData1.addOrReplaceChild("small2", CubeListBuilder.create().texOffs(0, 0).addBox(1.5F, -11.0F, -2.5F, 1.0F, 3.0F, 1.0F), PartPose.offset(0.0F, 8.0F, 0.0F));
+        modelPartData1.addOrReplaceChild("small3", CubeListBuilder.create().texOffs(30, 30).addBox(-4.5F, -11.0F, 0.5F, 2.0F, 6.0F, 2.0F), PartPose.offset(0.0F, 8.0F, 0.0F));
+        modelPartData1.addOrReplaceChild("small4", CubeListBuilder.create().texOffs(32, 15).addBox(-2.5F, -5.0F, -4.5F, 1.0F, 4.0F, 1.0F), PartPose.offset(0.0F, 8.0F, 0.0F));
+        modelPartData1.addOrReplaceChild("small5", CubeListBuilder.create().texOffs(12, 0).addBox(-1.5F, -7.0F, 2.5F, 1.0F, 2.0F, 1.0F), PartPose.offset(0.0F, 8.0F, 0.0F));
+        modelPartData1.addOrReplaceChild("small6", CubeListBuilder.create().texOffs(28, 11).addBox(3.5F, -6.0F, 0.5F, 2.0F, 2.0F, 2.0F), PartPose.offset(0.0F, 8.0F, 0.0F));
+        PartDefinition modelPartData2 = modelPartData.addOrReplaceChild("big", CubeListBuilder.create().texOffs(0, 0).addBox(-1.0F, -11.0F, -2.0F, 4.0F, 23.0F, 4.0F), PartPose.offset(0.0F, 6.0F, 0.0F));
+        modelPartData2.addOrReplaceChild("big1", CubeListBuilder.create().texOffs(24, 16).addBox(-4.0F, -21.0F, 4.0F, 2.0F, 14.0F, 2.0F), PartPose.offset(0.0F, 16.0F, 0.0F));
+        modelPartData2.addOrReplaceChild("big2", CubeListBuilder.create().texOffs(16, 16).addBox(-6.0F, -25.0F, -3.0F, 2.0F, 14.0F, 2.0F), PartPose.offset(0.0F, 16.0F, 0.0F));
+        modelPartData2.addOrReplaceChild("big3", CubeListBuilder.create().texOffs(28, 0).addBox(5.0F, -11.0F, -6.0F, 2.0F, 9.0F, 2.0F), PartPose.offset(0.0F, 16.0F, 0.0F));
+        modelPartData2.addOrReplaceChild("big4", CubeListBuilder.create().texOffs(8, 27).addBox(-1.0F, -32.0F, -7.0F, 2.0F, 9.0F, 2.0F), PartPose.offset(0.0F, 16.0F, 0.0F));
+        modelPartData2.addOrReplaceChild("big5", CubeListBuilder.create().texOffs(0, 27).addBox(3.0F, -17.0F, 2.0F, 2.0F, 11.0F, 2.0F), PartPose.offset(0.0F, 16.0F, 0.0F));
+        return LayerDefinition.create(modelData, 64, 64);
     }
 
     @Override
-    public Iterable<ModelPart> getParts() {
+    public Iterable<ModelPart> parts() {
         return ImmutableList.of(this.small, this.big);
     }
 
     @Override
-    public void setAngles(T entity, float limbAngle, float limbDistance, float animationProgress, float headYaw, float headPitch) {
-        if (entity.getDataTracker().get(VoidFragmentEntity.IS_VOID_ORB)) {
+    public void setupAnim(T entity, float limbAngle, float limbDistance, float animationProgress, float headYaw, float headPitch) {
+        if (entity.getEntityData().get(VoidFragmentEntity.IS_VOID_ORB)) {
             big.visible = true;
             small.visible = false;
-            this.big.pivotY = 6.0F + MathHelper.cos(animationProgress * 0.1662F) * 0.6F;
-            this.big1.pivotY = 16.0F + MathHelper.cos(animationProgress * 0.2662F + MathHelper.PI * 0.3F) * 0.9F;
-            this.big2.pivotY = 16.0F + MathHelper.cos(animationProgress * 0.2662F + MathHelper.PI * 0.6F) * 1.2F;
-            this.big3.pivotY = 16.0F + MathHelper.cos(animationProgress * 0.2662F + MathHelper.PI * 1.3F) * 0.7F;
-            this.big4.pivotY = 16.0F + MathHelper.cos(animationProgress * 0.2662F + MathHelper.PI * 1.6F) * 0.8F;
-            this.big5.pivotY = 16.0F + MathHelper.cos(animationProgress * 0.2662F + MathHelper.PI) * 0.6F;
+            this.big.y = 6.0F + Mth.cos(animationProgress * 0.1662F) * 0.6F;
+            this.big1.y = 16.0F + Mth.cos(animationProgress * 0.2662F + Mth.PI * 0.3F) * 0.9F;
+            this.big2.y = 16.0F + Mth.cos(animationProgress * 0.2662F + Mth.PI * 0.6F) * 1.2F;
+            this.big3.y = 16.0F + Mth.cos(animationProgress * 0.2662F + Mth.PI * 1.3F) * 0.7F;
+            this.big4.y = 16.0F + Mth.cos(animationProgress * 0.2662F + Mth.PI * 1.6F) * 0.8F;
+            this.big5.y = 16.0F + Mth.cos(animationProgress * 0.2662F + Mth.PI) * 0.6F;
         } else {
             big.visible = false;
             small.visible = true;
-            this.small.pivotY = 12.0F + MathHelper.cos(animationProgress * 0.1662F) * 0.6F;
-            this.small1.pivotY = 8.0F + MathHelper.cos(animationProgress * 0.1662F + MathHelper.PI * 0.3F) * 0.9F;
-            this.small2.pivotY = 8.0F + MathHelper.cos(animationProgress * 0.1662F + MathHelper.PI * 0.6F) * 1.2F;
-            this.small3.pivotY = 8.0F + MathHelper.cos(animationProgress * 0.1662F + MathHelper.PI * 1.3F) * 0.7F;
-            this.small4.pivotY = 8.0F + MathHelper.cos(animationProgress * 0.1662F + MathHelper.PI * 1.6F) * 0.8F;
-            this.small5.pivotY = 8.0F + MathHelper.cos(animationProgress * 0.1662F + MathHelper.PI) * 0.6F;
-            this.small6.pivotY = 8.0F + MathHelper.cos(animationProgress * 0.1662F + MathHelper.PI) * 0.4F;
+            this.small.y = 12.0F + Mth.cos(animationProgress * 0.1662F) * 0.6F;
+            this.small1.y = 8.0F + Mth.cos(animationProgress * 0.1662F + Mth.PI * 0.3F) * 0.9F;
+            this.small2.y = 8.0F + Mth.cos(animationProgress * 0.1662F + Mth.PI * 0.6F) * 1.2F;
+            this.small3.y = 8.0F + Mth.cos(animationProgress * 0.1662F + Mth.PI * 1.3F) * 0.7F;
+            this.small4.y = 8.0F + Mth.cos(animationProgress * 0.1662F + Mth.PI * 1.6F) * 0.8F;
+            this.small5.y = 8.0F + Mth.cos(animationProgress * 0.1662F + Mth.PI) * 0.6F;
+            this.small6.y = 8.0F + Mth.cos(animationProgress * 0.1662F + Mth.PI) * 0.4F;
         }
     }
 }

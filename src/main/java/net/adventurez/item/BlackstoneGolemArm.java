@@ -4,117 +4,116 @@ import net.adventurez.entity.nonliving.ThrownRockEntity;
 import net.adventurez.init.ConfigInit;
 import net.adventurez.init.ItemInit;
 import net.adventurez.init.SoundInit;
-import net.minecraft.client.gui.screen.Screen;
-import net.minecraft.entity.Entity;
-import net.minecraft.entity.EquipmentSlot;
-import net.minecraft.entity.LivingEntity;
-import net.minecraft.entity.effect.StatusEffectInstance;
-import net.minecraft.entity.effect.StatusEffects;
-import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.item.Item;
-import net.minecraft.item.ItemStack;
-import net.minecraft.item.Items;
-import net.minecraft.item.tooltip.TooltipType;
-import net.minecraft.sound.SoundCategory;
-import net.minecraft.text.Text;
-import net.minecraft.util.Hand;
-import net.minecraft.util.TypedActionResult;
-import net.minecraft.util.UseAction;
-import net.minecraft.util.math.Vec3d;
-import net.minecraft.world.World;
-
+import net.minecraft.client.gui.screens.Screen;
+import net.minecraft.network.chat.Component;
+import net.minecraft.sounds.SoundSource;
+import net.minecraft.world.InteractionHand;
+import net.minecraft.world.InteractionResultHolder;
+import net.minecraft.world.effect.MobEffectInstance;
+import net.minecraft.world.effect.MobEffects;
+import net.minecraft.world.entity.Entity;
+import net.minecraft.world.entity.EquipmentSlot;
+import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.item.Item;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.Items;
+import net.minecraft.world.item.TooltipFlag;
+import net.minecraft.world.item.UseAnim;
+import net.minecraft.world.level.Level;
+import net.minecraft.world.phys.Vec3;
 import java.util.List;
 
 public class BlackstoneGolemArm extends Item {
 
-    public BlackstoneGolemArm(Settings settings) {
+    public BlackstoneGolemArm(Properties settings) {
         super(settings);
     }
 
     @Override
-    public void appendTooltip(ItemStack stack, TooltipContext context, List<Text> tooltip, TooltipType type) {
-        super.appendTooltip(stack, context, tooltip, type);
+    public void appendHoverText(ItemStack stack, TooltipContext context, List<Component> tooltip, TooltipFlag type) {
+        super.appendHoverText(stack, context, tooltip, type);
         if (ConfigInit.CONFIG.allow_extra_tooltips) {
-            tooltip.add(Text.translatable("item.adventurez.moreinfo.tooltip"));
+            tooltip.add(Component.translatable("item.adventurez.moreinfo.tooltip"));
             if (Screen.hasShiftDown()) {
-                tooltip.remove(Text.translatable("item.adventurez.moreinfo.tooltip"));
-                tooltip.add(Text.translatable("item.adventurez.blackstone_golem_arm.tooltip"));
+                tooltip.remove(Component.translatable("item.adventurez.moreinfo.tooltip"));
+                tooltip.add(Component.translatable("item.adventurez.blackstone_golem_arm.tooltip"));
             }
         }
     }
 
     @Override
-    public void onStoppedUsing(ItemStack stack, World world, LivingEntity user, int remainingUseTicks) {
-        if (user instanceof PlayerEntity playerEntity) {
-            int stoneCounter = this.getMaxUseTime(stack, user) - remainingUseTicks;
+    public void releaseUsing(ItemStack stack, Level world, LivingEntity user, int remainingUseTicks) {
+        if (user instanceof Player playerEntity) {
+            int stoneCounter = this.getUseDuration(stack, user) - remainingUseTicks;
             if (stoneCounter >= 30) {
                 stack.set(ItemInit.LAVA_LIGHT, false);
-                if (!world.isClient()) {
+                if (!world.isClientSide()) {
                     float strength = getStoneStrength(stoneCounter);
-                    stack.damage(1, playerEntity, LivingEntity.getSlotForHand(user.getActiveHand()));
+                    stack.hurtAndBreak(1, playerEntity, LivingEntity.getSlotForHand(user.getUsedItemHand()));
                     ThrownRockEntity thrownRockEntity = new ThrownRockEntity(world, playerEntity);
-                    thrownRockEntity.setVelocity(playerEntity, playerEntity.getPitch(), playerEntity.getYaw(), 0.0F, strength * 1.2F, 1.0F);
-                    world.spawnEntity(thrownRockEntity);
-                    world.playSoundFromEntity((PlayerEntity) null, thrownRockEntity, SoundInit.ROCK_THROW_EVENT, SoundCategory.PLAYERS, 1.0F, 1.0F);
+                    thrownRockEntity.shootFromRotation(playerEntity, playerEntity.getXRot(), playerEntity.getYRot(), 0.0F, strength * 1.2F, 1.0F);
+                    world.addFreshEntity(thrownRockEntity);
+                    world.playSound((Player) null, thrownRockEntity, SoundInit.ROCK_THROW_EVENT, SoundSource.PLAYERS, 1.0F, 1.0F);
                 }
             }
         }
     }
 
     @Override
-    public TypedActionResult<ItemStack> use(World world, PlayerEntity user, Hand hand) {
-        ItemStack itemStack = user.getStackInHand(hand);
-        if (itemStack.getDamage() >= itemStack.getMaxDamage() - 1) {
-            return TypedActionResult.fail(itemStack);
+    public InteractionResultHolder<ItemStack> use(Level world, Player user, InteractionHand hand) {
+        ItemStack itemStack = user.getItemInHand(hand);
+        if (itemStack.getDamageValue() >= itemStack.getMaxDamage() - 1) {
+            return InteractionResultHolder.fail(itemStack);
         } else {
-            user.setCurrentHand(hand);
-            return TypedActionResult.success(itemStack);
+            user.startUsingItem(hand);
+            return InteractionResultHolder.success(itemStack);
         }
     }
 
     @Override
-    public void inventoryTick(ItemStack stack, World world, Entity entity, int slot, boolean selected) {
-        PlayerEntity player = (PlayerEntity) entity;
-        StatusEffectInstance slowness = new StatusEffectInstance(StatusEffects.SLOWNESS, 9, 0, false, false, false);
-        if (selected && !world.isClient()) {
-            player.addStatusEffect(slowness);
+    public void inventoryTick(ItemStack stack, Level world, Entity entity, int slot, boolean selected) {
+        Player player = (Player) entity;
+        MobEffectInstance slowness = new MobEffectInstance(MobEffects.MOVEMENT_SLOWDOWN, 9, 0, false, false, false);
+        if (selected && !world.isClientSide()) {
+            player.addEffect(slowness);
         }
 
-        if (world.isClient()) {
-            if (player.getItemUseTimeLeft() < 71970 && player.getItemUseTimeLeft() != 0
-                    && player.getEquippedStack(player.getActiveHand() == Hand.MAIN_HAND ? EquipmentSlot.MAINHAND : EquipmentSlot.OFFHAND) == stack) {
+        if (world.isClientSide()) {
+            if (player.getUseItemRemainingTicks() < 71970 && player.getUseItemRemainingTicks() != 0
+                    && player.getItemBySlot(player.getUsedItemHand() == InteractionHand.MAIN_HAND ? EquipmentSlot.MAINHAND : EquipmentSlot.OFFHAND) == stack) {
                 stack.set(ItemInit.LAVA_LIGHT, true);
             }
 
             if (stack.get(ItemInit.LAVA_LIGHT) != null && stack.get(ItemInit.LAVA_LIGHT)
-                    && player.getEquippedStack(player.getActiveHand() == Hand.MAIN_HAND ? EquipmentSlot.MAINHAND : EquipmentSlot.OFFHAND) != stack) {
+                    && player.getItemBySlot(player.getUsedItemHand() == InteractionHand.MAIN_HAND ? EquipmentSlot.MAINHAND : EquipmentSlot.OFFHAND) != stack) {
                 stack.set(ItemInit.LAVA_LIGHT, false);
             }
         }
     }
 
     @Override
-    public UseAction getUseAction(ItemStack stack) {
-        return UseAction.NONE;
+    public UseAnim getUseAnimation(ItemStack stack) {
+        return UseAnim.NONE;
     }
 
     @Override
-    public int getMaxUseTime(ItemStack stack, LivingEntity user) {
+    public int getUseDuration(ItemStack stack, LivingEntity user) {
         return 72000;
     }
 
     @Override
-    public boolean canRepair(ItemStack stack, ItemStack ingredient) {
+    public boolean isValidRepairItem(ItemStack stack, ItemStack ingredient) {
         return ingredient.getItem() == Items.NETHERITE_SCRAP;
     }
 
     @Override
-    public boolean postHit(ItemStack stack, LivingEntity target, LivingEntity attacker) {
-        Vec3d vec3d_1 = attacker.getRotationVec(1.0F);
+    public boolean hurtEnemy(ItemStack stack, LivingEntity target, LivingEntity attacker) {
+        Vec3 vec3d_1 = attacker.getViewVector(1.0F);
         double x_vector = vec3d_1.x / 2D;
         double z_vector = vec3d_1.z / 2D;
-        stack.damage(1, attacker, LivingEntity.getSlotForHand(attacker.getActiveHand()));
-        target.addVelocity(x_vector, 0.45D, z_vector);
+        stack.hurtAndBreak(1, attacker, LivingEntity.getSlotForHand(attacker.getUsedItemHand()));
+        target.push(x_vector, 0.45D, z_vector);
         return true;
     }
 

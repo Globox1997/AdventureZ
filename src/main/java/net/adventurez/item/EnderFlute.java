@@ -3,67 +3,66 @@ package net.adventurez.item;
 import net.adventurez.entity.EnderWhaleEntity;
 import net.adventurez.init.ConfigInit;
 import net.adventurez.init.SoundInit;
-import net.minecraft.client.gui.screen.Screen;
-import net.minecraft.entity.Entity;
-import net.minecraft.entity.LivingEntity;
-import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.item.Item;
-import net.minecraft.item.ItemStack;
-import net.minecraft.item.tooltip.TooltipType;
-import net.minecraft.particle.ParticleTypes;
-import net.minecraft.predicate.entity.EntityPredicates;
-import net.minecraft.sound.SoundCategory;
-import net.minecraft.text.Text;
-import net.minecraft.util.Hand;
-import net.minecraft.util.TypedActionResult;
-import net.minecraft.util.math.Box;
-import net.minecraft.world.World;
-
+import net.minecraft.client.gui.screens.Screen;
+import net.minecraft.core.particles.ParticleTypes;
+import net.minecraft.network.chat.Component;
+import net.minecraft.sounds.SoundSource;
+import net.minecraft.world.InteractionHand;
+import net.minecraft.world.InteractionResultHolder;
+import net.minecraft.world.entity.Entity;
+import net.minecraft.world.entity.EntitySelector;
+import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.item.Item;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.TooltipFlag;
+import net.minecraft.world.level.Level;
+import net.minecraft.world.phys.AABB;
 import java.util.List;
 
 public class EnderFlute extends Item {
 
-    public EnderFlute(Settings settings) {
+    public EnderFlute(Properties settings) {
         super(settings);
     }
 
     @Override
-    public void appendTooltip(ItemStack stack, TooltipContext context, List<Text> tooltip, TooltipType type) {
-        super.appendTooltip(stack, context, tooltip, type);
+    public void appendHoverText(ItemStack stack, TooltipContext context, List<Component> tooltip, TooltipFlag type) {
+        super.appendHoverText(stack, context, tooltip, type);
         if (ConfigInit.CONFIG.allow_extra_tooltips) {
-            tooltip.add(Text.translatable("item.adventurez.moreinfo.tooltip"));
+            tooltip.add(Component.translatable("item.adventurez.moreinfo.tooltip"));
             if (Screen.hasShiftDown()) {
-                tooltip.remove(Text.translatable("item.adventurez.moreinfo.tooltip"));
-                tooltip.add(Text.translatable("item.adventurez.ender_flute.tooltip"));
+                tooltip.remove(Component.translatable("item.adventurez.moreinfo.tooltip"));
+                tooltip.add(Component.translatable("item.adventurez.ender_flute.tooltip"));
             }
         }
     }
 
     @Override
-    public TypedActionResult<ItemStack> use(World world, PlayerEntity user, Hand hand) {
-        ItemStack itemStack = user.getStackInHand(hand);
-        world.playSound(null, user.getX(), user.getY(), user.getZ(), SoundInit.FLUTE_CALL_EVENT, SoundCategory.PLAYERS, 1.0F, world.random.nextFloat() * 0.2F + 0.9F);
-        if (!world.isClient()) {
-            itemStack.damage(1, user, LivingEntity.getSlotForHand(hand));
-            List<EnderWhaleEntity> list = world.getEntitiesByClass(EnderWhaleEntity.class, new Box(user.getBlockPos()).expand(100D), EntityPredicates.EXCEPT_SPECTATOR);
+    public InteractionResultHolder<ItemStack> use(Level world, Player user, InteractionHand hand) {
+        ItemStack itemStack = user.getItemInHand(hand);
+        world.playSound(null, user.getX(), user.getY(), user.getZ(), SoundInit.FLUTE_CALL_EVENT, SoundSource.PLAYERS, 1.0F, world.random.nextFloat() * 0.2F + 0.9F);
+        if (!world.isClientSide()) {
+            itemStack.hurtAndBreak(1, user, LivingEntity.getSlotForHand(hand));
+            List<EnderWhaleEntity> list = world.getEntitiesOfClass(EnderWhaleEntity.class, new AABB(user.blockPosition()).inflate(100D), EntitySelector.NO_SPECTATORS);
             if (!list.isEmpty()) {
-                list.get(0).getMoveControl().moveTo(user.getX(), user.getY(), user.getZ(), 1.0D);
+                list.get(0).getMoveControl().setWantedPosition(user.getX(), user.getY(), user.getZ(), 1.0D);
             }
         }
 
-        user.getItemCooldownManager().set(itemStack.getItem(), 40);
-        return TypedActionResult.success(itemStack, world.isClient());
+        user.getCooldowns().addCooldown(itemStack.getItem(), 40);
+        return InteractionResultHolder.sidedSuccess(itemStack, world.isClientSide());
     }
 
     @Override
-    public void inventoryTick(ItemStack stack, World world, Entity entity, int slot, boolean selected) {
-        if (world.isClient() && entity instanceof PlayerEntity) {
-            PlayerEntity playerEntity = (PlayerEntity) entity;
-            float cooldownProgress = playerEntity.getItemCooldownManager().getCooldownProgress(stack.getItem(), 0.0F);
+    public void inventoryTick(ItemStack stack, Level world, Entity entity, int slot, boolean selected) {
+        if (world.isClientSide() && entity instanceof Player) {
+            Player playerEntity = (Player) entity;
+            float cooldownProgress = playerEntity.getCooldowns().getCooldownPercent(stack.getItem(), 0.0F);
             if (cooldownProgress > 0.0F) {
-                world.addParticle(ParticleTypes.NOTE, (double) playerEntity.getX() + playerEntity.getRotationVecClient().getX() + world.random.nextDouble() * 0.4D,
-                        (double) playerEntity.getY() + playerEntity.getHeight() * 0.8D, (double) playerEntity.getZ() + playerEntity.getRotationVecClient().getZ() + world.random.nextDouble() * 0.4D,
-                        playerEntity.getRotationVecClient().getX() * world.random.nextDouble(), 0.0D, 0.0D);
+                world.addParticle(ParticleTypes.NOTE, (double) playerEntity.getX() + playerEntity.getForward().x() + world.random.nextDouble() * 0.4D,
+                        (double) playerEntity.getY() + playerEntity.getBbHeight() * 0.8D, (double) playerEntity.getZ() + playerEntity.getForward().z() + world.random.nextDouble() * 0.4D,
+                        playerEntity.getForward().x() * world.random.nextDouble(), 0.0D, 0.0D);
             }
         }
     }

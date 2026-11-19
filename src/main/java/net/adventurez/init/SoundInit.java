@@ -1,9 +1,9 @@
 package net.adventurez.init;
 
 import net.adventurez.AdventureMain;
-import net.minecraft.registry.Registries;
-import net.minecraft.registry.Registry;
-import net.minecraft.sound.SoundEvent;
+import net.minecraft.core.Registry;
+import net.minecraft.core.registries.BuiltInRegistries;
+import net.minecraft.sounds.SoundEvent;
 
 public class SoundInit {
     // Blackstone Golem
@@ -141,7 +141,7 @@ public class SoundInit {
     public static SoundEvent CLOSE_SHADOW_CHEST_EVENT = register("close_shadow_chest");
 
     private static SoundEvent register(String id) {
-        return Registry.register(Registries.SOUND_EVENT, AdventureMain.identifierOf(id), SoundEvent.of(AdventureMain.identifierOf(id)));
+        return Registry.register(BuiltInRegistries.SOUND_EVENT, AdventureMain.identifierOf(id), SoundEvent.createVariableRangeEvent(AdventureMain.identifierOf(id)));
     }
 
     public static void init() {

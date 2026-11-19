@@ -3,69 +3,76 @@ package net.adventurez.entity;
 import net.adventurez.init.EntityInit;
 import net.adventurez.init.ParticleInit;
 import net.adventurez.init.SoundInit;
-import net.minecraft.block.BlockState;
-import net.minecraft.entity.EntityType;
-import net.minecraft.entity.ai.NoPenaltyTargeting;
-import net.minecraft.entity.ai.goal.*;
-import net.minecraft.entity.attribute.DefaultAttributeContainer;
-import net.minecraft.entity.attribute.EntityAttributes;
-import net.minecraft.entity.damage.DamageSource;
-import net.minecraft.entity.mob.MobEntity;
-import net.minecraft.entity.passive.AnimalEntity;
-import net.minecraft.entity.passive.PassiveEntity;
-import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.item.ItemStack;
-import net.minecraft.item.Items;
-import net.minecraft.recipe.Ingredient;
-import net.minecraft.server.world.ServerWorld;
-import net.minecraft.sound.SoundCategory;
-import net.minecraft.sound.SoundEvent;
-import net.minecraft.sound.SoundEvents;
-import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.math.Vec3d;
-import net.minecraft.world.World;
-
+import net.minecraft.core.BlockPos;
+import net.minecraft.server.level.ServerLevel;
+import net.minecraft.sounds.SoundEvent;
+import net.minecraft.sounds.SoundEvents;
+import net.minecraft.sounds.SoundSource;
+import net.minecraft.world.damagesource.DamageSource;
+import net.minecraft.world.entity.AgeableMob;
+import net.minecraft.world.entity.EntityType;
+import net.minecraft.world.entity.Mob;
+import net.minecraft.world.entity.ai.attributes.AttributeSupplier;
+import net.minecraft.world.entity.ai.attributes.Attributes;
+import net.minecraft.world.entity.ai.goal.BreedGoal;
+import net.minecraft.world.entity.ai.goal.FloatGoal;
+import net.minecraft.world.entity.ai.goal.FollowParentGoal;
+import net.minecraft.world.entity.ai.goal.Goal;
+import net.minecraft.world.entity.ai.goal.LookAtPlayerGoal;
+import net.minecraft.world.entity.ai.goal.PanicGoal;
+import net.minecraft.world.entity.ai.goal.RandomLookAroundGoal;
+import net.minecraft.world.entity.ai.goal.TemptGoal;
+import net.minecraft.world.entity.ai.goal.WaterAvoidingRandomStrollGoal;
+import net.minecraft.world.entity.ai.util.DefaultRandomPos;
+import net.minecraft.world.entity.animal.Animal;
+import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.Items;
+import net.minecraft.world.item.crafting.Ingredient;
+import net.minecraft.world.level.Level;
+import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.phys.Vec3;
 import java.util.EnumSet;
 
-public class SkunkEntity extends AnimalEntity {
+public class SkunkEntity extends Animal {
 
     private int fartTick = 1200;
 
-    public SkunkEntity(EntityType<? extends SkunkEntity> entityType, World world) {
+    public SkunkEntity(EntityType<? extends SkunkEntity> entityType, Level world) {
         super(entityType, world);
     }
 
-    public static DefaultAttributeContainer.Builder createSkunkAttributes() {
-        return MobEntity.createMobAttributes().add(EntityAttributes.GENERIC_MAX_HEALTH, 8.0D).add(EntityAttributes.GENERIC_MOVEMENT_SPEED, 0.21D);
+    public static AttributeSupplier.Builder createSkunkAttributes() {
+        return Mob.createMobAttributes().add(Attributes.MAX_HEALTH, 8.0D).add(Attributes.MOVEMENT_SPEED, 0.21D);
     }
 
     @Override
-    protected void initGoals() {
-        this.goalSelector.add(0, new SwimGoal(this));
-        this.goalSelector.add(1, new EscapeDangerGoal(this, 1.8D));
-        this.goalSelector.add(2, new AnimalMateGoal(this, 1.0D));
-        this.goalSelector.add(3, new TemptGoal(this, 1.20D, Ingredient.ofItems(Items.SHORT_GRASS, Items.FERN), true));
-        this.goalSelector.add(4, new FollowParentGoal(this, 1.25D));
-        this.goalSelector.add(5, new EscapePlayerGoal(this, 2.0D));
-        this.goalSelector.add(6, new WanderAroundFarGoal(this, 1.0D));
-        this.goalSelector.add(7, new LookAtEntityGoal(this, PlayerEntity.class, 6.0F));
-        this.goalSelector.add(8, new LookAroundGoal(this));
+    protected void registerGoals() {
+        this.goalSelector.addGoal(0, new FloatGoal(this));
+        this.goalSelector.addGoal(1, new PanicGoal(this, 1.8D));
+        this.goalSelector.addGoal(2, new BreedGoal(this, 1.0D));
+        this.goalSelector.addGoal(3, new TemptGoal(this, 1.20D, Ingredient.of(Items.SHORT_GRASS, Items.FERN), true));
+        this.goalSelector.addGoal(4, new FollowParentGoal(this, 1.25D));
+        this.goalSelector.addGoal(5, new EscapePlayerGoal(this, 2.0D));
+        this.goalSelector.addGoal(6, new WaterAvoidingRandomStrollGoal(this, 1.0D));
+        this.goalSelector.addGoal(7, new LookAtPlayerGoal(this, Player.class, 6.0F));
+        this.goalSelector.addGoal(8, new RandomLookAroundGoal(this));
     }
 
     @Override
     public void tick() {
         super.tick();
-        if (this.getWorld().isClient()) {
+        if (this.level().isClientSide()) {
             this.fartTick--;
 
-            Vec3d velocity = this.getVelocity();
-            Vec3d rotationVec = this.getRotationVector();
+            Vec3 velocity = this.getDeltaMovement();
+            Vec3 rotationVec = this.getLookAngle();
 
             if (this.fartTick <= 0) {
                 for (int i = 0; i < 10; i++) {
-                    this.getWorld().addParticle(ParticleInit.FART_PARTICLE, this.getX() - rotationVec.x * 0.5, this.getEyeY() - 0.1F, this.getZ() - rotationVec.z * 0.5, -velocity.x, 0.0, -velocity.z);
+                    this.level().addParticle(ParticleInit.FART_PARTICLE, this.getX() - rotationVec.x * 0.5, this.getEyeY() - 0.1F, this.getZ() - rotationVec.z * 0.5, -velocity.x, 0.0, -velocity.z);
                 }
-                this.getWorld().playSoundFromEntity(this, SoundInit.SKUNK_FART_EVENT, SoundCategory.NEUTRAL, 0.7f, this.getRandom().nextFloat() * 0.4f + 0.8f);
+                this.level().playLocalSound(this, SoundInit.SKUNK_FART_EVENT, SoundSource.NEUTRAL, 0.7f, this.getRandom().nextFloat() * 0.4f + 0.8f);
                 this.fartTick = 800 + this.getRandom().nextInt(400);
             }
         }
@@ -88,17 +95,17 @@ public class SkunkEntity extends AnimalEntity {
 
     @Override
     protected void playStepSound(BlockPos pos, BlockState state) {
-        this.playSound(SoundEvents.ENTITY_WOLF_STEP, 0.15F, 1.0F);
+        this.playSound(SoundEvents.WOLF_STEP, 0.15F, 1.0F);
     }
 
     @Override
-    public SkunkEntity createChild(ServerWorld serverWorld, PassiveEntity passiveEntity) {
+    public SkunkEntity getBreedOffspring(ServerLevel serverWorld, AgeableMob passiveEntity) {
         return EntityInit.SKUNK.create(serverWorld);
     }
 
     @Override
-    public boolean isBreedingItem(ItemStack stack) {
-        return stack.isOf(Items.SHORT_GRASS) || stack.isOf(Items.FERN) || stack.isOf(Items.TALL_GRASS);
+    public boolean isFood(ItemStack stack) {
+        return stack.is(Items.SHORT_GRASS) || stack.is(Items.FERN) || stack.is(Items.TALL_GRASS);
     }
 
     private static class EscapePlayerGoal extends Goal {
@@ -111,12 +118,12 @@ public class SkunkEntity extends AnimalEntity {
         public EscapePlayerGoal(SkunkEntity skunkEntity, double speed) {
             this.skunkEntity = skunkEntity;
             this.speed = speed;
-            this.setControls(EnumSet.of(Goal.Control.MOVE));
+            this.setFlags(EnumSet.of(Goal.Flag.MOVE));
         }
 
         @Override
-        public boolean canStart() {
-            if (this.skunkEntity.getWorld().getClosestPlayer(this.skunkEntity, 4.0D) == null) {
+        public boolean canUse() {
+            if (this.skunkEntity.level().getNearestPlayer(this.skunkEntity, 4.0D) == null) {
                 return false;
             } else {
                 return this.findTarget();
@@ -124,7 +131,7 @@ public class SkunkEntity extends AnimalEntity {
         }
 
         private boolean findTarget() {
-            Vec3d vec3d = NoPenaltyTargeting.find(this.skunkEntity, 12, 4);
+            Vec3 vec3d = DefaultRandomPos.getPos(this.skunkEntity, 12, 4);
             if (vec3d == null) {
                 return false;
             } else {
@@ -137,12 +144,12 @@ public class SkunkEntity extends AnimalEntity {
 
         @Override
         public void start() {
-            this.skunkEntity.getNavigation().startMovingTo(this.targetX, this.targetY, this.targetZ, this.speed);
+            this.skunkEntity.getNavigation().moveTo(this.targetX, this.targetY, this.targetZ, this.speed);
         }
 
         @Override
-        public boolean shouldContinue() {
-            return !this.skunkEntity.getNavigation().isIdle();
+        public boolean canContinueToUse() {
+            return !this.skunkEntity.getNavigation().isDone();
         }
 
     }

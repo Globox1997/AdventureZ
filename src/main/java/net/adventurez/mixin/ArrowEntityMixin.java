@@ -11,44 +11,44 @@ import org.spongepowered.asm.mixin.injection.callback.LocalCapture;
 import org.spongepowered.asm.mixin.injection.At;
 
 import net.adventurez.init.ItemInit;
-import net.minecraft.entity.EntityType;
-import net.minecraft.entity.LivingEntity;
-import net.minecraft.entity.data.TrackedData;
-import net.minecraft.entity.projectile.ArrowEntity;
-import net.minecraft.entity.projectile.PersistentProjectileEntity;
-import net.minecraft.item.ItemStack;
-import net.minecraft.world.World;
+import net.minecraft.network.syncher.EntityDataAccessor;
+import net.minecraft.world.entity.EntityType;
+import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.entity.projectile.AbstractArrow;
+import net.minecraft.world.entity.projectile.Arrow;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.level.Level;
 
-@Mixin(ArrowEntity.class)
-public abstract class ArrowEntityMixin extends PersistentProjectileEntity {
+@Mixin(Arrow.class)
+public abstract class ArrowEntityMixin extends AbstractArrow {
 
     @Shadow
     @Mutable
     @Final
-    private static TrackedData<Integer> COLOR;
+    private static EntityDataAccessor<Integer> ID_EFFECT_COLOR;
 
-    public ArrowEntityMixin(EntityType<? extends PersistentProjectileEntity> entityType, World world) {
+    public ArrowEntityMixin(EntityType<? extends AbstractArrow> entityType, Level world) {
         super(entityType, world);
     }
 
-    @Inject(method = "Lnet/minecraft/entity/projectile/ArrowEntity;<init>(Lnet/minecraft/world/World;Lnet/minecraft/entity/LivingEntity;Lnet/minecraft/item/ItemStack;Lnet/minecraft/item/ItemStack;)V", at = @At("TAIL"))
-    private void initMixin(World world, LivingEntity owner, ItemStack stack, @Nullable ItemStack shotFrom, CallbackInfo info) {
-        if (stack.isOf(ItemInit.IVORY_ARROW)) {
-            this.setDamage(this.getDamage() + 4.0D);
+    @Inject(method = "<init>(Lnet/minecraft/world/level/Level;Lnet/minecraft/world/entity/LivingEntity;Lnet/minecraft/world/item/ItemStack;Lnet/minecraft/world/item/ItemStack;)V", at = @At("TAIL"))
+    private void initMixin(Level world, LivingEntity owner, ItemStack stack, @Nullable ItemStack shotFrom, CallbackInfo info) {
+        if (stack.is(ItemInit.IVORY_ARROW)) {
+            this.setBaseDamage(this.getBaseDamage() + 4.0D);
         }
     }
 
-    @Inject(method = "spawnParticles", at = @At(value = "INVOKE_ASSIGN", target = "Lnet/minecraft/entity/projectile/ArrowEntity;getColor()I"), locals = LocalCapture.CAPTURE_FAILSOFT, cancellable = true)
+    @Inject(method = "makeParticle", at = @At(value = "INVOKE_ASSIGN", target = "Lnet/minecraft/world/entity/projectile/Arrow;getColor()I"), locals = LocalCapture.CAPTURE_FAILSOFT, cancellable = true)
     private void spawnParticlesMixin(int amount, CallbackInfo info, int i) {
         if (i == 14340520) {
             info.cancel();
         }
     }
 
-    @Inject(method = "initColor", at = @At("TAIL"), cancellable = true)
+    @Inject(method = "updateColor", at = @At("TAIL"), cancellable = true)
     private void initColorMixin(CallbackInfo info) {
-        if (this.getItemStack().isOf(ItemInit.IVORY_ARROW)) {
-            this.dataTracker.set(COLOR, 14340520);
+        if (this.getPickupItemStackOrigin().is(ItemInit.IVORY_ARROW)) {
+            this.entityData.set(ID_EFFECT_COLOR, 14340520);
         }
     }
 
