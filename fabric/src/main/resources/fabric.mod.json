@@ -1,0 +1,43 @@
+{
+  "schemaVersion": 1,
+  "id": "adventurez",
+  "version": "${version}",
+  "name": "AdventureZ",
+  "description": "Adds deadly Creatures to Minecraft",
+  "authors": [
+    "Globox_Z"
+  ],
+  "contact": {
+    "homepage": "https://www.curseforge.com/minecraft/mc-mods/adventurez",
+    "sources": "https://github.com/Globox1997/AdventureZ",
+    "issues": "https://github.com/Globox1997/AdventureZ/issues"
+  },
+  "license": [
+    "GPLv3",
+    "ARR (Assets)"
+  ],
+  "icon": "assets/adventurez/icon.png",
+  "environment": "*",
+  "entrypoints": {
+    "main": [
+      "net.adventurez.fabric.AdventureFabric"
+    ],
+    "client": [
+      "net.adventurez.fabric.client.AdventureFabricClient"
+    ],
+    "modmenu": [
+      "net.adventurez.fabric.client.ModMenuIntegration"
+    ]
+  },
+  "mixins": [
+    "adventurez.mixins.json",
+    "adventurez.fabric.mixins.json"
+  ],
+  "depends": {
+    "java": ">=25",
+    "minecraft": ">=${minecraft_version}",
+    "fabric-api": ">=${fabric_version}",
+    "fabricloader": ">=${loader_version}",
+    "cloth-config2": ">=${cloth_config_version}"
+  }
+}

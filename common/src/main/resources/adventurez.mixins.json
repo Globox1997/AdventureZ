@@ -1,0 +1,52 @@
+{
+  "required": true,
+  "minVersion": "0.8",
+  "package": "net.adventurez.mixin",
+  "compatibilityLevel": "JAVA_25",
+  "plugin": "net.adventurez.mixin.compat.AdventurezMixinPlugin",
+  "mixins": [
+    "AmethystClusterBlockMixin",
+    "AnvilScreenHandlerMixin",
+    "ArrowEntityMixin",
+    "DesertWellFeatureMixin",
+    "DragonEggBlockMixin",
+    "ElytraItemMixin",
+    "EnderDragonFightMixin",
+    "EnderPearlEntityMixin",
+    "EndPortalBlockMixin",
+    "ExperienceDroppingBlockMixin",
+    "ExplosionMixin",
+    "GeodeFeatureMixin",
+    "GiveGiftsToHeroTaskMixin",
+    "IronGolemEntityMixin",
+    "MobSpawnerLogicMixin",
+    "NetherPortalBlockMixin",
+    "PiglinBrainMixin",
+    "PiglinEntityMixin",
+    "PlayerEntityMixin",
+    "ServerPlayNetworkHandlerMixin",
+    "ServerWorldMixin",
+    "SmallFireballEntityMixin",
+    "StemBlockMixin",
+    "VillagerEntityMixin",
+    "accessor.ChestLidAnimatorAccessor",
+    "accessor.CreeperAccessor",
+    "accessor.EntityAccessor",
+    "accessor.FallingBlockAccessor",
+    "accessor.LivingEntityAccessor",
+    "accessor.ProjectileEntityAccessor",
+    "compat.AnvilScreenHandlerCompatMixin",
+    "compat.EnchantedBookItemMixin"
+  ],
+  "client": [
+    "client.ArmorFeatureRendererMixin",
+    "client.ClientPlayerInteractionManagerMixin",
+    "client.InGameOverlayRendererMixin",
+    "client.IronGolemCrackFeatureRendererMixin",
+    "client.IronGolemEntityRendererMixin",
+    "client.IronGolemRenderStateMixin"
+  ],
+  "injectors": {
+    "defaultRequire": 1
+  }
+}

@@ -1,0 +1,69 @@
+plugins {
+    id 'net.neoforged.moddev'
+}
+
+neoForge {
+    version = neoforge_version
+    runs {
+        configureEach {
+            ideName = "NeoForge ${it.name.capitalize()} (${project.path})"
+            systemProperty('terminal.ansi', 'true')
+        }
+        client {
+            client()
+            gameDirectory = project.file('runs/client')
+        }
+        server {
+            server()
+            gameDirectory = project.file('runs/server')
+            programArgument('--nogui')
+        }
+    }
+    mods {
+        adventurez {
+            sourceSet sourceSets.main
+        }
+    }
+}
+
+dependencies {
+    implementation("me.shedaniel.cloth:cloth-config-neoforge:${cloth_config_version}")
+    compileOnly("maven.modrinth:patchouli:${patchouli_neoforge_version}") {
+        transitive = false
+    }
+    compileOnly('maven.modrinth:iris:1.11.7+26.3-fabric') {
+        transitive = false
+    }
+}
+
+processResources {
+    def expandProps = [
+            'version'             : project.version,
+            'minecraft_version'   : minecraft_version,
+            'neoforge_version'    : neoforge_version,
+            'cloth_config_version': cloth_config_version
+    ]
+    inputs.properties(expandProps)
+
+    filesMatching('META-INF/neoforge.mods.toml') {
+        expand expandProps
+    }
+}
+
+def loaderAttribute = Attribute.of('io.github.mcgradleconventions.loader', String)
+['apiElements', 'runtimeElements', 'sourcesElements'].each { variant ->
+    configurations.named(variant) {
+        attributes {
+            attribute(loaderAttribute, 'neoforge')
+        }
+    }
+}
+sourceSets.configureEach {
+    [it.compileClasspathConfigurationName, it.runtimeClasspathConfigurationName, it.getTaskName(null, 'jarJar')].each { variant ->
+        configurations.named(variant) {
+            attributes {
+                attribute(loaderAttribute, 'neoforge')
+            }
+        }
+    }
+}
