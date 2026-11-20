@@ -6,12 +6,8 @@
     "e e"
   ],
   "key": {
-    "d": {
-      "item": "adventurez:blackstone_golem_heart"
-    },
-    "e": {
-      "item": "minecraft:blackstone"
-    }
+    "d": "adventurez:blackstone_golem_heart",
+    "e": "minecraft:blackstone"
   },
   "result": {
     "id": "adventurez:blackstone_golem_arm",

@@ -1,11 +1,11 @@
 package net.adventurez.entity.model;
 
-import com.google.common.collect.ImmutableList;
 
+import net.adventurez.entity.render.state.ShamanRenderState;
+import net.minecraft.client.model.EntityModel;
 import net.adventurez.entity.ShamanEntity;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
-import net.minecraft.client.model.ListModel;
 import net.minecraft.client.model.geom.ModelPart;
 import net.minecraft.client.model.geom.PartPose;
 import net.minecraft.client.model.geom.builders.CubeDeformation;
@@ -16,7 +16,7 @@ import net.minecraft.client.model.geom.builders.PartDefinition;
 import net.minecraft.util.Mth;
 
 @Environment(EnvType.CLIENT)
-public class ShamanModel<T extends ShamanEntity> extends ListModel<T> {
+public class ShamanModel extends EntityModel<ShamanRenderState> {
     private final ModelPart body1;
     private final ModelPart body2;
     private final ModelPart thighR;
@@ -49,6 +49,7 @@ public class ShamanModel<T extends ShamanEntity> extends ListModel<T> {
     private final ModelPart feathercrownR;
 
     public ShamanModel(ModelPart root) {
+        super(root);
         this.body1 = root.getChild("body1");
         this.neck = this.body1.getChild("neck");
         this.head = this.neck.getChild("head");
@@ -131,13 +132,14 @@ public class ShamanModel<T extends ShamanEntity> extends ListModel<T> {
         return LayerDefinition.create(modelData, 128, 128);
     }
 
-    @Override
-    public Iterable<ModelPart> parts() {
-        return ImmutableList.of(this.body1);
-    }
 
     @Override
-    public void setupAnim(T entity, float f, float g, float h, float i, float j) {
+    public void setupAnim(ShamanRenderState state) {
+        float f = state.walkAnimationPos;
+        float g = state.walkAnimationSpeed;
+        float h = state.ageInTicks;
+        float i = state.yRot;
+        float j = state.xRot;
         this.body1.xRot = 0.4887F;
         this.body2.xRot = -0.2094F;
         this.thighR.xRot = -0.7156F + Mth.cos(f * 0.6662F) * 1.4F * g * 0.5F;
@@ -190,7 +192,7 @@ public class ShamanModel<T extends ShamanEntity> extends ListModel<T> {
         this.feathercrownR.yRot = -0.5411F;
         this.feathercrownR.zRot = 0.6807F;
 
-        if (entity.isSpellcasting()) {
+        if (state.spellcasting) {
             this.armR1.xRot = -2.0246F + Mth.cos(h * 0.6662F) * 0.1F - 0.6F;
         }
     }

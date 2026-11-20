@@ -30,17 +30,17 @@ public class DragonEggBlockMixin implements EntityBlock {
     @Inject(method = "useWithoutItem", at = @At("HEAD"), cancellable = true)
     private void onUseMixin(BlockState state, Level world, BlockPos pos, Player player, BlockHitResult hit, CallbackInfoReturnable<InteractionResult> info) {
         if (ConfigInit.CONFIG.allow_other_dragon_hatching && player.getMainHandItem().is(Items.DRAGON_BREATH) && player.getItemBySlot(EquipmentSlot.HEAD).is(Items.DRAGON_HEAD)) {
-            if (!world.isClientSide) {
+            if (!world.isClientSide()) {
                 player.getMainHandItem().shrink(1);
                 if (state.hasBlockEntity()) {
                     ((DragonEggEntity) world.getBlockEntity(pos)).enableEggHatching();
                 }
             } else {
                 for (int i = 0; i < 20; i++)
-                    world.addParticle(ParticleTypes.HAPPY_VILLAGER, pos.getX() + world.random.nextDouble(), pos.getY() + world.random.nextDouble(), pos.getZ() + world.random.nextDouble(), 0.0D, 0.0D,
+                    world.addParticle(ParticleTypes.HAPPY_VILLAGER, pos.getX() + world.getRandom().nextDouble(), pos.getY() + world.getRandom().nextDouble(), pos.getZ() + world.getRandom().nextDouble(), 0.0D, 0.0D,
                             0.0D);
             }
-            info.setReturnValue(InteractionResult.sidedSuccess(true));
+            info.setReturnValue(InteractionResult.SUCCESS);
         }
     }
 
@@ -52,7 +52,7 @@ public class DragonEggBlockMixin implements EntityBlock {
     @Nullable
     @Override
     public <T extends BlockEntity> BlockEntityTicker<T> getTicker(Level world, BlockState state, BlockEntityType<T> type) {
-        return checkType(type, BlockInit.DRAGON_EGG_ENTITY, world.isClientSide ? DragonEggEntity::clientTick : DragonEggEntity::serverTick);
+        return checkType(type, BlockInit.DRAGON_EGG_ENTITY, world.isClientSide() ? DragonEggEntity::clientTick : DragonEggEntity::serverTick);
     }
 
     @SuppressWarnings("unchecked")

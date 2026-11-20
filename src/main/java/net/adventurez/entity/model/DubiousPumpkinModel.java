@@ -1,7 +1,8 @@
 package net.adventurez.entity.model;
 
-import com.google.common.collect.ImmutableList;
 
+import net.adventurez.entity.render.state.DubiousPumpkinRenderState;
+import net.minecraft.client.model.EntityModel;
 import net.adventurez.entity.DubiousPumpkinEntity;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
@@ -16,7 +17,7 @@ import net.minecraft.client.model.geom.builders.PartDefinition;
 import net.minecraft.util.Mth;
 
 @Environment(EnvType.CLIENT)
-public class DubiousPumpkinModel<T extends DubiousPumpkinEntity> extends ListModel<T> {
+public class DubiousPumpkinModel extends EntityModel<DubiousPumpkinRenderState> {
     private final ModelPart root;
     private final ModelPart waist;
     private final ModelPart body;
@@ -26,6 +27,7 @@ public class DubiousPumpkinModel<T extends DubiousPumpkinEntity> extends ListMod
     private final ModelPart rightLeg;
 
     public DubiousPumpkinModel(ModelPart rootPart) {
+        super(rootPart);
         this.root = rootPart.getChild("root");
         this.waist = root.getChild("waist");
         this.body = waist.getChild("body");
@@ -56,13 +58,14 @@ public class DubiousPumpkinModel<T extends DubiousPumpkinEntity> extends ListMod
         return LayerDefinition.create(modelData, 64, 64);
     }
 
-    @Override
-    public Iterable<ModelPart> parts() {
-        return ImmutableList.of(this.root);
-    }
 
     @Override
-    public void setupAnim(T fungus, float limbAngle, float limbDistance, float animationProgress, float headYaw, float headPitch) {
+    public void setupAnim(DubiousPumpkinRenderState state) {
+        float limbAngle = state.walkAnimationPos;
+        float limbDistance = state.walkAnimationSpeed;
+        float animationProgress = state.ageInTicks;
+        float headYaw = state.yRot;
+        float headPitch = state.xRot;
 //        this.tail.pitch = -1.0F;
 //        this.head.pitch = headPitch * 0.010453292F;
 //        this.head.yaw = headYaw * 0.010453292F;

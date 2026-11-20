@@ -1,0 +1,16 @@
+{
+  "model": {
+    "type": "minecraft:model",
+    "model": "adventurez:item/spawn_ender_whale",
+    "tints": [
+      {
+        "type": "minecraft:constant",
+        "value": -15065549
+      },
+      {
+        "type": "minecraft:constant",
+        "value": -10597266
+      }
+    ]
+  }
+}

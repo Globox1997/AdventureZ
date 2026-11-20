@@ -8,19 +8,24 @@ import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
 import net.minecraft.client.renderer.entity.EntityRendererProvider;
 import net.minecraft.client.renderer.entity.HumanoidMobRenderer;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.client.renderer.entity.state.HumanoidRenderState;
+import net.minecraft.resources.Identifier;
 
 @Environment(EnvType.CLIENT)
-public class WitherPuppetRenderer extends HumanoidMobRenderer<WitherPuppetEntity, WitherPuppetModel<WitherPuppetEntity>> {
-    private static final ResourceLocation TEXTURE = AdventureMain.identifierOf("textures/entity/wither_puppet.png");
+public class WitherPuppetRenderer extends HumanoidMobRenderer<WitherPuppetEntity, HumanoidRenderState, WitherPuppetModel> {
+    private static final Identifier TEXTURE = AdventureMain.identifierOf("textures/entity/wither_puppet.png");
 
     public WitherPuppetRenderer(EntityRendererProvider.Context context) {
-        super(context, new WitherPuppetModel<>(context.bakeLayer(RenderInit.WITHER_PUPPET_LAYER)), 0.5F);
+        super(context, new WitherPuppetModel(context.bakeLayer(RenderInit.WITHER_PUPPET_LAYER)), 0.5F);
     }
 
     @Override
-    public ResourceLocation getTextureLocation(WitherPuppetEntity witherPuppetEntity) {
+    public Identifier getTextureLocation(HumanoidRenderState witherPuppetEntity) {
         return TEXTURE;
     }
 
+    @Override
+    public HumanoidRenderState createRenderState() {
+        return new HumanoidRenderState();
+    }
 }

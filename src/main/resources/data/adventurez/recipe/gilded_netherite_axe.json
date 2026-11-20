@@ -1,15 +1,9 @@
 {
   "type": "minecraft:smithing_transform",
-  "base": {
-    "item": "minecraft:netherite_axe"
-  },
-  "addition": {
-    "item": "adventurez:gilded_netherite_fragment"
-  },
+  "base": "minecraft:netherite_axe",
+  "addition": "adventurez:gilded_netherite_fragment",
   "result": {
     "id": "adventurez:gilded_netherite_axe"
   },
-  "template": {
-    "item": "adventurez:gilded_upgrade_smithing_template"
-  }
+  "template": "adventurez:gilded_upgrade_smithing_template"
 }

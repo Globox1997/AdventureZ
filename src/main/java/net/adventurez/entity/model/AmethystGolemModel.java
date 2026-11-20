@@ -1,11 +1,11 @@
 package net.adventurez.entity.model;
 
-import com.google.common.collect.ImmutableList;
 
+import net.adventurez.entity.render.state.AmethystGolemRenderState;
+import net.minecraft.client.model.EntityModel;
 import net.adventurez.entity.AmethystGolemEntity;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
-import net.minecraft.client.model.ListModel;
 import net.minecraft.client.model.geom.ModelPart;
 import net.minecraft.client.model.geom.PartPose;
 import net.minecraft.client.model.geom.builders.CubeDeformation;
@@ -16,7 +16,7 @@ import net.minecraft.client.model.geom.builders.PartDefinition;
 import net.minecraft.util.Mth;
 
 @Environment(EnvType.CLIENT)
-public class AmethystGolemModel<T extends AmethystGolemEntity> extends ListModel<T> {
+public class AmethystGolemModel extends EntityModel<AmethystGolemRenderState> {
     private final ModelPart root;
     private final ModelPart amethyst_golem;
     private final ModelPart body;
@@ -36,6 +36,7 @@ public class AmethystGolemModel<T extends AmethystGolemEntity> extends ListModel
     private final ModelPart right_leg;
 
     public AmethystGolemModel(ModelPart root) {
+        super(root);
         this.root = root.getChild("root");
         this.amethyst_golem = this.root.getChild("amethyst_golem");
         this.legs = this.amethyst_golem.getChild("legs");
@@ -93,13 +94,14 @@ public class AmethystGolemModel<T extends AmethystGolemEntity> extends ListModel
 
     }
 
-    @Override
-    public Iterable<ModelPart> parts() {
-        return ImmutableList.of(this.root);
-    }
 
     @Override
-    public void setupAnim(T entity, float limbAngle, float limbDistance, float animationProgress, float headYaw, float headPitch) {
+    public void setupAnim(AmethystGolemRenderState state) {
+        float limbAngle = state.walkAnimationPos;
+        float limbDistance = state.walkAnimationSpeed;
+        float animationProgress = state.ageInTicks;
+        float headYaw = state.yRot;
+        float headPitch = state.xRot;
         this.amethyst2.xRot = -0.1745F;
         this.amethyst2.yRot = 0.1745F;
         this.amethyst2_r1.yRot = 0.3927F;
@@ -114,31 +116,31 @@ public class AmethystGolemModel<T extends AmethystGolemEntity> extends ListModel
         this.left_leg.xRot = Mth.cos(limbAngle * 0.6662F) * 1.4F * limbDistance;
         this.right_arm.xRot = -Mth.cos(limbAngle * 0.6662F + 3.1415927F) * 2.0F * limbDistance * 0.3F;
         this.left_arm.xRot = Mth.cos(limbAngle * 0.6662F + 3.1415927F) * 2.0F * limbDistance * 0.3F;
-        float k = Mth.sin(entity.attackAnim * 3.1415927F);
+        float k = Mth.sin(state.attackAnim * 3.1415927F);
         if (k > 0) {
             this.right_arm.xRot = -k;
         }
-        if (entity.getEntityData().get(AmethystGolemEntity.BACK_CRYSTALS) == 4) {
+        if (state.backCrystals == 4) {
             amethyst.visible = true;
             amethyst2.visible = true;
             amethyst3.visible = true;
             amethyst4.visible = true;
-        } else if (entity.getEntityData().get(AmethystGolemEntity.BACK_CRYSTALS) == 3) {
+        } else if (state.backCrystals == 3) {
             amethyst.visible = true;
             amethyst2.visible = true;
             amethyst3.visible = false;
             amethyst4.visible = true;
-        } else if (entity.getEntityData().get(AmethystGolemEntity.BACK_CRYSTALS) == 2) {
+        } else if (state.backCrystals == 2) {
             amethyst.visible = true;
             amethyst2.visible = true;
             amethyst3.visible = false;
             amethyst4.visible = false;
-        } else if (entity.getEntityData().get(AmethystGolemEntity.BACK_CRYSTALS) == 1) {
+        } else if (state.backCrystals == 1) {
             amethyst.visible = false;
             amethyst2.visible = true;
             amethyst3.visible = false;
             amethyst4.visible = false;
-        } else if (entity.getEntityData().get(AmethystGolemEntity.BACK_CRYSTALS) == 0) {
+        } else if (state.backCrystals == 0) {
             amethyst.visible = false;
             amethyst2.visible = false;
             amethyst3.visible = false;

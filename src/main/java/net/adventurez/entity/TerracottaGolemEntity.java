@@ -19,7 +19,7 @@ import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntityDimensions;
 import net.minecraft.world.entity.EntityType;
-import net.minecraft.world.entity.MobSpawnType;
+import net.minecraft.world.entity.EntitySpawnReason;
 import net.minecraft.world.entity.Pose;
 import net.minecraft.world.entity.SpawnGroupData;
 import net.minecraft.world.entity.ai.attributes.AttributeSupplier;
@@ -35,6 +35,8 @@ import net.minecraft.world.level.Level;
 import net.minecraft.world.level.ServerLevelAccessor;
 import net.minecraft.world.level.block.state.BlockState;
 import org.jetbrains.annotations.Nullable;
+import net.minecraft.world.level.storage.ValueInput;
+import net.minecraft.world.level.storage.ValueOutput;
 
 public class TerracottaGolemEntity extends Monster {
 
@@ -61,8 +63,8 @@ public class TerracottaGolemEntity extends Monster {
         this.targetSelector.addGoal(1, new NearestAttackableTargetGoal<>(this, Player.class, true));
     }
 
-    public static boolean canSpawn(EntityType<TerracottaGolemEntity> type, ServerLevelAccessor world, MobSpawnType spawnReason, BlockPos pos, RandomSource random) {
-        return (checkMonsterSpawnRules(type, world, spawnReason, pos, random) && world.getBlockState(pos.below()).is(BlockTags.TERRACOTTA)) || spawnReason == MobSpawnType.SPAWNER;
+    public static boolean canSpawn(EntityType<TerracottaGolemEntity> type, ServerLevelAccessor world, EntitySpawnReason spawnReason, BlockPos pos, RandomSource random) {
+        return (checkMonsterSpawnRules(type, world, spawnReason, pos, random) && world.getBlockState(pos.below()).is(BlockTags.TERRACOTTA)) || spawnReason == EntitySpawnReason.SPAWNER;
     }
 
     @Override
@@ -72,14 +74,14 @@ public class TerracottaGolemEntity extends Monster {
     }
 
     @Override
-    public void readAdditionalSaveData(CompoundTag tag) {
+    public void readAdditionalSaveData(ValueInput tag) {
         super.readAdditionalSaveData(tag);
-        this.entityData.set(BLOCK_VARIANT, tag.getBoolean("BlockVariant"));
-        this.blockTimer = tag.getInt("BlockTimer");
+        this.entityData.set(BLOCK_VARIANT, tag.getBooleanOr("BlockVariant", false));
+        this.blockTimer = tag.getIntOr("BlockTimer", 0);
     }
 
     @Override
-    public void addAdditionalSaveData(CompoundTag tag) {
+    public void addAdditionalSaveData(ValueOutput tag) {
         super.addAdditionalSaveData(tag);
         tag.putBoolean("BlockVariant", this.entityData.get(BLOCK_VARIANT));
         tag.putInt("BlockTimer", this.blockTimer);
@@ -142,8 +144,8 @@ public class TerracottaGolemEntity extends Monster {
     }
 
     @Override
-    public SpawnGroupData finalizeSpawn(ServerLevelAccessor world, DifficultyInstance difficulty, MobSpawnType spawnReason, @Nullable SpawnGroupData entityData) {
-        if (spawnReason.equals(MobSpawnType.CHUNK_GENERATION) || spawnReason.equals(MobSpawnType.STRUCTURE)) {
+    public SpawnGroupData finalizeSpawn(ServerLevelAccessor world, DifficultyInstance difficulty, EntitySpawnReason spawnReason, @Nullable SpawnGroupData entityData) {
+        if (spawnReason.equals(EntitySpawnReason.CHUNK_GENERATION) || spawnReason.equals(EntitySpawnReason.STRUCTURE)) {
             this.entityData.set(BLOCK_VARIANT, true);
             this.reapplyPosition();
             this.refreshDimensions();
@@ -184,11 +186,11 @@ public class TerracottaGolemEntity extends Monster {
     }
 
     @Override
-    public boolean hurt(DamageSource source, float amount) {
+    public boolean hurtServer(ServerLevel level, DamageSource source, float amount) {
         if (!this.level().isClientSide()) {
             setBlockVariant(false);
         }
-        return super.hurt(source, amount);
+        return super.hurtServer(level, source, amount);
     }
 
     @Override

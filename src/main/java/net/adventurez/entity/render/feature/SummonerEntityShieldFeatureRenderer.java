@@ -1,31 +1,29 @@
 package net.adventurez.entity.render.feature;
 
 import com.mojang.blaze3d.vertex.PoseStack;
-import com.mojang.blaze3d.vertex.VertexConsumer;
-import net.adventurez.entity.SummonerEntity;
 import net.adventurez.entity.model.SummonerModel;
+import net.adventurez.entity.render.state.SummonerRenderState;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
-import net.minecraft.client.renderer.MultiBufferSource;
-import net.minecraft.client.renderer.RenderType;
+import net.minecraft.client.renderer.SubmitNodeCollector;
 import net.minecraft.client.renderer.entity.RenderLayerParent;
 import net.minecraft.client.renderer.entity.layers.RenderLayer;
+import net.minecraft.client.renderer.rendertype.RenderType;
+import net.minecraft.client.renderer.rendertype.RenderTypes;
 import net.minecraft.client.renderer.texture.OverlayTexture;
 
 @Environment(EnvType.CLIENT)
-public class SummonerEntityShieldFeatureRenderer extends RenderLayer<SummonerEntity, SummonerModel<SummonerEntity>> {
-    private static final RenderType SHIELD_LAYER = RenderType.entityGlint();
+public class SummonerEntityShieldFeatureRenderer extends RenderLayer<SummonerRenderState, SummonerModel> {
+    private static final RenderType SHIELD_LAYER = RenderTypes.trimmedArmorGlint();
 
-    public SummonerEntityShieldFeatureRenderer(RenderLayerParent<SummonerEntity, SummonerModel<SummonerEntity>> featureRendererContext) {
+    public SummonerEntityShieldFeatureRenderer(RenderLayerParent<SummonerRenderState, SummonerModel> featureRendererContext) {
         super(featureRendererContext);
     }
 
     @Override
-    public void render(PoseStack matrixStack, MultiBufferSource vertexConsumerProvider, int i, SummonerEntity summonerEntity, float f, float g, float h, float j, float k, float l) {
-        if (summonerEntity.getEntityData().get(SummonerEntity.INVULNERABLE_SHIELD)) {
-            VertexConsumer vertexConsumer = vertexConsumerProvider.getBuffer(SHIELD_LAYER);
-            this.getParentModel().renderToBuffer(matrixStack, vertexConsumer, 15728640, OverlayTexture.NO_OVERLAY);
+    public void submit(PoseStack matrixStack, SubmitNodeCollector submitNodeCollector, int i, SummonerRenderState state, float yRot, float xRot) {
+        if (state.invulnerableShield) {
+            submitNodeCollector.order(1).submitModel(this.getParentModel(), state, matrixStack, SHIELD_LAYER, 15728640, OverlayTexture.NO_OVERLAY, state.outlineColor);
         }
     }
-
 }

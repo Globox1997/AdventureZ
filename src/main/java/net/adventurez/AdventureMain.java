@@ -3,7 +3,7 @@ package net.adventurez;
 import net.adventurez.init.*;
 import net.adventurez.network.AdventureServerPacket;
 import net.fabricmc.api.ModInitializer;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 
 public class AdventureMain implements ModInitializer {
 
@@ -23,8 +23,8 @@ public class AdventureMain implements ModInitializer {
         EventInit.init();
     }
 
-    public static ResourceLocation identifierOf(String name) {
-        return ResourceLocation.fromNamespaceAndPath("adventurez", name);
+    public static Identifier identifierOf(String name) {
+        return Identifier.fromNamespaceAndPath("adventurez", name);
     }
 }
 

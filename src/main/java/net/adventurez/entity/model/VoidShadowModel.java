@@ -1,11 +1,10 @@
 package net.adventurez.entity.model;
 
-import com.google.common.collect.ImmutableList;
 
-import net.adventurez.entity.VoidShadowEntity;
+import net.adventurez.entity.render.state.VoidShadowRenderState;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
-import net.minecraft.client.model.ListModel;
+import net.minecraft.client.model.EntityModel;
 import net.minecraft.client.model.geom.ModelPart;
 import net.minecraft.client.model.geom.PartPose;
 import net.minecraft.client.model.geom.builders.CubeListBuilder;
@@ -15,7 +14,7 @@ import net.minecraft.client.model.geom.builders.PartDefinition;
 import net.minecraft.util.Mth;
 
 @Environment(EnvType.CLIENT)
-public class VoidShadowModel<T extends VoidShadowEntity> extends ListModel<T> {
+public class VoidShadowModel extends EntityModel<VoidShadowRenderState> {
 
     private final ModelPart rightArm;
     private final ModelPart leftArm;
@@ -35,9 +34,9 @@ public class VoidShadowModel<T extends VoidShadowEntity> extends ListModel<T> {
     private final ModelPart bone11;
     private final ModelPart bone12;
 
-    private float throwingBlocksTicker;
 
     public VoidShadowModel(ModelPart root) {
+        super(root);
         this.rightArm = root.getChild("rightArm");
         this.leftArm = root.getChild("leftArm");
         this.body = root.getChild("body");
@@ -99,13 +98,10 @@ public class VoidShadowModel<T extends VoidShadowEntity> extends ListModel<T> {
         return LayerDefinition.create(modelData, 128, 128);
     }
 
-    @Override
-    public Iterable<ModelPart> parts() {
-        return ImmutableList.of(this.rightArm, this.leftArm, this.body);
-    }
 
     @Override
-    public void setupAnim(T shadow, float limbAngle, float limbDistance, float animationProgress, float headYaw, float headPitch) {
+    public void setupAnim(VoidShadowRenderState state) {
+        float animationProgress = state.ageInTicks;
 
         this.body.y = 8.0F + Mth.sin(animationProgress / 12.5663706F) / 2.0F;
         this.rightArm.y = 1.0F + Mth.sin(animationProgress / 12.5663706F) / 1.5F;
@@ -125,18 +121,14 @@ public class VoidShadowModel<T extends VoidShadowEntity> extends ListModel<T> {
         this.rightArm.zRot = 0.0F;
         this.leftArm.zRot = 0.0F;
 
-        if (shadow.getEntityData().get(VoidShadowEntity.IS_THROWING_BLOCKS)) {
-            throwingBlocksTicker = Mth.clamp(throwingBlocksTicker + 0.05817666666666F, 0.0F, 1.7453F);
-        } else {
-            throwingBlocksTicker = Mth.clamp(throwingBlocksTicker - 0.05817666666666F, 0.0F, 1.7453F);
-        }
+        float throwingBlocksTicker = state.throwingBlocksTicker;
 
         this.rightArm.xRot = -throwingBlocksTicker;
         this.leftArm.xRot = this.rightArm.xRot;
         this.rightArm.yRot = -throwingBlocksTicker * 0.20002291869F;
         this.leftArm.yRot = throwingBlocksTicker * 0.20002291869F;
 
-        if (shadow.getEntityData().get(VoidShadowEntity.HOVERING_MAGIC_HANDS)) {
+        if (state.hoveringMagicHands) {
             this.rightArm.zRot = -2.4871F - Mth.cos(animationProgress * 0.3662F) * 0.1F;
             this.leftArm.zRot = 2.4871F + Mth.cos(animationProgress * 0.3662F) * 0.1F;
             this.rightArm.xRot = -Mth.cos(animationProgress * 0.1662F) * 0.25F;
@@ -145,7 +137,7 @@ public class VoidShadowModel<T extends VoidShadowEntity> extends ListModel<T> {
             // 0.25F;
             // this.leftAttackingArm.pitch = MathHelper.cos(animationProgress * 0.6662F) *
             // 0.25F;
-        } else if (shadow.getEntityData().get(VoidShadowEntity.CIRCLING_HANDS)) {
+        } else if (state.circlingHands) {
             this.rightArm.zRot = -1.5708F;
             this.leftArm.zRot = 1.5708F;
         }

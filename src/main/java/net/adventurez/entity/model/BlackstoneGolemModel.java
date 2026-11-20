@@ -1,11 +1,11 @@
 package net.adventurez.entity.model;
 
-import com.google.common.collect.ImmutableList;
 
+import net.adventurez.entity.render.state.BlackstoneGolemRenderState;
+import net.minecraft.client.model.EntityModel;
 import net.adventurez.entity.BlackstoneGolemEntity;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
-import net.minecraft.client.model.ListModel;
 import net.minecraft.client.model.geom.ModelPart;
 import net.minecraft.client.model.geom.PartPose;
 import net.minecraft.client.model.geom.builders.CubeListBuilder;
@@ -15,7 +15,7 @@ import net.minecraft.client.model.geom.builders.PartDefinition;
 import net.minecraft.util.Mth;
 
 @Environment(EnvType.CLIENT)
-public class BlackstoneGolemModel<T extends BlackstoneGolemEntity> extends ListModel<T> {
+public class BlackstoneGolemModel extends EntityModel<BlackstoneGolemRenderState> {
     private final ModelPart head;
     private final ModelPart torso;
     private final ModelPart rightArm;
@@ -24,6 +24,7 @@ public class BlackstoneGolemModel<T extends BlackstoneGolemEntity> extends ListM
     private final ModelPart leftLeg;
 
     public BlackstoneGolemModel(ModelPart root) {
+        super(root);
         this.head = root.getChild("head");
         this.torso = root.getChild("torso");
         this.rightArm = root.getChild("rightArm");
@@ -52,14 +53,15 @@ public class BlackstoneGolemModel<T extends BlackstoneGolemEntity> extends ListM
         // this.leftLeg.mirror = true;
     }
 
-    @Override
-    public Iterable<ModelPart> parts() {
-        return ImmutableList.of(this.head, this.torso, this.rightLeg, this.leftLeg, this.rightArm, this.leftArm);
-    }
 
     @Override
-    public void setupAnim(T stoneGolem, float f, float g, float h, float i, float j) {
-        int roarTick = stoneGolem.getRoarTick();
+    public void setupAnim(BlackstoneGolemRenderState state) {
+        float f = state.walkAnimationPos;
+        float g = state.walkAnimationSpeed;
+        float h = state.ageInTicks;
+        float i = state.yRot;
+        float j = state.xRot;
+        int roarTick = state.roarTick;
         this.head.yRot = i * 0.0077453292F;
         this.head.xRot = j * 0.0017453292F + 0.2618F;
         this.rightLeg.yRot = 0.0F;
@@ -69,7 +71,7 @@ public class BlackstoneGolemModel<T extends BlackstoneGolemEntity> extends ListM
         this.torso.xRot = 0.7854F;
         this.rightArm.xRot = 0.5F * Mth.triangleWave(f, 13.0F) * g - 0.5236F;
         this.leftArm.xRot = -0.5F * Mth.triangleWave(f, 13.0F) * g - 0.5236F;
-        int thrownRockTick = stoneGolem.getEntityData().get(BlackstoneGolemEntity.THROW_COOLDOWN);
+        int thrownRockTick = state.throwCooldown;
         if (thrownRockTick >= 100) {
             this.leftArm.xRot = Mth.cos(-thrownRockTick * 0.2F + 0.3F) - 0.3F;
         }
@@ -77,7 +79,7 @@ public class BlackstoneGolemModel<T extends BlackstoneGolemEntity> extends ListM
             this.rightArm.xRot = Mth.sin(roarTick / 5.832F) - 0.5236F;
             this.leftArm.xRot = Mth.sin(roarTick / 5.832F) - 0.5236F;
         }
-        float k = Mth.sin(this.attackTime * 3.1415927F) * 0.5F;
+        float k = Mth.sin(state.attackTime * 3.1415927F) * 0.5F;
         if (k > 0.1F) {
             this.rightArm.xRot = -k - 0.5236F;
         }

@@ -1,11 +1,11 @@
 package net.adventurez.entity.model;
 
-import com.google.common.collect.ImmutableList;
 
+import net.adventurez.entity.render.state.AdventureRenderState;
+import net.minecraft.client.model.EntityModel;
 import net.adventurez.entity.MiniBlackstoneGolemEntity;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
-import net.minecraft.client.model.ListModel;
 import net.minecraft.client.model.geom.ModelPart;
 import net.minecraft.client.model.geom.PartPose;
 import net.minecraft.client.model.geom.builders.CubeListBuilder;
@@ -15,7 +15,7 @@ import net.minecraft.client.model.geom.builders.PartDefinition;
 import net.minecraft.util.Mth;
 
 @Environment(EnvType.CLIENT)
-public class MiniBlackstoneGolemModel<T extends MiniBlackstoneGolemEntity> extends ListModel<T> {
+public class MiniBlackstoneGolemModel extends EntityModel<AdventureRenderState> {
     private final ModelPart head;
     private final ModelPart torso;
     private final ModelPart rightArm;
@@ -24,6 +24,7 @@ public class MiniBlackstoneGolemModel<T extends MiniBlackstoneGolemEntity> exten
     private final ModelPart leftLeg;
 
     public MiniBlackstoneGolemModel(ModelPart root) {
+        super(root);
         this.head = root.getChild("head");
         this.torso = root.getChild("torso");
         this.rightArm = root.getChild("rightArm");
@@ -45,13 +46,14 @@ public class MiniBlackstoneGolemModel<T extends MiniBlackstoneGolemEntity> exten
         return LayerDefinition.create(modelData, 128, 128);
     }
 
-    @Override
-    public Iterable<ModelPart> parts() {
-        return ImmutableList.of(this.head, this.torso, this.rightLeg, this.leftLeg, this.rightArm, this.leftArm);
-    }
 
     @Override
-    public void setupAnim(T stoneGolem, float f, float g, float h, float i, float j) {
+    public void setupAnim(AdventureRenderState state) {
+        float f = state.walkAnimationPos;
+        float g = state.walkAnimationSpeed;
+        float h = state.ageInTicks;
+        float i = state.yRot;
+        float j = state.xRot;
         this.head.yRot = i * 0.0077453292F;
         this.head.xRot = j * 0.0017453292F + 0.1745F;
         this.rightLeg.yRot = 0.0F;
@@ -61,7 +63,7 @@ public class MiniBlackstoneGolemModel<T extends MiniBlackstoneGolemEntity> exten
         this.torso.xRot = 1.309F;
         this.rightArm.xRot = 0.5F * Mth.triangleWave(f, 13.0F) * g * 1.3F - 0.6109F;
         this.leftArm.xRot = -0.5F * Mth.triangleWave(f, 13.0F) * g * 1.3F - 0.6109F;
-        float k = Mth.sin(this.attackTime * 3.1415927F);
+        float k = Mth.sin(state.attackTime * 3.1415927F);
         if (k > 0) {
             this.rightArm.xRot = -k * 1.5F;
         }

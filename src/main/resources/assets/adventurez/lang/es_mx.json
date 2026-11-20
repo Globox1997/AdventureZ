@@ -120,7 +120,7 @@
 
   "item.adventurez.moreinfo.tooltip": "§8Mantén §6Shift §8para más información",
   
-  "category.adventurez.keybind": "Teclas de Acceso Rápido de AdventureZ",
+  "key.category.adventurez.keybind": "Teclas de Acceso Rápido de AdventureZ",
   "key.adventurez.dragonflydown": "Bajar del Dragón",
   "key.adventurez.dragonfirebreath": "Aliento de Fuego del Dragón",
 

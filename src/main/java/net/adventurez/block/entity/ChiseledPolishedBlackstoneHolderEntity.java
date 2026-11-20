@@ -20,7 +20,7 @@ import net.minecraft.sounds.SoundSource;
 import net.minecraft.world.Container;
 import net.minecraft.world.ContainerHelper;
 import net.minecraft.world.Containers;
-import net.minecraft.world.entity.MobSpawnType;
+import net.minecraft.world.entity.EntitySpawnReason;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
@@ -32,6 +32,8 @@ import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.properties.Half;
 import net.minecraft.world.level.block.state.properties.SlabType;
 import net.minecraft.world.level.block.state.properties.StairsShape;
+import net.minecraft.world.level.storage.ValueInput;
+import net.minecraft.world.level.storage.ValueOutput;
 
 public class ChiseledPolishedBlackstoneHolderEntity extends BlockEntity implements Container {
     private NonNullList<ItemStack> inventory;
@@ -45,19 +47,19 @@ public class ChiseledPolishedBlackstoneHolderEntity extends BlockEntity implemen
     }
 
     @Override
-    protected void loadAdditional(CompoundTag nbt, Provider registryLookup) {
-        super.loadAdditional(nbt, registryLookup);
+    protected void loadAdditional(ValueInput nbt) {
+        super.loadAdditional(nbt);
         inventory.clear();
-        ContainerHelper.loadAllItems(nbt, inventory, registryLookup);
-        buildGolemCounter = nbt.getInt("buildcounter");
-        tickCounter = nbt.getInt("tickcounter");
-        startBuildingGolem = nbt.getBoolean("startbuilding");
+        ContainerHelper.loadAllItems(nbt, inventory);
+        buildGolemCounter = nbt.getIntOr("buildcounter", 0);
+        tickCounter = nbt.getIntOr("tickcounter", 0);
+        startBuildingGolem = nbt.getBooleanOr("startbuilding", false);
     }
 
     @Override
-    protected void saveAdditional(CompoundTag nbt, Provider registryLookup) {
-        super.saveAdditional(nbt, registryLookup);
-        ContainerHelper.saveAllItems(nbt, inventory, registryLookup);
+    protected void saveAdditional(ValueOutput nbt) {
+        super.saveAdditional(nbt);
+        ContainerHelper.saveAllItems(nbt, inventory);
         nbt.putInt("buildcounter", buildGolemCounter);
         nbt.putInt("tickcounter", tickCounter);
         nbt.putBoolean("startbuilding", startBuildingGolem);
@@ -233,10 +235,10 @@ public class ChiseledPolishedBlackstoneHolderEntity extends BlockEntity implemen
                         }
                     }
                 }
-                BlackstoneGolemEntity stoneGolemEntity = EntityInit.BLACKSTONE_GOLEM.create(level);
+                BlackstoneGolemEntity stoneGolemEntity = EntityInit.BLACKSTONE_GOLEM.create(level, EntitySpawnReason.MOB_SUMMONED);
                 BlockPos spawnPos = new BlockPos(this.getBlockPos().getX(), this.getBlockPos().getY() + 1, this.getBlockPos().getZ() - 5);
-                stoneGolemEntity.moveTo(spawnPos, 0.0F, 0.0F);
-                stoneGolemEntity.finalizeSpawn(((ServerLevel) this.getLevel()), this.getLevel().getCurrentDifficultyAt(this.getBlockPos()), MobSpawnType.STRUCTURE, null);
+                stoneGolemEntity.snapTo(spawnPos, 0.0F, 0.0F);
+                stoneGolemEntity.finalizeSpawn(((ServerLevel) this.getLevel()), ((ServerLevel) this.getLevel()).getCurrentDifficultyAt(this.getBlockPos()), EntitySpawnReason.STRUCTURE, null);
                 stoneGolemEntity.sendtoEntity();
                 this.getLevel().addFreshEntity(stoneGolemEntity);
                 this.getLevel().playSound(null, this.getBlockPos(), SoundInit.BLACKSTONE_GOLEM_SPAWN_EVENT, SoundSource.HOSTILE, 1F, 1F);

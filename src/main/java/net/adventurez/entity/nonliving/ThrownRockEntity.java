@@ -16,13 +16,15 @@ import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
-import net.minecraft.world.entity.projectile.ThrowableItemProjectile;
+import net.minecraft.world.entity.projectile.throwableitemprojectile.ThrowableItemProjectile;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.EntityHitResult;
 import net.minecraft.world.phys.HitResult;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.server.level.ServerLevel;
 
 @SuppressWarnings("deprecation")
 public class ThrownRockEntity extends ThrowableItemProjectile {
@@ -32,11 +34,11 @@ public class ThrownRockEntity extends ThrowableItemProjectile {
     }
 
     public ThrownRockEntity(Level world, LivingEntity owner) {
-        super(EntityInit.THROWN_ROCK, owner, world);
+        super(EntityInit.THROWN_ROCK, owner, world, new ItemStack(Items.BLACKSTONE));
     }
 
     public ThrownRockEntity(Level world, double x, double y, double z) {
-        super(EntityInit.THROWN_ROCK, x, y, z, world);
+        super(EntityInit.THROWN_ROCK, x, y, z, world, new ItemStack(Items.BLACKSTONE));
     }
 
     @Override
@@ -97,7 +99,7 @@ public class ThrownRockEntity extends ThrowableItemProjectile {
             Entity owner = this.getOwner();
             DamageSource damageSource = createDamageSource(this, owner == null ? this : owner);
             if (owner instanceof LivingEntity livingEntity) {
-                if (entity.hurt(damageSource, 16F)) {
+                if (entity.hurtServer((ServerLevel) this.level(), damageSource, 16F)) {
                     if (entity instanceof LivingEntity livingEntity2) {
                         livingEntity.setLastHurtMob(livingEntity2);
                     }
@@ -107,11 +109,11 @@ public class ThrownRockEntity extends ThrowableItemProjectile {
                 int slownessAddition = 400;
 
                 if (this.getItem().getItem() == this.getDefaultItem()) {
-                    livingEntity.addEffect(new MobEffectInstance(MobEffects.DIG_SLOWDOWN, 2000, 2));
+                    livingEntity.addEffect(new MobEffectInstance(MobEffects.MINING_FATIGUE, 2000, 2));
                     slownessAddition = 200;
                 }
                 livingEntity.addEffect(new MobEffectInstance(MobEffects.BLINDNESS, 50, 0));
-                livingEntity.addEffect(new MobEffectInstance(MobEffects.MOVEMENT_SLOWDOWN, slownessAddition, slownessAddition / 200 - 1));
+                livingEntity.addEffect(new MobEffectInstance(MobEffects.SLOWNESS, slownessAddition, slownessAddition / 200 - 1));
                 livingEntity.addEffect(new MobEffectInstance(MobEffects.HUNGER, 600, 1));
             }
 

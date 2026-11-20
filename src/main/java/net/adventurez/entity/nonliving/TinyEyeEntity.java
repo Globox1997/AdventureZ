@@ -18,11 +18,11 @@ import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.LivingEntity;
-import net.minecraft.world.entity.MobSpawnType;
+import net.minecraft.world.entity.EntitySpawnReason;
 import net.minecraft.world.entity.SpawnPlacements;
 import net.minecraft.world.entity.player.Player;
-import net.minecraft.world.entity.projectile.AbstractHurtingProjectile;
-import net.minecraft.world.entity.projectile.Arrow;
+import net.minecraft.world.entity.projectile.hurtingprojectile.AbstractHurtingProjectile;
+import net.minecraft.world.entity.projectile.arrow.Arrow;
 import net.minecraft.world.entity.projectile.ProjectileUtil;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.levelgen.Heightmap;
@@ -31,6 +31,10 @@ import net.minecraft.world.phys.EntityHitResult;
 import net.minecraft.world.phys.HitResult;
 import net.minecraft.world.phys.Vec3;
 import org.jetbrains.annotations.Nullable;
+import net.minecraft.world.entity.EntityTypes;
+import net.minecraft.world.level.storage.ValueInput;
+import net.minecraft.world.level.storage.ValueOutput;
+import net.minecraft.core.UUIDUtil;
 
 public class TinyEyeEntity extends AbstractHurtingProjectile {
 
@@ -51,7 +55,7 @@ public class TinyEyeEntity extends AbstractHurtingProjectile {
     @Environment(EnvType.CLIENT)
     public TinyEyeEntity(Level world, double x, double y, double z, double velocityX, double velocityY, double velocityZ) {
         this(EntityInit.TINY_EYE, world);
-        this.moveTo(x, y, z, this.getYRot(), this.getXRot());
+        this.snapTo(x, y, z, this.getYRot(), this.getXRot());
         this.setDeltaMovement(velocityX, velocityY, velocityZ);
     }
 
@@ -62,7 +66,7 @@ public class TinyEyeEntity extends AbstractHurtingProjectile {
         double d = (double) blockPos.getX() + 0.5D;
         double e = (double) blockPos.getY() + 0.5D;
         double f = (double) blockPos.getZ() + 0.5D;
-        this.moveTo(d, e, f, this.getYRot(), this.getXRot());
+        this.snapTo(d, e, f, this.getYRot(), this.getXRot());
         this.target = target;
         this.direction = Direction.UP;
         this.movingAround();
@@ -74,10 +78,10 @@ public class TinyEyeEntity extends AbstractHurtingProjectile {
     }
 
     @Override
-    public void addAdditionalSaveData(CompoundTag tag) {
+    public void addAdditionalSaveData(ValueOutput tag) {
         super.addAdditionalSaveData(tag);
         if (this.target != null)
-            tag.putUUID("Target", this.target.getUUID());
+            tag.store("Target", UUIDUtil.CODEC, this.target.getUUID());
         if (this.direction != null)
             tag.putInt("Dir", this.direction.get3DDataValue());
 
@@ -88,17 +92,14 @@ public class TinyEyeEntity extends AbstractHurtingProjectile {
     }
 
     @Override
-    public void readAdditionalSaveData(CompoundTag tag) {
+    public void readAdditionalSaveData(ValueInput tag) {
         super.readAdditionalSaveData(tag);
-        this.stepCount = tag.getInt("Steps");
-        this.targetX = tag.getDouble("TXD");
-        this.targetY = tag.getDouble("TYD");
-        this.targetZ = tag.getDouble("TZD");
-        if (tag.contains("Dir", 99))
-            this.direction = Direction.from3DDataValue(tag.getInt("Dir"));
-
-        if (tag.hasUUID("Target"))
-            this.targetUuid = tag.getUUID("Target");
+        this.stepCount = tag.getIntOr("Steps", 0);
+        this.targetX = tag.getDoubleOr("TXD", 0.0D);
+        this.targetY = tag.getDoubleOr("TYD", 0.0D);
+        this.targetZ = tag.getDoubleOr("TZD", 0.0D);
+        tag.getInt("Dir").ifPresent(dir -> this.direction = Direction.from3DDataValue(dir));
+        tag.read("Target", UUIDUtil.CODEC).ifPresent(uuid -> this.targetUuid = uuid);
 
     }
 
@@ -133,7 +134,7 @@ public class TinyEyeEntity extends AbstractHurtingProjectile {
             this.targetZ = k / l * 0.15D;
         }
 
-        this.hasImpulse = true;
+        this.needsSync = true;
         this.stepCount = 10 + this.random.nextInt(5) * 10;
     }
 
@@ -172,9 +173,9 @@ public class TinyEyeEntity extends AbstractHurtingProjectile {
             }
         }
 
-        this.checkInsideBlocks();
+        this.applyEffectsFromBlocks();
         vec3d = this.getDeltaMovement();
-        this.absMoveTo(this.getX() + vec3d.x, this.getY() + vec3d.y, this.getZ() + vec3d.z);
+        this.absSnapTo(this.getX() + vec3d.x, this.getY() + vec3d.y, this.getZ() + vec3d.z);
         ProjectileUtil.rotateTowardsMovement(this, 0.5F);
         if (this.level().isClientSide()) {
         } else if (this.target != null && !this.target.isRemoved()) {
@@ -252,9 +253,9 @@ public class TinyEyeEntity extends AbstractHurtingProjectile {
                 int posY = serverWorld.getHeight(Heightmap.Types.WORLD_SURFACE, posX, posZ);
                 BlockPos teleportPos = new BlockPos(posX, posY, posZ);
                 if (serverWorld.hasChunksAt(teleportPos.getX() - 4, teleportPos.getY() - 4, teleportPos.getZ() - 4, teleportPos.getX() + 4, teleportPos.getY() + 4, teleportPos.getZ() + 4)
-                        && SpawnPlacements.checkSpawnRules(EntityType.PLAYER, serverWorld, MobSpawnType.EVENT, teleportPos, serverWorld.getRandom())) {
+                        && SpawnPlacements.checkSpawnRules(EntityTypes.PLAYER, serverWorld, EntitySpawnReason.EVENT, teleportPos, serverWorld.getRandom())) {
                     if (!this.level().isClientSide()) {
-                        livingEntity.randomTeleport(teleportPos.getX(), teleportPos.getY(), teleportPos.getZ(), false);
+                        livingEntity.randomTeleport(teleportPos.getX(), teleportPos.getY(), teleportPos.getZ(), false, state -> false);
                     }
 
                     serverWorld.playSeededSound(null, posX, posY, posZ, SoundEvents.ENDERMAN_TELEPORT, SoundSource.HOSTILE, 1.0f, 1.0f, serverWorld.getRandom().nextLong());

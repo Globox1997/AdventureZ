@@ -25,6 +25,7 @@ import net.minecraft.world.entity.monster.Monster;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.server.level.ServerLevel;
 
 public class SkeletonVanguardEntity extends Monster {
 
@@ -103,7 +104,7 @@ public class SkeletonVanguardEntity extends Monster {
     }
 
     @Override
-    public boolean hurt(DamageSource source, float amount) {
+    public boolean hurtServer(ServerLevel level, DamageSource source, float amount) {
         int chance = 0;
         if (source.is(DamageTypeTags.IS_PROJECTILE)) {
             chance = this.level().getRandom().nextInt(2);
@@ -117,7 +118,7 @@ public class SkeletonVanguardEntity extends Monster {
             this.level().playSound(null, this, SoundEvents.SHIELD_BLOCK, SoundSource.HOSTILE, 1.0F, 1.0F);
             return false;
         } else {
-            return !this.isInvulnerableTo(source) && super.hurt(source, amount);
+            return !this.isInvulnerableTo(level, source) && super.hurtServer(level, source, amount);
         }
     }
 

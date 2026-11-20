@@ -1,6 +1,6 @@
 package net.adventurez.effect;
 
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.world.effect.MobEffect;
 import net.minecraft.world.effect.MobEffectCategory;
 import net.minecraft.world.entity.LivingEntity;
@@ -8,18 +8,19 @@ import net.minecraft.world.entity.ai.attributes.AttributeInstance;
 import net.minecraft.world.entity.ai.attributes.AttributeMap;
 import net.minecraft.world.entity.ai.attributes.AttributeModifier;
 import net.minecraft.world.entity.ai.attributes.Attributes;
+import net.minecraft.server.level.ServerLevel;
 
 public class WitheringEffect extends MobEffect {
 
-    private static final AttributeModifier WITHERING = new AttributeModifier(ResourceLocation.parse("adventurez:withering"), -0.15D, AttributeModifier.Operation.ADD_MULTIPLIED_TOTAL);
+    private static final AttributeModifier WITHERING = new AttributeModifier(Identifier.parse("adventurez:withering"), -0.15D, AttributeModifier.Operation.ADD_MULTIPLIED_TOTAL);
 
     public WitheringEffect(MobEffectCategory type, int color) {
         super(type, color);
     }
 
     @Override
-    public boolean applyEffectTick(LivingEntity entity, int amplifier) {
-        entity.hurt(entity.damageSources().wither(), 0.5F);
+    public boolean applyEffectTick(ServerLevel level, LivingEntity entity, int amplifier) {
+        entity.hurtServer(level, entity.damageSources().wither(), 0.5F);
         return true;
     }
 

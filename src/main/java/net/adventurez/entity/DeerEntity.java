@@ -32,6 +32,7 @@ import net.minecraft.world.item.crafting.Ingredient;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.Vec3;
+import net.minecraft.world.entity.EntitySpawnReason;
 
 public class DeerEntity extends Animal {
 
@@ -73,12 +74,12 @@ public class DeerEntity extends Animal {
 
     @Override
     protected void playStepSound(BlockPos pos, BlockState state) {
-        this.playSound(SoundEvents.WOLF_STEP, 0.15F, 1.0F);
+        this.playSound(SoundEvents.WOLF_STEP.value(), 0.15F, 1.0F);
     }
 
     @Override
     public DeerEntity getBreedOffspring(ServerLevel serverWorld, AgeableMob passiveEntity) {
-        return EntityInit.DEER.create(serverWorld);
+        return EntityInit.DEER.create(serverWorld, EntitySpawnReason.MOB_SUMMONED);
     }
 
     @Override

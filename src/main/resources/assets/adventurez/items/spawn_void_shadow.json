@@ -1,0 +1,16 @@
+{
+  "model": {
+    "type": "minecraft:model",
+    "model": "adventurez:item/spawn_void_shadow",
+    "tints": [
+      {
+        "type": "minecraft:constant",
+        "value": -15335315
+      },
+      {
+        "type": "minecraft:constant",
+        "value": -16383972
+      }
+    ]
+  }
+}

@@ -1,11 +1,11 @@
 package net.adventurez.entity.model;
 
-import com.google.common.collect.ImmutableList;
 
+import net.adventurez.entity.render.state.MammothRenderState;
+import net.minecraft.client.model.EntityModel;
 import net.adventurez.entity.MammothEntity;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
-import net.minecraft.client.model.ListModel;
 import net.minecraft.client.model.geom.ModelPart;
 import net.minecraft.client.model.geom.PartPose;
 import net.minecraft.client.model.geom.builders.CubeListBuilder;
@@ -15,7 +15,7 @@ import net.minecraft.client.model.geom.builders.PartDefinition;
 import net.minecraft.util.Mth;
 
 @Environment(EnvType.CLIENT)
-public class MammothModel<T extends MammothEntity> extends ListModel<T> {
+public class MammothModel extends EntityModel<MammothRenderState> {
     private final ModelPart body;
     private final ModelPart humpRight;
     private final ModelPart tail;
@@ -44,6 +44,7 @@ public class MammothModel<T extends MammothEntity> extends ListModel<T> {
     private final ModelPart tuskBaseLeft_r1;
 
     public MammothModel(ModelPart root) {
+        super(root);
         this.body = root.getChild("body");
         this.tail = this.body.getChild("tail");
         this.humpRight = this.body.getChild("humpRight");
@@ -111,13 +112,14 @@ public class MammothModel<T extends MammothEntity> extends ListModel<T> {
         return LayerDefinition.create(modelData, 128, 128);
     }
 
-    @Override
-    public Iterable<ModelPart> parts() {
-        return ImmutableList.of(this.head, this.body, this.legBackLeft, this.legBackRight, this.legFrontLeft, this.legFrontRight);
-    }
 
     @Override
-    public void setupAnim(T entity, float limbAngle, float limbDistance, float animationProgress, float headYaw, float headPitch) {
+    public void setupAnim(MammothRenderState state) {
+        float limbAngle = state.walkAnimationPos;
+        float limbDistance = state.walkAnimationSpeed;
+        float animationProgress = state.ageInTicks;
+        float headYaw = state.yRot;
+        float headPitch = state.xRot;
         this.head.yRot = headYaw * 0.007453292F;
         this.head.xRot = headPitch * 0.007453292F;
         this.humpRight.xRot = -0.6981F;
@@ -145,7 +147,7 @@ public class MammothModel<T extends MammothEntity> extends ListModel<T> {
         this.tuskBackLeft_r1.zRot = 0.4363F;
         this.tuskBaseLeft_r1.zRot = 0.4363F;
         float slowerWalking = 0.6662F;
-        if (entity.isBaby()) {
+        if (state.isBaby) {
             slowerWalking = 0.1F;
         }
         this.legBackRight.xRot = Mth.cos(limbAngle * slowerWalking + 3.1415927F) * 0.7F * limbDistance;
@@ -153,7 +155,7 @@ public class MammothModel<T extends MammothEntity> extends ListModel<T> {
         this.legFrontLeft.xRot = Mth.cos(limbAngle * slowerWalking + 3.1415927F) * 0.7F * limbDistance;
         this.legFrontRight.xRot = Mth.cos(limbAngle * slowerWalking) * 0.7F * limbDistance;
 
-        int i = entity.getEntityData().get(MammothEntity.ATTACK_TICKS);
+        int i = state.attackTicks;
         if (i > 0) {
             this.head.xRot = -0.3491F + Mth.sin((3.14159265358F / 10F) * ((float) i - 9)) * 0.4F;
         }

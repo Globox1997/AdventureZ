@@ -6,9 +6,7 @@
     "X X"
   ],
   "key": {
-    "X": {
-      "tag": "adventurez:leather_items"
-    }
+    "X": "#adventurez:leather_items"
   },
   "result": {
     "id": "minecraft:leather_leggings"

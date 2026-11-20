@@ -2,7 +2,7 @@
   "required": true,
   "minVersion": "0.8",
   "package": "net.adventurez.mixin",
-  "compatibilityLevel": "JAVA_17",
+  "compatibilityLevel": "JAVA_25",
   "plugin": "net.adventurez.mixin.compat.AdventurezMixinPlugin",
   "mixins": [
     "AmethystClusterBlockMixin",
@@ -31,6 +31,7 @@
     "StemBlockMixin",
     "VillagerEntityMixin",
     "accessor.ChestLidAnimatorAccessor",
+    "accessor.CreeperAccessor",
     "accessor.EntityAccessor",
     "accessor.FallingBlockAccessor",
     "accessor.LivingEntityAccessor",
@@ -44,7 +45,7 @@
     "client.InGameOverlayRendererMixin",
     "client.IronGolemCrackFeatureRendererMixin",
     "client.IronGolemEntityRendererMixin",
-    "client.TexturedRenderLayersMixin"
+    "client.IronGolemRenderStateMixin"
   ],
   "injectors": {
     "defaultRequire": 1

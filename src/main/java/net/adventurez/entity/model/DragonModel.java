@@ -1,10 +1,10 @@
 package net.adventurez.entity.model;
 
-import com.google.common.collect.ImmutableList;
 import net.adventurez.entity.DragonEntity;
+import net.adventurez.entity.render.state.DragonRenderState;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
-import net.minecraft.client.model.*;
+import net.minecraft.client.model.EntityModel;
 import net.minecraft.client.model.geom.ModelPart;
 import net.minecraft.client.model.geom.PartPose;
 import net.minecraft.client.model.geom.builders.CubeListBuilder;
@@ -12,10 +12,9 @@ import net.minecraft.client.model.geom.builders.LayerDefinition;
 import net.minecraft.client.model.geom.builders.MeshDefinition;
 import net.minecraft.client.model.geom.builders.PartDefinition;
 import net.minecraft.util.Mth;
-import net.minecraft.world.entity.Entity;
 
 @Environment(EnvType.CLIENT)
-public class DragonModel<T extends DragonEntity> extends ListModel<T> {
+public class DragonModel extends EntityModel<DragonRenderState> {
     private final ModelPart body;
     private final ModelPart chest;
     private final ModelPart spike;
@@ -66,6 +65,7 @@ public class DragonModel<T extends DragonEntity> extends ListModel<T> {
     private final ModelPart tail7;
 
     public DragonModel(ModelPart root) {
+        super(root);
         this.body = root.getChild("body");
         this.spike = this.body.getChild("spike");
         this.chest = this.body.getChild("chest");
@@ -209,61 +209,61 @@ public class DragonModel<T extends DragonEntity> extends ListModel<T> {
         return LayerDefinition.create(modelData, 512, 512);
     }
 
-    @Override
-    public Iterable<ModelPart> parts() {
-        return ImmutableList.of(this.body, this.wingLeft, this.wingRight, this.rearLegLeft, this.rearLegRight, this.frontLegLeft, this.frontLegRight, this.neck, this.tail);
-    }
 
     @Override
-    public void setupAnim(T entity, float limbAngle, float limbDistance, float animationProgress, float headYaw, float headPitch) {
-        this.parts().forEach(part -> part.getAllParts().forEach(ModelPart::resetPose));
+    public void setupAnim(DragonRenderState state) {
+        float limbAngle = state.walkAnimationPos;
+        float limbDistance = state.walkAnimationSpeed;
+        float animationProgress = state.ageInTicks;
+        float headYaw = state.yRot;
+        float headPitch = state.xRot;
+        this.resetPose();
         // Extras
-        this.renderExtras(entity);
+        this.renderExtras(state);
 
-        float tickDelta = animationProgress - entity.tickCount;
-        boolean fireBreathing = entity.getEntityData().get(DragonEntity.FIRE_BREATH);
+                boolean fireBreathing = state.fireBreath;
 
         this.setRestPose();
         this.setLookAngles(headYaw, headPitch);
 
-        if (entity.getEntityData().get(DragonEntity.CLIENT_START_FLYING)) {
+        if (state.clientStartFlying) {
             // Takeoff
-            float wingOpen = Mth.lerp(tickDelta, entity.prevWingOpen, entity.wingOpen);
+            float wingOpen = state.wingOpen;
             this.wingRight.zRot = 0.6981f - wingOpen;
             this.wingLeft.zRot = -0.6981f + wingOpen;
             this.wingTipRight.zRot = -2.618f + wingOpen * 1.32f;
             this.wingTipLeft.zRot = 2.618f - wingOpen * 1.32f;
             this.setTailPose();
-            if (entity.onGround()) {
+            if (state.onGround) {
                 this.animateWalking(limbAngle, limbDistance);
             }
-        } else if (entity.getEntityData().get(DragonEntity.IS_FLYING)) {
+        } else if (state.flying) {
             // Flying
-            float flap = DragonEntity.flapWaving(animationProgress, entity.flapPhase);
+            float flap = DragonEntity.flapWaving(animationProgress, state.flapPhase);
             this.setFlapPose(flap);
             this.setTailPose();
             this.setFlightFloat(flap, animationProgress / 100f);
-            if (entity.onGround()) {
+            if (state.onGround) {
                 this.animateWalking(limbAngle, limbDistance);
             } else {
                 this.setFlyingLegPose();
             }
-        } else if (entity.getEntityData().get(DragonEntity.CLIENT_END_FLYING)) {
+        } else if (state.clientEndFlying) {
             // Landing
-            if (entity.landingWings) {
-                float fold = Mth.lerp(tickDelta, entity.prevLanding, entity.landing) * 0.6981f;
+            if (state.landingWings) {
+                float fold = state.landing * 0.6981f;
                 this.wingRight.zRot = fold;
                 this.wingLeft.zRot = -fold;
                 this.wingTipRight.zRot = -fold * 3.75f;
                 this.wingTipLeft.zRot = fold * 3.75f;
             } else {
-                this.setFlapPose(DragonEntity.flapWaving(animationProgress, entity.flapPhase));
+                this.setFlapPose(DragonEntity.flapWaving(animationProgress, state.flapPhase));
             }
             this.setTailPose();
-            if (entity.onGround()) {
+            if (state.onGround) {
                 this.animateWalking(limbAngle, limbDistance);
             }
-        } else if (!entity.isInSittingPose() || entity.isVehicle()) {
+        } else if (!state.sittingPose || state.vehicle) {
             // Walking
             this.animateWalking(limbAngle, limbDistance);
             this.setTailPose();
@@ -307,8 +307,8 @@ public class DragonModel<T extends DragonEntity> extends ListModel<T> {
             this.wingRight.zRot = 0.6981F;
             this.wingTipRight.zRot = -2.618F;
 
-            if (entity.isYawning()) {
-                this.jaw.xRot = entity.getYawnPitch(tickDelta);
+            if (state.yawning) {
+                this.jaw.xRot = state.yawnPitch;
             }
         }
 
@@ -450,17 +450,17 @@ public class DragonModel<T extends DragonEntity> extends ListModel<T> {
         this.frontFootLeft.xRot = 1.4835f;
     }
 
-    private void renderExtras(Entity entity) {
-        this.spike.visible = !entity.getEntityData().get(DragonEntity.HAS_SADDLE);
-        this.chest.visible = entity.getEntityData().get(DragonEntity.HAS_CHEST);
-        if (entity.getEntityData().get(DragonEntity.OTHER_EARS)) {
+    private void renderExtras(DragonRenderState state) {
+        this.spike.visible = !state.hasSaddle;
+        this.chest.visible = state.hasChest;
+        if (state.otherEars) {
             this.otherEars.visible = true;
             this.ears.visible = false;
         } else {
             this.otherEars.visible = false;
             this.ears.visible = true;
         }
-        if (entity.getEntityData().get(DragonEntity.OTHER_TAIL)) {
+        if (state.otherTail) {
             this.otherTail.visible = true;
             this.extraTail.visible = false;
         } else {

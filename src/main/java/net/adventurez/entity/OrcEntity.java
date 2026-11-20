@@ -4,7 +4,6 @@ import net.adventurez.init.ConfigInit;
 import net.adventurez.init.SoundInit;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.registries.BuiltInRegistries;
-import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.syncher.EntityDataAccessor;
 import net.minecraft.network.syncher.EntityDataSerializers;
 import net.minecraft.network.syncher.SynchedEntityData;
@@ -18,7 +17,7 @@ import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.entity.EntityDimensions;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.LivingEntity;
-import net.minecraft.world.entity.MobSpawnType;
+import net.minecraft.world.entity.EntitySpawnReason;
 import net.minecraft.world.entity.Pose;
 import net.minecraft.world.entity.SpawnGroupData;
 import net.minecraft.world.entity.ai.attributes.AttributeSupplier;
@@ -33,12 +32,16 @@ import net.minecraft.world.entity.ai.goal.target.HurtByTargetGoal;
 import net.minecraft.world.entity.ai.goal.target.NearestAttackableTargetGoal;
 import net.minecraft.world.entity.ai.util.DefaultRandomPos;
 import net.minecraft.world.entity.monster.Monster;
-import net.minecraft.world.entity.npc.Villager;
-import net.minecraft.world.entity.npc.WanderingTrader;
+import net.minecraft.world.entity.npc.villager.Villager;
+import net.minecraft.world.entity.npc.wanderingtrader.WanderingTrader;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.item.TieredItem;
+import net.minecraft.core.Holder;
+import net.minecraft.server.level.ServerLevel;
+import net.minecraft.tags.ItemTags;
+import net.minecraft.world.level.storage.ValueInput;
+import net.minecraft.world.level.storage.ValueOutput;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.ServerLevelAccessor;
 import net.minecraft.world.level.block.state.BlockState;
@@ -84,8 +87,8 @@ public class OrcEntity extends Monster {
         this.targetSelector.addGoal(4, (new HurtByTargetGoal(this, new Class[]{OrcEntity.class})));
     }
 
-    public static boolean canSpawn(EntityType<OrcEntity> type, ServerLevelAccessor world, MobSpawnType spawnReason, BlockPos pos, RandomSource random) {
-        return (checkMonsterSpawnRules(type, world, spawnReason, pos, random) && world.canSeeSky(pos)) || spawnReason == MobSpawnType.SPAWNER;
+    public static boolean canSpawn(EntityType<OrcEntity> type, ServerLevelAccessor world, EntitySpawnReason spawnReason, BlockPos pos, RandomSource random) {
+        return (checkMonsterSpawnRules(type, world, spawnReason, pos, random) && world.canSeeSky(pos)) || spawnReason == EntitySpawnReason.SPAWNER;
     }
 
     @Override
@@ -97,21 +100,21 @@ public class OrcEntity extends Monster {
     }
 
     @Override
-    public void readAdditionalSaveData(CompoundTag tag) {
-        super.readAdditionalSaveData(tag);
-        this.setSize(tag.getInt("OrkSize"), false);
-        if (tag.contains("OrcItem", 10)) {
-            this.inventory.setItem(0, ItemStack.parse(this.registryAccess(), tag.getCompound("OrcItem")).get());
+    public void readAdditionalSaveData(ValueInput input) {
+        super.readAdditionalSaveData(input);
+        this.setSize(input.getIntOr("OrkSize", 0), false);
+        input.read("OrcItem", ItemStack.CODEC).ifPresent(stack -> {
+            this.inventory.setItem(0, stack);
             this.setItemId(this.inventory.getItem(0).getItem());
-        }
+        });
     }
 
     @Override
-    public void addAdditionalSaveData(CompoundTag tag) {
-        super.addAdditionalSaveData(tag);
-        tag.putInt("OrkSize", this.getSize());
+    public void addAdditionalSaveData(ValueOutput output) {
+        super.addAdditionalSaveData(output);
+        output.putInt("OrkSize", this.getSize());
         if (!this.inventory.getItem(0).isEmpty()) {
-            tag.put("OrcItem", this.inventory.getItem(0).save(this.registryAccess()));
+            output.store("OrcItem", ItemStack.CODEC, this.inventory.getItem(0));
         }
     }
 
@@ -182,7 +185,7 @@ public class OrcEntity extends Monster {
 
     @Nullable
     @Override
-    public SpawnGroupData finalizeSpawn(ServerLevelAccessor world, DifficultyInstance difficulty, MobSpawnType spawnReason, @Nullable SpawnGroupData entityData) {
+    public SpawnGroupData finalizeSpawn(ServerLevelAccessor world, DifficultyInstance difficulty, EntitySpawnReason spawnReason, @Nullable SpawnGroupData entityData) {
         this.setSize(this.getRandom().nextInt(3) + 1, true);
         return super.finalizeSpawn(world, difficulty, spawnReason, entityData);
     }
@@ -193,13 +196,13 @@ public class OrcEntity extends Monster {
     }
 
     @Override
-    public boolean hurt(DamageSource source, float amount) {
+    public boolean hurtServer(ServerLevel level, DamageSource source, float amount) {
         if (this.level().getRandom().nextInt(3) == 0 && !this.entityData.get(DOUBLE_HAND_ATTACK)) {
             entityData.set(DOUBLE_HAND_ATTACK, true);
         } else {
             entityData.set(DOUBLE_HAND_ATTACK, false);
         }
-        return !this.isInvulnerableTo(source) && super.hurt(source, amount);
+        return !this.isInvulnerableTo(level, source) && super.hurtServer(level, source, amount);
     }
 
     @Override
@@ -208,10 +211,10 @@ public class OrcEntity extends Monster {
     }
 
     @Override
-    protected void dropEquipment() {
-        super.dropEquipment();
+    protected void dropEquipment(ServerLevel level) {
+        super.dropEquipment(level);
         if (this.inventory != null && !this.inventory.isEmpty()) {
-            this.spawnAtLocation(this.inventory.getItem(0));
+            this.spawnAtLocation(level, this.inventory.getItem(0));
         }
     }
 
@@ -221,6 +224,10 @@ public class OrcEntity extends Monster {
         } else {
             return false;
         }
+    }
+
+    private static boolean isTieredTool(Holder<Item> item) {
+        return item.is(ItemTags.SWORDS) || item.is(ItemTags.AXES) || item.is(ItemTags.PICKAXES) || item.is(ItemTags.SHOVELS) || item.is(ItemTags.HOES);
     }
 
     private void setItemId(Item item) {
@@ -245,11 +252,11 @@ public class OrcEntity extends Monster {
         protected void checkAndPerformAttack(LivingEntity target) {
             if (canPerformAttack(target) && this.getTicksUntilNextAttack() <= 0) {
                 this.resetAttackCooldown();
-                this.mob.swing(InteractionHand.MAIN_HAND);
-                this.mob.doHurtTarget(target);
+                this.mob.swingForAttack(InteractionHand.MAIN_HAND);
+                this.mob.doHurtTarget(getServerLevel(this.mob), target);
                 if (ConfigInit.CONFIG.allow_orc_stealing && !this.orcEntity.isBigOrc() && this.orcEntity.inventory.isEmpty() && this.orcEntity.level().getRandom().nextFloat() <= 0.3F && target instanceof Player playerEntity) {
                     for (int i = 45; i > 0; i--) {
-                        if (!playerEntity.getInventory().getItem(i).isEmpty() && playerEntity.getInventory().getItem(i).getItem() instanceof TieredItem
+                        if (!playerEntity.getInventory().getItem(i).isEmpty() && playerEntity.getInventory().getItem(i).is(OrcEntity::isTieredTool)
                                 && playerEntity.level().getRandom().nextFloat() < 0.3F) {
                             this.orcEntity.inventory.setItem(0, playerEntity.getInventory().getItem(i));
                             this.orcEntity.setItemId(this.orcEntity.inventory.getItem(0).getItem());
@@ -351,7 +358,7 @@ public class OrcEntity extends Monster {
         @Nullable
         @Override
         protected Vec3 getPosition() {
-            if (this.orcEntity.isInWaterOrBubble()) {
+            if (this.orcEntity.isInWater()) {
                 Vec3 vec3d = DefaultRandomPos.getPos(this.orcEntity, 15, 7);
                 return vec3d == null ? super.getPosition() : vec3d;
             } else {

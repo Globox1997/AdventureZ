@@ -16,6 +16,9 @@ import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.AABB;
+import net.minecraft.world.entity.EntityTypes;
+import net.minecraft.world.level.storage.ValueInput;
+import net.minecraft.world.level.storage.ValueOutput;
 
 public class PiglinFlagEntity extends BlockEntity {
     private int flagWave;
@@ -25,14 +28,14 @@ public class PiglinFlagEntity extends BlockEntity {
     }
 
     @Override
-    protected void loadAdditional(CompoundTag nbt, Provider registryLookup) {
-        super.loadAdditional(nbt, registryLookup);
-        this.flagWave = nbt.getInt("Flagging");
+    protected void loadAdditional(ValueInput nbt) {
+        super.loadAdditional(nbt);
+        this.flagWave = nbt.getIntOr("Flagging", 0);
     }
 
     @Override
-    public void saveAdditional(CompoundTag nbt, Provider registryLookup) {
-        super.saveAdditional(nbt, registryLookup);
+    public void saveAdditional(ValueOutput nbt) {
+        super.saveAdditional(nbt);
         nbt.putInt("Flagging", flagWave);
     }
 
@@ -82,7 +85,7 @@ public class PiglinFlagEntity extends BlockEntity {
         List<LivingEntity> list = this.getLevel().getEntitiesOfClass(LivingEntity.class, new AABB(this.getBlockPos()).inflate(40D), EntitySelector.NO_SPECTATORS);
         for (int i = 0; i < list.size(); ++i) {
             LivingEntity entity = list.get(i);
-            if (entity.getType() == EntityType.PIGLIN) {
+            if (entity.getType() == EntityTypes.PIGLIN) {
                 Piglin piglin = (Piglin) entity;
                 if (piglin.getBrain().hasMemoryValue(MemoryModuleType.ATTACK_TARGET)) {
                     piglin.getBrain().eraseMemory(MemoryModuleType.ANGRY_AT);

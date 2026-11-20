@@ -1,0 +1,16 @@
+{
+  "model": {
+    "type": "minecraft:model",
+    "model": "adventurez:item/spawn_the_eye",
+    "tints": [
+      {
+        "type": "minecraft:constant",
+        "value": -14792651
+      },
+      {
+        "type": "minecraft:constant",
+        "value": -15717327
+      }
+    ]
+  }
+}

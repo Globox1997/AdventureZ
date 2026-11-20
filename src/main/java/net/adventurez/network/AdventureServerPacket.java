@@ -9,8 +9,8 @@ import net.fabricmc.fabric.api.networking.v1.ServerPlayNetworking;
 public class AdventureServerPacket {
 
     public static void init() {
-        PayloadTypeRegistry.playC2S().register(DragonFireBreathPacket.PACKET_ID, DragonFireBreathPacket.PACKET_CODEC);
-        PayloadTypeRegistry.playS2C().register(VelocityPacket.PACKET_ID, VelocityPacket.PACKET_CODEC);
+        PayloadTypeRegistry.serverboundPlay().register(DragonFireBreathPacket.PACKET_ID, DragonFireBreathPacket.PACKET_CODEC);
+        PayloadTypeRegistry.clientboundPlay().register(VelocityPacket.PACKET_ID, VelocityPacket.PACKET_CODEC);
 
         ServerPlayNetworking.registerGlobalReceiver(DragonFireBreathPacket.PACKET_ID, (payload, context) -> {
             context.server().execute(() -> {

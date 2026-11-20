@@ -22,7 +22,7 @@ public class DragonSitGoal extends Goal {
     public boolean canUse() {
         if (!this.dragonEntity.isTamed()) {
             return false;
-        } else if (this.dragonEntity.isInWaterOrBubble()) {
+        } else if (this.dragonEntity.isInWater()) {
             return false;
         } else if (!this.dragonEntity.onGround()) {
             return false;

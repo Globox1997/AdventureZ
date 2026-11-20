@@ -1,0 +1,16 @@
+{
+  "model": {
+    "type": "minecraft:model",
+    "model": "adventurez:item/spawn_mammoth",
+    "tints": [
+      {
+        "type": "minecraft:constant",
+        "value": -12044754
+      },
+      {
+        "type": "minecraft:constant",
+        "value": -10400453
+      }
+    ]
+  }
+}

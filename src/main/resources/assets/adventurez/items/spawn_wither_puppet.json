@@ -1,0 +1,16 @@
+{
+  "model": {
+    "type": "minecraft:model",
+    "model": "adventurez:item/spawn_wither_puppet",
+    "tints": [
+      {
+        "type": "minecraft:constant",
+        "value": -15527149
+      },
+      {
+        "type": "minecraft:constant",
+        "value": -13684945
+      }
+    ]
+  }
+}

@@ -108,7 +108,7 @@
 
   "item.adventurez.moreinfo.tooltip": "§8按§6Shift§8查看更多信息",
   
-  "category.adventurez.keybind": "AdventureZ 按键绑定",
+  "key.category.adventurez.keybind": "AdventureZ 按键绑定",
   "key.adventurez.activatearmor": "激活盔甲",
   "key.adventurez.dragonflydown": "龙往下飞",
   "key.adventurez.dragonfirebreath": "末影龙火焰吐息",

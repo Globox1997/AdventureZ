@@ -16,6 +16,9 @@ import net.minecraft.world.entity.ai.goal.Goal;
 import net.minecraft.world.entity.monster.Monster;
 import net.minecraft.world.level.Level;
 import org.jetbrains.annotations.Nullable;
+import net.minecraft.world.level.storage.ValueInput;
+import net.minecraft.world.level.storage.ValueOutput;
+import net.minecraft.server.level.ServerLevel;
 
 public abstract class SpellCastingEntity extends Monster {
     public SpellCastingEntity(EntityType<? extends Monster> entityType, Level world) {
@@ -33,12 +36,12 @@ public abstract class SpellCastingEntity extends Monster {
         builder.define(SPELL, (byte) 0);
     }
 
-    public void readAdditionalSaveData(CompoundTag tag) {
+    public void readAdditionalSaveData(ValueInput tag) {
         super.readAdditionalSaveData(tag);
-        this.spellTicks = tag.getInt("SpellTicks");
+        this.spellTicks = tag.getIntOr("SpellTicks", 0);
     }
 
-    public void addAdditionalSaveData(CompoundTag tag) {
+    public void addAdditionalSaveData(ValueOutput tag) {
         super.addAdditionalSaveData(tag);
         tag.putInt("SpellTicks", this.spellTicks);
     }
@@ -60,8 +63,8 @@ public abstract class SpellCastingEntity extends Monster {
         return !this.level().isClientSide() ? this.spell : SpellCastingEntity.Spell.byId((Byte) this.entityData.get(SPELL));
     }
 
-    protected void customServerAiStep() {
-        super.customServerAiStep();
+    protected void customServerAiStep(ServerLevel level) {
+        super.customServerAiStep(level);
         if (this.spellTicks > 0) {
             --this.spellTicks;
         }

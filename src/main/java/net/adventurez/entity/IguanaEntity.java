@@ -14,7 +14,7 @@ import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.entity.AgeableMob;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.Mob;
-import net.minecraft.world.entity.MobSpawnType;
+import net.minecraft.world.entity.EntitySpawnReason;
 import net.minecraft.world.entity.PathfinderMob;
 import net.minecraft.world.entity.ai.attributes.AttributeSupplier;
 import net.minecraft.world.entity.ai.attributes.Attributes;
@@ -50,7 +50,7 @@ public class IguanaEntity extends Animal {
         return Mob.createMobAttributes().add(Attributes.MAX_HEALTH, 10.0D).add(Attributes.MOVEMENT_SPEED, 0.22D);
     }
 
-    public static boolean checkAnimalSpawnRules(EntityType<? extends Animal> type, LevelAccessor world, MobSpawnType spawnReason, BlockPos pos, RandomSource random) {
+    public static boolean checkAnimalSpawnRules(EntityType<? extends Animal> type, LevelAccessor world, EntitySpawnReason spawnReason, BlockPos pos, RandomSource random) {
         return world.getBlockState(pos.below()).is(Blocks.RED_SAND) && world.getRawBrightness(pos, 0) > 8;
     }
 
@@ -96,7 +96,7 @@ public class IguanaEntity extends Animal {
 
     @Override
     public IguanaEntity getBreedOffspring(ServerLevel serverWorld, AgeableMob passiveEntity) {
-        return EntityInit.IGUANA.create(serverWorld);
+        return EntityInit.IGUANA.create(serverWorld, EntitySpawnReason.MOB_SUMMONED);
     }
 
     @Override

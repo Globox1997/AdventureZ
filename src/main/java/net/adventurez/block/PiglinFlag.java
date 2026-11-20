@@ -3,13 +3,11 @@ package net.adventurez.block;
 import net.adventurez.block.entity.PiglinFlagEntity;
 import net.adventurez.init.BlockInit;
 import net.adventurez.init.ConfigInit;
-import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.item.Item.TooltipContext;
 import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.item.TooltipFlag;
 import net.minecraft.world.item.context.BlockPlaceContext;
 import net.minecraft.world.level.BlockGetter;
 import net.minecraft.world.level.Level;
@@ -22,7 +20,7 @@ import net.minecraft.world.level.block.entity.BlockEntityTicker;
 import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.StateDefinition;
-import net.minecraft.world.level.block.state.properties.DirectionProperty;
+import net.minecraft.world.level.block.state.properties.EnumProperty;
 import net.minecraft.world.level.pathfinder.PathComputationType;
 import net.minecraft.world.phys.shapes.CollisionContext;
 import net.minecraft.world.phys.shapes.Shapes;
@@ -32,7 +30,7 @@ import org.jetbrains.annotations.Nullable;
 import java.util.List;
 
 public class PiglinFlag extends Block implements EntityBlock {
-    public static final DirectionProperty FACING;
+    public static final EnumProperty<Direction> FACING;
     private static final VoxelShape BASE;
     private static final VoxelShape POLE;
     private static final VoxelShape BAR_1;
@@ -60,19 +58,6 @@ public class PiglinFlag extends Block implements EntityBlock {
         return checkType(type, BlockInit.PIGLIN_FLAG_ENTITY, world.isClientSide() ? PiglinFlagEntity::clientTick : PiglinFlagEntity::serverTick);
     }
 
-    @Override
-    public void appendHoverText(ItemStack stack, TooltipContext context, List<Component> tooltip, TooltipFlag options) {
-        super.appendHoverText(stack, context, tooltip, options);
-        if (ConfigInit.CONFIG.allow_extra_tooltips) {
-            tooltip.add(Component.translatable("item.adventurez.moreinfo.tooltip"));
-            if (Screen.hasShiftDown()) {
-                tooltip.remove(Component.translatable("item.adventurez.moreinfo.tooltip"));
-                tooltip.add(Component.translatable("block.adventurez.piglin_flag.tooltip"));
-                tooltip.add(Component.translatable("block.adventurez.piglin_flag.tooltip2"));
-                tooltip.add(Component.translatable("block.adventurez.piglin_flag.tooltip3"));
-            }
-        }
-    }
 
     @Override
     public BlockState getStateForPlacement(BlockPlaceContext ctx) {

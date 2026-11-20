@@ -1,15 +1,9 @@
 {
   "type": "minecraft:smithing_transform",
-  "base": {
-    "item": "minecraft:netherite_boots"
-  },
-  "addition": {
-    "item": "adventurez:gilded_netherite_fragment"
-  },
+  "base": "minecraft:netherite_boots",
+  "addition": "adventurez:gilded_netherite_fragment",
   "result": {
     "id": "adventurez:gilded_netherite_boots"
   },
-  "template": {
-    "item": "adventurez:gilded_upgrade_smithing_template"
-  }
+  "template": "adventurez:gilded_upgrade_smithing_template"
 }

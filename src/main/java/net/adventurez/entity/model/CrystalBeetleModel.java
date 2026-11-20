@@ -1,6 +1,7 @@
 package net.adventurez.entity.model;
 
-import com.google.common.collect.ImmutableList;
+import net.adventurez.entity.render.state.AdventureRenderState;
+import net.minecraft.client.model.EntityModel;
 import net.adventurez.entity.CrystalBeetleEntity;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
@@ -15,7 +16,7 @@ import net.minecraft.client.model.geom.builders.PartDefinition;
 import net.minecraft.util.Mth;
 
 @Environment(EnvType.CLIENT)
-public class CrystalBeetleModel<T extends CrystalBeetleEntity> extends ListModel<T> {
+public class CrystalBeetleModel extends EntityModel<AdventureRenderState> {
     private final ModelPart body;
     private final ModelPart right_front_leg;
     private final ModelPart right_back_leg;
@@ -25,6 +26,7 @@ public class CrystalBeetleModel<T extends CrystalBeetleEntity> extends ListModel
     private final ModelPart head;
 
     public CrystalBeetleModel(ModelPart root) {
+        super(root);
         this.body = root.getChild("body");
         this.right_front_leg = body.getChild("right_front_leg");
         this.right_back_leg = body.getChild("right_back_leg");
@@ -55,13 +57,14 @@ public class CrystalBeetleModel<T extends CrystalBeetleEntity> extends ListModel
         return LayerDefinition.create(modelData, 64, 64);
     }
 
-    @Override
-    public Iterable<ModelPart> parts() {
-        return ImmutableList.of(this.body);
-    }
 
     @Override
-    public void setupAnim(T entity, float limbAngle, float limbDistance, float animationProgress, float headYaw, float headPitch) {
+    public void setupAnim(AdventureRenderState state) {
+        float limbAngle = state.walkAnimationPos;
+        float limbDistance = state.walkAnimationSpeed;
+        float animationProgress = state.ageInTicks;
+        float headYaw = state.yRot;
+        float headPitch = state.xRot;
         this.head.yRot = headYaw * 0.012453292F;
         this.head.xRot = headPitch * 0.014453292F;
 

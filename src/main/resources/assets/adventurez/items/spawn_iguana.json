@@ -1,0 +1,16 @@
+{
+  "model": {
+    "type": "minecraft:model",
+    "model": "adventurez:item/spawn_iguana",
+    "tints": [
+      {
+        "type": "minecraft:constant",
+        "value": -5291741
+      },
+      {
+        "type": "minecraft:constant",
+        "value": -7789023
+      }
+    ]
+  }
+}

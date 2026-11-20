@@ -1,51 +1,54 @@
 package net.adventurez.entity.render;
 
 import com.mojang.blaze3d.vertex.PoseStack;
-import com.mojang.blaze3d.vertex.VertexConsumer;
 import net.adventurez.AdventureMain;
-import net.adventurez.entity.model.AmethystShardModel;
 import net.adventurez.entity.nonliving.AmethystShardEntity;
+import net.adventurez.entity.model.AmethystShardModel;
+import net.adventurez.entity.render.state.ProjectileRenderState;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
-import net.minecraft.client.renderer.MultiBufferSource;
+import net.minecraft.client.renderer.SubmitNodeCollector;
 import net.minecraft.client.renderer.entity.EntityRenderer;
 import net.minecraft.client.renderer.entity.EntityRendererProvider;
+import net.minecraft.client.renderer.state.level.CameraRenderState;
 import net.minecraft.client.renderer.texture.OverlayTexture;
 import net.minecraft.core.BlockPos;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.util.Mth;
 
 @Environment(EnvType.CLIENT)
-public class AmethystShardRenderer extends EntityRenderer<AmethystShardEntity> {
-    private static final ResourceLocation TEXTURE = AdventureMain.identifierOf("textures/entity/amethyst_shard.png");
-    private final AmethystShardModel<AmethystShardEntity> model = new AmethystShardModel<>(AmethystShardModel.getTexturedModelData().bakeRoot());
+public class AmethystShardRenderer extends EntityRenderer<AmethystShardEntity, ProjectileRenderState> {
+    private static final Identifier TEXTURE = AdventureMain.identifierOf("textures/entity/amethyst_shard.png");
+    private final AmethystShardModel model = new AmethystShardModel(AmethystShardModel.getTexturedModelData().bakeRoot());
 
     public AmethystShardRenderer(EntityRendererProvider.Context context) {
         super(context);
     }
 
     @Override
-    public int getBlockLightLevel(AmethystShardEntity amethystShardEntity, BlockPos blockPos) {
-        return amethystShardEntity.level().getMaxLocalRawBrightness(blockPos);
+    protected int getBlockLightLevel(AmethystShardEntity entity, BlockPos blockPos) {
+        return entity.level().getMaxLocalRawBrightness(blockPos);
     }
 
     @Override
-    public void render(AmethystShardEntity amethystShardEntity, float f, float g, PoseStack matrixStack, MultiBufferSource vertexConsumerProvider, int i) {
+    public void submit(ProjectileRenderState state, PoseStack matrixStack, SubmitNodeCollector submitNodeCollector, CameraRenderState camera) {
         matrixStack.pushPose();
-        float h = Mth.rotLerp(g, amethystShardEntity.yRotO, amethystShardEntity.getYRot());
-        float j = Mth.lerp(g, amethystShardEntity.xRotO, amethystShardEntity.getXRot());
         matrixStack.scale(-1.0F, -1.0F, 1.0F);
         matrixStack.translate(0.0D, -1.55D, 0.0D);
-        this.model.setupAnim(amethystShardEntity, 0.0F, 0.0F, 0.0F, h, j);
-        VertexConsumer vertexConsumer = vertexConsumerProvider.getBuffer(this.model.renderType(TEXTURE));
-        this.model.renderToBuffer(matrixStack, vertexConsumer, i, OverlayTexture.NO_OVERLAY);
+        submitNodeCollector.submitModel(this.model, state, matrixStack, this.model.renderType(TEXTURE), state.lightCoords, OverlayTexture.NO_OVERLAY, state.outlineColor);
         matrixStack.popPose();
-        super.render(amethystShardEntity, f, g, matrixStack, vertexConsumerProvider, i);
+        super.submit(state, matrixStack, submitNodeCollector, camera);
     }
 
     @Override
-    public ResourceLocation getTextureLocation(AmethystShardEntity amethystShardEntity) {
-        return TEXTURE;
+    public ProjectileRenderState createRenderState() {
+        return new ProjectileRenderState();
     }
 
+    @Override
+    public void extractRenderState(AmethystShardEntity entity, ProjectileRenderState state, float partialTicks) {
+        super.extractRenderState(entity, state, partialTicks);
+        state.yRot = Mth.rotLerp(partialTicks, entity.yRotO, entity.getYRot());
+        state.xRot = Mth.lerp(partialTicks, entity.xRotO, entity.getXRot());
+    }
 }

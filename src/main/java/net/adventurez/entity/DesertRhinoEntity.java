@@ -18,7 +18,7 @@ import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntitySelector;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.LivingEntity;
-import net.minecraft.world.entity.MobSpawnType;
+import net.minecraft.world.entity.EntitySpawnReason;
 import net.minecraft.world.entity.PathfinderMob;
 import net.minecraft.world.entity.ai.attributes.AttributeSupplier;
 import net.minecraft.world.entity.ai.attributes.Attributes;
@@ -30,7 +30,7 @@ import net.minecraft.world.entity.ai.goal.RandomLookAroundGoal;
 import net.minecraft.world.entity.ai.goal.WaterAvoidingRandomStrollGoal;
 import net.minecraft.world.entity.ai.goal.target.HurtByTargetGoal;
 import net.minecraft.world.entity.ai.goal.target.NearestAttackableTargetGoal;
-import net.minecraft.world.entity.monster.Husk;
+import net.minecraft.world.entity.monster.zombie.Husk;
 import net.minecraft.world.entity.monster.Monster;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.Level;
@@ -39,6 +39,8 @@ import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.pathfinder.Path;
 import net.minecraft.world.phys.AABB;
+import net.minecraft.world.level.storage.ValueInput;
+import net.minecraft.world.level.storage.ValueOutput;
 
 public class DesertRhinoEntity extends Monster {
 
@@ -55,10 +57,10 @@ public class DesertRhinoEntity extends Monster {
                 .add(Attributes.FOLLOW_RANGE, 38.0D);
     }
 
-    public static boolean canSpawn(EntityType<DesertRhinoEntity> type, ServerLevelAccessor world, MobSpawnType spawnReason, BlockPos pos, RandomSource random) {
+    public static boolean canSpawn(EntityType<DesertRhinoEntity> type, ServerLevelAccessor world, EntitySpawnReason spawnReason, BlockPos pos, RandomSource random) {
         return (world.getRandom().nextFloat() < 0.5F && (world.getBlockState(pos.below()).is(Blocks.SAND) || world.getBlockState(pos.below()).is(Blocks.SANDSTONE))
                 && world.getRawBrightness(pos, 0) > 8 && world.canSeeSky(pos) && world.getEntitiesOfClass(DesertRhinoEntity.class, new AABB(pos).inflate(120D), EntitySelector.NO_SPECTATORS).isEmpty())
-                || spawnReason == MobSpawnType.SPAWNER;
+                || spawnReason == EntitySpawnReason.SPAWNER;
     }
 
     @Override
@@ -76,12 +78,12 @@ public class DesertRhinoEntity extends Monster {
     }
 
     @Override
-    public void addAdditionalSaveData(CompoundTag tag) {
+    public void addAdditionalSaveData(ValueOutput tag) {
         super.addAdditionalSaveData(tag);
     }
 
     @Override
-    public void readAdditionalSaveData(CompoundTag tag) {
+    public void readAdditionalSaveData(ValueInput tag) {
         super.readAdditionalSaveData(tag);
     }
 
@@ -132,9 +134,9 @@ public class DesertRhinoEntity extends Monster {
     }
 
     @Override
-    public boolean doHurtTarget(Entity target) {
+    public boolean doHurtTarget(ServerLevel level, Entity target) {
         this.level().playSound(null, this.getX(), this.getY(), this.getZ(), SoundInit.DESERT_RHINO_ATTACK_EVENT, SoundSource.HOSTILE, 1.0F, 1.0F);
-        return super.doHurtTarget(target);
+        return super.doHurtTarget(level, target);
     }
 
     private class HeadAttackGoal extends MeleeAttackGoal {
@@ -183,7 +185,7 @@ public class DesertRhinoEntity extends Monster {
                 } else {
                     this.path = this.desertRhinoEntity.getNavigation().createPath((Entity) livingEntity, 0);
                     if (this.path != null && this.path.canReach()) {
-                        this.targetPos = new BlockPos(this.path.getTarget());
+                        this.targetPos = this.path.getTarget();
                         return true;
                     } else {
                         return false;
@@ -199,7 +201,7 @@ public class DesertRhinoEntity extends Monster {
                 return false;
             } else if (!livingEntity.isAlive()) {
                 return false;
-            } else if (!this.desertRhinoEntity.isWithinRestriction(livingEntity.blockPosition())) {
+            } else if (!this.desertRhinoEntity.isWithinHome(livingEntity.blockPosition())) {
                 return false;
             } else if (this.desertRhinoEntity.distanceToSqr(this.targetPos.getX(), this.targetPos.getY(), this.targetPos.getZ()) < 10.0D) {
                 return false;
@@ -226,11 +228,11 @@ public class DesertRhinoEntity extends Monster {
         private void attack(LivingEntity target, double squaredDistance) {
             double d = (double) (this.desertRhinoEntity.getBbWidth() * 2.25F * this.desertRhinoEntity.getBbWidth() * 2.25F + target.getBbWidth() * 1.25F);
             if (squaredDistance <= d) {
-                this.desertRhinoEntity.swing(InteractionHand.MAIN_HAND);
+                this.desertRhinoEntity.swingForAttack(InteractionHand.MAIN_HAND);
                 this.desertRhinoEntity.getAttribute(Attributes.ATTACK_KNOCKBACK)
                         .setBaseValue(this.desertRhinoEntity.getAttributeValue(Attributes.ATTACK_KNOCKBACK) + 10.0D);
                 BlockPos attackedPos;
-                if (this.desertRhinoEntity.doHurtTarget(target)) {
+                if (this.desertRhinoEntity.doHurtTarget(getServerLevel(this.desertRhinoEntity), target)) {
                     attackedPos = BlockPos.containing(target.getX(), target.getY(), target.getZ());
                 } else {
                     attackedPos = targetPos;

@@ -27,7 +27,7 @@ import net.minecraft.world.entity.EquipmentSlot;
 import net.minecraft.world.entity.LightningBolt;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.Mob;
-import net.minecraft.world.entity.MobSpawnType;
+import net.minecraft.world.entity.EntitySpawnReason;
 import net.minecraft.world.entity.PathfinderMob;
 import net.minecraft.world.entity.SpawnPlacements;
 import net.minecraft.world.entity.ai.attributes.AttributeSupplier;
@@ -41,10 +41,10 @@ import net.minecraft.world.entity.ai.goal.target.HurtByTargetGoal;
 import net.minecraft.world.entity.ai.goal.target.NearestAttackableTargetGoal;
 import net.minecraft.world.entity.ai.targeting.TargetingConditions;
 import net.minecraft.world.entity.monster.Monster;
-import net.minecraft.world.entity.monster.Skeleton;
-import net.minecraft.world.entity.monster.Zombie;
+import net.minecraft.world.entity.monster.skeleton.Skeleton;
+import net.minecraft.world.entity.monster.zombie.Zombie;
 import net.minecraft.world.entity.player.Player;
-import net.minecraft.world.entity.projectile.Arrow;
+import net.minecraft.world.entity.projectile.arrow.Arrow;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.item.ProjectileWeaponItem;
@@ -52,6 +52,9 @@ import net.minecraft.world.level.Level;
 import net.minecraft.world.level.ServerLevelAccessor;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.levelgen.Heightmap;
+import net.minecraft.world.entity.EntityTypes;
+import net.minecraft.world.level.storage.ValueInput;
+import net.minecraft.world.level.storage.ValueOutput;
 
 public class SummonerEntity extends SpellCastingEntity {
     public static final EntityDataAccessor<Boolean> INVULNERABLE_SHIELD = SynchedEntityData.defineId(SummonerEntity.class, EntityDataSerializers.BOOLEAN);
@@ -87,22 +90,22 @@ public class SummonerEntity extends SpellCastingEntity {
         this.targetSelector.addGoal(4, (new NearestAttackableTargetGoal<>(this, Player.class, true)).setUnseenMemoryTicks(300));
     }
 
-    public static boolean canSpawn(EntityType<SummonerEntity> type, ServerLevelAccessor world, MobSpawnType spawnReason, BlockPos pos, RandomSource random) {
-        return (checkMonsterSpawnRules(type, world, spawnReason, pos, random) && world.canSeeSky(pos) && world.getLevelData().isRaining()) || spawnReason == MobSpawnType.SPAWNER;
+    public static boolean canSpawn(EntityType<SummonerEntity> type, ServerLevelAccessor world, EntitySpawnReason spawnReason, BlockPos pos, RandomSource random) {
+        return (checkMonsterSpawnRules(type, world, spawnReason, pos, random) && world.canSeeSky(pos) && world.getLevel().isRaining()) || spawnReason == EntitySpawnReason.SPAWNER;
     }
 
     @Override
-    public void addAdditionalSaveData(CompoundTag tag) {
+    public void addAdditionalSaveData(ValueOutput tag) {
         super.addAdditionalSaveData(tag);
         tag.putInt("InvulnerableMagicTick", this.invulnerableMagicTick);
         tag.putBoolean("InvulnerableMagicShield", this.getEntityData().get(INVULNERABLE_SHIELD));
     }
 
     @Override
-    public void readAdditionalSaveData(CompoundTag tag) {
+    public void readAdditionalSaveData(ValueInput tag) {
         super.readAdditionalSaveData(tag);
-        this.invulnerableMagicTick = tag.getInt("InvulnerableMagicTick");
-        this.getEntityData().set(INVULNERABLE_SHIELD, tag.getBoolean("InvulnerableMagicShield"));
+        this.invulnerableMagicTick = tag.getIntOr("InvulnerableMagicTick", 0);
+        this.getEntityData().set(INVULNERABLE_SHIELD, tag.getBooleanOr("InvulnerableMagicShield", false));
     }
 
     @Override
@@ -112,14 +115,14 @@ public class SummonerEntity extends SpellCastingEntity {
     }
 
     @Override
-    public void customServerAiStep() {
-        super.customServerAiStep();
+    public void customServerAiStep(ServerLevel level) {
+        super.customServerAiStep(level);
         if (entityData.get(INVULNERABLE_SHIELD)) {
-            this.setInvulnerable(true);
+            this.setPermanentlyInvulnerable(true);
             this.getAttribute(Attributes.MOVEMENT_SPEED).setBaseValue(0.0D);
             this.invulnerableMagicTick--;
             if (this.invulnerableMagicTick < 0) {
-                this.setInvulnerable(false);
+                this.setPermanentlyInvulnerable(false);
                 this.getAttribute(Attributes.MOVEMENT_SPEED).setBaseValue(0.3D);
                 entityData.set(INVULNERABLE_SHIELD, false);
             }
@@ -163,7 +166,7 @@ public class SummonerEntity extends SpellCastingEntity {
     }
 
     @Override
-    public boolean hurt(DamageSource source, float amount) {
+    public boolean hurtServer(ServerLevel level, DamageSource source, float amount) {
         int chance = 0;
         if (source.is(DamageTypeTags.IS_LIGHTNING)) {
             return false;
@@ -181,7 +184,7 @@ public class SummonerEntity extends SpellCastingEntity {
             }
             return false;
         } else {
-            return !this.isInvulnerableTo(source) && super.hurt(source, amount);
+            return !this.isInvulnerableTo(level, source) && super.hurtServer(level, source, amount);
         }
     }
 
@@ -224,8 +227,8 @@ public class SummonerEntity extends SpellCastingEntity {
                 double posY = attacker.getY();
                 double posZ = attacker.getZ() + SummonerEntity.this.level().getRandom().nextInt(3);
                 BlockPos pos = BlockPos.containing(posX, posY, posZ);
-                LightningBolt lightningEntity = (LightningBolt) EntityType.LIGHTNING_BOLT.create(attacker.level());
-                lightningEntity.moveTo(pos, 0.0F, 0.0F);
+                LightningBolt lightningEntity = (LightningBolt) EntityTypes.LIGHTNING_BOLT.create(attacker.level(), EntitySpawnReason.MOB_SUMMONED);
+                lightningEntity.snapTo(pos, 0.0F, 0.0F);
                 serverWorld.addFreshEntity(lightningEntity);
             }
             gotShotByABow = false;
@@ -281,8 +284,8 @@ public class SummonerEntity extends SpellCastingEntity {
                 BlockPos teleportPos = new BlockPos(posX, posY, posZ);
                 if (SummonerEntity.this.level().hasChunksAt(teleportPos.getX() - 4, teleportPos.getY() - 4, teleportPos.getZ() - 4, teleportPos.getX() + 4, teleportPos.getY() + 4,
                         teleportPos.getZ() + 4)
-                        && SpawnPlacements.checkSpawnRules(EntityInit.SUMMONER, (ServerLevel) SummonerEntity.this.level(), MobSpawnType.EVENT, teleportPos, SummonerEntity.this.getRandom())) {
-                    SummonerEntity.this.randomTeleport(teleportPos.getX(), teleportPos.getY(), teleportPos.getZ(), true);
+                        && SpawnPlacements.checkSpawnRules(EntityInit.SUMMONER, (ServerLevel) SummonerEntity.this.level(), EntitySpawnReason.EVENT, teleportPos, SummonerEntity.this.getRandom())) {
+                    SummonerEntity.this.randomTeleport(teleportPos.getX(), teleportPos.getY(), teleportPos.getZ(), true, state -> false);
                     break;
                 }
             }
@@ -347,7 +350,7 @@ public class SummonerEntity extends SpellCastingEntity {
                     SummonerEntity.this.getZ(), 60, 0.7D, SummonerEntity.this.getBbHeight() * 0.3D, 0.7D, 0.0D);
 
             if (SummonerEntity.this.getTarget() != null) {
-                SummonerEntity.this.getTarget().addEffect(new MobEffectInstance(MobEffects.MOVEMENT_SLOWDOWN, 100, 1, false, false));
+                SummonerEntity.this.getTarget().addEffect(new MobEffectInstance(MobEffects.SLOWNESS, 100, 1, false, false));
             }
 
         }
@@ -376,7 +379,7 @@ public class SummonerEntity extends SpellCastingEntity {
             if (!super.canUse() || tooManySlaves()) {
                 return false;
             } else {
-                int i = SummonerEntity.this.level().getNearbyEntities(WitherPuppetEntity.class, this.PUPPET_PREDICATE, SummonerEntity.this, SummonerEntity.this.getBoundingBox().inflate(16.0D)).size();
+                int i = ((ServerLevel) SummonerEntity.this.level()).getNearbyEntities(WitherPuppetEntity.class, this.PUPPET_PREDICATE, SummonerEntity.this, SummonerEntity.this.getBoundingBox().inflate(16.0D)).size();
                 return SummonerEntity.this.getRandom().nextInt(8) + 1 > i;
             }
         }
@@ -397,23 +400,23 @@ public class SummonerEntity extends SpellCastingEntity {
             int spellCount = 0;
             for (int i = 0; i < 20; ++i) {
                 BlockPos blockPos = SummonerEntity.this.blockPosition().offset(-2 + serverWorld.getRandom().nextInt(5), serverWorld.getRandom().nextInt(3), -2 + serverWorld.getRandom().nextInt(5));
-                if (SpawnPlacements.checkSpawnRules(EntityInit.SKELETON_VANGUARD, serverWorld, MobSpawnType.EVENT, blockPos, serverWorld.getRandom())) {
+                if (SpawnPlacements.checkSpawnRules(EntityInit.SKELETON_VANGUARD, serverWorld, EntitySpawnReason.EVENT, blockPos, serverWorld.getRandom())) {
                     spellCount++;
-                    if (SummonerEntity.this.getHealth() <= 40.0F || SummonerEntity.this.getCommandSenderWorld().isDay()) {
-                        SkeletonVanguardEntity skeletonVanguardEntity = EntityInit.SKELETON_VANGUARD.create(serverWorld);
-                        skeletonVanguardEntity.moveTo(blockPos, serverWorld.getRandom().nextFloat() * 360F, 0.0F);
-                        skeletonVanguardEntity.finalizeSpawn(serverWorld, serverWorld.getCurrentDifficultyAt(blockPos), MobSpawnType.EVENT, null);
+                    if (SummonerEntity.this.getHealth() <= 40.0F || SummonerEntity.this.level().isBrightOutside()) {
+                        SkeletonVanguardEntity skeletonVanguardEntity = EntityInit.SKELETON_VANGUARD.create(serverWorld, EntitySpawnReason.MOB_SUMMONED);
+                        skeletonVanguardEntity.snapTo(blockPos, serverWorld.getRandom().nextFloat() * 360F, 0.0F);
+                        skeletonVanguardEntity.finalizeSpawn(serverWorld, serverWorld.getCurrentDifficultyAt(blockPos), EntitySpawnReason.EVENT, null);
                         serverWorld.addFreshEntityWithPassengers(skeletonVanguardEntity);
                     } else {
-                        Zombie zombieEntity = EntityType.ZOMBIE.create(serverWorld);
-                        zombieEntity.moveTo(blockPos, serverWorld.getRandom().nextFloat() * 360F, 0.0F);
-                        zombieEntity.finalizeSpawn(serverWorld, serverWorld.getCurrentDifficultyAt(blockPos), MobSpawnType.EVENT, null);
+                        Zombie zombieEntity = EntityTypes.ZOMBIE.create(serverWorld, EntitySpawnReason.MOB_SUMMONED);
+                        zombieEntity.snapTo(blockPos, serverWorld.getRandom().nextFloat() * 360F, 0.0F);
+                        zombieEntity.finalizeSpawn(serverWorld, serverWorld.getCurrentDifficultyAt(blockPos), EntitySpawnReason.EVENT, null);
                         serverWorld.addFreshEntityWithPassengers(zombieEntity);
                         int skeletonChance = serverWorld.getRandom().nextInt(8);
                         if (skeletonChance == 0) {
-                            Skeleton skeletonEntity = EntityType.SKELETON.create(serverWorld);
-                            skeletonEntity.moveTo(blockPos, serverWorld.getRandom().nextFloat() * 360F, 0.0F);
-                            skeletonEntity.finalizeSpawn(serverWorld, serverWorld.getCurrentDifficultyAt(blockPos), MobSpawnType.EVENT, null);
+                            Skeleton skeletonEntity = EntityTypes.SKELETON.create(serverWorld, EntitySpawnReason.MOB_SUMMONED);
+                            skeletonEntity.snapTo(blockPos, serverWorld.getRandom().nextFloat() * 360F, 0.0F);
+                            skeletonEntity.finalizeSpawn(serverWorld, serverWorld.getCurrentDifficultyAt(blockPos), EntitySpawnReason.EVENT, null);
                             if (SummonerEntity.this.gotShotByABow) {
                                 skeletonEntity.setItemSlot(EquipmentSlot.MAINHAND, new ItemStack(Items.BOW));
                             }
@@ -460,7 +463,7 @@ public class SummonerEntity extends SpellCastingEntity {
             for (LivingEntity livingEntity : list) {
                 if (livingEntity.getType() == EntityInit.SKELETON_VANGUARD) {
                     vanguards++;
-                } else if (livingEntity.getType() == EntityType.ZOMBIE || livingEntity.getType() == EntityType.SKELETON) {
+                } else if (livingEntity.getType() == EntityTypes.ZOMBIE || livingEntity.getType() == EntityTypes.SKELETON) {
                     othermobs++;
                 }
                 if (vanguards >= 5 || othermobs >= 7) {
@@ -492,7 +495,7 @@ public class SummonerEntity extends SpellCastingEntity {
                 return false;
             } else if (!livingEntity.isAlive()) {
                 return false;
-            } else if (!this.mob.isWithinRestriction(livingEntity.blockPosition())) {
+            } else if (!this.mob.isWithinHome(livingEntity.blockPosition())) {
                 return false;
             } else {
                 return !(livingEntity instanceof Player player) || !livingEntity.isSpectator() && !player.isCreative();

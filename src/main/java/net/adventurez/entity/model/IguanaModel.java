@@ -1,11 +1,11 @@
 package net.adventurez.entity.model;
 
-import com.google.common.collect.ImmutableList;
 
+import net.adventurez.entity.render.state.IguanaRenderState;
+import net.minecraft.client.model.EntityModel;
 import net.adventurez.entity.IguanaEntity;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
-import net.minecraft.client.model.AgeableListModel;
 import net.minecraft.client.model.geom.ModelPart;
 import net.minecraft.client.model.geom.PartPose;
 import net.minecraft.client.model.geom.builders.CubeListBuilder;
@@ -15,7 +15,7 @@ import net.minecraft.client.model.geom.builders.PartDefinition;
 import net.minecraft.util.Mth;
 
 @Environment(EnvType.CLIENT)
-public class IguanaModel<T extends IguanaEntity> extends AgeableListModel<T> {
+public class IguanaModel extends EntityModel<IguanaRenderState> {
     private final ModelPart body;
     private final ModelPart tail;
     private final ModelPart cube_r1;
@@ -29,6 +29,7 @@ public class IguanaModel<T extends IguanaEntity> extends AgeableListModel<T> {
     private final ModelPart right_back;
 
     public IguanaModel(ModelPart root) {
+        super(root);
         this.body = root.getChild("body");
         this.tail = this.body.getChild("tail");
         this.cube_r1 = this.tail.getChild("cube_r1");
@@ -64,7 +65,12 @@ public class IguanaModel<T extends IguanaEntity> extends AgeableListModel<T> {
     }
 
     @Override
-    public void setupAnim(T entity, float limbAngle, float limbDistance, float animationProgress, float headYaw, float headPitch) {
+    public void setupAnim(IguanaRenderState state) {
+        float limbAngle = state.walkAnimationPos;
+        float limbDistance = state.walkAnimationSpeed;
+        float animationProgress = state.ageInTicks;
+        float headYaw = state.yRot;
+        float headPitch = state.xRot;
         this.cube_r1.xRot = -0.1745F;
         this.head.xRot = headPitch * 0.007453292F;
         this.head.yRot = headYaw * 0.0017453292F;
@@ -76,20 +82,12 @@ public class IguanaModel<T extends IguanaEntity> extends AgeableListModel<T> {
         this.right_middle.xRot = Mth.cos(limbAngle * 0.6662F + 4.7123889803F) * 1.4F * limbDistance;
         this.left_middle.xRot = Mth.cos(limbAngle * 0.6662F + 1.57079632F) * 1.4F * limbDistance;
 
-        if (entity.getEntityData().get(IguanaEntity.OPEN_MOUTH)) {
+        if (state.openMouth) {
             this.jaw.xRot = 0.3F;
         } else
             this.jaw.xRot = 0.0F;
     }
 
-    @Override
-    protected Iterable<ModelPart> headParts() {
-        return ImmutableList.of();
-    }
 
-    @Override
-    protected Iterable<ModelPart> bodyParts() {
-        return ImmutableList.of(this.head, this.body, this.left_middle, this.left_front, this.left_back, this.right_middle, this.right_front, this.right_back);
-    }
 
 }

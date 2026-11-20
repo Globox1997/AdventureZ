@@ -1,11 +1,10 @@
 package net.adventurez.entity.model;
 
-import com.google.common.collect.ImmutableList;
 
-import net.adventurez.entity.OrcEntity;
+import net.adventurez.entity.render.state.OrcRenderState;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
-import net.minecraft.client.model.ListModel;
+import net.minecraft.client.model.EntityModel;
 import net.minecraft.client.model.geom.ModelPart;
 import net.minecraft.client.model.geom.PartPose;
 import net.minecraft.client.model.geom.builders.CubeListBuilder;
@@ -15,7 +14,7 @@ import net.minecraft.client.model.geom.builders.PartDefinition;
 import net.minecraft.util.Mth;
 
 @Environment(EnvType.CLIENT)
-public class OrcModel<T extends OrcEntity> extends ListModel<T> {
+public class OrcModel extends EntityModel<OrcRenderState> {
     private final ModelPart leftLeg;
     private final ModelPart rightLeg;
     private final ModelPart torso;
@@ -29,6 +28,7 @@ public class OrcModel<T extends OrcEntity> extends ListModel<T> {
     private final ModelPart ear;
 
     public OrcModel(ModelPart root) {
+        super(root);
         this.leftLeg = root.getChild("leftLeg");
         this.rightLeg = root.getChild("rightLeg");
         this.torso = root.getChild("torso");
@@ -65,13 +65,13 @@ public class OrcModel<T extends OrcEntity> extends ListModel<T> {
         return LayerDefinition.create(modelData, 128, 128);
     }
 
-    @Override
-    public Iterable<ModelPart> parts() {
-        return ImmutableList.of(this.head, this.torso, this.rightLeg, this.leftLeg, this.rightArm, this.leftArm);
-    }
 
     @Override
-    public void setupAnim(T entity, float limbAngle, float limbDistance, float animationProgress, float headYaw, float headPitch) {
+    public void setupAnim(OrcRenderState state) {
+        float limbAngle = state.walkAnimationPos;
+        float limbDistance = state.walkAnimationSpeed;
+        float headYaw = state.yRot;
+        float headPitch = state.xRot;
         this.leftArm.xRot = -0.2618F;
         this.leftArm.zRot = 0.0436F;
         this.rightArm.xRot = -0.2618F;
@@ -90,10 +90,10 @@ public class OrcModel<T extends OrcEntity> extends ListModel<T> {
 
         this.rightArm.xRot = -Mth.cos(limbAngle * 0.6662F + 3.1415927F) * 2.0F * limbDistance * 0.32F;
         this.leftArm.xRot = Mth.cos(limbAngle * 0.6662F + 3.1415927F) * 2.0F * limbDistance * 0.32F;
-        float k = Mth.sin(entity.attackAnim * 3.1415927F);
+        float k = Mth.sin(state.attackAnim * 3.1415927F);
         if (k > 0) {
             this.rightArm.xRot = -k;
-            if (entity.getEntityData().get(OrcEntity.DOUBLE_HAND_ATTACK)) {
+            if (state.doubleHandAttack) {
                 this.leftArm.xRot = -k;
             }
         }

@@ -9,7 +9,7 @@ import net.minecraft.network.syncher.EntityDataAccessor;
 import net.minecraft.network.syncher.EntityDataSerializers;
 import net.minecraft.network.syncher.SynchedEntityData;
 import net.minecraft.network.syncher.SynchedEntityData.Builder;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.sounds.SoundEvent;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.world.Difficulty;
@@ -31,23 +31,27 @@ import net.minecraft.world.entity.ai.goal.target.HurtByTargetGoal;
 import net.minecraft.world.entity.ai.goal.target.NearestAttackableTargetGoal;
 import net.minecraft.world.entity.ai.memory.MemoryModuleType;
 import net.minecraft.world.entity.monster.Monster;
-import net.minecraft.world.entity.monster.WitherSkeleton;
+import net.minecraft.world.entity.monster.skeleton.WitherSkeleton;
 import net.minecraft.world.entity.monster.piglin.AbstractPiglin;
 import net.minecraft.world.entity.monster.piglin.Piglin;
 import net.minecraft.world.entity.player.Player;
-import net.minecraft.world.level.GameRules;
+import net.minecraft.world.level.gamerules.GameRules;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.LevelReader;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.pathfinder.PathType;
 import java.util.List;
 import java.util.Optional;
+import net.minecraft.world.entity.EntityTypes;
+import net.minecraft.world.level.storage.ValueInput;
+import net.minecraft.world.level.storage.ValueOutput;
+import net.minecraft.server.level.ServerLevel;
 
 public class PiglinBeastEntity extends Monster {
     public static final EntityDataAccessor<Float> LEAD_ARM = SynchedEntityData.defineId(PiglinBeastEntity.class, EntityDataSerializers.FLOAT);
     public float armTick;
     private int makePiglinsAngry = 0;
-    private static final ResourceLocation LEAD_ARM_IDENTIFIER = AdventureMain.identifierOf("lead_arm_movement");
+    private static final Identifier LEAD_ARM_IDENTIFIER = AdventureMain.identifierOf("lead_arm_movement");
     private static final AttributeModifier LEAD_ARM_MOVEMENT = new AttributeModifier(
             LEAD_ARM_IDENTIFIER, -0.225F, AttributeModifier.Operation.ADD_VALUE);
 
@@ -79,7 +83,7 @@ public class PiglinBeastEntity extends Monster {
     }
 
     @Override
-    public void customServerAiStep() {
+    public void customServerAiStep(ServerLevel level) {
         if (this.getTarget() instanceof Player) {
             makePiglinsAngry++;
             if (makePiglinsAngry == 600) {
@@ -104,15 +108,15 @@ public class PiglinBeastEntity extends Monster {
     }
 
     @Override
-    public void addAdditionalSaveData(CompoundTag tag) {
+    public void addAdditionalSaveData(ValueOutput tag) {
         super.addAdditionalSaveData(tag);
         tag.putFloat("LeadArm", 0F);
     }
 
     @Override
-    public void readAdditionalSaveData(CompoundTag tag) {
+    public void readAdditionalSaveData(ValueInput tag) {
         super.readAdditionalSaveData(tag);
-        this.armTick = tag.getFloat("LeadArm");
+        this.armTick = tag.getFloatOr("LeadArm", 0.0F);
     }
 
     @Override
@@ -175,8 +179,8 @@ public class PiglinBeastEntity extends Monster {
                 this.resetAttackCooldown();
                 this.mob.level().playSound(null, PiglinBeastEntity.this, SoundInit.PIGLIN_BEAST_CLUBSWING_EVENT, SoundSource.HOSTILE, 1.0F, 1.0F);
 
-                this.mob.swing(InteractionHand.MAIN_HAND);
-                this.mob.doHurtTarget(target);
+                this.mob.swingForAttack(InteractionHand.MAIN_HAND);
+                this.mob.doHurtTarget(getServerLevel(this.mob), target);
             }
         }
     }
@@ -201,7 +205,7 @@ public class PiglinBeastEntity extends Monster {
         piglin.getBrain().eraseMemory(MemoryModuleType.CANT_REACH_WALK_TARGET_SINCE);
         piglin.getBrain().setMemoryWithExpiry(MemoryModuleType.ANGRY_AT, target.getUUID(), 600L);
 
-        if (target.getType() == EntityType.PLAYER && piglin.level().getGameRules().getBoolean(GameRules.RULE_UNIVERSAL_ANGER)) {
+        if (target.getType() == EntityTypes.PLAYER && ((ServerLevel) piglin.level()).getGameRules().get(GameRules.UNIVERSAL_ANGER)) {
             piglin.getBrain().setMemoryWithExpiry(MemoryModuleType.UNIVERSAL_ANGER, true, 600L);
         }
         if (!piglin.level().isClientSide()) {

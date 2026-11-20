@@ -23,7 +23,7 @@ import net.minecraft.world.DifficultyInstance;
 import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.LivingEntity;
-import net.minecraft.world.entity.MobSpawnType;
+import net.minecraft.world.entity.EntitySpawnReason;
 import net.minecraft.world.entity.SpawnGroupData;
 import net.minecraft.world.entity.SpawnPlacements;
 import net.minecraft.world.entity.ai.attributes.AttributeSupplier;
@@ -38,13 +38,16 @@ import net.minecraft.world.entity.ai.goal.target.NearestAttackableTargetGoal;
 import net.minecraft.world.entity.monster.Blaze;
 import net.minecraft.world.entity.monster.Monster;
 import net.minecraft.world.entity.player.Player;
-import net.minecraft.world.entity.projectile.SmallFireball;
+import net.minecraft.world.entity.projectile.hurtingprojectile.SmallFireball;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.Level.ExplosionInteraction;
 import net.minecraft.world.level.ServerLevelAccessor;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.pathfinder.PathType;
 import net.minecraft.world.phys.Vec3;
+import net.minecraft.world.entity.EntityTypes;
+import net.minecraft.world.level.storage.ValueInput;
+import net.minecraft.world.level.storage.ValueOutput;
 
 public class BlazeGuardianEntity extends Monster {
     private float eyeOffset = 0.5F;
@@ -64,8 +67,8 @@ public class BlazeGuardianEntity extends Monster {
         super(entityType, world);
         this.setPathfindingMalus(PathType.WATER, -1.0F);
         this.setPathfindingMalus(PathType.LAVA, 8.0F);
-        this.setPathfindingMalus(PathType.DANGER_FIRE, 0.0F);
-        this.setPathfindingMalus(PathType.DAMAGE_FIRE, 0.0F);
+        this.setPathfindingMalus(PathType.FIRE_IN_NEIGHBOR, 0.0F);
+        this.setPathfindingMalus(PathType.FIRE, 0.0F);
         this.xpReward = 20;
     }
 
@@ -98,7 +101,7 @@ public class BlazeGuardianEntity extends Monster {
     }
 
     @Override
-    public void addAdditionalSaveData(CompoundTag tag) {
+    public void addAdditionalSaveData(ValueOutput tag) {
         super.addAdditionalSaveData(tag);
         tag.putBoolean("ShieldNorth", this.shield_north.isAlive());
         tag.putBoolean("ShieldEast", this.shield_east.isAlive());
@@ -107,22 +110,22 @@ public class BlazeGuardianEntity extends Monster {
     }
 
     @Override
-    public void readAdditionalSaveData(CompoundTag tag) {
+    public void readAdditionalSaveData(ValueInput tag) {
         super.readAdditionalSaveData(tag);
-        this.entityData.set(SHIELD_NORTH, tag.getBoolean("ShieldNorth"));
-        if (tag.getBoolean("ShieldNorth")) {
+        this.entityData.set(SHIELD_NORTH, tag.getBooleanOr("ShieldNorth", false));
+        if (tag.getBooleanOr("ShieldNorth", false)) {
             this.level().addFreshEntity(shield_north);
         }
-        this.entityData.set(SHIELD_EAST, tag.getBoolean("ShieldEast"));
-        if (tag.getBoolean("ShieldEast")) {
+        this.entityData.set(SHIELD_EAST, tag.getBooleanOr("ShieldEast", false));
+        if (tag.getBooleanOr("ShieldEast", false)) {
             this.level().addFreshEntity(shield_east);
         }
-        this.entityData.set(SHIELD_SOUTH, tag.getBoolean("ShieldSouth"));
-        if (tag.getBoolean("ShieldSouth")) {
+        this.entityData.set(SHIELD_SOUTH, tag.getBooleanOr("ShieldSouth", false));
+        if (tag.getBooleanOr("ShieldSouth", false)) {
             this.level().addFreshEntity(shield_south);
         }
-        this.entityData.set(SHIELD_WEST, tag.getBoolean("ShieldWest"));
-        if (tag.getBoolean("ShieldWest")) {
+        this.entityData.set(SHIELD_WEST, tag.getBooleanOr("ShieldWest", false));
+        if (tag.getBooleanOr("ShieldWest", false)) {
             this.level().addFreshEntity(shield_west);
         }
     }
@@ -152,7 +155,7 @@ public class BlazeGuardianEntity extends Monster {
     }
 
     @Override
-    public boolean causeFallDamage(float fallDistance, float damageMultiplier, DamageSource damageSource) {
+    public boolean causeFallDamage(double fallDistance, float damageMultiplier, DamageSource damageSource) {
         return false;
     }
 
@@ -193,7 +196,7 @@ public class BlazeGuardianEntity extends Monster {
     }
 
     @Override
-    public void customServerAiStep() {
+    public void customServerAiStep(ServerLevel level) {
         --this.eyeOffsetCooldown;
         if (this.eyeOffsetCooldown <= 0) {
             this.eyeOffsetCooldown = 100;
@@ -204,10 +207,10 @@ public class BlazeGuardianEntity extends Monster {
         if (livingEntity != null && livingEntity.getEyeY() > this.getEyeY() + (double) this.eyeOffset && this.canAttack(livingEntity) && !this.isTryingToShockwave) {
             Vec3 vec3d = this.getDeltaMovement();
             this.setDeltaMovement(this.getDeltaMovement().add(0.0D, (0.30000001192092896D - vec3d.y) * 0.30000001192092896D, 0.0D));
-            this.hasImpulse = true;
+            this.needsSync = true;
         }
 
-        super.customServerAiStep();
+        super.customServerAiStep(level);
     }
 
     @Override
@@ -231,11 +234,11 @@ public class BlazeGuardianEntity extends Monster {
     }
 
     @Override
-    public boolean hurt(DamageSource source, float amount) {
+    public boolean hurtServer(ServerLevel level, DamageSource source, float amount) {
         if (!source.is(DamageTypeTags.BYPASSES_INVULNERABILITY) && this.getHealth() < this.getMaxHealth() / 2F) {
             amount *= 0.5F;
         }
-        return this.isInvulnerableTo(source) ? false : super.hurt(source, amount);
+        return this.isInvulnerableTo(level, source) ? false : super.hurtServer(level, source, amount);
     }
 
     @Override
@@ -259,15 +262,15 @@ public class BlazeGuardianEntity extends Monster {
 
     @Nullable
     @Override
-    public SpawnGroupData finalizeSpawn(ServerLevelAccessor serverWorldAccess, DifficultyInstance difficulty, MobSpawnType spawnReason, @Nullable SpawnGroupData entityData) {
-        if (spawnReason.equals(MobSpawnType.NATURAL) || spawnReason.equals(MobSpawnType.CHUNK_GENERATION)) {
+    public SpawnGroupData finalizeSpawn(ServerLevelAccessor serverWorldAccess, DifficultyInstance difficulty, EntitySpawnReason spawnReason, @Nullable SpawnGroupData entityData) {
+        if (spawnReason.equals(EntitySpawnReason.NATURAL) || spawnReason.equals(EntitySpawnReason.CHUNK_GENERATION)) {
             for (int i = 0; i < serverWorldAccess.getRandom().nextInt(3) + 2; i++) {
                 for (int u = 0; u < 10; u++) {
-                    BlockPos pos = new BlockPos(this.blockPosition().offset(this.level().getRandom().nextInt(5), this.level().getRandom().nextInt(5), this.level().getRandom().nextInt(5)));
-                    if (SpawnPlacements.checkSpawnRules(EntityType.BLAZE, serverWorldAccess, MobSpawnType.NATURAL, pos, serverWorldAccess.getRandom())) {
-                        Blaze blazeEntity = EntityType.BLAZE.create(serverWorldAccess.getLevel());
-                        blazeEntity.finalizeSpawn(serverWorldAccess, this.level().getCurrentDifficultyAt(pos), MobSpawnType.NATURAL, null);
-                        blazeEntity.moveTo(pos, this.level().getRandom().nextFloat() * 360.0F, 0.0F);
+                    BlockPos pos = (this.blockPosition().offset(this.level().getRandom().nextInt(5), this.level().getRandom().nextInt(5), this.level().getRandom().nextInt(5)));
+                    if (SpawnPlacements.checkSpawnRules(EntityTypes.BLAZE, serverWorldAccess, EntitySpawnReason.NATURAL, pos, serverWorldAccess.getRandom())) {
+                        Blaze blazeEntity = EntityTypes.BLAZE.create(serverWorldAccess.getLevel(), EntitySpawnReason.MOB_SUMMONED);
+                        blazeEntity.finalizeSpawn(serverWorldAccess, ((ServerLevel) this.level()).getCurrentDifficultyAt(pos), EntitySpawnReason.NATURAL, null);
+                        blazeEntity.snapTo(pos, this.level().getRandom().nextFloat() * 360.0F, 0.0F);
                         serverWorldAccess.addFreshEntity(blazeEntity);
                         break;
                     }
@@ -288,9 +291,9 @@ public class BlazeGuardianEntity extends Monster {
         return super.finalizeSpawn(serverWorldAccess, difficulty, spawnReason, entityData);
     }
 
-    public static boolean canSpawn(EntityType<BlazeGuardianEntity> type, ServerLevelAccessor world, MobSpawnType spawnReason, BlockPos pos, RandomSource random) {
+    public static boolean canSpawn(EntityType<BlazeGuardianEntity> type, ServerLevelAccessor world, EntitySpawnReason spawnReason, BlockPos pos, RandomSource random) {
         return ((world.getBlockState(pos.below()).is(Blocks.NETHERRACK) || world.getBlockState(pos.below()).is(Blocks.NETHER_BRICKS)) && checkMonsterSpawnRules(type, world, spawnReason, pos, random)
-                && random.nextInt(4) == 0) || spawnReason == MobSpawnType.SPAWNER;
+                && random.nextInt(4) == 0) || spawnReason == EntitySpawnReason.SPAWNER;
     }
 
     static {
@@ -347,7 +350,7 @@ public class BlazeGuardianEntity extends Monster {
                     }
                     if (this.fireballCooldown <= 0) {
                         this.fireballCooldown = 20;
-                        this.guardian.doHurtTarget(livingEntity);
+                        this.guardian.doHurtTarget(getServerLevel(this.guardian), livingEntity);
                     }
                     this.guardian.getMoveControl().setWantedPosition(livingEntity.getX(), livingEntity.getY(), livingEntity.getZ(), 1.0D);
                 } else if (d < this.getFollowRange() * this.getFollowRange() && bl) {
@@ -375,7 +378,7 @@ public class BlazeGuardianEntity extends Monster {
                             for (int i = 0; i < 1; ++i) {
                                 Vec3 vec3d = new Vec3(this.guardian.getRandom().triangle(e, 2.297 * h), f, this.guardian.getRandom().triangle(g, 2.297 * h));
                                 SmallFireball smallFireballEntity = new SmallFireball(this.guardian.level(), this.guardian, vec3d.normalize());
-                                smallFireballEntity.absMoveTo(smallFireballEntity.getX(), this.guardian.getY(0.5D) + 0.5D, smallFireballEntity.getZ());
+                                smallFireballEntity.absSnapTo(smallFireballEntity.getX(), this.guardian.getY(0.5D) + 0.5D, smallFireballEntity.getZ());
                                 this.guardian.level().addFreshEntity(smallFireballEntity);
                             }
                         }

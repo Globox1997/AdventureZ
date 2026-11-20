@@ -1,0 +1,16 @@
+{
+  "model": {
+    "type": "minecraft:model",
+    "model": "adventurez:item/spawn_soul_reaper",
+    "tints": [
+      {
+        "type": "minecraft:constant",
+        "value": -15395563
+      },
+      {
+        "type": "minecraft:constant",
+        "value": -11447469
+      }
+    ]
+  }
+}

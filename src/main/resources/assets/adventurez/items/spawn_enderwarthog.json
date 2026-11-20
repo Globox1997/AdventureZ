@@ -1,0 +1,16 @@
+{
+  "model": {
+    "type": "minecraft:model",
+    "model": "adventurez:item/spawn_enderwarthog",
+    "tints": [
+      {
+        "type": "minecraft:constant",
+        "value": -13949136
+      },
+      {
+        "type": "minecraft:constant",
+        "value": -10223491
+      }
+    ]
+  }
+}

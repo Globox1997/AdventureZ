@@ -16,7 +16,7 @@ import net.minecraft.world.entity.EntitySelector;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.Mob;
-import net.minecraft.world.entity.MobSpawnType;
+import net.minecraft.world.entity.EntitySpawnReason;
 import net.minecraft.world.entity.SpawnPlacements;
 import net.minecraft.world.entity.ai.attributes.AttributeSupplier;
 import net.minecraft.world.entity.ai.attributes.Attributes;
@@ -28,7 +28,7 @@ import net.minecraft.world.entity.ai.goal.target.HurtByTargetGoal;
 import net.minecraft.world.entity.ai.goal.target.NearestAttackableTargetGoal;
 import net.minecraft.world.entity.ai.targeting.TargetingConditions;
 import net.minecraft.world.entity.monster.Monster;
-import net.minecraft.world.entity.monster.WitherSkeleton;
+import net.minecraft.world.entity.monster.skeleton.WitherSkeleton;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.ServerLevelAccessor;
@@ -36,6 +36,7 @@ import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.AABB;
 import java.util.List;
+import net.minecraft.world.entity.EntityTypes;
 
 public class NecromancerEntity extends SpellCastingEntity {
 
@@ -65,14 +66,14 @@ public class NecromancerEntity extends SpellCastingEntity {
         this.targetSelector.addGoal(3, (new NearestAttackableTargetGoal<>(this, Player.class, true)).setUnseenMemoryTicks(300));
     }
 
-    public static boolean canSpawn(EntityType<NecromancerEntity> type, ServerLevelAccessor world, MobSpawnType spawnReason, BlockPos pos, RandomSource random) {
+    public static boolean canSpawn(EntityType<NecromancerEntity> type, ServerLevelAccessor world, EntitySpawnReason spawnReason, BlockPos pos, RandomSource random) {
         return (checkMonsterSpawnRules(type, world, spawnReason, pos, random) && world.getBlockState(pos.below()).equals(Blocks.NETHER_BRICKS.defaultBlockState())
-                && world.getEntitiesOfClass(NecromancerEntity.class, new AABB(pos).inflate(60D), EntitySelector.NO_SPECTATORS).isEmpty()) || spawnReason == MobSpawnType.SPAWNER;
+                && world.getEntitiesOfClass(NecromancerEntity.class, new AABB(pos).inflate(60D), EntitySelector.NO_SPECTATORS).isEmpty()) || spawnReason == EntitySpawnReason.SPAWNER;
     }
 
     @Override
-    public void customServerAiStep() {
-        super.customServerAiStep();
+    public void customServerAiStep(ServerLevel level) {
+        super.customServerAiStep(level);
         if (this.isSpellcasting() && this.spellTicks == 3) {
             int invisibleChance = this.level().getRandom().nextInt(5);
             if (invisibleChance == 0) {
@@ -122,12 +123,12 @@ public class NecromancerEntity extends SpellCastingEntity {
     }
 
     @Override
-    public boolean isAlliedTo(Entity other) {
+    protected boolean considersEntityAsAlly(Entity other) {
         if (other == null) {
             return false;
         } else if (other == this) {
             return true;
-        } else if (super.isAlliedTo(other)) {
+        } else if (super.considersEntityAsAlly(other)) {
             return true;
         } else if (other instanceof WitherPuppetEntity) {
             return this.isAlliedTo(((WitherPuppetEntity) other).getOwner());
@@ -195,7 +196,7 @@ public class NecromancerEntity extends SpellCastingEntity {
             if (!super.canUse() || arePuppetsNearby()) {
                 return false;
             } else {
-                int i = NecromancerEntity.this.level()
+                int i = ((ServerLevel) NecromancerEntity.this.level())
                         .getNearbyEntities(WitherPuppetEntity.class, this.CLOSE_PUPPET_PREDICATE, NecromancerEntity.this, NecromancerEntity.this.getBoundingBox().inflate(16.0D)).size();
                 return NecromancerEntity.this.random.nextInt(8) + 1 > i;
             }
@@ -217,19 +218,19 @@ public class NecromancerEntity extends SpellCastingEntity {
             int spellCount = 0;
             for (int i = 0; i < 20; ++i) {
                 BlockPos blockPos = NecromancerEntity.this.blockPosition().offset(-2 + NecromancerEntity.this.getRandom().nextInt(5), 1, -2 + NecromancerEntity.this.getRandom().nextInt(5));
-                if (SpawnPlacements.checkSpawnRules(EntityInit.WITHER_PUPPET, serverWorld, MobSpawnType.EVENT, blockPos, serverWorld.getRandom())) {
+                if (SpawnPlacements.checkSpawnRules(EntityInit.WITHER_PUPPET, serverWorld, EntitySpawnReason.EVENT, blockPos, serverWorld.getRandom())) {
                     spellCount++;
-                    WitherPuppetEntity puppet = EntityInit.WITHER_PUPPET.create(serverWorld);
-                    puppet.finalizeSpawn(serverWorld, serverWorld.getCurrentDifficultyAt(blockPos), MobSpawnType.EVENT, null);
-                    puppet.moveTo(blockPos, serverWorld.getRandom().nextFloat() * 360F, 0.0F);
+                    WitherPuppetEntity puppet = EntityInit.WITHER_PUPPET.create(serverWorld, EntitySpawnReason.MOB_SUMMONED);
+                    puppet.finalizeSpawn(serverWorld, serverWorld.getCurrentDifficultyAt(blockPos), EntitySpawnReason.EVENT, null);
+                    puppet.snapTo(blockPos, serverWorld.getRandom().nextFloat() * 360F, 0.0F);
                     puppet.setOwner(NecromancerEntity.this);
                     puppet.setLifeTicks(20 * (40 + NecromancerEntity.this.getRandom().nextInt(90)));
                     serverWorld.addFreshEntityWithPassengers(puppet);
                     int skeletonChance = serverWorld.getRandom().nextInt(14);
                     if (skeletonChance == 0) {
-                        WitherSkeleton witherSkeletonEntity = EntityType.WITHER_SKELETON.create(serverWorld);
-                        witherSkeletonEntity.moveTo(blockPos, serverWorld.getRandom().nextFloat() * 360F, 0.0F);
-                        witherSkeletonEntity.finalizeSpawn(serverWorld, serverWorld.getCurrentDifficultyAt(blockPos), MobSpawnType.EVENT, null);
+                        WitherSkeleton witherSkeletonEntity = EntityTypes.WITHER_SKELETON.create(serverWorld, EntitySpawnReason.MOB_SUMMONED);
+                        witherSkeletonEntity.snapTo(blockPos, serverWorld.getRandom().nextFloat() * 360F, 0.0F);
+                        witherSkeletonEntity.finalizeSpawn(serverWorld, serverWorld.getCurrentDifficultyAt(blockPos), EntitySpawnReason.EVENT, null);
                         serverWorld.addFreshEntityWithPassengers(witherSkeletonEntity);
                     }
                 }

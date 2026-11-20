@@ -7,7 +7,7 @@ import net.minecraft.util.RandomSource;
 import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.Mob;
-import net.minecraft.world.entity.MobSpawnType;
+import net.minecraft.world.entity.EntitySpawnReason;
 import net.minecraft.world.entity.ai.attributes.AttributeSupplier;
 import net.minecraft.world.entity.ai.attributes.Attributes;
 import net.minecraft.world.entity.ai.goal.FloatGoal;
@@ -45,8 +45,8 @@ public class MiniBlackstoneGolemEntity extends Monster {
                 .add(Attributes.FOLLOW_RANGE, 38.0D);
     }
 
-    public static boolean canSpawn(EntityType<MiniBlackstoneGolemEntity> type, ServerLevelAccessor world, MobSpawnType spawnReason, BlockPos pos, RandomSource random) {
-        return checkMonsterSpawnRules(type, world, spawnReason, pos, random) || spawnReason == MobSpawnType.SPAWNER;
+    public static boolean canSpawn(EntityType<MiniBlackstoneGolemEntity> type, ServerLevelAccessor world, EntitySpawnReason spawnReason, BlockPos pos, RandomSource random) {
+        return checkMonsterSpawnRules(type, world, spawnReason, pos, random) || spawnReason == EntitySpawnReason.SPAWNER;
     }
 
     @Override

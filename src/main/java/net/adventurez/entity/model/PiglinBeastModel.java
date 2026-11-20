@@ -1,6 +1,7 @@
 package net.adventurez.entity.model;
 
-import com.google.common.collect.ImmutableList;
+import net.adventurez.entity.render.state.PiglinBeastRenderState;
+import net.minecraft.client.model.EntityModel;
 import net.adventurez.entity.PiglinBeastEntity;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
@@ -15,7 +16,7 @@ import net.minecraft.client.model.geom.builders.PartDefinition;
 import net.minecraft.util.Mth;
 
 @Environment(EnvType.CLIENT)
-public class PiglinBeastModel<T extends PiglinBeastEntity> extends ListModel<T> {
+public class PiglinBeastModel extends EntityModel<PiglinBeastRenderState> {
     private final ModelPart head;
     private final ModelPart ears;
     private final ModelPart leftEar;
@@ -30,6 +31,7 @@ public class PiglinBeastModel<T extends PiglinBeastEntity> extends ListModel<T> 
     private final ModelPart hammer;
 
     public PiglinBeastModel(ModelPart root) {
+        super(root);
         this.head = root.getChild("head");
         this.ears = this.head.getChild("ears");
         this.leftEar = this.ears.getChild("leftEar");
@@ -105,13 +107,14 @@ public class PiglinBeastModel<T extends PiglinBeastEntity> extends ListModel<T> 
         return LayerDefinition.create(modelData, 256, 256);
     }
 
-    @Override
-    public Iterable<ModelPart> parts() {
-        return ImmutableList.of(this.head, this.body, this.rightLeg, this.leftLeg, this.rightArm, this.leftArm);
-    }
 
     @Override
-    public void setupAnim(T entity, float limbAngle, float limbDistance, float animationProgress, float headYaw, float headPitch) {
+    public void setupAnim(PiglinBeastRenderState state) {
+        float limbAngle = state.walkAnimationPos;
+        float limbDistance = state.walkAnimationSpeed;
+        float animationProgress = state.ageInTicks;
+        float headYaw = state.yRot;
+        float headPitch = state.xRot;
         this.head.yRot = headYaw * 0.0079453292F;
         this.head.xRot = headPitch * 0.0027453292F;
 
@@ -129,12 +132,12 @@ public class PiglinBeastModel<T extends PiglinBeastEntity> extends ListModel<T> 
         this.rightArm.xRot = Mth.cos(limbAngle * 0.6662F + 3.1415927F) * 2.0F * limbDistance * 0.3F;
         this.leftArm.xRot = -Mth.cos(limbAngle * 0.6662F + 3.1415927F) * 2.0F * limbDistance * 0.3F;
 
-        float k = Mth.sin(entity.attackAnim * 3.1415927F);
+        float k = Mth.sin(state.attackAnim * 3.1415927F);
         if (k > 0) {
             this.leftArm.xRot = -k;
         }
 
-        float handUp = entity.getEntityData().get(PiglinBeastEntity.LEAD_ARM);
+        float handUp = state.leadArm;
         if (handUp > 0.0F) {
             float g = handUp;
             float h = Mth.sin(g * 3.1415927F);

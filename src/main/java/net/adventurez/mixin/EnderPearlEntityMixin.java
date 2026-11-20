@@ -9,8 +9,8 @@ import org.spongepowered.asm.mixin.injection.At;
 import net.adventurez.init.ItemInit;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.entity.EntityType;
-import net.minecraft.world.entity.projectile.ThrowableItemProjectile;
-import net.minecraft.world.entity.projectile.ThrownEnderpearl;
+import net.minecraft.world.entity.projectile.throwableitemprojectile.ThrowableItemProjectile;
+import net.minecraft.world.entity.projectile.throwableitemprojectile.ThrownEnderpearl;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.phys.HitResult;
 import net.minecraft.world.phys.Vec3;
@@ -22,10 +22,10 @@ public abstract class EnderPearlEntityMixin extends ThrowableItemProjectile {
         super(entityType, world);
     }
 
-    @Inject(method = "onHit", at = @At(value = "INVOKE", target = "Lnet/minecraft/world/entity/Entity;hurt(Lnet/minecraft/world/damagesource/DamageSource;F)Z"), cancellable = true)
+    @Inject(method = "onHit", at = @At(value = "INVOKE", target = "Lnet/minecraft/server/level/ServerPlayer;hurtServer(Lnet/minecraft/server/level/ServerLevel;Lnet/minecraft/world/damagesource/DamageSource;F)Z"), cancellable = true)
     protected void onCollisionMixin(HitResult hitResult, CallbackInfo info) {
         if (this.getItem().is(ItemInit.PRIME_EYE)) {
-            this.getOwner().hurt(this.damageSources().fall(), 2.0F);
+            this.getOwner().hurtServer((ServerLevel) this.level(), this.damageSources().fall(), 2.0F);
             this.discard();
             this.playSound((ServerLevel) this.level(), this.position());
             info.cancel();

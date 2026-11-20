@@ -1,11 +1,11 @@
 package net.adventurez.entity.model;
 
-import com.google.common.collect.ImmutableList;
 
+import net.adventurez.entity.render.state.EnderwarthogRenderState;
+import net.minecraft.client.model.EntityModel;
 import net.adventurez.entity.EnderwarthogEntity;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
-import net.minecraft.client.model.ListModel;
 import net.minecraft.client.model.geom.ModelPart;
 import net.minecraft.client.model.geom.PartPose;
 import net.minecraft.client.model.geom.builders.CubeDeformation;
@@ -16,7 +16,7 @@ import net.minecraft.client.model.geom.builders.PartDefinition;
 import net.minecraft.util.Mth;
 
 @Environment(EnvType.CLIENT)
-public class EnderwarthogModel<T extends EnderwarthogEntity> extends ListModel<T> {
+public class EnderwarthogModel extends EntityModel<EnderwarthogRenderState> {
     private final ModelPart mainbody;
     private final ModelPart neck;
     private final ModelPart head;
@@ -37,6 +37,7 @@ public class EnderwarthogModel<T extends EnderwarthogEntity> extends ListModel<T
     private final ModelPart legbR;
 
     public EnderwarthogModel(ModelPart root) {
+        super(root);
         this.mainbody = root.getChild("mainbody");
         this.legbR = this.mainbody.getChild("legbR");
         this.legfR = this.mainbody.getChild("legfR");
@@ -96,13 +97,14 @@ public class EnderwarthogModel<T extends EnderwarthogEntity> extends ListModel<T
         return LayerDefinition.create(modelData, 256, 256);
     }
 
-    @Override
-    public Iterable<ModelPart> parts() {
-        return ImmutableList.of(this.mainbody);
-    }
 
     @Override
-    public void setupAnim(T entity, float limbAngle, float limbDistance, float animationProgress, float headYaw, float headPitch) {
+    public void setupAnim(EnderwarthogRenderState state) {
+        float limbAngle = state.walkAnimationPos;
+        float limbDistance = state.walkAnimationSpeed;
+        float animationProgress = state.ageInTicks;
+        float headYaw = state.yRot;
+        float headPitch = state.xRot;
 
         this.head.xRot = 0.2602F + headPitch * 0.010453292F;
         this.neck.yRot = headYaw * 0.004453292F;
@@ -140,10 +142,10 @@ public class EnderwarthogModel<T extends EnderwarthogEntity> extends ListModel<T
         this.legfR.xRot = Mth.cos(limbAngle * 0.6662F + 3.1415927F) * 0.8F * limbDistance;
         this.legfL.xRot = Mth.cos(limbAngle * 0.6662F) * 0.8F * limbDistance;
 
-        float k = Mth.sin(this.attackTime * 3.1415927F);
+        float k = Mth.sin(state.attackTime * 3.1415927F);
 
         if (k > 0.0F) {
-            if (entity.getEntityData().get(EnderwarthogEntity.BITE_ATTACK)) {
+            if (state.biteAttack) {
                 this.neck.xRot = -k * 0.05F;
                 this.head.xRot = -k * 0.01F;
                 this.jaw.xRot = 0.0524F + k * 0.45F;

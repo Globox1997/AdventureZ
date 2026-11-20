@@ -20,7 +20,11 @@
       "trigger": "minecraft:player_killed_entity",
       "conditions": {
         "entity": {
-          "type": "adventurez:blackstone_golem"
+          "type": "minecraft:entity_properties",
+          "entity": "this",
+          "predicate": {
+            "minecraft:entity_type": "adventurez:blackstone_golem"
+          }
         }
       }
     }

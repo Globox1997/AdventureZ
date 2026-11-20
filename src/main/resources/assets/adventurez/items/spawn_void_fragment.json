@@ -1,0 +1,16 @@
+{
+  "model": {
+    "type": "minecraft:model",
+    "model": "adventurez:item/spawn_void_fragment",
+    "tints": [
+      {
+        "type": "minecraft:constant",
+        "value": -15400881
+      },
+      {
+        "type": "minecraft:constant",
+        "value": -13107078
+      }
+    ]
+  }
+}

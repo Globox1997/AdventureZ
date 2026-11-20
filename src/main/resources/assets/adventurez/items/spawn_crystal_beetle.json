@@ -1,0 +1,16 @@
+{
+  "model": {
+    "type": "minecraft:model",
+    "model": "adventurez:item/spawn_crystal_beetle",
+    "tints": [
+      {
+        "type": "minecraft:constant",
+        "value": -14540253
+      },
+      {
+        "type": "minecraft:constant",
+        "value": -6006304
+      }
+    ]
+  }
+}

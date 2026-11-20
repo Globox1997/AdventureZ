@@ -2,7 +2,6 @@ package net.adventurez.block;
 
 import org.jetbrains.annotations.Nullable;
 
-import com.mojang.serialization.MapCodec;
 
 import net.adventurez.block.entity.ShadowChestEntity;
 import net.adventurez.init.BlockInit;
@@ -40,19 +39,20 @@ import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.StateDefinition;
 import net.minecraft.world.level.block.state.properties.BlockStateProperties;
 import net.minecraft.world.level.block.state.properties.BooleanProperty;
-import net.minecraft.world.level.block.state.properties.DirectionProperty;
+import net.minecraft.world.level.block.state.properties.EnumProperty;
 import net.minecraft.world.level.material.FluidState;
 import net.minecraft.world.level.material.Fluids;
 import net.minecraft.world.level.pathfinder.PathComputationType;
 import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.shapes.CollisionContext;
 import net.minecraft.world.phys.shapes.VoxelShape;
+import net.minecraft.world.level.LevelReader;
+import net.minecraft.world.level.ScheduledTickAccess;
 
 public class ShadowChest extends AbstractChestBlock<ShadowChestEntity> implements SimpleWaterloggedBlock {
 
-    public static final DirectionProperty FACING;
+    public static final EnumProperty<Direction> FACING;
     public static final BooleanProperty WATERLOGGED;
-    public static final MapCodec<ShadowChest> CODEC = ShadowChest.simpleCodec(ShadowChest::new);
     private static final VoxelShape SHAPE;
 
     public ShadowChest(BlockBehaviour.Properties settings) {
@@ -79,7 +79,7 @@ public class ShadowChest extends AbstractChestBlock<ShadowChestEntity> implement
 
     @Override
     public RenderShape getRenderShape(BlockState state) {
-        return RenderShape.ENTITYBLOCK_ANIMATED;
+        return RenderShape.INVISIBLE;
     }
 
     @Override
@@ -96,7 +96,7 @@ public class ShadowChest extends AbstractChestBlock<ShadowChestEntity> implement
             BlockEntity blockEntity = world.getBlockEntity(pos);
             if (!ChestBlock.isChestBlockedAt(world, pos) && blockEntity instanceof ShadowChestEntity) {
                 player.openMenu((ShadowChestEntity) blockEntity);
-                PiglinAi.angerNearbyPiglins(player, true);
+                PiglinAi.angerNearbyPiglins((ServerLevel) world, player, true);
             }
         }
         return InteractionResult.CONSUME;
@@ -149,12 +149,13 @@ public class ShadowChest extends AbstractChestBlock<ShadowChestEntity> implement
     }
 
     @Override
-    public BlockState updateShape(BlockState state, Direction direction, BlockState neighborState, LevelAccessor world, BlockPos pos, BlockPos neighborPos) {
+    protected BlockState updateShape(BlockState state, LevelReader world, ScheduledTickAccess ticks, BlockPos pos, Direction direction, BlockPos neighborPos, BlockState neighborState,
+            RandomSource random) {
         if (state.getValue(WATERLOGGED)) {
-            world.scheduleTick(pos, Fluids.WATER, Fluids.WATER.getTickDelay(world));
+            ticks.scheduleTick(pos, Fluids.WATER, Fluids.WATER.getTickDelay(world));
         }
 
-        return super.updateShape(state, direction, neighborState, world, pos, neighborPos);
+        return super.updateShape(state, world, ticks, pos, direction, neighborPos, neighborState, random);
     }
 
     @Override
@@ -172,29 +173,14 @@ public class ShadowChest extends AbstractChestBlock<ShadowChestEntity> implement
     }
 
     @Override
-    public void onRemove(BlockState state, Level world, BlockPos pos, BlockState newState, boolean moved) {
-        if (!state.is(newState.getBlock())) {
-            BlockEntity blockEntity = world.getBlockEntity(pos);
-            if (blockEntity instanceof Container) {
-                Containers.dropContents(world, pos, (Container) blockEntity);
-                world.updateNeighbourForOutputSignal(pos, this);
-            }
-
-            if (state.hasBlockEntity()) {
-                world.removeBlockEntity(pos);
-            }
-        }
+    protected void affectNeighborsAfterRemoval(BlockState state, ServerLevel world, BlockPos pos, boolean moved) {
+        Containers.updateNeighboursAfterDestroy(state, world, pos);
     }
 
     static {
         FACING = HorizontalDirectionalBlock.FACING;
         WATERLOGGED = BlockStateProperties.WATERLOGGED;
         SHAPE = Block.box(1.0D, 0.0D, 1.0D, 15.0D, 14.0D, 15.0D);
-    }
-
-    @Override
-    protected MapCodec<? extends AbstractChestBlock<ShadowChestEntity>> codec() {
-        return CODEC;
     }
 
 }

@@ -8,7 +8,6 @@ import org.jetbrains.annotations.Nullable;
 
 import net.adventurez.block.entity.ChiseledPolishedBlackstoneHolderEntity;
 import net.adventurez.init.TagInit;
-import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.core.BlockPos;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.Container;
@@ -17,7 +16,6 @@ import net.minecraft.world.InteractionResult;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.Item.TooltipContext;
 import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.item.TooltipFlag;
 import net.minecraft.world.level.BlockGetter;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Block;
@@ -30,6 +28,8 @@ import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.shapes.CollisionContext;
 import net.minecraft.world.phys.shapes.Shapes;
 import net.minecraft.world.phys.shapes.VoxelShape;
+import net.minecraft.server.level.ServerLevel;
+import net.minecraft.util.Prediction;
 
 public class ChiseledPolishedBlackstoneHolder extends Block implements EntityBlock {
     private static final VoxelShape SHAPE;
@@ -50,19 +50,6 @@ public class ChiseledPolishedBlackstoneHolder extends Block implements EntityBlo
                 world.isClientSide() ? ChiseledPolishedBlackstoneHolderEntity::clientTick : ChiseledPolishedBlackstoneHolderEntity::serverTick);
     }
 
-    @Override
-    public void appendHoverText(ItemStack stack, TooltipContext context, List<Component> tooltip, TooltipFlag options) {
-        super.appendHoverText(stack, context, tooltip, options);
-        if (ConfigInit.CONFIG.allow_extra_tooltips) {
-            tooltip.add(Component.translatable("item.adventurez.moreinfo.tooltip"));
-            if (Screen.hasShiftDown()) {
-                tooltip.remove(Component.translatable("item.adventurez.moreinfo.tooltip"));
-                tooltip.add(Component.translatable("block.adventurez.chiseled_polished_blackstone_holder.tooltip"));
-                tooltip.add(Component.translatable("block.adventurez.chiseled_polished_blackstone_holder.tooltip2"));
-                tooltip.add(Component.translatable("block.adventurez.chiseled_polished_blackstone_holder.tooltip3"));
-            }
-        }
-    }
 
     @Override
     public InteractionResult useWithoutItem(BlockState state, Level world, BlockPos pos, Player player, BlockHitResult hit) {
@@ -75,17 +62,17 @@ public class ChiseledPolishedBlackstoneHolder extends Block implements EntityBlo
                     blockEntity.setItem(0, itemStack);
                     itemStack.consume(1, player);
                 }
-                return InteractionResult.sidedSuccess(world.isClientSide());
+                return InteractionResult.SUCCESS;
             } else {
                 return InteractionResult.CONSUME;
             }
         } else {
             if (!world.isClientSide() && !player.getInventory().add(blockStack)) {
-                player.drop(blockStack, false);
+                player.drop(blockStack, false, Prediction.SERVER_ONLY);
             }
 
             blockEntity.clearContent();
-            return InteractionResult.sidedSuccess(world.isClientSide());
+            return InteractionResult.SUCCESS;
         }
 
     }
@@ -96,15 +83,8 @@ public class ChiseledPolishedBlackstoneHolder extends Block implements EntityBlo
     }
 
     @Override
-    public void onRemove(BlockState state, Level world, BlockPos pos, BlockState newState, boolean moved) {
-        if (!state.is(newState.getBlock())) {
-            BlockEntity blockEntity = world.getBlockEntity(pos);
-            if (blockEntity instanceof Container) {
-                Containers.dropContents(world, pos, (Container) blockEntity);
-                world.updateNeighbourForOutputSignal(pos, this);
-            }
-            super.onRemove(state, world, pos, newState, moved);
-        }
+    protected void affectNeighborsAfterRemoval(BlockState state, ServerLevel world, BlockPos pos, boolean moved) {
+        Containers.updateNeighboursAfterDestroy(state, world, pos);
     }
 
     @SuppressWarnings("unchecked")

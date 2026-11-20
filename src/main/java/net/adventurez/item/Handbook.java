@@ -10,7 +10,6 @@ import net.minecraft.network.protocol.game.ClientboundOpenBookPacket;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.server.network.Filterable;
 import net.minecraft.world.InteractionHand;
-import net.minecraft.world.InteractionResultHolder;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
@@ -20,6 +19,9 @@ import net.minecraft.world.level.Level;
 import vazkii.patchouli.api.PatchouliAPI;
 
 import java.util.List;
+import net.minecraft.world.InteractionResult;
+import net.minecraft.world.item.component.TooltipDisplay;
+import java.util.function.Consumer;
 
 public class Handbook extends Item {
 
@@ -43,11 +45,11 @@ public class Handbook extends Item {
     }
 
     @Override
-    public InteractionResultHolder<ItemStack> use(Level world, Player user, InteractionHand hand) {
+    public InteractionResult use(Level world, Player user, InteractionHand hand) {
         if (isPatchouliLoaded) {
             if (!world.isClientSide()) {
                 PatchouliAPI.get().openBookGUI((ServerPlayer) user, AdventureMain.identifierOf("adventurez"));
-                return InteractionResultHolder.success(user.getItemInHand(hand));
+                return InteractionResult.SUCCESS;
             }
         } else {
             if (!user.getItemInHand(hand).has(DataComponents.WRITTEN_BOOK_CONTENT)) {
@@ -56,21 +58,21 @@ public class Handbook extends Item {
             if (!world.isClientSide()) {
                 ((ServerPlayer) user).connection.send(new ClientboundOpenBookPacket(hand));
             }
-            return InteractionResultHolder.sidedSuccess(user.getItemInHand(hand), world.isClientSide());
+            return InteractionResult.SUCCESS;
         }
-        return InteractionResultHolder.fail(user.getItemInHand(hand));
+        return InteractionResult.FAIL;
     }
 
     @Override
-    public void appendHoverText(ItemStack stack, TooltipContext context, List<Component> tooltip, TooltipFlag type) {
-        super.appendHoverText(stack, context, tooltip, type);
+    public void appendHoverText(ItemStack stack, TooltipContext context, TooltipDisplay display, Consumer<Component> tooltip, TooltipFlag type) {
+        super.appendHoverText(stack, context, display, tooltip, type);
         if (ConfigInit.CONFIG.allow_extra_tooltips) {
             if (!isPatchouliLoaded) {
-                tooltip.add(Component.translatable("item.adventurez.patchouli_book.tooltip.1"));
-                tooltip.add(Component.translatable("item.adventurez.patchouli_book.tooltip.2"));
+                tooltip.accept(Component.translatable("item.adventurez.patchouli_book.tooltip.1"));
+                tooltip.accept(Component.translatable("item.adventurez.patchouli_book.tooltip.2"));
             }
         }
-        tooltip.add(Component.translatable("book.byAuthor", "Globox_Z").withStyle(ChatFormatting.GRAY));
+        tooltip.accept(Component.translatable("book.byAuthor", "Globox_Z").withStyle(ChatFormatting.GRAY));
     }
 
 }

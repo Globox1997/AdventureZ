@@ -1,5 +1,5 @@
 plugins {
-	id 'fabric-loom' version '1.17-SNAPSHOT'
+	id 'net.fabricmc.fabric-loom' version "${loom_version}"
 	id 'maven-publish'
 }
 
@@ -11,69 +11,58 @@ base {
 }
 
 repositories {
-	maven { url "https://maven.shedaniel.me/" }
-	maven { url 'https://maven.blamejared.com' }
-	maven { url 'https://jitpack.io' }
-	maven { url "https://maven.terraformersmc.com/" }
-	maven { url "https://api.modrinth.com/maven" }
-	maven { url "https://maven.jamieswhiteshirt.com/libs-release/" }
-	maven { url = uri("https://storage.googleapis.com/devan-maven/") }
-	maven { url = uri("https://ueaj.dev/maven") }
+	maven { url = "https://maven.shedaniel.me/" }
+	maven { url = "https://maven.terraformersmc.com/" }
+	maven { url = "https://api.modrinth.com/maven" }
 }
 
 dependencies {
 	minecraft "com.mojang:minecraft:${project.minecraft_version}"
-	mappings loom.officialMojangMappings()
-	modImplementation "net.fabricmc:fabric-loader:${project.loader_version}"
+	implementation "net.fabricmc:fabric-loader:${project.loader_version}"
 
 	// Fabric API
-	modImplementation "net.fabricmc.fabric-api:fabric-api:${project.fabric_version}"
+	implementation "net.fabricmc.fabric-api:fabric-api:${project.fabric_version}"
 	// Config
-	modImplementation ("me.shedaniel.cloth:cloth-config-fabric:${project.cloth_config_version}") {
-    	exclude(group: "net.fabricmc.fabric-api")
-  	}
+	implementation("me.shedaniel.cloth:cloth-config-fabric:${project.cloth_config_version}") {
+		exclude(group: "net.fabricmc.fabric-api")
+	}
 	// Modmenu
-	modCompileOnly modRuntimeOnly("com.terraformersmc:modmenu:${project.mod_menu_version}"),{
+	compileOnly localRuntime("com.terraformersmc:modmenu:${project.mod_menu_version}") {
 		exclude(group: "net.fabricmc.fabric-api")
 	}
 	// Patchouli
-	modCompileOnly ("vazkii.patchouli:Patchouli:${project.patchouli_version}") {
-		exclude(group: "net.fabricmc.fabric-api")
+	compileOnly("maven.modrinth:patchouli:${project.patchouli_version}") {
+		transitive = false
 	}
-	// VoidZ
-	 modCompileOnly ('maven.modrinth:voidz:1.0.11+1.21'){
-	 	exclude(group: "net.fabricmc.fabric-api")
-	 }
-	//	modCompileOnly ("com.github.Globox1997:VoidZ:1.21-SNAPSHOT") {
-	//		exclude(group: "net.fabricmc.fabric-api")
-	//	}
-	// Dragonloot
-	// modCompileOnly ('maven.modrinth:dragonloot:1.1.4+1.20.1'){
-	// 	exclude(group: "net.fabricmc.fabric-api")
-	// }
 	// Iris
-	modCompileOnly ('maven.modrinth:iris:1.6.2+1.19.2'){
-		exclude(group: "net.fabricmc.fabric-api")
+	compileOnly("maven.modrinth:iris:1.11.7+26.3-fabric") {
+		transitive = false
 	}
 }
 
 processResources {
-	inputs.property "version", project.version
+	def expandProps = [
+			"version"             : project.version,
+			"fabric_version"      : project.fabric_version,
+			"loader_version"      : project.loader_version,
+			"minecraft_version"   : project.minecraft_version,
+			"cloth_config_version": project.cloth_config_version
+	]
+	inputs.properties(expandProps)
 
 	filesMatching("fabric.mod.json") {
-		expand "version": project.version, "fabric_version": project.fabric_version, "loader_version": project.loader_version, "minecraft_version": project.minecraft_version, "cloth_config_version": project.cloth_config_version
+		expand expandProps
 	}
 }
 
-tasks.withType(JavaCompile).configureEach {
-	it.options.release = 21
+java {
+	toolchain.languageVersion = JavaLanguageVersion.of(project.java_version)
+	withSourcesJar()
 }
 
-java {
-	withSourcesJar()
-
-	sourceCompatibility = JavaVersion.VERSION_21
-	targetCompatibility = JavaVersion.VERSION_21
+tasks.withType(JavaCompile).configureEach {
+	it.options.encoding = "UTF-8"
+	it.options.release = Integer.parseInt(project.java_version)
 }
 
 jar {

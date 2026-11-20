@@ -13,7 +13,6 @@ import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.effect.MobEffectInstance;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntityType;
-import net.minecraft.world.entity.FlyingMob;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.ai.attributes.AttributeSupplier;
 import net.minecraft.world.entity.ai.attributes.Attributes;
@@ -26,13 +25,30 @@ import net.minecraft.world.entity.monster.Monster;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.phys.Vec3;
+import net.minecraft.world.entity.Mob;
+import net.minecraft.core.BlockPos;
+import net.minecraft.world.level.block.state.BlockState;
 
-public class VoidShadeEntity extends FlyingMob implements Enemy {
+public class VoidShadeEntity extends Mob implements Enemy {
 
-    public VoidShadeEntity(EntityType<? extends FlyingMob> entityType, Level world) {
+    public VoidShadeEntity(EntityType<? extends Mob> entityType, Level world) {
         super(entityType, world);
         this.moveControl = new VoidShadeEntity.VoidShadeMoveControl(this);
         this.xpReward = 0;
+    }
+
+    @Override
+    protected void checkFallDamage(double heightDifference, boolean onGround, BlockState state, BlockPos landedPosition) {
+    }
+
+    @Override
+    public boolean onClimbable() {
+        return false;
+    }
+
+    @Override
+    public void travel(Vec3 movementInput) {
+        this.travelFlying(movementInput, 0.02F);
     }
 
     public static AttributeSupplier.Builder createVoidShadeAttributes() {
@@ -52,11 +68,11 @@ public class VoidShadeEntity extends FlyingMob implements Enemy {
     }
 
     @Override
-    public boolean hurt(DamageSource source, float amount) {
-        if (this.isInvulnerableTo(source) || source.getDirectEntity() instanceof ThrownRockEntity) {
+    public boolean hurtServer(ServerLevel level, DamageSource source, float amount) {
+        if (this.isInvulnerableTo(level, source) || source.getDirectEntity() instanceof ThrownRockEntity) {
             return false;
         } else {
-            return super.hurt(source, amount);
+            return super.hurtServer(level, source, amount);
         }
     }
 
@@ -68,7 +84,7 @@ public class VoidShadeEntity extends FlyingMob implements Enemy {
     }
 
     @Override
-    public boolean causeFallDamage(float fallDistance, float damageMultiplier, DamageSource damageSource) {
+    public boolean causeFallDamage(double fallDistance, float damageMultiplier, DamageSource damageSource) {
         return false;
     }
 
@@ -120,14 +136,14 @@ public class VoidShadeEntity extends FlyingMob implements Enemy {
                 if (this.cooldown == 20) {
                     ((ServerLevel) world).playSound(null, this.voidShadeEntity, SoundInit.VOID_SHADOW_CAST_EVENT, SoundSource.HOSTILE, 1.0F, 1.0F);
                     Vec3 vec3d = this.voidShadeEntity.getViewVector(1.0F);
-                    vec3d.add(world.random.nextFloat() * 0.5F - 0.25F, 0, world.random.nextFloat() * 0.5F - 0.25F);
+                    vec3d.add(world.getRandom().nextFloat() * 0.5F - 0.25F, 0, world.getRandom().nextFloat() * 0.5F - 0.25F);
                     VoidBulletEntity voidBulletEntity = new VoidBulletEntity(this.voidShadeEntity, vec3d, world);
                     world.addFreshEntity(voidBulletEntity);
 
                     this.cooldown = -40;
                 }
                 if (livingEntity.distanceTo(this.voidShadeEntity) < 1.0D) {
-                    this.voidShadeEntity.doHurtTarget(livingEntity);
+                    this.voidShadeEntity.doHurtTarget(getServerLevel(this.voidShadeEntity), livingEntity);
                 }
             } else if (this.cooldown > 0) {
                 --this.cooldown;

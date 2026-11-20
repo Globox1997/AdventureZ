@@ -1,6 +1,6 @@
 package net.adventurez.effect;
 
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.world.effect.MobEffect;
 import net.minecraft.world.effect.MobEffectCategory;
 import net.minecraft.world.entity.Entity.RemovalReason;
@@ -9,11 +9,12 @@ import net.minecraft.world.entity.ai.attributes.AttributeInstance;
 import net.minecraft.world.entity.ai.attributes.AttributeMap;
 import net.minecraft.world.entity.ai.attributes.AttributeModifier;
 import net.minecraft.world.entity.ai.attributes.Attributes;
+import net.minecraft.server.level.ServerLevel;
 
 public class BlackstonedHeartEffect extends MobEffect {
 
-    private static final AttributeModifier BLACKSTONED = new AttributeModifier(ResourceLocation.parse("adventurez:blackstoned"), 1.0D, AttributeModifier.Operation.ADD_VALUE);
-    private static final AttributeModifier BLACKSTONED_HEALTH = new AttributeModifier(ResourceLocation.parse("adventurez:blackstoned_health"), 4.0D, AttributeModifier.Operation.ADD_VALUE);
+    private static final AttributeModifier BLACKSTONED = new AttributeModifier(Identifier.parse("adventurez:blackstoned"), 1.0D, AttributeModifier.Operation.ADD_VALUE);
+    private static final AttributeModifier BLACKSTONED_HEALTH = new AttributeModifier(Identifier.parse("adventurez:blackstoned_health"), 4.0D, AttributeModifier.Operation.ADD_VALUE);
 
     public BlackstonedHeartEffect(MobEffectCategory category, int color) {
         super(category, color);
@@ -47,8 +48,8 @@ public class BlackstonedHeartEffect extends MobEffect {
     }
 
     @Override
-    public void onMobRemoved(LivingEntity entity, int amplifier, RemovalReason reason) {
-        super.onMobRemoved(entity, amplifier, reason);
+    public void onMobRemoved(ServerLevel level, LivingEntity entity, int amplifier, RemovalReason reason) {
+        super.onMobRemoved(level, entity, amplifier, reason);
         if (entity.getHealth() > entity.getMaxHealth()) {
             entity.setHealth(entity.getMaxHealth());
         }

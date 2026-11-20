@@ -1,11 +1,11 @@
 package net.adventurez.entity.model;
 
-import com.google.common.collect.ImmutableList;
 
+import net.adventurez.entity.render.state.SkeletonVanguardRenderState;
+import net.minecraft.client.model.EntityModel;
 import net.adventurez.entity.SkeletonVanguardEntity;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
-import net.minecraft.client.model.ListModel;
 import net.minecraft.client.model.geom.ModelPart;
 import net.minecraft.client.model.geom.PartPose;
 import net.minecraft.client.model.geom.builders.CubeListBuilder;
@@ -15,7 +15,7 @@ import net.minecraft.client.model.geom.builders.PartDefinition;
 import net.minecraft.util.Mth;
 
 @Environment(EnvType.CLIENT)
-public class SkeletonVanguardModel<T extends SkeletonVanguardEntity> extends ListModel<T> {
+public class SkeletonVanguardModel extends EntityModel<SkeletonVanguardRenderState> {
     private final ModelPart head;
     private final ModelPart spear;
     private final ModelPart body;
@@ -25,6 +25,7 @@ public class SkeletonVanguardModel<T extends SkeletonVanguardEntity> extends Lis
     private final ModelPart rightLeg;
 
     public SkeletonVanguardModel(ModelPart root) {
+        super(root);
         this.head = root.getChild("head");
         this.body = root.getChild("body");
         this.leftArm = root.getChild("leftArm");
@@ -67,13 +68,14 @@ public class SkeletonVanguardModel<T extends SkeletonVanguardEntity> extends Lis
         return LayerDefinition.create(modelData, 128, 128);
     }
 
-    @Override
-    public Iterable<ModelPart> parts() {
-        return ImmutableList.of(this.head, this.body, this.rightLeg, this.leftLeg, this.rightArm, this.leftArm);
-    }
 
     @Override
-    public void setupAnim(T vanguard, float f, float g, float h, float i, float j) {
+    public void setupAnim(SkeletonVanguardRenderState state) {
+        float f = state.walkAnimationPos;
+        float g = state.walkAnimationSpeed;
+        float h = state.ageInTicks;
+        float i = state.yRot;
+        float j = state.xRot;
         this.head.yRot = i * 0.0119453292F;
         this.head.xRot = j * 0.0061453292F;
         this.spear.xRot = -0.7854F;
@@ -89,12 +91,12 @@ public class SkeletonVanguardModel<T extends SkeletonVanguardEntity> extends Lis
         this.leftLeg.xRot = Mth.cos(f * 0.6662F + 3.1415927F) * 1.4F * g * 0.5F;
         this.leftLeg.yRot = 0.0F;
         this.leftLeg.zRot = 0.0F;
-        float k = Mth.sin(this.attackTime * 3.1415927F);
+        float k = Mth.sin(state.attackTime * 3.1415927F);
         if (k > 0.0F) {
             this.rightArm.xRot = -k * 1.5F;
             this.rightArm.zRot = -k * 0.4F;
         }
-        float shieldSwing = vanguard.getEntityData().get(SkeletonVanguardEntity.SHIELD_SWING) * 2F;
+        float shieldSwing = state.shieldSwing * 2F;
         if (shieldSwing > 0.0F) {
             this.leftArm.xRot = Mth.sin(shieldSwing * 3.1415927F) - 1.5708F;
         }

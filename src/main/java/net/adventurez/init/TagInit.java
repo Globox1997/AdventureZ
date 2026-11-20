@@ -17,6 +17,7 @@ public class TagInit {
     public static final TagKey<Item> LEATHER_ITEMS = TagKey.create(Registries.ITEM, AdventureMain.identifierOf("leather_items"));
     public static final TagKey<Item> HOLDER_ITEMS = TagKey.create(Registries.ITEM, AdventureMain.identifierOf("holder_items"));
     public static final TagKey<Item> PIGLIN_NOT_ATTACK_ITEMS = TagKey.create(Registries.ITEM, AdventureMain.identifierOf("piglin_not_attack_items"));
+    public static final TagKey<Item> REPAIRS_GILDED_NETHERITE = TagKey.create(Registries.ITEM, AdventureMain.identifierOf("repairs_gilded_netherite"));
 
     // Damage Type
     public static final TagKey<DamageType> IS_WALL = TagKey.create(Registries.DAMAGE_TYPE, AdventureMain.identifierOf("is_wall"));

@@ -1,5 +1,6 @@
 package net.adventurez.entity.render;
 
+import net.adventurez.entity.render.state.AdventureRenderState;
 import com.mojang.blaze3d.vertex.PoseStack;
 import net.adventurez.AdventureMain;
 import net.adventurez.entity.BrownFungusEntity;
@@ -8,24 +9,28 @@ import net.adventurez.init.RenderInit;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
 import net.minecraft.client.renderer.entity.EntityRendererProvider;
-import net.minecraft.client.renderer.entity.MobRenderer;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 
 @Environment(EnvType.CLIENT)
-public class BrownFungusRenderer extends MobRenderer<BrownFungusEntity, BrownFungusModel<BrownFungusEntity>> {
-    private static final ResourceLocation TEXTURE = AdventureMain.identifierOf("textures/entity/brown_fungus.png");
+public class BrownFungusRenderer extends AdventureMobRenderer<BrownFungusEntity, AdventureRenderState, BrownFungusModel> {
+    private static final Identifier TEXTURE = AdventureMain.identifierOf("textures/entity/brown_fungus.png");
 
     public BrownFungusRenderer(EntityRendererProvider.Context context) {
-        super(context, new BrownFungusModel<>(context.bakeLayer(RenderInit.BROWN_FUNGUS_LAYER)), 0.4F);
+        super(context, new BrownFungusModel(context.bakeLayer(RenderInit.BROWN_FUNGUS_LAYER)), 0.4F);
     }
 
     @Override
-    public void scale(BrownFungusEntity brownFungusEntity, PoseStack matrixStack, float f) {
+    protected void scale(AdventureRenderState brownFungusEntity, PoseStack matrixStack) {
         matrixStack.scale(1.3F, 1.3F, 1.3F);
     }
 
     @Override
-    public ResourceLocation getTextureLocation(BrownFungusEntity fungusEntity) {
+    public Identifier getTextureLocation(AdventureRenderState fungusEntity) {
         return TEXTURE;
+    }
+
+    @Override
+    public AdventureRenderState createRenderState() {
+        return new AdventureRenderState();
     }
 }

@@ -1,10 +1,10 @@
 package net.adventurez.entity.model;
 
-import com.google.common.collect.ImmutableList;
 
+import net.adventurez.entity.render.state.AdventureRenderState;
+import net.minecraft.client.model.EntityModel;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
-import net.minecraft.client.model.AgeableListModel;
 import net.minecraft.client.model.geom.ModelPart;
 import net.minecraft.client.model.geom.PartPose;
 import net.minecraft.client.model.geom.builders.CubeDeformation;
@@ -16,7 +16,7 @@ import net.minecraft.util.Mth;
 import net.minecraft.world.entity.animal.Animal;
 
 @Environment(EnvType.CLIENT)
-public class SkunkModel<T extends Animal> extends AgeableListModel<T> {
+public class SkunkModel extends EntityModel<AdventureRenderState> {
     private final ModelPart body;
     private final ModelPart leftFrontLeg;
     private final ModelPart leftBackLeg;
@@ -26,7 +26,7 @@ public class SkunkModel<T extends Animal> extends AgeableListModel<T> {
     private final ModelPart head;
 
     public SkunkModel(ModelPart root) {
-        super(true, 10.0F, 4.0F);
+        super(root);
         this.body = root.getChild("body");
         this.leftFrontLeg = this.body.getChild("leftFrontLeg");
         this.leftBackLeg = this.body.getChild("leftBackLeg");
@@ -61,18 +61,15 @@ public class SkunkModel<T extends Animal> extends AgeableListModel<T> {
         return LayerDefinition.create(modelData, 64, 64);
     }
 
-    @Override
-    protected Iterable<ModelPart> headParts() {
-        return ImmutableList.of(this.head);
-    }
+
 
     @Override
-    protected Iterable<ModelPart> bodyParts() {
-        return ImmutableList.of(this.body);
-    }
-
-    @Override
-    public void setupAnim(T entity, float limbAngle, float limbDistance, float animationProgress, float headYaw, float headPitch) {
+    public void setupAnim(AdventureRenderState state) {
+        float limbAngle = state.walkAnimationPos;
+        float limbDistance = state.walkAnimationSpeed;
+        float animationProgress = state.ageInTicks;
+        float headYaw = state.yRot;
+        float headPitch = state.xRot;
 //        this.root. = 10f;
         this.head.xRot = headPitch * 0.010453292F;
         this.head.yRot = headYaw * 0.010453292F;

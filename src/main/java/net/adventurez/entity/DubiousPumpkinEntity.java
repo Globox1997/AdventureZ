@@ -26,20 +26,23 @@ import net.minecraft.world.entity.ai.goal.RandomStrollGoal;
 import net.minecraft.world.entity.ai.goal.target.HurtByTargetGoal;
 import net.minecraft.world.entity.ai.goal.target.NearestAttackableTargetGoal;
 import net.minecraft.world.entity.ai.goal.target.ResetUniversalAngerTargetGoal;
-import net.minecraft.world.entity.monster.Zombie;
+import net.minecraft.world.entity.monster.zombie.Zombie;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.state.BlockState;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.UUID;
+import net.minecraft.world.level.storage.ValueInput;
+import net.minecraft.world.level.storage.ValueOutput;
+import net.minecraft.world.entity.EntityReference;
 
 public class DubiousPumpkinEntity extends PathfinderMob implements NeutralMob {
     public static final EntityDataAccessor<Boolean> ANGRY = SynchedEntityData.defineId(DubiousPumpkinEntity.class, EntityDataSerializers.BOOLEAN);
     private static final UniformInt ANGER_TIME_RANGE = TimeUtil.rangeOfSeconds(10, 29);
-    private int angerTime;
+    private long angerTime;
     @Nullable
-    private UUID angryAt;
+    private EntityReference<LivingEntity> angryAt;
 
     public DubiousPumpkinEntity(EntityType<? extends DubiousPumpkinEntity> entityType, Level world) {
         super(entityType, world);
@@ -64,34 +67,34 @@ public class DubiousPumpkinEntity extends PathfinderMob implements NeutralMob {
     }
 
     @Override
-    public void readAdditionalSaveData(CompoundTag nbt) {
+    public void readAdditionalSaveData(ValueInput nbt) {
         super.readAdditionalSaveData(nbt);
         this.readPersistentAngerSaveData(this.level(), nbt);
     }
 
     @Override
-    public void addAdditionalSaveData(CompoundTag nbt) {
+    public void addAdditionalSaveData(ValueOutput nbt) {
         super.addAdditionalSaveData(nbt);
         this.addPersistentAngerSaveData(nbt);
     }
 
     @Override
     public void startPersistentAngerTimer() {
-        this.setRemainingPersistentAngerTime(ANGER_TIME_RANGE.sample(this.random));
+        this.setTimeToRemainAngry(ANGER_TIME_RANGE.sample(this.random));
     }
 
     @Override
-    public void setRemainingPersistentAngerTime(int angerTime) {
+    public void setPersistentAngerEndTime(long angerTime) {
         this.angerTime = angerTime;
     }
 
     @Override
-    public int getRemainingPersistentAngerTime() {
+    public long getPersistentAngerEndTime() {
         return this.angerTime;
     }
 
     @Override
-    public void setPersistentAngerTarget(@Nullable UUID angryAt) {
+    public void setPersistentAngerTarget(@Nullable EntityReference<LivingEntity> angryAt) {
         this.entityData.set(ANGRY, angryAt != null);
         this.angryAt = angryAt;
     }
@@ -104,7 +107,7 @@ public class DubiousPumpkinEntity extends PathfinderMob implements NeutralMob {
 
     @Nullable
     @Override
-    public UUID getPersistentAngerTarget() {
+    public EntityReference<LivingEntity> getPersistentAngerTarget() {
         return this.angryAt;
     }
 
@@ -157,7 +160,7 @@ public class DubiousPumpkinEntity extends PathfinderMob implements NeutralMob {
         protected void checkAndPerformAttack(LivingEntity target) {
             if (this.canPerformAttack(target)) {
                 this.resetAttackCooldown();
-                this.mob.doHurtTarget(target);
+                this.mob.doHurtTarget(getServerLevel(this.mob), target);
             } else if (this.mob.distanceToSqr(target) < (target.getBbWidth() + 3.0F) * (target.getBbWidth() + 3.0F)) {
                 if (this.isTimeToAttack()) {
                     this.resetAttackCooldown();

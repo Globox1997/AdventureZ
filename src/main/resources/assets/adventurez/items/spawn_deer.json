@@ -1,0 +1,16 @@
+{
+  "model": {
+    "type": "minecraft:model",
+    "model": "adventurez:item/spawn_deer",
+    "tints": [
+      {
+        "type": "minecraft:constant",
+        "value": -10996725
+      },
+      {
+        "type": "minecraft:constant",
+        "value": -7051468
+      }
+    ]
+  }
+}

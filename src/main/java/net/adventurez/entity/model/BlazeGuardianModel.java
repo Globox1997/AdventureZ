@@ -1,11 +1,11 @@
 package net.adventurez.entity.model;
 
-import com.google.common.collect.ImmutableList;
 
+import net.adventurez.entity.render.state.BlazeGuardianRenderState;
+import net.minecraft.client.model.EntityModel;
 import net.adventurez.entity.BlazeGuardianEntity;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
-import net.minecraft.client.model.ListModel;
 import net.minecraft.client.model.geom.ModelPart;
 import net.minecraft.client.model.geom.PartPose;
 import net.minecraft.client.model.geom.builders.CubeListBuilder;
@@ -14,7 +14,7 @@ import net.minecraft.client.model.geom.builders.MeshDefinition;
 import net.minecraft.client.model.geom.builders.PartDefinition;
 
 @Environment(EnvType.CLIENT)
-public class BlazeGuardianModel<T extends BlazeGuardianEntity> extends ListModel<T> {
+public class BlazeGuardianModel extends EntityModel<BlazeGuardianRenderState> {
     private final ModelPart body;
     private final ModelPart head;
     private final ModelPart shieldOne;
@@ -23,6 +23,7 @@ public class BlazeGuardianModel<T extends BlazeGuardianEntity> extends ListModel
     private final ModelPart shieldFour;
 
     public BlazeGuardianModel(ModelPart root) {
+        super(root);
         this.body = root.getChild("body");
         this.head = root.getChild("head");
         this.shieldOne = root.getChild("shieldOne");
@@ -54,13 +55,14 @@ public class BlazeGuardianModel<T extends BlazeGuardianEntity> extends ListModel
         return LayerDefinition.create(modelData, 128, 128);
     }
 
-    @Override
-    public Iterable<ModelPart> parts() {
-        return ImmutableList.of(this.head, this.body, this.shieldOne, this.shieldTwo, this.shieldThree, this.shieldFour);
-    }
 
     @Override
-    public void setupAnim(T entity, float limbAngle, float limbDistance, float animationProgress, float headYaw, float headPitch) {
+    public void setupAnim(BlazeGuardianRenderState state) {
+        float limbAngle = state.walkAnimationPos;
+        float limbDistance = state.walkAnimationSpeed;
+        float animationProgress = state.ageInTicks;
+        float headYaw = state.yRot;
+        float headPitch = state.xRot;
         float f = animationProgress / 6.2831853F;
         this.shieldOne.xRot = -0.3927F;
         this.shieldTwo.xRot = -0.3927F;
@@ -73,10 +75,10 @@ public class BlazeGuardianModel<T extends BlazeGuardianEntity> extends ListModel
         this.head.yRot = headYaw * 0.017453292F;
         this.head.xRot = headPitch * 0.017453292F;
 
-        this.shieldThree.visible = entity.getEntityData().get(BlazeGuardianEntity.SHIELD_NORTH);
-        this.shieldTwo.visible = entity.getEntityData().get(BlazeGuardianEntity.SHIELD_EAST);
-        this.shieldFour.visible = entity.getEntityData().get(BlazeGuardianEntity.SHIELD_SOUTH);
-        this.shieldOne.visible = entity.getEntityData().get(BlazeGuardianEntity.SHIELD_WEST);
+        this.shieldThree.visible = state.shieldNorth;
+        this.shieldTwo.visible = state.shieldEast;
+        this.shieldFour.visible = state.shieldSouth;
+        this.shieldOne.visible = state.shieldWest;
     }
 
 }

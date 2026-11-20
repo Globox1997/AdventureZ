@@ -23,14 +23,11 @@ import net.minecraft.core.Direction;
 import net.minecraft.core.particles.ParticleOptions;
 import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.core.registries.BuiltInRegistries;
-import net.minecraft.nbt.CompoundTag;
-import net.minecraft.nbt.ListTag;
-import net.minecraft.nbt.Tag;
 import net.minecraft.network.syncher.EntityDataAccessor;
 import net.minecraft.network.syncher.EntityDataSerializers;
 import net.minecraft.network.syncher.SynchedEntityData;
 import net.minecraft.network.syncher.SynchedEntityData.Builder;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.server.players.OldUsersConverter;
 import net.minecraft.sounds.SoundEvent;
@@ -38,8 +35,6 @@ import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.tags.FluidTags;
 import net.minecraft.util.Mth;
-import net.minecraft.world.Container;
-import net.minecraft.world.ContainerListener;
 import net.minecraft.world.DifficultyInstance;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
@@ -52,7 +47,7 @@ import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.HumanoidArm;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.Mob;
-import net.minecraft.world.entity.MobSpawnType;
+import net.minecraft.world.entity.EntitySpawnReason;
 import net.minecraft.world.entity.MoverType;
 import net.minecraft.world.entity.OwnableEntity;
 import net.minecraft.world.entity.PathfinderMob;
@@ -71,7 +66,7 @@ import net.minecraft.world.inventory.MenuType;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
-import net.minecraft.world.level.GameRules;
+import net.minecraft.world.level.gamerules.GameRules;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.ServerLevelAccessor;
 import net.minecraft.world.level.block.Blocks;
@@ -82,15 +77,22 @@ import org.jetbrains.annotations.Nullable;
 import com.mojang.blaze3d.platform.InputConstants;
 import java.util.Optional;
 import java.util.UUID;
+import net.minecraft.world.level.storage.ValueInput;
+import net.minecraft.world.level.storage.ValueOutput;
+import net.minecraft.core.UUIDUtil;
+import net.minecraft.server.level.ServerLevel;
+import net.minecraft.world.ItemStackWithSlot;
+import net.minecraft.world.entity.EntityReference;
+import net.minecraft.world.attribute.EnvironmentAttributes;
 
-public class DragonEntity extends PathfinderMob implements ContainerListener, OwnableEntity {
+public class DragonEntity extends PathfinderMob implements OwnableEntity {
 
     public static final EntityDataAccessor<Boolean> IS_FLYING;
     public static final EntityDataAccessor<Boolean> IS_START_FLYING;
     public static final EntityDataAccessor<Boolean> CLIENT_START_FLYING;
     public static final EntityDataAccessor<Boolean> CLIENT_END_FLYING;
     public static final EntityDataAccessor<Byte> TAMEABLE_FLAGS;
-    public static final EntityDataAccessor<Optional<UUID>> OWNER_UUID;
+    public static final EntityDataAccessor<Optional<EntityReference<LivingEntity>>> OWNER_UUID;
     public static final EntityDataAccessor<Boolean> HAS_SADDLE;
     public static final EntityDataAccessor<Boolean> HAS_CHEST;
     public static final EntityDataAccessor<Boolean> OTHER_EARS;
@@ -105,7 +107,7 @@ public class DragonEntity extends PathfinderMob implements ContainerListener, Ow
     private int startFlyingTimer = 0;
     private float dragonSideSpeed = 0.0F;
     private float dragonForwardSpeed = 0.0F;
-    public int keyBind = 342;
+    public int keyBind = InputConstants.KEY_LALT;
     private float turningFloat;
     private boolean hasSaddle;
     private int healingFood;
@@ -171,27 +173,23 @@ public class DragonEntity extends PathfinderMob implements ContainerListener, Ow
     }
 
     @Override
-    public void addAdditionalSaveData(CompoundTag tag) {
+    public void addAdditionalSaveData(ValueOutput tag) {
         super.addAdditionalSaveData(tag);
         if (this.getOwnerUUID() != null) {
-            tag.putUUID("DragonOwner", this.getOwnerUUID());
+            tag.store("DragonOwner", UUIDUtil.CODEC, this.getOwnerUUID());
         }
         tag.putBoolean("IsFlying", this.isFlying);
         tag.putBoolean("SittingDragon", this.sitting);
         tag.putBoolean("HasSaddle", this.hasSaddle);
         tag.putBoolean("HasChest", this.hasChest());
         if (this.hasChest()) {
-            ListTag nbtList = new ListTag();
+            ValueOutput.TypedOutputList<ItemStackWithSlot> nbtList = tag.list("Items", ItemStackWithSlot.CODEC);
             for (int i = 0; i < this.inventory.getContainerSize(); i++) {
                 ItemStack itemStack = this.inventory.getItem(i);
                 if (!itemStack.isEmpty()) {
-                    CompoundTag nbtCompound = new CompoundTag();
-                    nbtCompound.putByte("Slot", (byte) (i));
-                    nbtList.add(itemStack.save(this.registryAccess(), nbtCompound));
+                    nbtList.add(new ItemStackWithSlot(i, itemStack));
                 }
             }
-
-            tag.put("Items", nbtList);
         }
         tag.putInt("DragonSize", this.getSize());
         tag.putBoolean("OtherDragonEars", this.getEntityData().get(DragonEntity.OTHER_EARS));
@@ -203,14 +201,15 @@ public class DragonEntity extends PathfinderMob implements ContainerListener, Ow
     }
 
     @Override
-    public void readAdditionalSaveData(CompoundTag tag) {
+    public void readAdditionalSaveData(ValueInput tag) {
         super.readAdditionalSaveData(tag);
         UUID uUID2;
-        if (tag.hasUUID("DragonOwner")) {
-            uUID2 = tag.getUUID("DragonOwner");
+        Optional<UUID> storedOwner = tag.read("DragonOwner", UUIDUtil.CODEC);
+        if (storedOwner.isPresent()) {
+            uUID2 = storedOwner.get();
         } else {
-            String string = tag.getString("DragonOwner");
-            uUID2 = OldUsersConverter.convertMobOwnerIfNecessary(this.getServer(), string);
+            String string = tag.getStringOr("DragonOwner", "");
+            uUID2 = this.level().getServer() != null ? OldUsersConverter.convertMobOwnerIfNecessary(this.level().getServer(), string) : null;
         }
         if (uUID2 != null) {
             try {
@@ -220,32 +219,29 @@ public class DragonEntity extends PathfinderMob implements ContainerListener, Ow
                 this.setTamed(false);
             }
         }
-        this.isFlying = tag.getBoolean("IsFlying");
+        this.isFlying = tag.getBooleanOr("IsFlying", false);
         this.entityData.set(IS_FLYING, this.isFlying);
-        this.sitting = tag.getBoolean("SittingDragon");
+        this.sitting = tag.getBooleanOr("SittingDragon", false);
         this.setSitting(this.sitting);
-        this.hasSaddle = tag.getBoolean("HasSaddle");
+        this.hasSaddle = tag.getBooleanOr("HasSaddle", false);
         this.entityData.set(HAS_SADDLE, this.hasSaddle);
-        this.setHasChest(tag.getBoolean("HasChest"));
+        this.setHasChest(tag.getBooleanOr("HasChest", false));
         if (this.hasChest()) {
-            ListTag nbtList = tag.getList("Items", Tag.TAG_COMPOUND);
             this.onChestedStatusChanged();
-            for (int i = 0; i < nbtList.size(); i++) {
-                CompoundTag nbtCompound = nbtList.getCompound(i);
-                int j = nbtCompound.getByte("Slot") & 255;
-                if (j < this.inventory.getContainerSize()) {
-                    this.inventory.setItem(j, ItemStack.parse(this.registryAccess(), nbtCompound).orElse(ItemStack.EMPTY));
+            for (ItemStackWithSlot itemStackWithSlot : tag.listOrEmpty("Items", ItemStackWithSlot.CODEC)) {
+                if (itemStackWithSlot.isValidInContainer(this.inventory.getContainerSize())) {
+                    this.inventory.setItem(itemStackWithSlot.slot(), itemStackWithSlot.stack());
                 }
             }
         }
-        this.setSize(tag.getInt("DragonSize"));
-        this.entityData.set(OTHER_EARS, tag.getBoolean("OtherDragonEars"));
-        this.entityData.set(OTHER_TAIL, tag.getBoolean("OtherDragonTail"));
-        this.entityData.set(OTHER_EYES, tag.getBoolean("OtherDragonEyes"));
-        this.entityData.set(RED_DRAGON, tag.getBoolean("RedDragon"));
-        this.dragonAge = tag.getInt("DragonAge");
+        this.setSize(tag.getIntOr("DragonSize", 0));
+        this.entityData.set(OTHER_EARS, tag.getBooleanOr("OtherDragonEars", false));
+        this.entityData.set(OTHER_TAIL, tag.getBooleanOr("OtherDragonTail", false));
+        this.entityData.set(OTHER_EYES, tag.getBooleanOr("OtherDragonEyes", false));
+        this.entityData.set(RED_DRAGON, tag.getBooleanOr("RedDragon", false));
+        this.dragonAge = tag.getIntOr("DragonAge", 0);
         if (this.isFlying) {
-            this.startFlyingTime = tag.getInt("StartFlyingTime");
+            this.startFlyingTime = tag.getIntOr("StartFlyingTime", 0);
         }
     }
 
@@ -264,17 +260,17 @@ public class DragonEntity extends PathfinderMob implements ContainerListener, Ow
                 boolean shouldFlyDown = false;
                 shouldFlyUp = ((LivingEntityAccessor) livingEntity).jumping(); // Pressing jump button for going upwards
                 if (this.level().isClientSide() && livingEntity instanceof LocalPlayer clientPlayerEntity) {
-                    shouldFlyDown = InputConstants.isKeyDown(Minecraft.getInstance().getWindow().getWindow(), this.keyBind);
-                    if (clientPlayerEntity.input.left) {
+                    shouldFlyDown = InputConstants.isKeyDown(this.keyBind);
+                    if (clientPlayerEntity.input.keyPresses.left()) {
                         turningFloat -= 0.05F;
                     }
-                    if (!clientPlayerEntity.input.left && turningFloat < 0.0F) {
+                    if (!clientPlayerEntity.input.keyPresses.left() && turningFloat < 0.0F) {
                         turningFloat = 0.0F;
                     }
-                    if (clientPlayerEntity.input.right) {
+                    if (clientPlayerEntity.input.keyPresses.right()) {
                         turningFloat += 0.05F;
                     }
-                    if (!clientPlayerEntity.input.right && turningFloat > 0.0F) {
+                    if (!clientPlayerEntity.input.keyPresses.right() && turningFloat > 0.0F) {
                         turningFloat = 0.0F;
                     }
                 }
@@ -348,7 +344,7 @@ public class DragonEntity extends PathfinderMob implements ContainerListener, Ow
                     flySpeed *= 0.4F;
                 }
 
-                if (this.isControlledByLocalInstance()) {
+                if (this.isLocalInstanceAuthoritative()) {
                     this.setSpeed((float) this.getAttributeValue(Attributes.MOVEMENT_SPEED));
                     if ((!this.getEntityData().get(IS_FLYING) && !this.isFlying) || (this.isInWater() && this.getFluidHeight(FluidTags.WATER) > 0.2D)) {
                         super.travel(new Vec3(f, movementInput.y, g));
@@ -491,7 +487,7 @@ public class DragonEntity extends PathfinderMob implements ContainerListener, Ow
                     Vec3 otherVec3d = this.calculateViewVector(xRotO, yBodyRot);
                     vec3d = vec3d.add(otherVec3d);
                     FireBreathEntity fireBreathEntity = new FireBreathEntity(this.level(), this, vec3d);
-                    fireBreathEntity.moveTo(this.getX() + vec3d.x * 3D,
+                    fireBreathEntity.snapTo(this.getX() + vec3d.x * 3D,
                             this.getY() + this.getBoundingBox().getYsize() * 0.65D + (this.getXRot() > 0F ? -this.getXRot() / 40F : -this.getXRot() / 80F), this.getZ() + vec3d.z * 3D,
                             this.getYRot(), this.getXRot());
 
@@ -728,12 +724,18 @@ public class DragonEntity extends PathfinderMob implements ContainerListener, Ow
 
     @Nullable
     @Override
-    public UUID getOwnerUUID() {
+    public EntityReference<LivingEntity> getOwnerReference() {
         return this.entityData.get(OWNER_UUID).orElse(null);
     }
 
+    @Nullable
+    public UUID getOwnerUUID() {
+        EntityReference<LivingEntity> reference = this.getOwnerReference();
+        return reference == null ? null : reference.getUUID();
+    }
+
     public void setOwnerUuid(@Nullable UUID uuid) {
-        this.entityData.set(OWNER_UUID, Optional.ofNullable(uuid));
+        this.entityData.set(OWNER_UUID, Optional.ofNullable(uuid).map(EntityReference::of));
     }
 
     public void setOwner(Player player) {
@@ -762,7 +764,7 @@ public class DragonEntity extends PathfinderMob implements ContainerListener, Ow
     }
 
     @Override
-    public boolean isAlliedTo(Entity other) {
+    protected boolean considersEntityAsAlly(Entity other) {
         if (this.isTamed()) {
             LivingEntity livingEntity = this.getOwner();
             if (other == livingEntity) {
@@ -774,17 +776,17 @@ public class DragonEntity extends PathfinderMob implements ContainerListener, Ow
             }
         }
 
-        return super.isAlliedTo(other);
+        return super.considersEntityAsAlly(other);
     }
 
     @Override
     public void die(DamageSource source) {
         if (!this.level().isClientSide()) {
-            if (this.level().getGameRules().getBoolean(GameRules.RULE_SHOWDEATHMESSAGES) && this.getOwner() instanceof ServerPlayer) {
-                this.getOwner().sendSystemMessage(this.getCombatTracker().getDeathMessage());
+            if (((ServerLevel) this.level()).getGameRules().get(GameRules.SHOW_DEATH_MESSAGES) && this.getOwner() instanceof ServerPlayer serverPlayer) {
+                serverPlayer.sendSystemMessage(this.getCombatTracker().getDeathMessage());
             }
             if (FabricLoader.getInstance().isModLoaded("dragonloot")) {
-                this.spawnAtLocation(new ItemStack(BuiltInRegistries.ITEM.get(ResourceLocation.fromNamespaceAndPath("dragonloot", "dragon_scale")), (int) (this.getSize() * this.level().getRandom().nextFloat())));
+                this.spawnAtLocation((ServerLevel) this.level(), new ItemStack(BuiltInRegistries.ITEM.getValue(Identifier.fromNamespaceAndPath("dragonloot", "dragon_scale")), (int) (this.getSize() * this.level().getRandom().nextFloat())));
             }
         }
 
@@ -820,7 +822,7 @@ public class DragonEntity extends PathfinderMob implements ContainerListener, Ow
     }
 
     @Override
-    public boolean causeFallDamage(float fallDistance, float damageMultiplier, DamageSource damageSource) {
+    public boolean causeFallDamage(double fallDistance, float damageMultiplier, DamageSource damageSource) {
         return false;
     }
 
@@ -878,15 +880,10 @@ public class DragonEntity extends PathfinderMob implements ContainerListener, Ow
         return false;
     }
 
-    @Override
-    public void containerChanged(Container sender) {
-    }
-
     private void onChestedStatusChanged() {
         SimpleContainer simpleInventory = this.inventory;
         this.inventory = new SimpleContainer(27);
         if (simpleInventory != null) {
-            simpleInventory.removeListener(this);
             int i = Math.min(simpleInventory.getContainerSize(), this.inventory.getContainerSize());
 
             for (int j = 0; j < i; ++j) {
@@ -897,24 +894,23 @@ public class DragonEntity extends PathfinderMob implements ContainerListener, Ow
             }
         }
 
-        this.inventory.addListener(this);
     }
 
     @Override
-    protected void dropEquipment() {
-        super.dropEquipment();
+    protected void dropEquipment(ServerLevel level) {
+        super.dropEquipment(level);
         if (this.inventory != null) {
             for (int i = 0; i < this.inventory.getContainerSize(); ++i) {
                 ItemStack itemStack = this.inventory.getItem(i);
                 if (!itemStack.isEmpty()) {
-                    this.spawnAtLocation(itemStack);
+                    this.spawnAtLocation(level, itemStack);
                 }
             }
 
         }
         if (this.hasChest()) {
             if (!this.level().isClientSide()) {
-                this.spawnAtLocation(Blocks.CHEST);
+                this.spawnAtLocation(level, Blocks.CHEST);
             }
 
             this.setHasChest(false);
@@ -939,13 +935,13 @@ public class DragonEntity extends PathfinderMob implements ContainerListener, Ow
 
     @Nullable
     @Override
-    public SpawnGroupData finalizeSpawn(ServerLevelAccessor world, DifficultyInstance difficulty, MobSpawnType spawnReason, @Nullable SpawnGroupData entityData) {
+    public SpawnGroupData finalizeSpawn(ServerLevelAccessor world, DifficultyInstance difficulty, EntitySpawnReason spawnReason, @Nullable SpawnGroupData entityData) {
         this.getEntityData().set(OTHER_EARS, world.getRandom().nextBoolean());
         this.getEntityData().set(OTHER_TAIL, world.getRandom().nextBoolean());
         this.getEntityData().set(OTHER_EYES, world.getRandom().nextBoolean());
-        if (world.dimensionType().ultraWarm())
+        if (world.getLevel().environmentAttributes().getValue(EnvironmentAttributes.WATER_EVAPORATES, this.blockPosition()))
             this.getEntityData().set(RED_DRAGON, world.getRandom().nextBoolean());
-        if (spawnReason.equals(MobSpawnType.COMMAND)) {
+        if (spawnReason.equals(EntitySpawnReason.COMMAND)) {
             this.setSize(3);
         } else {
             this.setSize(1);
@@ -987,7 +983,7 @@ public class DragonEntity extends PathfinderMob implements ContainerListener, Ow
         double e = this.getY();
         double f = this.getZ();
         super.refreshDimensions();
-        this.absMoveTo(d, e, f);
+        this.absSnapTo(d, e, f);
     }
 
     @Override
@@ -1027,14 +1023,14 @@ public class DragonEntity extends PathfinderMob implements ContainerListener, Ow
     }
 
     @Override
-    public boolean hurt(DamageSource source, float amount) {
+    public boolean hurtServer(ServerLevel level, DamageSource source, float amount) {
         if (source.is(TagInit.IS_WALL)) {
             return false;
         }
         if (!this.level().isClientSide()) {
             this.setSitting(false);
         }
-        return !this.isInvulnerableTo(source) && super.hurt(source, amount);
+        return !this.isInvulnerableTo(level, source) && super.hurtServer(level, source, amount);
     }
 
     public void setFireBreathActive(boolean fireBreathActive) {
@@ -1066,7 +1062,7 @@ public class DragonEntity extends PathfinderMob implements ContainerListener, Ow
         double pitch = this.getXRot() * (0.00374f + 4f * 0.00174f) * 3D;
         double angle = this.yBodyRot * Mth.DEG_TO_RAD + Mth.PI + yaw;
         for (int i = 0; i < 3; i++) {
-            this.level().addParticle(ParticleTypes.FLAME, true, this.getX() + Math.sin(angle) * 6D, this.getY() - pitch + 1.95D, this.getZ() - Math.cos(angle) * 6D, 0.0D, 0.0D, 0.0D);
+            this.level().addParticle(ParticleTypes.FLAME, true, false, this.getX() + Math.sin(angle) * 6D, this.getY() - pitch + 1.95D, this.getZ() - Math.cos(angle) * 6D, 0.0D, 0.0D, 0.0D);
         }
     }
 
@@ -1123,7 +1119,7 @@ public class DragonEntity extends PathfinderMob implements ContainerListener, Ow
         CLIENT_START_FLYING = SynchedEntityData.defineId(DragonEntity.class, EntityDataSerializers.BOOLEAN);
         CLIENT_END_FLYING = SynchedEntityData.defineId(DragonEntity.class, EntityDataSerializers.BOOLEAN);
         TAMEABLE_FLAGS = SynchedEntityData.defineId(DragonEntity.class, EntityDataSerializers.BYTE);
-        OWNER_UUID = SynchedEntityData.defineId(DragonEntity.class, EntityDataSerializers.OPTIONAL_UUID);
+        OWNER_UUID = SynchedEntityData.defineId(DragonEntity.class, EntityDataSerializers.OPTIONAL_LIVING_ENTITY_REFERENCE);
         HAS_SADDLE = SynchedEntityData.defineId(DragonEntity.class, EntityDataSerializers.BOOLEAN);
         HAS_CHEST = SynchedEntityData.defineId(DragonEntity.class, EntityDataSerializers.BOOLEAN);
         OTHER_EARS = SynchedEntityData.defineId(DragonEntity.class, EntityDataSerializers.BOOLEAN);

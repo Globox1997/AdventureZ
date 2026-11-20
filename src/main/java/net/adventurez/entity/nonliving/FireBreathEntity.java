@@ -13,14 +13,15 @@ import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.Mob;
-import net.minecraft.world.entity.projectile.AbstractHurtingProjectile;
-import net.minecraft.world.level.GameRules;
+import net.minecraft.world.entity.projectile.hurtingprojectile.AbstractHurtingProjectile;
+import net.minecraft.world.level.gamerules.GameRules;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.BaseFireBlock;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.EntityHitResult;
 import net.minecraft.world.phys.Vec3;
+import net.minecraft.server.level.ServerLevel;
 
 public class FireBreathEntity extends AbstractHurtingProjectile {
 
@@ -33,7 +34,7 @@ public class FireBreathEntity extends AbstractHurtingProjectile {
     @Environment(EnvType.CLIENT)
     public FireBreathEntity(Level world, double x, double y, double z, double velocityX, double velocityY, double velocityZ) {
         this(EntityInit.FIRE_BREATH, world);
-        this.moveTo(x, y, z, this.getYRot(), this.getXRot());
+        this.snapTo(x, y, z, this.getYRot(), this.getXRot());
         this.setDeltaMovement(velocityX, velocityY, velocityZ);
     }
 
@@ -112,7 +113,7 @@ public class FireBreathEntity extends AbstractHurtingProjectile {
         super.onHitBlock(blockHitResult);
         if (!this.level().isClientSide()) {
             Entity entity = this.getOwner();
-            if (entity == null || !(entity instanceof Mob) || this.level().getGameRules().getBoolean(GameRules.RULE_MOBGRIEFING)) {
+            if (entity == null || !(entity instanceof Mob) || ((ServerLevel) this.level()).getGameRules().get(GameRules.MOB_GRIEFING)) {
                 BlockPos blockPos = blockHitResult.getBlockPos().relative(blockHitResult.getDirection());
                 if (this.level().isEmptyBlock(blockPos)) {
                     this.level().setBlockAndUpdate(blockPos, BaseFireBlock.getState(this.level(), blockPos));

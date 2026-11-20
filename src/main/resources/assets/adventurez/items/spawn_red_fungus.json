@@ -1,0 +1,16 @@
+{
+  "model": {
+    "type": "minecraft:model",
+    "model": "adventurez:item/spawn_red_fungus",
+    "tints": [
+      {
+        "type": "minecraft:constant",
+        "value": -3692425
+      },
+      {
+        "type": "minecraft:constant",
+        "value": -3593431
+      }
+    ]
+  }
+}

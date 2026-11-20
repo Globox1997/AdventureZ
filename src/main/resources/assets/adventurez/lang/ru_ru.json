@@ -120,7 +120,7 @@
 
   "item.adventurez.moreinfo.tooltip": "§8Удерживайте §6Shift §8для подробной информации",
 
-  "category.adventurez.keybind": "Привязки клавиш ПриключениЯ",
+  "key.category.adventurez.keybind": "Привязки клавиш ПриключениЯ",
   "key.adventurez.dragonflydown": "Полёт вниз на драконе",
   "key.adventurez.dragonfirebreath": "Огненное дыхание дракона",
 

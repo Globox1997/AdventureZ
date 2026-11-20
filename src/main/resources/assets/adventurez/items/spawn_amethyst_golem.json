@@ -1,0 +1,16 @@
+{
+  "model": {
+    "type": "minecraft:model",
+    "model": "adventurez:item/spawn_amethyst_golem",
+    "tints": [
+      {
+        "type": "minecraft:constant",
+        "value": -11382190
+      },
+      {
+        "type": "minecraft:constant",
+        "value": -7509300
+      }
+    ]
+  }
+}

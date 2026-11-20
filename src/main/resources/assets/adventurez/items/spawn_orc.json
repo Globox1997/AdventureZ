@@ -1,0 +1,16 @@
+{
+  "model": {
+    "type": "minecraft:model",
+    "model": "adventurez:item/spawn_orc",
+    "tints": [
+      {
+        "type": "minecraft:constant",
+        "value": -14521779
+      },
+      {
+        "type": "minecraft:constant",
+        "value": -13264527
+      }
+    ]
+  }
+}

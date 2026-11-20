@@ -2,15 +2,9 @@
   "type": "minecraft:crafting_shaped",
   "category": "misc",
   "key": {
-    "#": {
-      "item": "minecraft:blackstone"
-    },
-    "C": {
-      "item": "minecraft:gold_ingot"
-    },
-    "S": {
-      "item": "adventurez:gilded_upgrade_smithing_template"
-    }
+    "#": "minecraft:blackstone",
+    "C": "minecraft:gold_ingot",
+    "S": "adventurez:gilded_upgrade_smithing_template"
   },
   "pattern": [
     "#S#",

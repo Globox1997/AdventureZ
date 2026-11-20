@@ -5,7 +5,7 @@ import org.jetbrains.annotations.Nullable;
 import net.adventurez.init.EntityInit;
 import net.adventurez.init.SoundInit;
 import net.minecraft.core.particles.ParticleTypes;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.sounds.SoundEvent;
 import net.minecraft.sounds.SoundSource;
@@ -22,18 +22,19 @@ import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.ai.attributes.AttributeModifier;
 import net.minecraft.world.entity.ai.attributes.AttributeSupplier;
 import net.minecraft.world.entity.ai.attributes.Attributes;
-import net.minecraft.world.entity.animal.horse.SkeletonHorse;
+import net.minecraft.world.entity.animal.equine.SkeletonHorse;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.pathfinder.PathType;
+import net.minecraft.world.entity.EntitySpawnReason;
 
 public class NightmareEntity extends SkeletonHorse {
     private int eatingGrassTicks;
     private int damageWaterTicks;
-    private static final ResourceLocation WALKING_SPEED_INCREASE_ID;
+    private static final Identifier WALKING_SPEED_INCREASE_ID;
     private static final AttributeModifier WALKING_SPEED_INCREASE;
 
     public NightmareEntity(EntityType<? extends SkeletonHorse> entityType, Level world) {
@@ -64,7 +65,7 @@ public class NightmareEntity extends SkeletonHorse {
                 }
             }
 
-            this.followMommy();
+            this.followMommy((ServerLevel) this.level());
         }
         if (this.level().isClientSide()) {
             double g = this.level().getRandom().nextDouble() * 0.75F - 0.375F;
@@ -108,7 +109,7 @@ public class NightmareEntity extends SkeletonHorse {
     }
 
     @Override
-    public void followMommy() {
+    protected void followMommy(ServerLevel level) {
         if (this.isBred() && this.isBaby() && !this.isEating()) {
             LivingEntity livingEntity = this.level().getNearestPlayer(this, 16D);
             if (livingEntity != null && this.distanceToSqr(livingEntity) > 4.0D) {
@@ -135,12 +136,12 @@ public class NightmareEntity extends SkeletonHorse {
             }
             if (!this.isTamed()) {
                 this.level().playSound(null, this, SoundInit.NIGHTMARE_ANGRY_EVENT, SoundSource.HOSTILE, 1F, 1F);
-                return InteractionResult.sidedSuccess(this.level().isClientSide());
+                return InteractionResult.SUCCESS;
             }
         }
 
         this.doPlayerRide(player);
-        return InteractionResult.sidedSuccess(this.level().isClientSide());
+        return InteractionResult.SUCCESS;
     }
 
     @Override
@@ -171,11 +172,11 @@ public class NightmareEntity extends SkeletonHorse {
     @Override
     @Nullable
     public AgeableMob getBreedOffspring(ServerLevel serverWorld, AgeableMob passiveEntity) {
-        return EntityInit.NIGHTMARE.create(serverWorld);
+        return EntityInit.NIGHTMARE.create(serverWorld, EntitySpawnReason.MOB_SUMMONED);
     }
 
     static {
-        WALKING_SPEED_INCREASE_ID = ResourceLocation.parse("adventurez:walking_speed");
+        WALKING_SPEED_INCREASE_ID = Identifier.parse("adventurez:walking_speed");
         WALKING_SPEED_INCREASE = new AttributeModifier(WALKING_SPEED_INCREASE_ID, 0.5D, AttributeModifier.Operation.ADD_MULTIPLIED_BASE);
     }
 

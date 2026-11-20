@@ -1,41 +1,40 @@
 package net.adventurez.entity.render.feature;
 
 import com.mojang.blaze3d.vertex.PoseStack;
-import com.mojang.blaze3d.vertex.VertexConsumer;
-import net.adventurez.entity.BlackstoneGolemEntity;
 import net.adventurez.entity.model.BlackstoneGolemModel;
 import net.adventurez.entity.render.feature.layer.ExtraRenderLayer;
+import net.adventurez.entity.render.state.BlackstoneGolemRenderState;
 import net.adventurez.init.RenderInit;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
-import net.minecraft.client.renderer.MultiBufferSource;
-import net.minecraft.client.renderer.RenderType;
+import net.minecraft.client.renderer.SubmitNodeCollector;
 import net.minecraft.client.renderer.entity.RenderLayerParent;
 import net.minecraft.client.renderer.entity.layers.RenderLayer;
+import net.minecraft.client.renderer.rendertype.RenderType;
+import net.minecraft.client.renderer.rendertype.RenderTypes;
 import net.minecraft.client.renderer.texture.OverlayTexture;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 
 @Environment(EnvType.CLIENT)
-public class StoneGolemLavaFeatureRenderer extends RenderLayer<BlackstoneGolemEntity, BlackstoneGolemModel<BlackstoneGolemEntity>> {
-    private static final RenderType LAVA_LAYER = ExtraRenderLayer.getGlowing(ResourceLocation.parse("adventurez:textures/entity/feature/lava_feature_golem.png"));
-    private static final RenderType FLOWING_LAVA_LAYER = RenderType.entityCutoutNoCull(ResourceLocation.parse("adventurez:textures/entity/feature/lava_feature_golem.png"));
+public class StoneGolemLavaFeatureRenderer extends RenderLayer<BlackstoneGolemRenderState, BlackstoneGolemModel> {
+    private static final RenderType LAVA_LAYER = ExtraRenderLayer.getGlowing(Identifier.parse("adventurez:textures/entity/feature/lava_feature_golem.png"));
+    private static final RenderType FLOWING_LAVA_LAYER = RenderTypes.entityCutout(Identifier.parse("adventurez:textures/entity/feature/lava_feature_golem.png"));
 
-    public StoneGolemLavaFeatureRenderer(RenderLayerParent<BlackstoneGolemEntity, BlackstoneGolemModel<BlackstoneGolemEntity>> featureRendererContext) {
+    public StoneGolemLavaFeatureRenderer(RenderLayerParent<BlackstoneGolemRenderState, BlackstoneGolemModel> featureRendererContext) {
         super(featureRendererContext);
     }
 
     @Override
-    public void render(PoseStack matrixStack, MultiBufferSource vertexConsumerProvider, int i, BlackstoneGolemEntity stoneGolemEntity, float f, float g, float h, float j, float k, float l) {
-        if (!stoneGolemEntity.getEntityData().get(BlackstoneGolemEntity.HALF_LIFE_CHANGE)) {
-            int lavaFlow = stoneGolemEntity.getEntityData().get(BlackstoneGolemEntity.LAVA_TEXTURE);
-            VertexConsumer vertexConsumer = vertexConsumerProvider.getBuffer(LAVA_LAYER);
+    public void submit(PoseStack matrixStack, SubmitNodeCollector submitNodeCollector, int i, BlackstoneGolemRenderState state, float yRot, float xRot) {
+        if (!state.halfLifeChange) {
+            int lavaFlow = state.lavaTexture;
+            RenderType renderType = LAVA_LAYER;
             if (lavaFlow < 240 && !RenderInit.isCanvasLoaded && !RenderInit.isSodiumLoaded) {
-                vertexConsumer = vertexConsumerProvider.getBuffer(FLOWING_LAVA_LAYER);
+                renderType = FLOWING_LAVA_LAYER;
             } else {
                 lavaFlow = Integer.MAX_VALUE;
             }
-            this.getParentModel().renderToBuffer(matrixStack, vertexConsumer, lavaFlow, OverlayTexture.NO_OVERLAY);
+            submitNodeCollector.order(1).submitModel(this.getParentModel(), state, matrixStack, renderType, lavaFlow, OverlayTexture.NO_OVERLAY, state.outlineColor);
         }
     }
-
 }

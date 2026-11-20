@@ -1,0 +1,16 @@
+{
+  "model": {
+    "type": "minecraft:model",
+    "model": "adventurez:item/spawn_nightmare",
+    "tints": [
+      {
+        "type": "minecraft:constant",
+        "value": -15395563
+      },
+      {
+        "type": "minecraft:constant",
+        "value": -13764353
+      }
+    ]
+  }
+}

@@ -1,17 +1,11 @@
 {
-    "type": "minecraft:crafting_shapeless",
-    "ingredients": [
-        {
-            "item": "minecraft:book"
-        },
-        {
-            "item": "minecraft:ender_eye"
-        },
-        {
-            "item": "adventurez:orc_skin"
-        }
-    ],
-    "result": {
-        "id": "adventurez:handbook"
-    }
+  "type": "minecraft:crafting_shapeless",
+  "ingredients": [
+    "minecraft:book",
+    "minecraft:ender_eye",
+    "adventurez:orc_skin"
+  ],
+  "result": {
+    "id": "adventurez:handbook"
+  }
 }

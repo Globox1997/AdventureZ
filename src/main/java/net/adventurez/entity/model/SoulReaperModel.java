@@ -4,6 +4,8 @@ import com.mojang.blaze3d.vertex.PoseStack;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
 import net.minecraft.client.model.HumanoidModel;
+import net.adventurez.entity.render.state.SoulReaperRenderState;
+import net.minecraft.client.renderer.entity.state.HumanoidRenderState;
 import net.minecraft.client.model.geom.ModelPart;
 import net.minecraft.client.model.geom.PartPose;
 import net.minecraft.client.model.geom.builders.CubeDeformation;
@@ -12,15 +14,10 @@ import net.minecraft.client.model.geom.builders.LayerDefinition;
 import net.minecraft.client.model.geom.builders.MeshDefinition;
 import net.minecraft.client.model.geom.builders.PartDefinition;
 import net.minecraft.util.Mth;
-import net.minecraft.world.InteractionHand;
 import net.minecraft.world.entity.HumanoidArm;
-import net.minecraft.world.entity.Mob;
-import net.minecraft.world.entity.monster.RangedAttackMob;
-import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.item.Items;
 
 @Environment(EnvType.CLIENT)
-public class SoulReaperModel<T extends Mob & RangedAttackMob> extends HumanoidModel<T> {
+public class SoulReaperModel extends HumanoidModel<SoulReaperRenderState> {
 
     public SoulReaperModel(ModelPart modelPart) {
         super(modelPart);
@@ -64,24 +61,15 @@ public class SoulReaperModel<T extends Mob & RangedAttackMob> extends HumanoidMo
         return LayerDefinition.create(modelData, 64, 64);
     }
 
-    @Override
-    public void prepareMobModel(T mobEntity, float f, float g, float h) {
-        this.rightArmPose = HumanoidModel.ArmPose.EMPTY;
-        this.leftArmPose = HumanoidModel.ArmPose.EMPTY;
-        ItemStack itemStack = mobEntity.getItemInHand(InteractionHand.MAIN_HAND);
-        if (itemStack.getItem() == Items.BOW && mobEntity.isAggressive() && !this.riding) {
-            this.rightArmPose = HumanoidModel.ArmPose.BOW_AND_ARROW;
-        }
-        super.prepareMobModel((T) mobEntity, f, g, h);
-    }
 
     @Override
-    public void setupAnim(T mobEntity, float f, float g, float h, float i, float j) {
-        super.setupAnim((T) mobEntity, f, g, h, i, j);
-        ItemStack itemStack = mobEntity.getMainHandItem();
-        if (mobEntity.isAggressive() && (itemStack.isEmpty() || itemStack.getItem() != Items.BOW) && !this.riding) {
-            float k = Mth.sin(this.attackTime * 3.1415927F);
-            float l = Mth.sin((1.0F - (1.0F - this.attackTime) * (1.0F - this.attackTime)) * 3.1415927F);
+    public void setupAnim(SoulReaperRenderState state) {
+        super.setupAnim(state);
+        float f = state.walkAnimationPos;
+        float g = state.walkAnimationSpeed;
+        if (state.aggressive && (state.mainHandEmpty || !state.holdingBow) && !state.isPassenger) {
+            float k = Mth.sin(state.swingAnimation * 3.1415927F);
+            float l = Mth.sin((1.0F - (1.0F - state.swingAnimation) * (1.0F - state.swingAnimation)) * 3.1415927F);
             this.rightArm.zRot = 0.0F;
             this.leftArm.zRot = 0.0F;
             this.rightArm.yRot = -(0.1F - k * 0.6F);
@@ -91,18 +79,18 @@ public class SoulReaperModel<T extends Mob & RangedAttackMob> extends HumanoidMo
             ModelPart var10000 = this.rightArm;
             var10000.xRot -= k * 1.2F - l * 0.4F;
         }
-        if (this.riding) {
+        if (state.isPassenger) {
             this.rightArm.xRot = 0.3F;
             this.leftArm.xRot = 0.3F;
-            if (mobEntity.isAggressive()) {
-                if (itemStack.getItem() == Items.BOW) {
+            if (state.aggressive) {
+                if (state.holdingBow) {
                     this.rightArm.yRot = -0.1F + this.head.yRot - 0.4F;
                     this.leftArm.yRot = 0.1F + this.head.yRot;
                     this.rightArm.xRot = -1.0F + this.head.xRot;
                     this.leftArm.xRot = -1.0F + this.head.xRot;
                 } else {
-                    float k = Mth.sin(this.attackTime * 3.1415927F);
-                    float l = Mth.sin((1.0F - (1.0F - this.attackTime) * (1.0F - this.attackTime)) * 3.1415927F);
+                    float k = Mth.sin(state.swingAnimation * 3.1415927F);
+                    float l = Mth.sin((1.0F - (1.0F - state.swingAnimation) * (1.0F - state.swingAnimation)) * 3.1415927F);
                     this.rightArm.zRot = 0.0F;
                     this.leftArm.zRot = 0.0F;
                     this.rightArm.yRot = -(0.1F - k * 0.6F);
@@ -135,7 +123,7 @@ public class SoulReaperModel<T extends Mob & RangedAttackMob> extends HumanoidMo
     }
 
     @Override
-    public void translateToHand(HumanoidArm arm, PoseStack matrices) {
+    public void translateToHand(HumanoidRenderState state, HumanoidArm arm, PoseStack matrices) {
         float f = arm == HumanoidArm.RIGHT ? 1.0F : -1.0F;
         ModelPart modelPart = this.getArm(arm);
         modelPart.x += f;

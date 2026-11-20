@@ -1,22 +1,22 @@
 package net.adventurez.entity.model;
 
-import com.google.common.collect.ImmutableList;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
-import net.minecraft.client.model.ListModel;
+import net.minecraft.client.model.EntityModel;
 import net.minecraft.client.model.geom.ModelPart;
 import net.minecraft.client.model.geom.PartPose;
 import net.minecraft.client.model.geom.builders.CubeListBuilder;
 import net.minecraft.client.model.geom.builders.LayerDefinition;
 import net.minecraft.client.model.geom.builders.MeshDefinition;
 import net.minecraft.client.model.geom.builders.PartDefinition;
-import net.minecraft.world.entity.Entity;
+import net.adventurez.entity.render.state.ProjectileRenderState;
 
 @Environment(EnvType.CLIENT)
-public class TinyEyeModel<T extends Entity> extends ListModel<T> {
+public class TinyEyeModel extends EntityModel<ProjectileRenderState> {
     private final ModelPart body;
 
     public TinyEyeModel(ModelPart root) {
+        super(root);
         this.body = root.getChild("body");
     }
 
@@ -32,13 +32,11 @@ public class TinyEyeModel<T extends Entity> extends ListModel<T> {
         return LayerDefinition.create(modelData, 32, 32);
     }
 
-    @Override
-    public Iterable<ModelPart> parts() {
-        return ImmutableList.of(this.body);
-    }
 
     @Override
-    public void setupAnim(T bullet, float limbAngle, float limbDistance, float animationProgress, float headYaw, float headPitch) {
+    public void setupAnim(ProjectileRenderState state) {
+        float headYaw = state.yRot;
+        float headPitch = state.xRot;
         this.body.yRot = headYaw * 0.017453292F;
     }
 }

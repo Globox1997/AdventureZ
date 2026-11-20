@@ -6,8 +6,8 @@ import net.minecraft.world.level.storage.loot.BuiltInLootTables;
 import net.minecraft.world.level.storage.loot.LootPool;
 import net.minecraft.world.level.storage.loot.LootTable;
 import net.minecraft.world.level.storage.loot.entries.LootItem;
-import net.minecraft.world.level.storage.loot.providers.number.BinomialDistributionGenerator;
 import java.util.List;
+import net.minecraft.world.level.storage.loot.predicates.LootItemRandomChanceCondition;
 
 public class LootInit {
 
@@ -26,14 +26,14 @@ public class LootInit {
     public static void init() {
         LootTableEvents.MODIFY.register((key, tableBuilder, source, registries) -> {
             if (addedLootTable(key)) {
-                LootPool pool = LootPool.lootPool().with(LootItem.lootTableItem(ItemInit.GILDED_BLACKSTONE_SHARD).build()).setRolls(BinomialDistributionGenerator.binomial(1, 0.01F)).build();
+                LootPool pool = LootPool.lootPool().add(LootItem.lootTableItem(ItemInit.GILDED_BLACKSTONE_SHARD)).when(LootItemRandomChanceCondition.randomChance(0.01F)).build();
                 tableBuilder.pool(pool);
                 if (BuiltInLootTables.BASTION_TREASURE.equals(key)) {
-                    pool = LootPool.lootPool().with(LootItem.lootTableItem(ItemInit.GILDED_UPGRADE_SMITHING_TEMPLATE).build()).setRolls(BinomialDistributionGenerator.binomial(1, 0.5F)).build();
+                    pool = LootPool.lootPool().add(LootItem.lootTableItem(ItemInit.GILDED_UPGRADE_SMITHING_TEMPLATE)).when(LootItemRandomChanceCondition.randomChance(0.5F)).build();
                     tableBuilder.pool(pool);
                 }
-            } else if ("minecraft:entities/piglin_brute".equals(key.location().toString())) {
-                LootPool pool = LootPool.lootPool().with(LootItem.lootTableItem(ItemInit.GILDED_BLACKSTONE_SHARD).build()).setRolls(BinomialDistributionGenerator.binomial(1, 0.1F)).build();
+            } else if ("minecraft:entities/piglin_brute".equals(key.identifier().toString())) {
+                LootPool pool = LootPool.lootPool().add(LootItem.lootTableItem(ItemInit.GILDED_BLACKSTONE_SHARD)).when(LootItemRandomChanceCondition.randomChance(0.1F)).build();
                 tableBuilder.pool(pool);
             }
         });

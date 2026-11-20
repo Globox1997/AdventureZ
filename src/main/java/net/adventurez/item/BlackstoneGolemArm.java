@@ -4,11 +4,12 @@ import net.adventurez.entity.nonliving.ThrownRockEntity;
 import net.adventurez.init.ConfigInit;
 import net.adventurez.init.ItemInit;
 import net.adventurez.init.SoundInit;
-import net.minecraft.client.gui.screens.Screen;
+import net.minecraft.client.Minecraft;
 import net.minecraft.network.chat.Component;
+import net.minecraft.server.level.ServerLevel;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.world.InteractionHand;
-import net.minecraft.world.InteractionResultHolder;
+import net.minecraft.world.InteractionResult;
 import net.minecraft.world.effect.MobEffectInstance;
 import net.minecraft.world.effect.MobEffects;
 import net.minecraft.world.entity.Entity;
@@ -17,12 +18,14 @@ import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.item.Items;
+import net.minecraft.world.item.ItemUseAnimation;
 import net.minecraft.world.item.TooltipFlag;
-import net.minecraft.world.item.UseAnim;
+import net.minecraft.world.item.component.TooltipDisplay;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.phys.Vec3;
-import java.util.List;
+import org.jspecify.annotations.Nullable;
+
+import java.util.function.Consumer;
 
 public class BlackstoneGolemArm extends Item {
 
@@ -31,70 +34,70 @@ public class BlackstoneGolemArm extends Item {
     }
 
     @Override
-    public void appendHoverText(ItemStack stack, TooltipContext context, List<Component> tooltip, TooltipFlag type) {
-        super.appendHoverText(stack, context, tooltip, type);
+    public void appendHoverText(ItemStack stack, TooltipContext context, TooltipDisplay display, Consumer<Component> tooltip, TooltipFlag type) {
+        super.appendHoverText(stack, context, display, tooltip, type);
         if (ConfigInit.CONFIG.allow_extra_tooltips) {
-            tooltip.add(Component.translatable("item.adventurez.moreinfo.tooltip"));
-            if (Screen.hasShiftDown()) {
-                tooltip.remove(Component.translatable("item.adventurez.moreinfo.tooltip"));
-                tooltip.add(Component.translatable("item.adventurez.blackstone_golem_arm.tooltip"));
+            if (Minecraft.getInstance().hasShiftDown()) {
+                tooltip.accept(Component.translatable("item.adventurez.blackstone_golem_arm.tooltip"));
+            } else {
+                tooltip.accept(Component.translatable("item.adventurez.moreinfo.tooltip"));
             }
         }
     }
 
     @Override
-    public void releaseUsing(ItemStack stack, Level world, LivingEntity user, int remainingUseTicks) {
+    public boolean releaseUsing(ItemStack stack, Level world, LivingEntity user, int remainingUseTicks) {
         if (user instanceof Player playerEntity) {
             int stoneCounter = this.getUseDuration(stack, user) - remainingUseTicks;
             if (stoneCounter >= 30) {
-                stack.set(ItemInit.LAVA_LIGHT, false);
+                stack.remove(ItemInit.LAVA_LIGHT);
                 if (!world.isClientSide()) {
                     float strength = getStoneStrength(stoneCounter);
-                    stack.hurtAndBreak(1, playerEntity, LivingEntity.getSlotForHand(user.getUsedItemHand()));
+                    stack.hurtAndBreak(1, playerEntity, user.getUsedItemHand().asEquipmentSlot());
                     ThrownRockEntity thrownRockEntity = new ThrownRockEntity(world, playerEntity);
                     thrownRockEntity.shootFromRotation(playerEntity, playerEntity.getXRot(), playerEntity.getYRot(), 0.0F, strength * 1.2F, 1.0F);
                     world.addFreshEntity(thrownRockEntity);
                     world.playSound((Player) null, thrownRockEntity, SoundInit.ROCK_THROW_EVENT, SoundSource.PLAYERS, 1.0F, 1.0F);
                 }
+                return true;
             }
         }
+        return false;
     }
 
     @Override
-    public InteractionResultHolder<ItemStack> use(Level world, Player user, InteractionHand hand) {
+    public InteractionResult use(Level world, Player user, InteractionHand hand) {
         ItemStack itemStack = user.getItemInHand(hand);
         if (itemStack.getDamageValue() >= itemStack.getMaxDamage() - 1) {
-            return InteractionResultHolder.fail(itemStack);
+            return InteractionResult.FAIL;
         } else {
             user.startUsingItem(hand);
-            return InteractionResultHolder.success(itemStack);
+            return InteractionResult.SUCCESS;
         }
     }
 
     @Override
-    public void inventoryTick(ItemStack stack, Level world, Entity entity, int slot, boolean selected) {
-        Player player = (Player) entity;
-        MobEffectInstance slowness = new MobEffectInstance(MobEffects.MOVEMENT_SLOWDOWN, 9, 0, false, false, false);
-        if (selected && !world.isClientSide()) {
-            player.addEffect(slowness);
+    public void inventoryTick(ItemStack stack, ServerLevel world, Entity entity, @Nullable EquipmentSlot slot) {
+        if (!(entity instanceof Player player)) {
+            return;
         }
-
-        if (world.isClientSide()) {
-            if (player.getUseItemRemainingTicks() < 71970 && player.getUseItemRemainingTicks() != 0
-                    && player.getItemBySlot(player.getUsedItemHand() == InteractionHand.MAIN_HAND ? EquipmentSlot.MAINHAND : EquipmentSlot.OFFHAND) == stack) {
+        if (slot == EquipmentSlot.MAINHAND) {
+            player.addEffect(new MobEffectInstance(MobEffects.SLOWNESS, 9, 0, false, false, false));
+        }
+        boolean usingThisStack = player.getItemBySlot(player.getUsedItemHand() == InteractionHand.MAIN_HAND ? EquipmentSlot.MAINHAND : EquipmentSlot.OFFHAND) == stack;
+        if (player.getUseItemRemainingTicks() < 71970 && player.getUseItemRemainingTicks() != 0 && usingThisStack) {
+            if (!Boolean.TRUE.equals(stack.get(ItemInit.LAVA_LIGHT))) {
                 stack.set(ItemInit.LAVA_LIGHT, true);
             }
-
-            if (stack.get(ItemInit.LAVA_LIGHT) != null && stack.get(ItemInit.LAVA_LIGHT)
-                    && player.getItemBySlot(player.getUsedItemHand() == InteractionHand.MAIN_HAND ? EquipmentSlot.MAINHAND : EquipmentSlot.OFFHAND) != stack) {
-                stack.set(ItemInit.LAVA_LIGHT, false);
-            }
+        }
+        if (Boolean.TRUE.equals(stack.get(ItemInit.LAVA_LIGHT)) && !usingThisStack) {
+            stack.remove(ItemInit.LAVA_LIGHT);
         }
     }
 
     @Override
-    public UseAnim getUseAnimation(ItemStack stack) {
-        return UseAnim.NONE;
+    public ItemUseAnimation getUseAnimation(ItemStack stack) {
+        return ItemUseAnimation.NONE;
     }
 
     @Override
@@ -103,18 +106,12 @@ public class BlackstoneGolemArm extends Item {
     }
 
     @Override
-    public boolean isValidRepairItem(ItemStack stack, ItemStack ingredient) {
-        return ingredient.getItem() == Items.NETHERITE_SCRAP;
-    }
-
-    @Override
-    public boolean hurtEnemy(ItemStack stack, LivingEntity target, LivingEntity attacker) {
+    public void hurtEnemy(ItemStack stack, LivingEntity target, LivingEntity attacker) {
         Vec3 vec3d_1 = attacker.getViewVector(1.0F);
         double x_vector = vec3d_1.x / 2D;
         double z_vector = vec3d_1.z / 2D;
-        stack.hurtAndBreak(1, attacker, LivingEntity.getSlotForHand(attacker.getUsedItemHand()));
+        stack.hurtAndBreak(1, attacker, attacker.getUsedItemHand().asEquipmentSlot());
         target.push(x_vector, 0.45D, z_vector);
-        return true;
     }
 
     public static float getStoneStrength(int useTicks) {
@@ -125,5 +122,4 @@ public class BlackstoneGolemArm extends Item {
         }
         return f;
     }
-
 }

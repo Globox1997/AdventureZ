@@ -3,10 +3,14 @@ package net.adventurez.init;
 import net.adventurez.AdventureMain;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
-import net.fabricmc.fabric.api.client.particle.v1.FabricSpriteProvider;
 import net.fabricmc.fabric.api.particle.v1.FabricParticleTypes;
 import net.minecraft.client.multiplayer.ClientLevel;
-import net.minecraft.client.particle.*;
+import net.minecraft.client.particle.ExplodeParticle;
+import net.minecraft.client.particle.Particle;
+import net.minecraft.client.particle.ParticleProvider;
+import net.minecraft.client.particle.SingleQuadParticle;
+import net.minecraft.client.particle.SpriteSet;
+import net.minecraft.util.RandomSource;
 import net.minecraft.core.Registry;
 import net.minecraft.core.particles.SimpleParticleType;
 import net.minecraft.core.registries.BuiltInRegistries;
@@ -47,19 +51,19 @@ public class ParticleInit {
             }
 
             @Override
-            public Particle createParticle(SimpleParticleType simpleParticleType, ClientLevel clientWorld, double d, double e, double f, double g, double h, double i) {
+            public Particle createParticle(SimpleParticleType simpleParticleType, ClientLevel clientWorld, double d, double e, double f, double g, double h, double i, RandomSource random) {
                 return new FartParticle(clientWorld, d, e, f, g, h, i, this.spriteProvider);
             }
         }
     }
 
     @Environment(EnvType.CLIENT)
-    public static class ShardParticle extends TextureSheetParticle {
+    public static class ShardParticle extends SingleQuadParticle {
         static final Random RANDOM = new Random();
         private final SpriteSet spriteProvider;
 
         public ShardParticle(ClientLevel clientWorld, double d, double e, double f, double g, double h, double i, SpriteSet spriteProvider) {
-            super(clientWorld, d, e, f, g, h, i);
+            super(clientWorld, d, e, f, g, h, i, spriteProvider.first());
             this.friction = 0.96F;
             this.speedUpWhenYMotionIsBlocked = true;
             this.spriteProvider = spriteProvider;
@@ -69,15 +73,15 @@ public class ParticleInit {
         }
 
         @Override
-        public ParticleRenderType getRenderType() {
-            return ParticleRenderType.PARTICLE_SHEET_TRANSLUCENT;
+        public SingleQuadParticle.Layer getLayer() {
+            return SingleQuadParticle.Layer.TRANSLUCENT;
         }
 
         @Override
-        public int getLightColor(float tint) {
+        public int getLightCoords(float tint) {
             float f = ((float) this.age + tint) / (float) this.lifetime;
             f = Mth.clamp(f, 0.0F, 1.0F);
-            int i = super.getLightColor(tint);
+            int i = super.getLightCoords(tint);
             int j = i & 255;
             int k = i >> 16 & 255;
             j += (int) (f * 15.0F * 16.0F);
@@ -98,14 +102,14 @@ public class ParticleInit {
         public static class ShardFactory implements ParticleProvider<SimpleParticleType> {
             private final SpriteSet spriteProvider;
 
-            public ShardFactory(FabricSpriteProvider sprites) {
+            public ShardFactory(SpriteSet sprites) {
                 this.spriteProvider = sprites;
             }
 
             @Override
-            public Particle createParticle(SimpleParticleType defaultParticleType, ClientLevel clientWorld, double d, double e, double f, double g, double h, double i) {
+            public Particle createParticle(SimpleParticleType defaultParticleType, ClientLevel clientWorld, double d, double e, double f, double g, double h, double i, RandomSource random) {
                 ShardParticle shardParticle = new ShardParticle(clientWorld, d, e, f, 0.5D - ShardParticle.RANDOM.nextDouble(), h, 0.5D - ShardParticle.RANDOM.nextDouble(), this.spriteProvider);
-                int rand = clientWorld.random.nextInt(4);
+                int rand = clientWorld.getRandom().nextInt(4);
                 if (rand == 0)
                     shardParticle.setColor(1.0F, 0.796F, 0.9F);
                 else if (rand == 1)
@@ -121,7 +125,7 @@ public class ParticleInit {
                     shardParticle.zd *= 0.10000000149011612D;
                 }
 
-                shardParticle.setLifetime((int) (8.0D / (clientWorld.random.nextDouble() * 0.8D + 0.2D)));
+                shardParticle.setLifetime((int) (8.0D / (clientWorld.getRandom().nextDouble() * 0.8D + 0.2D)));
                 return shardParticle;
             }
         }
@@ -129,13 +133,13 @@ public class ParticleInit {
     }
 
     @Environment(EnvType.CLIENT)
-    public static class VoidCloudParticle extends TextureSheetParticle {
+    public static class VoidCloudParticle extends SingleQuadParticle {
         private final double startX;
         private final double startY;
         private final double startZ;
 
-        private VoidCloudParticle(ClientLevel clientWorld, double d, double e, double f, double g, double h, double i) {
-            super(clientWorld, d, e, f);
+        private VoidCloudParticle(ClientLevel clientWorld, double d, double e, double f, double g, double h, double i, SpriteSet spriteProvider, RandomSource random) {
+            super(clientWorld, d, e, f, spriteProvider.get(random));
             this.xd = g;
             this.yd = h;
             this.zd = i;
@@ -153,8 +157,8 @@ public class ParticleInit {
         }
 
         @Override
-        public ParticleRenderType getRenderType() {
-            return ParticleRenderType.PARTICLE_SHEET_OPAQUE;
+        public SingleQuadParticle.Layer getLayer() {
+            return SingleQuadParticle.Layer.OPAQUE;
         }
 
         @Override
@@ -173,8 +177,8 @@ public class ParticleInit {
         }
 
         @Override
-        public int getLightColor(float tint) {
-            int i = super.getLightColor(tint);
+        public int getLightCoords(float tint) {
+            int i = super.getLightCoords(tint);
             float f = (float) this.age / (float) this.lifetime;
             f *= f;
             f *= f;
@@ -215,21 +219,19 @@ public class ParticleInit {
             }
 
             @Override
-            public Particle createParticle(SimpleParticleType defaultParticleType, ClientLevel clientWorld, double d, double e, double f, double g, double h, double i) {
-                VoidCloudParticle portalParticle = new VoidCloudParticle(clientWorld, d, e, f, g, h, i);
-                portalParticle.pickSprite(this.spriteProvider);
-                return portalParticle;
+            public Particle createParticle(SimpleParticleType defaultParticleType, ClientLevel clientWorld, double d, double e, double f, double g, double h, double i, RandomSource random) {
+                return new VoidCloudParticle(clientWorld, d, e, f, g, h, i, this.spriteProvider, random);
             }
         }
     }
 
     @Environment(EnvType.CLIENT)
-    static class SprintParticle extends TextureSheetParticle {
+    public static class SprintParticle extends SingleQuadParticle {
         static final Random RANDOM = new Random();
         private final SpriteSet spriteProvider;
 
         public SprintParticle(ClientLevel clientWorld, double d, double e, double f, double g, double h, double i, SpriteSet spriteProvider) {
-            super(clientWorld, d, e, f);
+            super(clientWorld, d, e, f, spriteProvider.first());
             this.friction = 1.0F;
             this.speedUpWhenYMotionIsBlocked = false;
             this.gravity = 0.0F;
@@ -239,8 +241,8 @@ public class ParticleInit {
         }
 
         @Override
-        public ParticleRenderType getRenderType() {
-            return ParticleRenderType.PARTICLE_SHEET_TRANSLUCENT;
+        public SingleQuadParticle.Layer getLayer() {
+            return SingleQuadParticle.Layer.TRANSLUCENT;
         }
 
         @Override
@@ -253,12 +255,12 @@ public class ParticleInit {
         public static class SprintFactory implements ParticleProvider<SimpleParticleType> {
             private final SpriteSet spriteProvider;
 
-            public SprintFactory(FabricSpriteProvider sprites) {
+            public SprintFactory(SpriteSet sprites) {
                 this.spriteProvider = sprites;
             }
 
             @Override
-            public Particle createParticle(SimpleParticleType defaultParticleType, ClientLevel clientWorld, double d, double e, double f, double g, double h, double i) {
+            public Particle createParticle(SimpleParticleType defaultParticleType, ClientLevel clientWorld, double d, double e, double f, double g, double h, double i, RandomSource random) {
                 SprintParticle sprintParticle = new SprintParticle(clientWorld, d, e, f, g, h, i, this.spriteProvider);
                 sprintParticle.xd = -g * 1.5D;
                 sprintParticle.zd = -i * 1.5D;

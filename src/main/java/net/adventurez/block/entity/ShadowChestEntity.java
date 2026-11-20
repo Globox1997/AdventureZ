@@ -16,7 +16,7 @@ import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.world.Container;
@@ -41,6 +41,9 @@ import net.minecraft.world.level.storage.loot.parameters.LootContextParams;
 import net.minecraft.world.phys.Vec3;
 import java.util.List;
 import java.util.Optional;
+import net.minecraft.world.level.storage.ValueInput;
+import net.minecraft.world.level.storage.ValueOutput;
+import net.minecraft.world.entity.ContainerUser;
 
 public class ShadowChestEntity extends RandomizableContainerBlockEntity implements LidBlockEntity {
 
@@ -70,7 +73,7 @@ public class ShadowChestEntity extends RandomizableContainerBlockEntity implemen
             }
 
             @Override
-            protected boolean isOwnContainer(Player player) {
+            public boolean isOwnContainer(Player player) {
                 if (player.containerMenu instanceof ChestMenu) {
                     Container inventory = ((ChestMenu) player.containerMenu).getContainer();
                     return inventory == ShadowChestEntity.this;
@@ -99,16 +102,16 @@ public class ShadowChestEntity extends RandomizableContainerBlockEntity implemen
     }
 
     @Override
-    protected void saveAdditional(CompoundTag nbt, Provider registryLookup) {
-        super.saveAdditional(nbt, registryLookup);
-        ContainerHelper.saveAllItems(nbt, this.inventory, registryLookup);
+    protected void saveAdditional(ValueOutput nbt) {
+        super.saveAdditional(nbt);
+        ContainerHelper.saveAllItems(nbt, this.inventory);
     }
 
     @Override
-    protected void loadAdditional(CompoundTag nbt, Provider registryLookup) {
-        super.loadAdditional(nbt, registryLookup);
+    protected void loadAdditional(ValueInput nbt) {
+        super.loadAdditional(nbt);
         this.inventory = NonNullList.withSize(this.getContainerSize(), ItemStack.EMPTY);
-        ContainerHelper.loadAllItems(nbt, this.inventory, registryLookup);
+        ContainerHelper.loadAllItems(nbt, this.inventory);
     }
 
     @Override
@@ -122,17 +125,17 @@ public class ShadowChestEntity extends RandomizableContainerBlockEntity implemen
     }
 
     @Override
-    public void startOpen(Player player) {
-        if (!this.remove && !player.isSpectator()) {
-            this.stateManager.incrementOpeners(player, this.getLevel(), this.getBlockPos(), this.getBlockState());
+    public void startOpen(ContainerUser containerUser) {
+        if (!this.remove && !containerUser.getLivingEntity().isSpectator()) {
+            this.stateManager.incrementOpeners(containerUser.getLivingEntity(), this.getLevel(), this.getBlockPos(), this.getBlockState(), containerUser.getContainerInteractionRange());
         }
 
     }
 
     @Override
-    public void stopOpen(Player player) {
-        if (!this.remove && !player.isSpectator()) {
-            this.stateManager.decrementOpeners(player, this.getLevel(), this.getBlockPos(), this.getBlockState());
+    public void stopOpen(ContainerUser containerUser) {
+        if (!this.remove && !containerUser.getLivingEntity().isSpectator()) {
+            this.stateManager.decrementOpeners(containerUser.getLivingEntity(), this.getLevel(), this.getBlockPos(), this.getBlockState());
         }
         if (this.isEmpty()) {
             this.getLevel().destroyBlock(worldPosition, true);
@@ -193,7 +196,7 @@ public class ShadowChestEntity extends RandomizableContainerBlockEntity implemen
 
             for (int i = 0; i < 27; i++) {
                 if (i == 20 && this.getLevel().getRandom().nextFloat() < 0.2F && FabricLoader.getInstance().isModLoaded("medievalweapons")) {
-                    this.inventory.set(i, new ItemStack(BuiltInRegistries.ITEM.get(ResourceLocation.fromNamespaceAndPath("medievalweapons", "thalleous_sword"))));
+                    this.inventory.set(i, new ItemStack(BuiltInRegistries.ITEM.getValue(Identifier.fromNamespaceAndPath("medievalweapons", "thalleous_sword"))));
                     continue;
                 }
                 if (i == 13)
@@ -214,7 +217,7 @@ public class ShadowChestEntity extends RandomizableContainerBlockEntity implemen
                         case 6:
                             ItemStack stack = new ItemStack(Items.ENCHANTED_BOOK);
                             RegistryAccess dynamicRegistryManager = this.getLevel().registryAccess();
-                            Optional<Holder.Reference<Enchantment>> optional = dynamicRegistryManager.registryOrThrow(Registries.ENCHANTMENT).getRandom(this.getLevel().getRandom());
+                            Optional<Holder.Reference<Enchantment>> optional = dynamicRegistryManager.lookupOrThrow(Registries.ENCHANTMENT).getRandom(this.getLevel().getRandom());
                             if (optional.isPresent()) {
                                 stack.enchant(optional.get(), optional.get().value().getMaxLevel() + (ConfigInit.CONFIG.allow_special_enchant_loot ? 1 : 0));
                             }

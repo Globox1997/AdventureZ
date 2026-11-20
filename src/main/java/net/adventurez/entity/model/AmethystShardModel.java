@@ -1,9 +1,8 @@
 package net.adventurez.entity.model;
 
-import com.google.common.collect.ImmutableList;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
-import net.minecraft.client.model.ListModel;
+import net.minecraft.client.model.EntityModel;
 import net.minecraft.client.model.geom.ModelPart;
 import net.minecraft.client.model.geom.PartPose;
 import net.minecraft.client.model.geom.builders.CubeDeformation;
@@ -11,10 +10,10 @@ import net.minecraft.client.model.geom.builders.CubeListBuilder;
 import net.minecraft.client.model.geom.builders.LayerDefinition;
 import net.minecraft.client.model.geom.builders.MeshDefinition;
 import net.minecraft.client.model.geom.builders.PartDefinition;
-import net.minecraft.world.entity.Entity;
+import net.adventurez.entity.render.state.ProjectileRenderState;
 
 @Environment(EnvType.CLIENT)
-public class AmethystShardModel<T extends Entity> extends ListModel<T> {
+public class AmethystShardModel extends EntityModel<ProjectileRenderState> {
     private final ModelPart shard;
     private final ModelPart cube_r1;
     private final ModelPart cube_r2;
@@ -24,6 +23,7 @@ public class AmethystShardModel<T extends Entity> extends ListModel<T> {
     private final ModelPart cube_r6;
 
     public AmethystShardModel(ModelPart root) {
+        super(root);
         this.shard = root.getChild("shard");
         this.cube_r6 = this.shard.getChild("cube_r6");
         this.cube_r5 = this.shard.getChild("cube_r5");
@@ -47,13 +47,11 @@ public class AmethystShardModel<T extends Entity> extends ListModel<T> {
         return LayerDefinition.create(modelData, 32, 32);
     }
 
-    @Override
-    public Iterable<ModelPart> parts() {
-        return ImmutableList.of(this.shard);
-    }
 
     @Override
-    public void setupAnim(T entity, float limbAngle, float limbDistance, float animationProgress, float headYaw, float headPitch) {
+    public void setupAnim(ProjectileRenderState state) {
+        float headYaw = state.yRot;
+        float headPitch = state.xRot;
         this.shard.yRot = headYaw * 0.017453292F;
         this.shard.zRot = headPitch * 0.17453292F;
         this.cube_r1.xRot = -0.1309F;

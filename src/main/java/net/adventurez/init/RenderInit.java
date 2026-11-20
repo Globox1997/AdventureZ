@@ -1,5 +1,7 @@
 package net.adventurez.init;
 
+import java.util.Set;
+
 import net.adventurez.AdventureMain;
 import net.adventurez.block.renderer.*;
 import net.adventurez.entity.model.*;
@@ -10,27 +12,27 @@ import net.adventurez.init.ParticleInit.VoidCloudParticle;
 import net.adventurez.init.ParticleInit.FartParticle;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
-import net.fabricmc.fabric.api.blockrenderlayer.v1.BlockRenderLayerMap;
-import net.fabricmc.fabric.api.client.particle.v1.ParticleFactoryRegistry;
-import net.fabricmc.fabric.api.client.rendering.v1.EntityModelLayerRegistry;
+import net.fabricmc.fabric.api.client.particle.v1.ParticleProviderRegistry;
 import net.fabricmc.fabric.api.client.rendering.v1.EntityRendererRegistry;
-import net.fabricmc.fabric.api.client.rendering.v1.HudRenderCallback;
+import net.fabricmc.fabric.api.client.rendering.v1.ModelLayerRegistry;
+import net.fabricmc.fabric.api.client.rendering.v1.hud.HudElementRegistry;
 import net.fabricmc.loader.api.FabricLoader;
 import net.minecraft.client.Minecraft;
+import net.minecraft.client.model.BabyModelTransform;
 import net.minecraft.client.model.geom.ModelLayerLocation;
-import net.minecraft.client.renderer.RenderType;
+import net.minecraft.client.renderer.RenderPipelines;
 import net.minecraft.client.renderer.blockentity.BlockEntityRenderers;
-import net.minecraft.client.renderer.blockentity.ChestRenderer;
 import net.minecraft.client.renderer.entity.NoopRenderer;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
+import net.minecraft.util.ARGB;
 import net.minecraft.world.entity.EquipmentSlot;
 import net.minecraft.world.item.ItemStack;
 
 @Environment(EnvType.CLIENT)
 public class RenderInit {
 
-    private static final ResourceLocation WITHERED_TEXTURE = AdventureMain.identifierOf("textures/misc/withered.png");
-    private static final ResourceLocation ACTIVE_ARMOR_TEXTURE = AdventureMain.identifierOf("textures/misc/active_armor.png");
+    private static final Identifier WITHERED_TEXTURE = AdventureMain.identifierOf("textures/misc/withered.png");
+    private static final Identifier ACTIVE_ARMOR_TEXTURE = AdventureMain.identifierOf("textures/misc/active_armor.png");
 
     public static final boolean isCanvasLoaded = FabricLoader.getInstance().isModLoaded("canvas");
     public static final boolean isIrisLoaded = FabricLoader.getInstance().isModLoaded("iris");
@@ -62,12 +64,15 @@ public class RenderInit {
     public static final ModelLayerLocation PIGLIN_FLAG_LAYER = new ModelLayerLocation(AdventureMain.identifierOf("piglin_flag_render_layer"), "piglin_flag_render_layer");
     public static final ModelLayerLocation ENDER_WHALE_LAYER = new ModelLayerLocation(AdventureMain.identifierOf("ender_whale_render_layer"), "ender_whale_render_layer");
     public static final ModelLayerLocation IGUANA_LAYER = new ModelLayerLocation(AdventureMain.identifierOf("iguana_render_layer"), "iguana_render_layer");
+    public static final ModelLayerLocation IGUANA_LAYER_BABY = new ModelLayerLocation(AdventureMain.identifierOf("iguana_render_layer"), "iguana_render_layer_baby");
     public static final ModelLayerLocation AMETHYST_GOLEM_LAYER = new ModelLayerLocation(AdventureMain.identifierOf("amethyst_golem_render_layer"), "amethyst_golem_render_layer");
     public static final ModelLayerLocation AMETHYST_SHARD_LAYER = new ModelLayerLocation(AdventureMain.identifierOf("amethyst_shard_render_layer"), "amethyst_shard_render_layer");
     public static final ModelLayerLocation DESERT_RHINO_LAYER = new ModelLayerLocation(AdventureMain.identifierOf("desert_rhino_render_layer"), "desert_rhino_render_layer");
     public static final ModelLayerLocation SHAMAN_LAYER = new ModelLayerLocation(AdventureMain.identifierOf("shaman_render_layer"), "shaman_render_layer");
     public static final ModelLayerLocation DEER_LAYER = new ModelLayerLocation(AdventureMain.identifierOf("deer_render_layer"), "deer_render_layer");
+    public static final ModelLayerLocation DEER_LAYER_BABY = new ModelLayerLocation(AdventureMain.identifierOf("deer_render_layer"), "deer_render_layer_baby");
     public static final ModelLayerLocation SKUNK_LAYER = new ModelLayerLocation(AdventureMain.identifierOf("skunk_render_layer"), "skunk_render_layer");
+    public static final ModelLayerLocation SKUNK_LAYER_BABY = new ModelLayerLocation(AdventureMain.identifierOf("skunk_render_layer"), "skunk_render_layer_baby");
     public static final ModelLayerLocation ENDERWARTHOG_LAYER = new ModelLayerLocation(AdventureMain.identifierOf("enderwarthog_render_layer"), "enderwarthog_render_layer");
     public static final ModelLayerLocation DUBIOUS_PUMPKIN_LAYER = new ModelLayerLocation(AdventureMain.identifierOf("dubious_pumpkin_render_layer"), "dubious_pumpkin_render_layer");
     public static final ModelLayerLocation CRYSTAL_BEETLE_LAYER = new ModelLayerLocation(AdventureMain.identifierOf("crystal_beetle_render_layer"), "crystal_beetle_render_layer");
@@ -115,58 +120,59 @@ public class RenderInit {
         EntityRendererRegistry.register(EntityInit.TERRACOTTA_GOLEM, TerracottaGolemRenderer::new);
 
         // Entity Layer
-        EntityModelLayerRegistry.registerModelLayer(BLACKSTONE_GOLEM_LAYER, BlackstoneGolemModel::getTexturedModelData);
-        EntityModelLayerRegistry.registerModelLayer(THROWN_ROCK_LAYER, RockModel::getTexturedModelData);
-        EntityModelLayerRegistry.registerModelLayer(GILDED_STONE_LAYER, GildedStoneModel::getTexturedModelData);
-        EntityModelLayerRegistry.registerModelLayer(MINI_BLACKSTONE_GOLEM_LAYER, MiniBlackstoneGolemModel::getTexturedModelData);
-        EntityModelLayerRegistry.registerModelLayer(PIGLIN_BEAST_LAYER, PiglinBeastModel::getTexturedModelData);
-        EntityModelLayerRegistry.registerModelLayer(SOUL_REAPER_LAYER, SoulReaperModel::getTexturedModelData);
-        EntityModelLayerRegistry.registerModelLayer(NECROMANCER_LAYER, NecromancerModel::getTexturedModelData);
-        EntityModelLayerRegistry.registerModelLayer(WITHER_PUPPET_LAYER, WitherPuppetModel::getTexturedModelData);
-        EntityModelLayerRegistry.registerModelLayer(SKELETON_VANGUARD_LAYER, SkeletonVanguardModel::getTexturedModelData);
-        EntityModelLayerRegistry.registerModelLayer(SUMMONER_LAYER, SummonerModel::getTexturedModelData);
-        EntityModelLayerRegistry.registerModelLayer(BLAZE_GUARDIAN_LAYER, BlazeGuardianModel::getTexturedModelData);
-        EntityModelLayerRegistry.registerModelLayer(THE_EYE_LAYER, TheEyeModel::getTexturedModelData);
-        EntityModelLayerRegistry.registerModelLayer(VOID_SHADOW_LAYER, VoidShadowModel::getTexturedModelData);
-        EntityModelLayerRegistry.registerModelLayer(TINY_EYE_LAYER, TinyEyeModel::getTexturedModelData);
-        EntityModelLayerRegistry.registerModelLayer(RED_FUNGUS_LAYER, RedFungusModel::getTexturedModelData);
-        EntityModelLayerRegistry.registerModelLayer(BROWN_FUNGUS_LAYER, BrownFungusModel::getTexturedModelData);
-        EntityModelLayerRegistry.registerModelLayer(ORC_LAYER, OrcModel::getTexturedModelData);
-        EntityModelLayerRegistry.registerModelLayer(DRAGON_LAYER, DragonModel::getTexturedModelData);
-        EntityModelLayerRegistry.registerModelLayer(MAMMOTH_LAYER, MammothModel::getTexturedModelData);
-        EntityModelLayerRegistry.registerModelLayer(VOID_FRAGMENT_LAYER, VoidFragmentModel::getTexturedModelData);
-        EntityModelLayerRegistry.registerModelLayer(VOID_SHADE_LAYER, VoidShadeModel::getTexturedModelData);
-        EntityModelLayerRegistry.registerModelLayer(VOID_BULLET_LAYER, VoidBulletModel::getTexturedModelData);
-        EntityModelLayerRegistry.registerModelLayer(PIGLIN_FLAG_LAYER, PiglinFlagRenderer::getTexturedModelData);
-        EntityModelLayerRegistry.registerModelLayer(ENDER_WHALE_LAYER, EnderWhaleModel::getTexturedModelData);
-        EntityModelLayerRegistry.registerModelLayer(IGUANA_LAYER, IguanaModel::getTexturedModelData);
-        EntityModelLayerRegistry.registerModelLayer(AMETHYST_GOLEM_LAYER, AmethystGolemModel::getTexturedModelData);
-        EntityModelLayerRegistry.registerModelLayer(AMETHYST_SHARD_LAYER, AmethystShardModel::getTexturedModelData);
-        EntityModelLayerRegistry.registerModelLayer(DESERT_RHINO_LAYER, DesertRhinoModel::getTexturedModelData);
-        EntityModelLayerRegistry.registerModelLayer(SHAMAN_LAYER, ShamanModel::getTexturedModelData);
-        EntityModelLayerRegistry.registerModelLayer(DEER_LAYER, DeerModel::getTexturedModelData);
-        EntityModelLayerRegistry.registerModelLayer(SKUNK_LAYER, SkunkModel::getTexturedModelData);
-        EntityModelLayerRegistry.registerModelLayer(ENDERWARTHOG_LAYER, EnderwarthogModel::getTexturedModelData);
-        EntityModelLayerRegistry.registerModelLayer(DUBIOUS_PUMPKIN_LAYER, DubiousPumpkinModel::getTexturedModelData);
-        EntityModelLayerRegistry.registerModelLayer(CRYSTAL_BEETLE_LAYER, CrystalBeetleModel::getTexturedModelData);
-        EntityModelLayerRegistry.registerModelLayer(TERRACOTTA_GOLEM_LAYER, TerracottaGolemModel::getTexturedModelData);
+        ModelLayerRegistry.registerModelLayer(BLACKSTONE_GOLEM_LAYER, BlackstoneGolemModel::getTexturedModelData);
+        ModelLayerRegistry.registerModelLayer(THROWN_ROCK_LAYER, RockModel::getTexturedModelData);
+        ModelLayerRegistry.registerModelLayer(GILDED_STONE_LAYER, GildedStoneModel::getTexturedModelData);
+        ModelLayerRegistry.registerModelLayer(MINI_BLACKSTONE_GOLEM_LAYER, MiniBlackstoneGolemModel::getTexturedModelData);
+        ModelLayerRegistry.registerModelLayer(PIGLIN_BEAST_LAYER, PiglinBeastModel::getTexturedModelData);
+        ModelLayerRegistry.registerModelLayer(SOUL_REAPER_LAYER, SoulReaperModel::getTexturedModelData);
+        ModelLayerRegistry.registerModelLayer(NECROMANCER_LAYER, NecromancerModel::getTexturedModelData);
+        ModelLayerRegistry.registerModelLayer(WITHER_PUPPET_LAYER, WitherPuppetModel::getTexturedModelData);
+        ModelLayerRegistry.registerModelLayer(SKELETON_VANGUARD_LAYER, SkeletonVanguardModel::getTexturedModelData);
+        ModelLayerRegistry.registerModelLayer(SUMMONER_LAYER, SummonerModel::getTexturedModelData);
+        ModelLayerRegistry.registerModelLayer(BLAZE_GUARDIAN_LAYER, BlazeGuardianModel::getTexturedModelData);
+        ModelLayerRegistry.registerModelLayer(THE_EYE_LAYER, TheEyeModel::getTexturedModelData);
+        ModelLayerRegistry.registerModelLayer(VOID_SHADOW_LAYER, VoidShadowModel::getTexturedModelData);
+        ModelLayerRegistry.registerModelLayer(TINY_EYE_LAYER, TinyEyeModel::getTexturedModelData);
+        ModelLayerRegistry.registerModelLayer(RED_FUNGUS_LAYER, RedFungusModel::getTexturedModelData);
+        ModelLayerRegistry.registerModelLayer(BROWN_FUNGUS_LAYER, BrownFungusModel::getTexturedModelData);
+        ModelLayerRegistry.registerModelLayer(ORC_LAYER, OrcModel::getTexturedModelData);
+        ModelLayerRegistry.registerModelLayer(DRAGON_LAYER, DragonModel::getTexturedModelData);
+        ModelLayerRegistry.registerModelLayer(MAMMOTH_LAYER, MammothModel::getTexturedModelData);
+        ModelLayerRegistry.registerModelLayer(VOID_FRAGMENT_LAYER, VoidFragmentModel::getTexturedModelData);
+        ModelLayerRegistry.registerModelLayer(VOID_SHADE_LAYER, VoidShadeModel::getTexturedModelData);
+        ModelLayerRegistry.registerModelLayer(VOID_BULLET_LAYER, VoidBulletModel::getTexturedModelData);
+        ModelLayerRegistry.registerModelLayer(PIGLIN_FLAG_LAYER, PiglinFlagRenderer::getTexturedModelData);
+        ModelLayerRegistry.registerModelLayer(ENDER_WHALE_LAYER, EnderWhaleModel::getTexturedModelData);
+        ModelLayerRegistry.registerModelLayer(IGUANA_LAYER, IguanaModel::getTexturedModelData);
+        ModelLayerRegistry.registerModelLayer(IGUANA_LAYER_BABY, () -> IguanaModel.getTexturedModelData().apply(new BabyModelTransform(Set.of())));
+        ModelLayerRegistry.registerModelLayer(AMETHYST_GOLEM_LAYER, AmethystGolemModel::getTexturedModelData);
+        ModelLayerRegistry.registerModelLayer(AMETHYST_SHARD_LAYER, AmethystShardModel::getTexturedModelData);
+        ModelLayerRegistry.registerModelLayer(DESERT_RHINO_LAYER, DesertRhinoModel::getTexturedModelData);
+        ModelLayerRegistry.registerModelLayer(SHAMAN_LAYER, ShamanModel::getTexturedModelData);
+        ModelLayerRegistry.registerModelLayer(DEER_LAYER, DeerModel::getTexturedModelData);
+        ModelLayerRegistry.registerModelLayer(DEER_LAYER_BABY, () -> DeerModel.getTexturedModelData().apply(new BabyModelTransform(true, 17.0F, 4.0F, Set.of("head"))));
+        ModelLayerRegistry.registerModelLayer(SKUNK_LAYER, SkunkModel::getTexturedModelData);
+        ModelLayerRegistry.registerModelLayer(SKUNK_LAYER_BABY, () -> SkunkModel.getTexturedModelData().apply(new BabyModelTransform(true, 10.0F, 4.0F, Set.of("head"))));
+        ModelLayerRegistry.registerModelLayer(ENDERWARTHOG_LAYER, EnderwarthogModel::getTexturedModelData);
+        ModelLayerRegistry.registerModelLayer(DUBIOUS_PUMPKIN_LAYER, DubiousPumpkinModel::getTexturedModelData);
+        ModelLayerRegistry.registerModelLayer(CRYSTAL_BEETLE_LAYER, CrystalBeetleModel::getTexturedModelData);
+        ModelLayerRegistry.registerModelLayer(TERRACOTTA_GOLEM_LAYER, TerracottaGolemModel::getTexturedModelData);
 
         // Blocks
         BlockEntityRenderers.register(BlockInit.CHISELED_POLISHED_BLACKSTONE_HOLDER_ENTITY, ChiseledPolishedBlackstoneHolderRenderer::new);
-        BlockRenderLayerMap.INSTANCE.putBlock(BlockInit.CHISELED_POLISHED_BLACKSTONE_HOLDER, RenderType.cutout());
         BlockEntityRenderers.register(BlockInit.PIGLIN_FLAG_ENTITY, PiglinFlagRenderer::new);
-        BlockRenderLayerMap.INSTANCE.putBlock(BlockInit.PIGLIN_FLAG, RenderType.cutout());
-        BlockEntityRenderers.register(BlockInit.SHADOW_CHEST_ENTITY, ChestRenderer::new);
+        BlockEntityRenderers.register(BlockInit.SHADOW_CHEST_ENTITY, ShadowChestRenderer::new);
 
         // Particles
-        ParticleFactoryRegistry.getInstance().register(ParticleInit.AMETHYST_SHARD_PARTICLE, ShardParticle.ShardFactory::new);
-        ParticleFactoryRegistry.getInstance().register(ParticleInit.VOID_CLOUD_PARTICLE, VoidCloudParticle.CloudFactory::new);
-        ParticleFactoryRegistry.getInstance().register(ParticleInit.SPRINT_PARTICLE, SprintParticle.SprintFactory::new);
-        ParticleFactoryRegistry.getInstance().register(ParticleInit.FART_PARTICLE, FartParticle.Factory::new);
+        ParticleProviderRegistry.getInstance().register(ParticleInit.AMETHYST_SHARD_PARTICLE, ShardParticle.ShardFactory::new);
+        ParticleProviderRegistry.getInstance().register(ParticleInit.VOID_CLOUD_PARTICLE, VoidCloudParticle.CloudFactory::new);
+        ParticleProviderRegistry.getInstance().register(ParticleInit.SPRINT_PARTICLE, SprintParticle.SprintFactory::new);
+        ParticleProviderRegistry.getInstance().register(ParticleInit.FART_PARTICLE, FartParticle.Factory::new);
 
-        HudRenderCallback.EVENT.register((drawContext, tickDelta) -> {
+        HudElementRegistry.addLast(AdventureMain.identifierOf("armor_and_withering"), (drawContext, tickDelta) -> {
             Minecraft client = Minecraft.getInstance();
-            if (!client.options.hideGui&& !client.player.isCreative()&& !client.player.isSpectator()) {
+            if (!client.gui.hud.isHidden() && !client.player.isCreative() && !client.player.isSpectator()) {
                 ItemStack itemStack = client.player.getItemBySlot(EquipmentSlot.CHEST);
                 if (!itemStack.isEmpty() && itemStack.is(ItemInit.GILDED_NETHERITE_CHESTPLATE)) {
                     if (itemStack.get(ItemInit.GILDED_DATA) != null && itemStack.get(ItemInit.GILDED_DATA).activated()) {
@@ -175,7 +181,6 @@ public class RenderInit {
                         int worldTime = (int) client.player.level().getGameTime();
                         int savedTagInt = itemStack.get(ItemInit.GILDED_DATA).time();
                         float effectDuration = ConfigInit.CONFIG.gilded_netherite_armor_effect_duration;
-                        drawContext.pose().pushPose();
                         if (savedTagInt + effectDuration > worldTime) {
                             int multiplier = 2;
                             if (savedTagInt + Math.max(effectDuration - 100, 0) < worldTime) {
@@ -183,23 +188,20 @@ public class RenderInit {
                             }
 
                             float pulsating = (float) Math.sin((float) ((worldTime * multiplier) - (savedTagInt - 1)) / 6.2831855F);
-                            drawContext.setColor(1.0F, 1.0F, 1.0F, pulsating + 0.5F);
-                            drawContext.blit(ACTIVE_ARMOR_TEXTURE, (scaledWidth / 2) - 5, scaledHeight - 49, 10, 10, 0, 0, 16, 16, 16, 16);
+                            drawContext.blit(RenderPipelines.GUI_TEXTURED, ACTIVE_ARMOR_TEXTURE, (scaledWidth / 2) - 5, scaledHeight - 49, 0, 0, 10, 10, 16, 16, 16, 16,
+                                    ARGB.colorFromFloat(Math.clamp(pulsating + 0.5F, 0.0F, 1.0F), 1.0F, 1.0F, 1.0F));
                         } else {
                             float fading = (1F - (((float) (worldTime - (savedTagInt + (effectDuration - 1f))) / effectDuration) - 0.4F));
-                            drawContext.setColor(1.0F, 0.65F, 0.65F, fading);
-                            drawContext.blit(ACTIVE_ARMOR_TEXTURE, (scaledWidth / 2) - 5, scaledHeight - 49, 10, 10, 0, 0, 16, 16, 16, 16);
+                            drawContext.blit(RenderPipelines.GUI_TEXTURED, ACTIVE_ARMOR_TEXTURE, (scaledWidth / 2) - 5, scaledHeight - 49, 0, 0, 10, 10, 16, 16, 16, 16,
+                                    ARGB.colorFromFloat(Math.clamp(fading, 0.0F, 1.0F), 1.0F, 0.65F, 0.65F));
                         }
-                        drawContext.pose().popPose();
-                        drawContext.setColor(1.0F, 1.0F, 1.0F, 1.0F);
                     }
                 }
                 if (client.player.hasEffect(EffectInit.WITHERING)) {
-                    drawContext.setColor(1.0F, 1.0F, 1.0F, client.player.getEffect(EffectInit.WITHERING).getDuration() / 280F);
                     int scaledWidth = client.getWindow().getGuiScaledWidth();
                     int scaledHeight = client.getWindow().getGuiScaledHeight();
-                    drawContext.blit(WITHERED_TEXTURE, scaledWidth / 2 - 64, scaledHeight / 2 - 64, 0.0F, 0.0F, 128, 128, 128, 128);
-                    drawContext.setColor(1.0F, 1.0F, 1.0F, 1.0F);
+                    drawContext.blit(RenderPipelines.GUI_TEXTURED, WITHERED_TEXTURE, scaledWidth / 2 - 64, scaledHeight / 2 - 64, 0.0F, 0.0F, 128, 128, 128, 128,
+                            ARGB.colorFromFloat(Math.clamp(client.player.getEffect(EffectInit.WITHERING).getDuration() / 280F, 0.0F, 1.0F), 1.0F, 1.0F, 1.0F));
                 }
             }
         });

@@ -14,7 +14,7 @@ import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.LivingEntity;
-import net.minecraft.world.entity.projectile.AbstractHurtingProjectile;
+import net.minecraft.world.entity.projectile.hurtingprojectile.AbstractHurtingProjectile;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.phys.BlockHitResult;
@@ -32,13 +32,13 @@ public class VoidBulletEntity extends AbstractHurtingProjectile {
     @Environment(EnvType.CLIENT)
     public VoidBulletEntity(Level world, double x, double y, double z, double velocityX, double velocityY, double velocityZ) {
         this(EntityInit.VOID_BULLET, world);
-        this.moveTo(x, y, z, this.getYRot(), this.getXRot());
+        this.snapTo(x, y, z, this.getYRot(), this.getXRot());
         this.setDeltaMovement(velocityX, velocityY, velocityZ);
     }
 
     public VoidBulletEntity(LivingEntity owner, Vec3 velocity, Level world) {
         super(EntityInit.VOID_BULLET, owner, velocity, world);
-        this.moveTo(owner.getX() + velocity.x() * 1.2D, owner.getY() + owner.getBoundingBox().getYsize() * 0.6D + velocity.y() * 1.2D, owner.getZ() + velocity.z() * 1.2D,
+        this.snapTo(owner.getX() + velocity.x() * 1.2D, owner.getY() + owner.getBoundingBox().getYsize() * 0.6D + velocity.y() * 1.2D, owner.getZ() + velocity.z() * 1.2D,
                 -owner.getYRot(), owner.getXRot());
         this.xRotO = owner.getXRot();
         this.setYRot(-owner.getYRot());

@@ -13,11 +13,14 @@ import net.minecraft.world.effect.MobEffects;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.monster.Silverfish;
-import net.minecraft.world.entity.projectile.ThrowableItemProjectile;
+import net.minecraft.world.entity.projectile.throwableitemprojectile.ThrowableItemProjectile;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.phys.EntityHitResult;
 import net.minecraft.world.phys.HitResult;
+import net.minecraft.world.entity.EntityTypes;
+import net.minecraft.world.entity.EntitySpawnReason;
+import net.minecraft.world.item.ItemStack;
 
 public class GildedBlackstoneShardEntity extends ThrowableItemProjectile {
     public GildedBlackstoneShardEntity(EntityType<? extends GildedBlackstoneShardEntity> entityType, Level world) {
@@ -25,11 +28,11 @@ public class GildedBlackstoneShardEntity extends ThrowableItemProjectile {
     }
 
     public GildedBlackstoneShardEntity(Level world, LivingEntity owner) {
-        super(EntityInit.GILDED_BLACKSTONE_SHARD, owner, world);
+        super(EntityInit.GILDED_BLACKSTONE_SHARD, owner, world, new ItemStack(ItemInit.GILDED_BLACKSTONE_SHARD));
     }
 
     public GildedBlackstoneShardEntity(Level world, double x, double y, double z) {
-        super(EntityInit.GILDED_BLACKSTONE_SHARD, x, y, z, world);
+        super(EntityInit.GILDED_BLACKSTONE_SHARD, x, y, z, world, new ItemStack(ItemInit.GILDED_BLACKSTONE_SHARD));
     }
 
     @Override
@@ -37,7 +40,7 @@ public class GildedBlackstoneShardEntity extends ThrowableItemProjectile {
     public void handleEntityEvent(byte status) {
         if (status == 3) {
             for (int i = 0; i < 22; ++i) {
-                this.level().addParticle(new ItemParticleOption(ParticleTypes.ITEM, this.getItem()), this.getX(), this.getY(), this.getZ(),
+                this.level().addParticle(new ItemParticleOption(ParticleTypes.ITEM, this.getItem().getItem()), this.getX(), this.getY(), this.getZ(),
                         (this.level().getRandom().nextDouble() - 0.5D) * 0.08D, (this.level().getRandom().nextDouble() - 0.5D) * 0.08D,
                         (this.level().getRandom().nextDouble() - 0.5D) * 0.08D);
             }
@@ -67,8 +70,8 @@ public class GildedBlackstoneShardEntity extends ThrowableItemProjectile {
                 }
 
                 for (int j = 0; j < i; ++j) {
-                    Silverfish silverfishEntity = (Silverfish) EntityType.SILVERFISH.create(this.level());
-                    silverfishEntity.moveTo(this.getX(), this.getY(), this.getZ(), this.getYRot(), 0.0F);
+                    Silverfish silverfishEntity = (Silverfish) EntityTypes.SILVERFISH.create(this.level(), EntitySpawnReason.MOB_SUMMONED);
+                    silverfishEntity.snapTo(this.getX(), this.getY(), this.getZ(), this.getYRot(), 0.0F);
                     this.level().addFreshEntity(silverfishEntity);
                 }
             }

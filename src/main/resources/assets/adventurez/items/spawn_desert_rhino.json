@@ -1,0 +1,16 @@
+{
+  "model": {
+    "type": "minecraft:model",
+    "model": "adventurez:item/spawn_desert_rhino",
+    "tints": [
+      {
+        "type": "minecraft:constant",
+        "value": -8893129
+      },
+      {
+        "type": "minecraft:constant",
+        "value": -4745628
+      }
+    ]
+  }
+}

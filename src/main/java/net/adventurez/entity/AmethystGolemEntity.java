@@ -21,7 +21,7 @@ import net.minecraft.world.InteractionHand;
 import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.LivingEntity;
-import net.minecraft.world.entity.MobSpawnType;
+import net.minecraft.world.entity.EntitySpawnReason;
 import net.minecraft.world.entity.SpawnGroupData;
 import net.minecraft.world.entity.ai.attributes.AttributeSupplier;
 import net.minecraft.world.entity.ai.attributes.Attributes;
@@ -36,6 +36,8 @@ import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.ServerLevelAccessor;
 import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.level.storage.ValueInput;
+import net.minecraft.world.level.storage.ValueOutput;
 
 public class AmethystGolemEntity extends Monster {
 
@@ -64,8 +66,8 @@ public class AmethystGolemEntity extends Monster {
         this.targetSelector.addGoal(1, new NearestAttackableTargetGoal<>(this, Player.class, true));
     }
 
-    public static boolean canSpawn(EntityType<AmethystGolemEntity> type, ServerLevelAccessor world, MobSpawnType spawnReason, BlockPos pos, RandomSource random) {
-        return (checkMonsterSpawnRules(type, world, spawnReason, pos, random) && !world.canSeeSky(pos)) || spawnReason == MobSpawnType.SPAWNER;
+    public static boolean canSpawn(EntityType<AmethystGolemEntity> type, ServerLevelAccessor world, EntitySpawnReason spawnReason, BlockPos pos, RandomSource random) {
+        return (checkMonsterSpawnRules(type, world, spawnReason, pos, random) && !world.canSeeSky(pos)) || spawnReason == EntitySpawnReason.SPAWNER;
     }
 
     @Override
@@ -76,16 +78,16 @@ public class AmethystGolemEntity extends Monster {
     }
 
     @Override
-    public void readAdditionalSaveData(CompoundTag tag) {
+    public void readAdditionalSaveData(ValueInput tag) {
         super.readAdditionalSaveData(tag);
-        this.entityData.set(BACK_CRYSTALS, tag.getInt("Crystals"));
-        this.entityData.set(DEEPSLATE_VARIANT, tag.getBoolean("DeepslateGolem"));
-        this.grow = tag.getInt("GrowAmethysts");
-        this.isStronger = tag.getBoolean("StrongerGolem");
+        this.entityData.set(BACK_CRYSTALS, tag.getIntOr("Crystals", 0));
+        this.entityData.set(DEEPSLATE_VARIANT, tag.getBooleanOr("DeepslateGolem", false));
+        this.grow = tag.getIntOr("GrowAmethysts", 0);
+        this.isStronger = tag.getBooleanOr("StrongerGolem", false);
     }
 
     @Override
-    public void addAdditionalSaveData(CompoundTag tag) {
+    public void addAdditionalSaveData(ValueOutput tag) {
         super.addAdditionalSaveData(tag);
         tag.putInt("Crystals", this.entityData.get(BACK_CRYSTALS));
         tag.putBoolean("DeepslateGolem", this.entityData.get(DEEPSLATE_VARIANT));
@@ -108,7 +110,7 @@ public class AmethystGolemEntity extends Monster {
     }
 
     @Override
-    public SpawnGroupData finalizeSpawn(ServerLevelAccessor world, DifficultyInstance difficulty, MobSpawnType spawnReason, @Nullable SpawnGroupData entityData) {
+    public SpawnGroupData finalizeSpawn(ServerLevelAccessor world, DifficultyInstance difficulty, EntitySpawnReason spawnReason, @Nullable SpawnGroupData entityData) {
         int random = this.getRandom().nextInt(5);
         this.entityData.set(BACK_CRYSTALS, random);
         if (random > 0) {
@@ -208,7 +210,7 @@ public class AmethystGolemEntity extends Monster {
                 return false;
             } else if (!livingEntity.isAlive()) {
                 return false;
-            } else if (!this.amethystGolemEntity.isWithinRestriction(livingEntity.blockPosition()) || !this.amethystGolemEntity.hasLineOfSight(livingEntity)) {
+            } else if (!this.amethystGolemEntity.isWithinHome(livingEntity.blockPosition()) || !this.amethystGolemEntity.hasLineOfSight(livingEntity)) {
                 return false;
             } else if (this.cooldown > 0) {
                 return false;
@@ -219,7 +221,7 @@ public class AmethystGolemEntity extends Monster {
 
         @Override
         public void start() {
-            this.amethystGolemEntity.swing(InteractionHand.MAIN_HAND);
+            this.amethystGolemEntity.swingForAttack(InteractionHand.MAIN_HAND);
             if (!this.amethystGolemEntity.level().isClientSide()) {
                 this.amethystGolemEntity.level().playSound(null, this.amethystGolemEntity, SoundInit.ROCK_THROW_EVENT, SoundSource.HOSTILE, 0.74F, 1.0F);
                 AmethystShardEntity amethystShardEntity = new AmethystShardEntity(this.amethystGolemEntity, this.amethystGolemEntity.level());

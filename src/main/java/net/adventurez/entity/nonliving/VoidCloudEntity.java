@@ -26,6 +26,10 @@ import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.material.PushReaction;
 import org.jetbrains.annotations.Nullable;
+import net.minecraft.world.level.storage.ValueInput;
+import net.minecraft.world.level.storage.ValueOutput;
+import net.minecraft.core.UUIDUtil;
+import net.minecraft.world.damagesource.DamageSource;
 
 public class VoidCloudEntity extends Entity {
     private static final EntityDataAccessor<Float> RADIUS;
@@ -144,7 +148,7 @@ public class VoidCloudEntity extends Entity {
                             aa = y * y + z * z;
                         } while (!(aa <= (double) (f * f)));
                         this.affectedEntities.put(livingEntity, this.tickCount + this.reapplicationDelay);
-                        livingEntity.addEffect(new MobEffectInstance(MobEffects.MOVEMENT_SLOWDOWN, 50, 2, false, false, false));
+                        livingEntity.addEffect(new MobEffectInstance(MobEffects.SLOWNESS, 50, 2, false, false, false));
                         if (this.radiusOnUse != 0.0F) {
                             f += this.radiusOnUse;
                             if (f < 0.5F) {
@@ -182,21 +186,20 @@ public class VoidCloudEntity extends Entity {
     }
 
     @Override
-    protected void readAdditionalSaveData(CompoundTag nbt) {
-        this.tickCount = nbt.getInt("Age");
-        this.duration = nbt.getInt("Duration");
-        this.waitTime = nbt.getInt("WaitTime");
-        this.reapplicationDelay = nbt.getInt("ReapplicationDelay");
-        this.durationOnUse = nbt.getInt("DurationOnUse");
-        this.radiusOnUse = nbt.getFloat("RadiusOnUse");
-        this.radiusGrowth = nbt.getFloat("RadiusPerTick");
-        this.setRadius(nbt.getFloat("Radius"));
-        if (nbt.hasUUID("Owner"))
-            this.ownerUuid = nbt.getUUID("Owner");
+    protected void readAdditionalSaveData(ValueInput nbt) {
+        this.tickCount = nbt.getIntOr("Age", 0);
+        this.duration = nbt.getIntOr("Duration", 0);
+        this.waitTime = nbt.getIntOr("WaitTime", 0);
+        this.reapplicationDelay = nbt.getIntOr("ReapplicationDelay", 0);
+        this.durationOnUse = nbt.getIntOr("DurationOnUse", 0);
+        this.radiusOnUse = nbt.getFloatOr("RadiusOnUse", 0.0F);
+        this.radiusGrowth = nbt.getFloatOr("RadiusPerTick", 0.0F);
+        this.setRadius(nbt.getFloatOr("Radius", 0.0F));
+        nbt.read("Owner", UUIDUtil.CODEC).ifPresent(uuid -> this.ownerUuid = uuid);
     }
 
     @Override
-    protected void addAdditionalSaveData(CompoundTag nbt) {
+    protected void addAdditionalSaveData(ValueOutput nbt) {
         nbt.putInt("Age", this.tickCount);
         nbt.putInt("Duration", this.duration);
         nbt.putInt("ReapplicationDelay", this.reapplicationDelay);
@@ -205,7 +208,12 @@ public class VoidCloudEntity extends Entity {
         nbt.putFloat("RadiusPerTick", this.radiusGrowth);
         nbt.putFloat("Radius", this.getRadius());
         if (this.ownerUuid != null)
-            nbt.putUUID("Owner", this.ownerUuid);
+            nbt.store("Owner", UUIDUtil.CODEC, this.ownerUuid);
+    }
+
+    @Override
+    public boolean hurtServer(ServerLevel level, DamageSource source, float amount) {
+        return false;
     }
 
     @Override
@@ -217,7 +225,7 @@ public class VoidCloudEntity extends Entity {
 
     @Override
     public PushReaction getPistonPushReaction() {
-        return PushReaction.IGNORE;
+        return PushReaction.IGNORE_ENTITY;
     }
 
     @Override

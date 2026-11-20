@@ -21,7 +21,7 @@ import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.Mob;
-import net.minecraft.world.entity.MobSpawnType;
+import net.minecraft.world.entity.EntitySpawnReason;
 import net.minecraft.world.entity.NeutralMob;
 import net.minecraft.world.entity.PathfinderMob;
 import net.minecraft.world.entity.ai.attributes.AttributeSupplier;
@@ -42,11 +42,15 @@ import net.minecraft.world.level.Level;
 import net.minecraft.world.level.LevelAccessor;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.level.storage.ValueInput;
+import net.minecraft.world.level.storage.ValueOutput;
+import net.minecraft.world.entity.EntityReference;
 
 public class BrownFungusEntity extends PathfinderMob implements NeutralMob {
     private static final UniformInt ANGER_TIME_RANGE;
-    private int angerTime;
-    private UUID angryAt;
+    private long angerTime;
+    @Nullable
+    private EntityReference<LivingEntity> angryAt;
 
     public BrownFungusEntity(EntityType<? extends PathfinderMob> entityType, Level world) {
         super(entityType, world);
@@ -71,7 +75,7 @@ public class BrownFungusEntity extends PathfinderMob implements NeutralMob {
                 .add(Attributes.FOLLOW_RANGE, 32.0D);
     }
 
-    public static boolean canSpawn(EntityType<BrownFungusEntity> type, LevelAccessor world, MobSpawnType spawnReason, BlockPos pos, RandomSource random) {
+    public static boolean canSpawn(EntityType<BrownFungusEntity> type, LevelAccessor world, EntitySpawnReason spawnReason, BlockPos pos, RandomSource random) {
         return world.getBlockState(pos.below()).is(BlockTags.MOOSHROOMS_SPAWNABLE_ON) && world.getRawBrightness(pos, 0) > 8;
     }
 
@@ -92,17 +96,17 @@ public class BrownFungusEntity extends PathfinderMob implements NeutralMob {
 
     @Override
     protected void playStepSound(BlockPos pos, BlockState state) {
-        this.playSound(SoundEvents.WOLF_STEP, 0.15F, 1.0F);
+        this.playSound(SoundEvents.WOLF_STEP.value(), 0.15F, 1.0F);
     }
 
     @Override
-    public void addAdditionalSaveData(CompoundTag nbt) {
+    public void addAdditionalSaveData(ValueOutput nbt) {
         super.addAdditionalSaveData(nbt);
         this.addPersistentAngerSaveData(nbt);
     }
 
     @Override
-    public void readAdditionalSaveData(CompoundTag nbt) {
+    public void readAdditionalSaveData(ValueInput nbt) {
         super.readAdditionalSaveData(nbt);
         this.readPersistentAngerSaveData(this.level(), nbt);
     }
@@ -122,36 +126,36 @@ public class BrownFungusEntity extends PathfinderMob implements NeutralMob {
     }
 
     @Override
-    public boolean hurt(DamageSource source, float amount) {
+    public boolean hurtServer(ServerLevel level, DamageSource source, float amount) {
         if (source.getDirectEntity() != null && source.getDirectEntity() instanceof Player attacker) {
-            this.setPersistentAngerTarget(attacker.getUUID());
+            this.setPersistentAngerTarget(EntityReference.of(attacker));
         }
-        return !this.isInvulnerableTo(source) && super.hurt(source, amount);
+        return !this.isInvulnerableTo(level, source) && super.hurtServer(level, source, amount);
 
     }
 
     @Override
     public void startPersistentAngerTimer() {
-        this.setRemainingPersistentAngerTime(ANGER_TIME_RANGE.sample(this.random));
+        this.setTimeToRemainAngry(ANGER_TIME_RANGE.sample(this.random));
     }
 
     @Override
-    public void setRemainingPersistentAngerTime(int ticks) {
+    public void setPersistentAngerEndTime(long ticks) {
         this.angerTime = ticks;
     }
 
     @Override
-    public int getRemainingPersistentAngerTime() {
+    public long getPersistentAngerEndTime() {
         return this.angerTime;
     }
 
     @Override
-    public void setPersistentAngerTarget(@Nullable UUID uuid) {
+    public void setPersistentAngerTarget(@Nullable EntityReference<LivingEntity> uuid) {
         this.angryAt = uuid;
     }
 
     @Override
-    public UUID getPersistentAngerTarget() {
+    public @Nullable EntityReference<LivingEntity> getPersistentAngerTarget() {
         return this.angryAt;
     }
 
@@ -161,8 +165,8 @@ public class BrownFungusEntity extends PathfinderMob implements NeutralMob {
     }
 
     @Override
-    public boolean doHurtTarget(Entity target) {
-        if (!super.doHurtTarget(target)) {
+    public boolean doHurtTarget(ServerLevel level, Entity target) {
+        if (!super.doHurtTarget(level, target)) {
             return false;
         } else {
             if (!this.level().isClientSide() && target instanceof LivingEntity && this.level().getRandom().nextInt(160) > 100) {

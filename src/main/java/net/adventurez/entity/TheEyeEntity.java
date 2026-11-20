@@ -13,7 +13,7 @@ import net.minecraft.network.syncher.EntityDataAccessor;
 import net.minecraft.network.syncher.EntityDataSerializers;
 import net.minecraft.network.syncher.SynchedEntityData;
 import net.minecraft.network.syncher.SynchedEntityData.Builder;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.server.level.ServerBossEvent;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
@@ -31,9 +31,8 @@ import net.minecraft.world.effect.MobEffectInstance;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntitySelector;
 import net.minecraft.world.entity.EntityType;
-import net.minecraft.world.entity.FlyingMob;
 import net.minecraft.world.entity.LivingEntity;
-import net.minecraft.world.entity.MobSpawnType;
+import net.minecraft.world.entity.EntitySpawnReason;
 import net.minecraft.world.entity.MoverType;
 import net.minecraft.world.entity.SpawnPlacements;
 import net.minecraft.world.entity.ai.attributes.AttributeSupplier;
@@ -45,7 +44,7 @@ import net.minecraft.world.entity.ai.goal.target.NearestAttackableTargetGoal;
 import net.minecraft.world.entity.monster.Enemy;
 import net.minecraft.world.entity.monster.Monster;
 import net.minecraft.world.entity.player.Player;
-import net.minecraft.world.level.GameRules;
+import net.minecraft.world.level.gamerules.GameRules;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.Blocks;
@@ -63,9 +62,12 @@ import org.jetbrains.annotations.Nullable;
 import java.util.EnumSet;
 import java.util.List;
 import java.util.Optional;
+import net.minecraft.world.entity.Mob;
+import net.minecraft.world.level.storage.ValueInput;
+import net.minecraft.world.level.storage.ValueOutput;
 
 @SuppressWarnings("deprecation")
-public class TheEyeEntity extends FlyingMob implements Enemy {
+public class TheEyeEntity extends Mob implements Enemy {
     private static final EntityDataAccessor<Integer> BEAM_TARGET_ID;
     public static final EntityDataAccessor<Integer> INVUL_TIMER;
     private int field_7082;
@@ -82,13 +84,27 @@ public class TheEyeEntity extends FlyingMob implements Enemy {
     public TheEyeEntity(EntityType<? extends TheEyeEntity> entityType, Level world) {
         super(entityType, world);
         if (this.duplicationTimer <= 0) {
-            this.bossBar = new ServerBossEvent(this.getDisplayName(), BossEvent.BossBarColor.PURPLE, BossEvent.BossBarOverlay.PROGRESS);
+            this.bossBar = new ServerBossEvent(this.getUUID(), this.getDisplayName(), BossEvent.BossBarColor.PURPLE, BossEvent.BossBarOverlay.PROGRESS);
             this.xpReward = 80;
         } else {
             this.bossBar = null;
             this.xpReward = 0;
         }
         this.moveControl = new TheEyeEntity.EyeMoveControl(this);
+    }
+
+    @Override
+    protected void checkFallDamage(double heightDifference, boolean onGround, BlockState state, BlockPos landedPosition) {
+    }
+
+    @Override
+    public boolean onClimbable() {
+        return false;
+    }
+
+    @Override
+    public void travel(Vec3 movementInput) {
+        this.travelFlying(movementInput, 0.02F);
     }
 
     public static AttributeSupplier.Builder createTheEntityAttributes() {
@@ -115,7 +131,7 @@ public class TheEyeEntity extends FlyingMob implements Enemy {
     }
 
     @Override
-    public void addAdditionalSaveData(CompoundTag tag) {
+    public void addAdditionalSaveData(ValueOutput tag) {
         super.addAdditionalSaveData(tag);
         tag.putInt("Invul", this.getInvulnerableTimer());
         tag.putInt("DeathTimer", this.deathTimer);
@@ -123,14 +139,14 @@ public class TheEyeEntity extends FlyingMob implements Enemy {
     }
 
     @Override
-    public void readAdditionalSaveData(CompoundTag tag) {
+    public void readAdditionalSaveData(ValueInput tag) {
         super.readAdditionalSaveData(tag);
-        this.setInvulTimer(tag.getInt("Invul"));
+        this.setInvulTimer(tag.getIntOr("Invul", 0));
         if (this.hasCustomName() && this.bossBar != null) {
             this.bossBar.setName(this.getDisplayName());
         }
-        this.deathTimer = tag.getInt("DeathTimer");
-        this.duplicationTimer = tag.getInt("DuplicationTimer");
+        this.deathTimer = tag.getIntOr("DeathTimer", 0);
+        this.duplicationTimer = tag.getIntOr("DuplicationTimer", 0);
     }
 
     @Override
@@ -179,7 +195,7 @@ public class TheEyeEntity extends FlyingMob implements Enemy {
     }
 
     @Override
-    public void customServerAiStep() {
+    public void customServerAiStep(ServerLevel level) {
         if (!this.isNoGravity()) {
             this.setNoGravity(true);
         }
@@ -196,7 +212,7 @@ public class TheEyeEntity extends FlyingMob implements Enemy {
             this.setTarget(null);
             this.setInvulTimer(j);
         } else {
-            super.customServerAiStep();
+            super.customServerAiStep(level);
             LivingEntity livingEntity = this.getTarget();
             if (livingEntity != null && livingEntity.isAlive()) {
                 if (attackTpCounter >= 120 && !this.hasBeamTarget()) {
@@ -210,7 +226,7 @@ public class TheEyeEntity extends FlyingMob implements Enemy {
                                 teleportPos.getZ() + 4)) {
                             this.lookControl.setLookAt(teleportPos.getX(), teleportPos.getY(), teleportPos.getZ());
                             if (!this.level().isClientSide()) {
-                                livingEntity.randomTeleport(teleportPos.getX(), teleportPos.getY(), teleportPos.getZ(), false);
+                                livingEntity.randomTeleport(teleportPos.getX(), teleportPos.getY(), teleportPos.getZ(), false, state -> false);
                             }
                             livingEntity.level().playSound(null, teleportPos, SoundEvents.ENDERMAN_TELEPORT, SoundSource.HOSTILE, 1.0F, 1.0F);
                             if (this.level().isClientSide()) {
@@ -229,7 +245,7 @@ public class TheEyeEntity extends FlyingMob implements Enemy {
             int n;
             if (this.field_7082 > 0) {
                 --this.field_7082;
-                if (this.field_7082 == 0 && this.level().getGameRules().getBoolean(GameRules.RULE_MOBGRIEFING)) {
+                if (this.field_7082 == 0 && ((ServerLevel) this.level()).getGameRules().get(GameRules.MOB_GRIEFING)) {
                     j = Mth.floor(this.getY());
                     n = Mth.floor(this.getX());
                     int o = Mth.floor(this.getZ());
@@ -302,10 +318,10 @@ public class TheEyeEntity extends FlyingMob implements Enemy {
     }
 
     @Override
-    public boolean hurt(DamageSource source, float amount) {
+    public boolean hurtServer(ServerLevel level, DamageSource source, float amount) {
         if (source.is(DamageTypeTags.BYPASSES_INVULNERABILITY)) {
-            return super.hurt(source, amount);
-        } else if (this.isInvulnerableTo(source)) {
+            return super.hurtServer(level, source, amount);
+        } else if (this.isInvulnerableTo(level, source)) {
             return false;
         } else if (!source.is(DamageTypeTags.IS_DROWNING) && !(source.getEntity() instanceof TheEyeEntity)) {
             if (this.getInvulnerableTimer() > 0 && !source.is(DamageTypeTags.BYPASSES_INVULNERABILITY)) {
@@ -313,7 +329,7 @@ public class TheEyeEntity extends FlyingMob implements Enemy {
             } else {
                 Entity entity2;
                 entity2 = source.getEntity();
-                if (!(entity2 instanceof Player) && entity2 instanceof LivingEntity livingEntity && livingEntity.getType().is(EntityTypeTags.SENSITIVE_TO_SMITE)) {
+                if (!(entity2 instanceof Player) && entity2 instanceof LivingEntity livingEntity && livingEntity.is(EntityTypeTags.SENSITIVE_TO_SMITE)) {
                     return false;
                 } else {
                     if (this.field_7082 <= 0) {
@@ -322,7 +338,7 @@ public class TheEyeEntity extends FlyingMob implements Enemy {
                     if (this.level().getRandom().nextFloat() < 0.6F) {
                         this.gotDamage = true;
                     }
-                    return super.hurt(source, amount);
+                    return super.hurtServer(level, source, amount);
                 }
             }
         } else {
@@ -347,7 +363,7 @@ public class TheEyeEntity extends FlyingMob implements Enemy {
     }
 
     @Override
-    public boolean causeFallDamage(float fallDistance, float damageMultiplier, DamageSource damageSource) {
+    public boolean causeFallDamage(double fallDistance, float damageMultiplier, DamageSource damageSource) {
         return false;
     }
 
@@ -461,12 +477,12 @@ public class TheEyeEntity extends FlyingMob implements Enemy {
                         deathPos = deathPos.below(deathPos.getY() - this.level().getHeight() + 10);
                     this.placeDeathStructure(deathPos);
                     if (this.isVoidZLoaded) {
-                        this.level().setBlock(deathPos.above(8).north().west(), BuiltInRegistries.BLOCK.get(ResourceLocation.fromNamespaceAndPath("voidz", "void_portal")).defaultBlockState(), 3);
+                        this.level().setBlock(deathPos.above(8).north().west(), BuiltInRegistries.BLOCK.getValue(Identifier.fromNamespaceAndPath("voidz", "void_portal")).defaultBlockState(), 3);
                     } else {
                         this.level().setBlock(deathPos.above(8).north().west(), Blocks.DRAGON_EGG.defaultBlockState(), 3);
                     }
                     if (this.level().getRandom().nextFloat() <= 0.01F) {
-                        this.spawnAtLocation(ItemInit.PRIME_EYE);
+                        this.spawnAtLocation((ServerLevel) this.level(), ItemInit.PRIME_EYE);
                     }
                     this.discard();
                 }
@@ -490,8 +506,8 @@ public class TheEyeEntity extends FlyingMob implements Enemy {
     }
 
     private void placeDeathStructure(BlockPos blockPos) {
-        StructureTemplateManager structureTemplateManager = ((ServerLevel) this.level()).getStructureManager();
-        Optional<StructureTemplate> structure = structureTemplateManager.get(ResourceLocation.parse("adventurez:eyeland"));
+        StructureTemplateManager structureTemplateManager = ((ServerLevel) this.level()).getStructureTemplateManager();
+        Optional<StructureTemplate> structure = structureTemplateManager.get(Identifier.parse("adventurez:eyeland"));
         structure.get().placeInWorld((ServerLevel) this.level(), blockPos.west(5).north(5), blockPos,
                 (new StructurePlaceSettings()).setMirror(Mirror.NONE).setRotation(Rotation.NONE).setIgnoreEntities(true), this.level().getRandom(), Block.UPDATE_CLIENTS);
     }
@@ -529,7 +545,7 @@ public class TheEyeEntity extends FlyingMob implements Enemy {
             this.beamTicks = -20;
             this.theEye.getNavigation().stop();
             this.theEye.getLookControl().setLookAt(this.theEye.getTarget(), 90.0F, 90.0F);
-            this.theEye.hasImpulse = true;
+            this.theEye.needsSync = true;
         }
 
         @Override
@@ -752,10 +768,10 @@ public class TheEyeEntity extends FlyingMob implements Enemy {
                         pos = pos.offset(pos.getX() - livingEntity.blockPosition().getX() + theEyeEntity.level().getRandom().nextInt(6) * 5, 0,
                                 pos.getZ() - livingEntity.blockPosition().getZ() + theEyeEntity.level().getRandom().nextInt(6) * 5);
                         if (theEyeEntity.level().getBlockState(pos).isAir()
-                                && SpawnPlacements.checkSpawnRules(EntityInit.THE_EYE, (ServerLevel) theEyeEntity.level(), MobSpawnType.EVENT, pos, theEyeEntity.level().getRandom())) {
-                            TheEyeEntity theEyeEntityDuplicate = EntityInit.THE_EYE.create(theEyeEntity.level());
-                            theEyeEntityDuplicate.moveTo(pos, theEyeEntity.level().getRandom().nextFloat() * 360F, 0.0F);
-                            theEyeEntityDuplicate.finalizeSpawn((ServerLevel) theEyeEntity.level(), theEyeEntity.level().getCurrentDifficultyAt(pos), MobSpawnType.EVENT, null);
+                                && SpawnPlacements.checkSpawnRules(EntityInit.THE_EYE, (ServerLevel) theEyeEntity.level(), EntitySpawnReason.EVENT, pos, theEyeEntity.level().getRandom())) {
+                            TheEyeEntity theEyeEntityDuplicate = EntityInit.THE_EYE.create(theEyeEntity.level(), EntitySpawnReason.MOB_SUMMONED);
+                            theEyeEntityDuplicate.snapTo(pos, theEyeEntity.level().getRandom().nextFloat() * 360F, 0.0F);
+                            theEyeEntityDuplicate.finalizeSpawn((ServerLevel) theEyeEntity.level(), ((ServerLevel) theEyeEntity.level()).getCurrentDifficultyAt(pos), EntitySpawnReason.EVENT, null);
                             theEyeEntityDuplicate.duplicationTimer = 800;
                             theEyeEntityDuplicate.setLastHurtByMob(livingEntity);
                             theEyeEntityDuplicate.getAttribute(Attributes.MAX_HEALTH).setBaseValue(100.0D);

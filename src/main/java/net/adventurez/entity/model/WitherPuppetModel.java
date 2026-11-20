@@ -3,6 +3,7 @@ package net.adventurez.entity.model;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
 import net.minecraft.client.model.HumanoidModel;
+import net.minecraft.client.renderer.entity.state.HumanoidRenderState;
 import net.minecraft.client.model.geom.ModelPart;
 import net.minecraft.client.model.geom.PartPose;
 import net.minecraft.client.model.geom.builders.CubeDeformation;
@@ -11,10 +12,9 @@ import net.minecraft.client.model.geom.builders.LayerDefinition;
 import net.minecraft.client.model.geom.builders.MeshDefinition;
 import net.minecraft.client.model.geom.builders.PartDefinition;
 import net.minecraft.util.Mth;
-import net.minecraft.world.entity.Mob;
 
 @Environment(EnvType.CLIENT)
-public class WitherPuppetModel<T extends Mob> extends HumanoidModel<T> {
+public class WitherPuppetModel extends HumanoidModel<HumanoidRenderState> {
 
     public WitherPuppetModel(ModelPart modelPart) {
         super(modelPart);
@@ -33,8 +33,10 @@ public class WitherPuppetModel<T extends Mob> extends HumanoidModel<T> {
     }
 
     @Override
-    public void setupAnim(T puppet, float f, float g, float h, float i, float j) {
-        float k = Mth.sin(this.attackTime * 3.1415927F);
+    public void setupAnim(HumanoidRenderState state) {
+        float f = state.walkAnimationPos;
+        float g = state.walkAnimationSpeed;
+        float k = Mth.sin(state.swingAnimation * 3.1415927F);
         this.rightArm.xRot = Mth.cos(f * 0.6662F + 3.1415927F) * 2.0F * g * 0.5F;
         this.leftArm.xRot = Mth.cos(f * 0.6662F) * 2.0F * g * 0.5F;
         this.rightArm.zRot = 0.0F;

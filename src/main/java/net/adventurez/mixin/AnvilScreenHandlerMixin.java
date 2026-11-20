@@ -2,7 +2,6 @@ package net.adventurez.mixin;
 
 import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Mixin;
-import org.spongepowered.asm.mixin.Mutable;
 import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.Unique;
 import org.spongepowered.asm.mixin.injection.At;
@@ -20,6 +19,7 @@ import net.minecraft.world.inventory.ItemCombinerMenu;
 import net.minecraft.world.inventory.MenuType;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
+import net.minecraft.world.inventory.ItemCombinerMenuSlotDefinition;
 
 @Mixin(AnvilMenu.class)
 public abstract class AnvilScreenHandlerMixin extends ItemCombinerMenu {
@@ -28,12 +28,11 @@ public abstract class AnvilScreenHandlerMixin extends ItemCombinerMenu {
     private int repairedAmount;
 
     @Shadow
-    @Mutable
     @Final
-    private DataSlot cost = DataSlot.standalone();
+    private DataSlot cost;
 
-    public AnvilScreenHandlerMixin(MenuType<?> type, int syncId, Inventory playerInventory, ContainerLevelAccess context) {
-        super(type, syncId, playerInventory, context);
+    public AnvilScreenHandlerMixin(MenuType<?> type, int syncId, Inventory playerInventory, ContainerLevelAccess context, ItemCombinerMenuSlotDefinition slotDefinition) {
+        super(type, syncId, playerInventory, context, slotDefinition);
     }
 
     @Inject(method = "createResult", at = @At("HEAD"), cancellable = true)

@@ -10,6 +10,9 @@ import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.level.Level;
+import net.minecraft.world.level.storage.ValueInput;
+import net.minecraft.world.level.storage.ValueOutput;
+import net.minecraft.server.level.ServerLevel;
 
 public class BlazeGuardianShieldEntity extends Entity {
     public final BlazeGuardianEntity owner;
@@ -33,11 +36,11 @@ public class BlazeGuardianShieldEntity extends Entity {
     }
 
     @Override
-    protected void readAdditionalSaveData(CompoundTag nbt) {
+    protected void readAdditionalSaveData(ValueInput nbt) {
     }
 
     @Override
-    protected void addAdditionalSaveData(CompoundTag nbt) {
+    protected void addAdditionalSaveData(ValueOutput nbt) {
     }
 
     @Override
@@ -54,13 +57,13 @@ public class BlazeGuardianShieldEntity extends Entity {
     }
 
     @Override
-    public boolean hurt(DamageSource source, float amount) {
+    public boolean hurtServer(ServerLevel level, DamageSource source, float amount) {
         if (source.is(DamageTypeTags.IS_PROJECTILE)) {
             return false;
         }
         hit++;
         if (hit > 1 + this.level().getRandom().nextInt(2)) {
-            this.level().playSound(null, this.blockPosition(), SoundEvents.SHIELD_BREAK, SoundSource.HOSTILE, 1.0F, 1.0F);
+            this.level().playSound(null, this.blockPosition(), SoundEvents.SHIELD_BREAK.value(), SoundSource.HOSTILE, 1.0F, 1.0F);
             if (this.owner != null) {
                 this.removeShield(this.name, this.owner);
             }
@@ -68,9 +71,9 @@ public class BlazeGuardianShieldEntity extends Entity {
                 this.discard();
             }
         } else {
-            this.level().playSound(null, this.blockPosition(), SoundEvents.SHIELD_BLOCK, SoundSource.HOSTILE, 1.0F, 1.0F);
+            this.level().playSound(null, this.blockPosition(), SoundEvents.SHIELD_BLOCK.value(), SoundSource.HOSTILE, 1.0F, 1.0F);
         }
-        return this.isInvulnerableTo(source);
+        return this.isInvulnerableToBase(source);
     }
 
     @Override

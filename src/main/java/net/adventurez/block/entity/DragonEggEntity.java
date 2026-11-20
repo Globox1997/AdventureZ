@@ -12,12 +12,14 @@ import net.minecraft.core.HolderLookup.Provider;
 import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.server.level.ServerLevel;
-import net.minecraft.world.entity.MobSpawnType;
+import net.minecraft.world.entity.EntitySpawnReason;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.level.storage.ValueInput;
+import net.minecraft.world.level.storage.ValueOutput;
 
 public class DragonEggEntity extends BlockEntity {
     private int overallSummoningTick;
@@ -31,16 +33,16 @@ public class DragonEggEntity extends BlockEntity {
     }
 
     @Override
-    protected void loadAdditional(CompoundTag nbt, Provider registryLookup) {
-        super.loadAdditional(nbt, registryLookup);
-        hatchTick = nbt.getInt("Hatch_Tick");
-        isHatchAble = nbt.getBoolean("Hatch_Able");
-        summoningTick = nbt.getInt("Summoning_Tick");
+    protected void loadAdditional(ValueInput nbt) {
+        super.loadAdditional(nbt);
+        hatchTick = nbt.getIntOr("Hatch_Tick", 0);
+        isHatchAble = nbt.getBooleanOr("Hatch_Able", false);
+        summoningTick = nbt.getIntOr("Summoning_Tick", 0);
     }
 
     @Override
-    protected void saveAdditional(CompoundTag nbt, Provider registryLookup) {
-        super.saveAdditional(nbt, registryLookup);
+    protected void saveAdditional(ValueOutput nbt) {
+        super.saveAdditional(nbt);
         nbt.putBoolean("Hatch_Able", isHatchAble);
         nbt.putInt("Hatch_Tick", hatchTick);
         nbt.putInt("Summoning_Tick", summoningTick);
@@ -130,9 +132,9 @@ public class DragonEggEntity extends BlockEntity {
                     }
                     if (this.hatchTick >= 598) {
                         this.getLevel().destroyBlock(this.worldPosition, false);
-                        DragonEntity dragonEntity = EntityInit.DRAGON.create(this.getLevel());
-                        dragonEntity.moveTo((double) this.getBlockPos().getX() + 0.5D, (double) this.getBlockPos().getY() + 0.55D, (double) this.getBlockPos().getZ() + 0.5D, 90F, 0.0F);
-                        dragonEntity.finalizeSpawn(((ServerLevel) this.getLevel()), this.getLevel().getCurrentDifficultyAt(worldPosition), MobSpawnType.STRUCTURE, null);
+                        DragonEntity dragonEntity = EntityInit.DRAGON.create(this.getLevel(), EntitySpawnReason.MOB_SUMMONED);
+                        dragonEntity.snapTo((double) this.getBlockPos().getX() + 0.5D, (double) this.getBlockPos().getY() + 0.55D, (double) this.getBlockPos().getZ() + 0.5D, 90F, 0.0F);
+                        dragonEntity.finalizeSpawn(((ServerLevel) this.getLevel()), ((ServerLevel) this.getLevel()).getCurrentDifficultyAt(worldPosition), EntitySpawnReason.STRUCTURE, null);
                         dragonEntity.setSize(1);
                         this.getLevel().addFreshEntity(dragonEntity);
                     }
@@ -153,9 +155,9 @@ public class DragonEggEntity extends BlockEntity {
                 if (overallSummoningTick == 20 && this.isValid(this.getLevel(), worldPosition, state)) {
                     summoningTick++;
                     if (!this.getLevel().isClientSide() && summoningTick >= 60) {
-                        TheEyeEntity theEyeEntity = (TheEyeEntity) EntityInit.THE_EYE.create(this.getLevel());
-                        theEyeEntity.moveTo((double) this.getBlockPos().getX() + 0.5D, (double) this.getBlockPos().getY() + 0.55D, (double) this.getBlockPos().getZ() + 0.5D, 90F, 0.0F);
-                        theEyeEntity.finalizeSpawn(((ServerLevel) this.getLevel()), this.getLevel().getCurrentDifficultyAt(worldPosition), MobSpawnType.STRUCTURE, null);
+                        TheEyeEntity theEyeEntity = (TheEyeEntity) EntityInit.THE_EYE.create(this.getLevel(), EntitySpawnReason.MOB_SUMMONED);
+                        theEyeEntity.snapTo((double) this.getBlockPos().getX() + 0.5D, (double) this.getBlockPos().getY() + 0.55D, (double) this.getBlockPos().getZ() + 0.5D, 90F, 0.0F);
+                        theEyeEntity.finalizeSpawn(((ServerLevel) this.getLevel()), ((ServerLevel) this.getLevel()).getCurrentDifficultyAt(worldPosition), EntitySpawnReason.STRUCTURE, null);
                         theEyeEntity.setEyeInvulnerabletime();
                         this.getLevel().addFreshEntity(theEyeEntity);
                         this.getLevel().destroyBlock(worldPosition, false);
@@ -178,18 +180,18 @@ public class DragonEggEntity extends BlockEntity {
     }
 
     private void dragonAltartParticle(int distance) {
-        double d = (double) worldPosition.east(distance).north(distance).getX() + (double) level.random.nextFloat();
-        double e = (double) worldPosition.above(1 - distance).getY() + (double) level.random.nextFloat() * 2.0D;
-        double f = (double) worldPosition.east(distance).north(distance).getZ() + (double) level.random.nextFloat();
-        double d1 = (double) worldPosition.west(distance).north(distance).getX() + (double) level.random.nextFloat();
-        double e1 = (double) worldPosition.above(1 - distance).getY() + (double) level.random.nextFloat() * 2.0D;
-        double f1 = (double) worldPosition.west(distance).north(distance).getZ() + (double) level.random.nextFloat();
-        double d2 = (double) worldPosition.south(distance).east(distance).getX() + (double) level.random.nextFloat();
-        double e2 = (double) worldPosition.above(1 - distance).getY() + (double) level.random.nextFloat() * 2.0D;
-        double f2 = (double) worldPosition.south(distance).east(distance).getZ() + (double) level.random.nextFloat();
-        double d3 = (double) worldPosition.south(distance).west(distance).getX() + (double) level.random.nextFloat();
-        double e3 = (double) worldPosition.above(1 - distance).getY() + (double) level.random.nextFloat() * 2.0D;
-        double f3 = (double) worldPosition.south(distance).west(distance).getZ() + (double) level.random.nextFloat();
+        double d = (double) worldPosition.east(distance).north(distance).getX() + (double) level.getRandom().nextFloat();
+        double e = (double) worldPosition.above(1 - distance).getY() + (double) level.getRandom().nextFloat() * 2.0D;
+        double f = (double) worldPosition.east(distance).north(distance).getZ() + (double) level.getRandom().nextFloat();
+        double d1 = (double) worldPosition.west(distance).north(distance).getX() + (double) level.getRandom().nextFloat();
+        double e1 = (double) worldPosition.above(1 - distance).getY() + (double) level.getRandom().nextFloat() * 2.0D;
+        double f1 = (double) worldPosition.west(distance).north(distance).getZ() + (double) level.getRandom().nextFloat();
+        double d2 = (double) worldPosition.south(distance).east(distance).getX() + (double) level.getRandom().nextFloat();
+        double e2 = (double) worldPosition.above(1 - distance).getY() + (double) level.getRandom().nextFloat() * 2.0D;
+        double f2 = (double) worldPosition.south(distance).east(distance).getZ() + (double) level.getRandom().nextFloat();
+        double d3 = (double) worldPosition.south(distance).west(distance).getX() + (double) level.getRandom().nextFloat();
+        double e3 = (double) worldPosition.above(1 - distance).getY() + (double) level.getRandom().nextFloat() * 2.0D;
+        double f3 = (double) worldPosition.south(distance).west(distance).getZ() + (double) level.getRandom().nextFloat();
         level.addParticle(ParticleTypes.END_ROD, d, e, f, 0.0D, 0.0D, 0.0D);
         level.addParticle(ParticleTypes.END_ROD, d1, e1, f1, 0.0D, 0.0D, 0.0D);
         level.addParticle(ParticleTypes.END_ROD, d2, e2, f2, 0.0D, 0.0D, 0.0D);

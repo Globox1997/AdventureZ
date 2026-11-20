@@ -21,7 +21,7 @@ import net.minecraft.world.entity.AgeableMob;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.Mob;
-import net.minecraft.world.entity.MobSpawnType;
+import net.minecraft.world.entity.EntitySpawnReason;
 import net.minecraft.world.entity.NeutralMob;
 import net.minecraft.world.entity.SpawnGroupData;
 import net.minecraft.world.entity.ai.attributes.AttributeSupplier;
@@ -44,12 +44,16 @@ import net.minecraft.world.level.Level;
 import net.minecraft.world.level.ServerLevelAccessor;
 import net.minecraft.world.level.block.state.BlockState;
 import org.jetbrains.annotations.Nullable;
+import net.minecraft.world.level.storage.ValueInput;
+import net.minecraft.world.level.storage.ValueOutput;
+import net.minecraft.world.entity.EntityReference;
 
 public class MammothEntity extends Animal implements NeutralMob {
     private static final UniformInt ANGER_TIME_RANGE;
     public static final EntityDataAccessor<Integer> ATTACK_TICKS;
-    private int angerTime;
-    private UUID targetUuid;
+    private long angerTime;
+    @Nullable
+    private EntityReference<LivingEntity> targetUuid;
     private int attackTicksLeft;
 
     public MammothEntity(EntityType<? extends MammothEntity> entityType, Level world) {
@@ -63,7 +67,7 @@ public class MammothEntity extends Animal implements NeutralMob {
 
     @Override
     public AgeableMob getBreedOffspring(ServerLevel world, AgeableMob entity) {
-        return (AgeableMob) EntityInit.MAMMOTH.create(world);
+        return (AgeableMob) EntityInit.MAMMOTH.create(world, EntitySpawnReason.MOB_SUMMONED);
     }
 
     @Override
@@ -87,39 +91,39 @@ public class MammothEntity extends Animal implements NeutralMob {
     }
 
     @Override
-    public void addAdditionalSaveData(CompoundTag nbt) {
+    public void addAdditionalSaveData(ValueOutput nbt) {
         super.addAdditionalSaveData(nbt);
         this.addPersistentAngerSaveData(nbt);
     }
 
     @Override
-    public void readAdditionalSaveData(CompoundTag nbt) {
+    public void readAdditionalSaveData(ValueInput nbt) {
         super.readAdditionalSaveData(nbt);
         this.readPersistentAngerSaveData(this.level(), nbt);
     }
 
     @Override
     public void startPersistentAngerTimer() {
-        this.setRemainingPersistentAngerTime(ANGER_TIME_RANGE.sample(this.random));
+        this.setTimeToRemainAngry(ANGER_TIME_RANGE.sample(this.random));
     }
 
     @Override
-    public void setRemainingPersistentAngerTime(int ticks) {
+    public void setPersistentAngerEndTime(long ticks) {
         this.angerTime = ticks;
     }
 
     @Override
-    public int getRemainingPersistentAngerTime() {
+    public long getPersistentAngerEndTime() {
         return this.angerTime;
     }
 
     @Override
-    public void setPersistentAngerTarget(@Nullable UUID uuid) {
+    public void setPersistentAngerTarget(@Nullable EntityReference<LivingEntity> uuid) {
         this.targetUuid = uuid;
     }
 
     @Override
-    public UUID getPersistentAngerTarget() {
+    public @Nullable EntityReference<LivingEntity> getPersistentAngerTarget() {
         return this.targetUuid;
     }
 
@@ -168,7 +172,7 @@ public class MammothEntity extends Animal implements NeutralMob {
     }
 
     @Override
-    public SpawnGroupData finalizeSpawn(ServerLevelAccessor world, DifficultyInstance difficulty, MobSpawnType spawnReason, @Nullable SpawnGroupData entityData) {
+    public SpawnGroupData finalizeSpawn(ServerLevelAccessor world, DifficultyInstance difficulty, EntitySpawnReason spawnReason, @Nullable SpawnGroupData entityData) {
         if (entityData == null) {
             entityData = new AgeableMob.AgeableMobGroupData(1.0F);
         }

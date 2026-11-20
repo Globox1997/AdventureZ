@@ -20,8 +20,12 @@
             "trigger": "minecraft:player_killed_entity",
             "conditions": {
                 "entity": {
-                    "type": "adventurez:void_shadow"
-                }
+          "type": "minecraft:entity_properties",
+          "entity": "this",
+          "predicate": {
+            "minecraft:entity_type": "adventurez:void_shadow"
+          }
+        }
             }
         }
     },

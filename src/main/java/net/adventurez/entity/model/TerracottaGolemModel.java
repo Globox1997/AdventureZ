@@ -1,6 +1,7 @@
 package net.adventurez.entity.model;
 
-import com.google.common.collect.ImmutableList;
+import net.adventurez.entity.render.state.TerracottaGolemRenderState;
+import net.minecraft.client.model.EntityModel;
 import net.adventurez.entity.TerracottaGolemEntity;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
@@ -15,7 +16,7 @@ import net.minecraft.client.model.geom.builders.PartDefinition;
 import net.minecraft.util.Mth;
 
 @Environment(EnvType.CLIENT)
-public class TerracottaGolemModel<T extends TerracottaGolemEntity> extends ListModel<T> {
+public class TerracottaGolemModel extends EntityModel<TerracottaGolemRenderState> {
     private final ModelPart body;
     private final ModelPart block;
     private final ModelPart head;
@@ -25,6 +26,7 @@ public class TerracottaGolemModel<T extends TerracottaGolemEntity> extends ListM
     private final ModelPart left_leg;
 
     public TerracottaGolemModel(ModelPart root) {
+        super(root);
         this.body = root.getChild("body");
         this.block = root.getChild("block");
         this.head = body.getChild("head");
@@ -62,24 +64,25 @@ public class TerracottaGolemModel<T extends TerracottaGolemEntity> extends ListM
         return LayerDefinition.create(modelData, 256, 128);
     }
 
-    @Override
-    public Iterable<ModelPart> parts() {
-        return ImmutableList.of(this.body, this.block);
-    }
 
     @Override
-    public void setupAnim(T entity, float limbAngle, float limbDistance, float animationProgress, float headYaw, float headPitch) {
+    public void setupAnim(TerracottaGolemRenderState state) {
+        float limbAngle = state.walkAnimationPos;
+        float limbDistance = state.walkAnimationSpeed;
+        float animationProgress = state.ageInTicks;
+        float headYaw = state.yRot;
+        float headPitch = state.xRot;
         this.head.yRot = headYaw * 0.0039453292F;
         this.head.xRot = headPitch * 0.0027453292F;
         this.right_leg.xRot = Mth.cos(limbAngle * 0.6662F + 3.1415927F) * 1.4F * limbDistance;
         this.left_leg.xRot = Mth.cos(limbAngle * 0.6662F) * 1.4F * limbDistance;
         this.right_arm.xRot = -Mth.cos(limbAngle * 0.6662F + 3.1415927F) * 2.0F * limbDistance * 0.3F;
         this.left_arm.xRot = Mth.cos(limbAngle * 0.6662F + 3.1415927F) * 2.0F * limbDistance * 0.3F;
-        float k = Mth.sin(entity.attackAnim * 3.1415927F);
+        float k = Mth.sin(state.attackAnim * 3.1415927F);
         if (k > 0) {
             this.right_arm.xRot = -k;
         }
-        boolean isBlock = entity.getEntityData().get(TerracottaGolemEntity.BLOCK_VARIANT);
+        boolean isBlock = state.blockVariant;
         this.body.visible = !isBlock;
         this.block.visible = isBlock;
     }

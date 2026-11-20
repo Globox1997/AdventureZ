@@ -1,0 +1,16 @@
+{
+  "model": {
+    "type": "minecraft:model",
+    "model": "adventurez:item/spawn_summoner",
+    "tints": [
+      {
+        "type": "minecraft:constant",
+        "value": -4408132
+      },
+      {
+        "type": "minecraft:constant",
+        "value": -10929324
+      }
+    ]
+  }
+}

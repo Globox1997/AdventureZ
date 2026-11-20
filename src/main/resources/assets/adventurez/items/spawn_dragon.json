@@ -1,0 +1,16 @@
+{
+  "model": {
+    "type": "minecraft:model",
+    "model": "adventurez:item/spawn_dragon",
+    "tints": [
+      {
+        "type": "minecraft:constant",
+        "value": -14935012
+      },
+      {
+        "type": "minecraft:constant",
+        "value": -2065926
+      }
+    ]
+  }
+}

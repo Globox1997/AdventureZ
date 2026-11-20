@@ -1,8 +1,6 @@
 {
   "type": "minecraft:smoking",
-  "ingredient": {
-    "item": "adventurez:mammoth_meat"
-  },
+  "ingredient": "adventurez:mammoth_meat",
   "result": {
     "id": "adventurez:cooked_mammoth_meat"
   },

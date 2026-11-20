@@ -1,0 +1,16 @@
+{
+  "model": {
+    "type": "minecraft:model",
+    "model": "adventurez:item/spawn_blackstone_golem",
+    "tints": [
+      {
+        "type": "minecraft:constant",
+        "value": -13821144
+      },
+      {
+        "type": "minecraft:constant",
+        "value": -15331568
+      }
+    ]
+  }
+}

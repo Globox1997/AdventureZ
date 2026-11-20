@@ -1,0 +1,16 @@
+{
+  "model": {
+    "type": "minecraft:model",
+    "model": "adventurez:item/spawn_blaze_guardian",
+    "tints": [
+      {
+        "type": "minecraft:constant",
+        "value": -10968
+      },
+      {
+        "type": "minecraft:constant",
+        "value": -7654399
+      }
+    ]
+  }
+}

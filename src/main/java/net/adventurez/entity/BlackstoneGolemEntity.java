@@ -20,7 +20,7 @@ import net.minecraft.network.syncher.EntityDataAccessor;
 import net.minecraft.network.syncher.EntityDataSerializers;
 import net.minecraft.network.syncher.SynchedEntityData;
 import net.minecraft.network.syncher.SynchedEntityData.Builder;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.server.level.ServerBossEvent;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.sounds.SoundEvent;
@@ -44,10 +44,10 @@ import net.minecraft.world.entity.ai.goal.WaterAvoidingRandomStrollGoal;
 import net.minecraft.world.entity.ai.goal.target.NearestAttackableTargetGoal;
 import net.minecraft.world.entity.ai.navigation.GroundPathNavigation;
 import net.minecraft.world.entity.ai.navigation.PathNavigation;
-import net.minecraft.world.entity.animal.IronGolem;
+import net.minecraft.world.entity.animal.golem.IronGolem;
 import net.minecraft.world.entity.monster.Monster;
 import net.minecraft.world.entity.player.Player;
-import net.minecraft.world.level.GameRules;
+import net.minecraft.world.level.gamerules.GameRules;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.LevelReader;
 import net.minecraft.world.level.block.Block;
@@ -58,6 +58,10 @@ import net.minecraft.world.level.pathfinder.PathType;
 import net.minecraft.world.level.pathfinder.WalkNodeEvaluator;
 import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.Vec3;
+import net.minecraft.world.level.storage.ValueInput;
+import net.minecraft.world.level.storage.ValueOutput;
+import net.minecraft.server.level.ServerLevel;
+import net.minecraft.world.entity.EntitySpawnReason;
 
 public class BlackstoneGolemEntity extends Monster {
 
@@ -66,7 +70,7 @@ public class BlackstoneGolemEntity extends Monster {
     public static final EntityDataAccessor<Integer> INVULNERABLE_TIMER;
     public static final EntityDataAccessor<Integer> LAVA_TEXTURE;
     public static final EntityDataAccessor<Boolean> HALF_LIFE_CHANGE;
-    private static final ResourceLocation WALKING_SPEED_INCREASE_ID;
+    private static final Identifier WALKING_SPEED_INCREASE_ID;
     private static final AttributeModifier WALKING_SPEED_INCREASE;
     private static final Predicate<Entity> NOT_STONEGOLEM = (entity) -> {
         return entity.isAlive() && !(entity instanceof BlackstoneGolemEntity);
@@ -86,7 +90,7 @@ public class BlackstoneGolemEntity extends Monster {
     public BlackstoneGolemEntity(EntityType<? extends BlackstoneGolemEntity> entityType, Level world) {
         super(entityType, world);
         this.xpReward = 200;
-        this.bossBar = new ServerBossEvent(this.getDisplayName(), BossEvent.BossBarColor.RED, BossEvent.BossBarOverlay.PROGRESS);
+        this.bossBar = new ServerBossEvent(this.getUUID(), this.getDisplayName(), BossEvent.BossBarColor.RED, BossEvent.BossBarOverlay.PROGRESS);
     }
 
     public static AttributeSupplier.Builder createStoneGolemAttributes() {
@@ -109,7 +113,7 @@ public class BlackstoneGolemEntity extends Monster {
     }
 
     @Override
-    public void addAdditionalSaveData(CompoundTag tag) {
+    public void addAdditionalSaveData(ValueOutput tag) {
         super.addAdditionalSaveData(tag);
         tag.putInt("AttackTick", this.attackTick);
         tag.putInt("StunTick", this.stunTick);
@@ -119,13 +123,13 @@ public class BlackstoneGolemEntity extends Monster {
     }
 
     @Override
-    public void readAdditionalSaveData(CompoundTag tag) {
+    public void readAdditionalSaveData(ValueInput tag) {
         super.readAdditionalSaveData(tag);
-        this.attackTick = tag.getInt("AttackTick");
-        this.stunTick = tag.getInt("StunTick");
-        this.roarTick = tag.getInt("RoarTick");
-        this.setInvulTimer(tag.getInt("Invul"));
-        this.setLavaTexture(tag.getInt("LavaTexture"));
+        this.attackTick = tag.getIntOr("AttackTick", 0);
+        this.stunTick = tag.getIntOr("StunTick", 0);
+        this.roarTick = tag.getIntOr("RoarTick", 0);
+        this.setInvulTimer(tag.getIntOr("Invul", 0));
+        this.setLavaTexture(tag.getIntOr("LavaTexture", 0));
         if (this.hasCustomName()) {
             this.bossBar.setName(this.getDisplayName());
         }
@@ -170,7 +174,7 @@ public class BlackstoneGolemEntity extends Monster {
     }
 
     @Override
-    public void customServerAiStep() {
+    public void customServerAiStep(ServerLevel level) {
         this.bossBar.setProgress(this.getHealth() / this.getMaxHealth());
     }
 
@@ -218,7 +222,7 @@ public class BlackstoneGolemEntity extends Monster {
                     this.lavaRegenerateLife = 0;
                 }
             }
-            if (this.horizontalCollision && this.level().getGameRules().getBoolean(GameRules.RULE_MOBGRIEFING)) {
+            if (this.horizontalCollision && ((ServerLevel) this.level()).getGameRules().get(GameRules.MOB_GRIEFING)) {
                 boolean bl = false;
                 AABB box = this.getBoundingBox().inflate(0.25D);
                 Iterator<BlockPos> iterator = BlockPos.betweenClosed(Mth.floor(box.minX), Mth.floor(box.minY + 0.25D), Mth.floor(box.minZ), Mth.floor(box.maxX),
@@ -241,7 +245,7 @@ public class BlackstoneGolemEntity extends Monster {
                     block = blockState.getBlock();
 
                     if (block instanceof Block && !blockState.is(TagInit.UNBREAKABLE_BLOCKS)) {
-                        if (isDungeonZLoaded && this.level().dimension().location().equals(ResourceLocation.fromNamespaceAndPath("dungeonz", "dungeon"))) {
+                        if (isDungeonZLoaded && this.level().dimension().identifier().equals(Identifier.fromNamespaceAndPath("dungeonz", "dungeon"))) {
                             break;
                         }
                         bl = this.level().destroyBlock(blockPos, false, this) || bl;
@@ -317,7 +321,7 @@ public class BlackstoneGolemEntity extends Monster {
     }
 
     @Override
-    protected void blockedByShield(LivingEntity target) {
+    protected void blockedByItem(LivingEntity target, DamageSource source, float damage, boolean fullyBlocked) {
         if (this.roarTick == 0) {
             if (this.random.nextDouble() < 0.5D) {
                 this.stunTick = 40;
@@ -328,7 +332,7 @@ public class BlackstoneGolemEntity extends Monster {
                 this.knockBack(target);
             }
 
-            target.hurtMarked = true;
+            target.needsSync = true;
         }
 
     }
@@ -393,13 +397,13 @@ public class BlackstoneGolemEntity extends Monster {
     }
 
     @Override
-    public boolean doHurtTarget(Entity target) {
+    public boolean doHurtTarget(ServerLevel level, Entity target) {
         this.attackTick = 10;
         this.level().broadcastEntityEvent(this, (byte) 4);
         this.playSound(SoundInit.BLACKSTONE_GOLEM_HURT_EVENT, 1.0F, 1.0F);
         if (target instanceof LivingEntity)
             ((LivingEntity) target).igniteForSeconds(3 + this.level().getRandom().nextInt(6));
-        return super.doHurtTarget(target);
+        return super.doHurtTarget(level, target);
     }
 
     @Override
@@ -449,9 +453,9 @@ public class BlackstoneGolemEntity extends Monster {
     }
 
     @Override
-    public boolean hurt(DamageSource source, float amount) {
+    public boolean hurtServer(ServerLevel level, DamageSource source, float amount) {
         if (source.is(DamageTypeTags.BYPASSES_INVULNERABILITY)) {
-            return super.hurt(source, amount);
+            return super.hurtServer(level, source, amount);
         } else if (this.getEntityData().get(INVULNERABLE)) {
             return false;
         } else {
@@ -459,12 +463,12 @@ public class BlackstoneGolemEntity extends Monster {
                 this.setLastHurtByMob(attacker);
                 this.setTarget(attacker);
                 if (this.level().getRandom().nextFloat() <= 0.05F) {
-                    MiniBlackstoneGolemEntity smallStoneGolemEntity = EntityInit.MINI_BLACKSTONE_GOLEM.create(this.level());
-                    smallStoneGolemEntity.moveTo(this.blockPosition(), this.level().getRandom().nextFloat() * 360F, 0.0F);
+                    MiniBlackstoneGolemEntity smallStoneGolemEntity = EntityInit.MINI_BLACKSTONE_GOLEM.create(this.level(), EntitySpawnReason.MOB_SUMMONED);
+                    smallStoneGolemEntity.snapTo(this.blockPosition(), this.level().getRandom().nextFloat() * 360F, 0.0F);
                     this.level().addFreshEntity(smallStoneGolemEntity);
                 }
             }
-            return super.hurt(source, amount);
+            return super.hurtServer(level, source, amount);
         }
     }
 
@@ -528,10 +532,10 @@ public class BlackstoneGolemEntity extends Monster {
     @Override
     public void die(DamageSource source) {
         if (!this.level().isClientSide()) {
-            MiniBlackstoneGolemEntity smallStoneGolemEntity = (MiniBlackstoneGolemEntity) EntityInit.MINI_BLACKSTONE_GOLEM.create(this.level());
-            MiniBlackstoneGolemEntity smallStoneGolemEntitySecond = (MiniBlackstoneGolemEntity) EntityInit.MINI_BLACKSTONE_GOLEM.create(this.level());
-            smallStoneGolemEntity.moveTo(this.blockPosition().east(), this.level().getRandom().nextFloat() * 360F, 0.0F);
-            smallStoneGolemEntitySecond.moveTo(this.blockPosition().west(), this.level().getRandom().nextFloat() * 360F, 0.0F);
+            MiniBlackstoneGolemEntity smallStoneGolemEntity = (MiniBlackstoneGolemEntity) EntityInit.MINI_BLACKSTONE_GOLEM.create(this.level(), EntitySpawnReason.MOB_SUMMONED);
+            MiniBlackstoneGolemEntity smallStoneGolemEntitySecond = (MiniBlackstoneGolemEntity) EntityInit.MINI_BLACKSTONE_GOLEM.create(this.level(), EntitySpawnReason.MOB_SUMMONED);
+            smallStoneGolemEntity.snapTo(this.blockPosition().east(), this.level().getRandom().nextFloat() * 360F, 0.0F);
+            smallStoneGolemEntitySecond.snapTo(this.blockPosition().west(), this.level().getRandom().nextFloat() * 360F, 0.0F);
             this.level().addFreshEntity(smallStoneGolemEntity);
             this.level().addFreshEntity(smallStoneGolemEntitySecond);
         }
@@ -551,11 +555,6 @@ public class BlackstoneGolemEntity extends Monster {
     private static class Navigation extends GroundPathNavigation {
         public Navigation(Mob mobEntity, Level world) {
             super(mobEntity, world);
-        }
-
-        @Override
-        protected boolean hasValidPathType(PathType pathType) {
-            return pathType != PathType.LAVA && pathType != PathType.DAMAGE_FIRE && pathType != PathType.DANGER_FIRE ? super.hasValidPathType(pathType) : true;
         }
 
         @Override
@@ -583,7 +582,7 @@ public class BlackstoneGolemEntity extends Monster {
         INVULNERABLE_TIMER = SynchedEntityData.defineId(BlackstoneGolemEntity.class, EntityDataSerializers.INT);
         LAVA_TEXTURE = SynchedEntityData.defineId(BlackstoneGolemEntity.class, EntityDataSerializers.INT);
         HALF_LIFE_CHANGE = SynchedEntityData.defineId(BlackstoneGolemEntity.class, EntityDataSerializers.BOOLEAN);
-        WALKING_SPEED_INCREASE_ID = ResourceLocation.parse("adventurez:walking_speed_increase");
+        WALKING_SPEED_INCREASE_ID = Identifier.parse("adventurez:walking_speed_increase");
         WALKING_SPEED_INCREASE = new AttributeModifier(WALKING_SPEED_INCREASE_ID, 0.5D, AttributeModifier.Operation.ADD_MULTIPLIED_BASE);
     }
 }

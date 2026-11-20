@@ -1,0 +1,16 @@
+{
+  "model": {
+    "type": "minecraft:model",
+    "model": "adventurez:item/spawn_terracotta_golem",
+    "tints": [
+      {
+        "type": "minecraft:constant",
+        "value": -9092554
+      },
+      {
+        "type": "minecraft:constant",
+        "value": -7502463
+      }
+    ]
+  }
+}

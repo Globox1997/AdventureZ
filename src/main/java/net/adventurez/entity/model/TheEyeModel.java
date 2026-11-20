@@ -1,11 +1,10 @@
 package net.adventurez.entity.model;
 
-import com.google.common.collect.ImmutableList;
 
-import net.adventurez.entity.TheEyeEntity;
+import net.adventurez.entity.render.state.TheEyeRenderState;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
-import net.minecraft.client.model.ListModel;
+import net.minecraft.client.model.EntityModel;
 import net.minecraft.client.model.geom.ModelPart;
 import net.minecraft.client.model.geom.PartPose;
 import net.minecraft.client.model.geom.builders.CubeListBuilder;
@@ -14,12 +13,13 @@ import net.minecraft.client.model.geom.builders.MeshDefinition;
 import net.minecraft.client.model.geom.builders.PartDefinition;
 
 @Environment(EnvType.CLIENT)
-public class TheEyeModel<T extends TheEyeEntity> extends ListModel<T> {
+public class TheEyeModel extends EntityModel<TheEyeRenderState> {
     private final ModelPart middle;
     private final ModelPart leftSite;
     private final ModelPart rightSite;
 
     public TheEyeModel(ModelPart root) {
+        super(root);
         this.middle = root.getChild("middle");
         this.leftSite = root.getChild("leftSite");
         this.rightSite = root.getChild("rightSite");
@@ -36,19 +36,16 @@ public class TheEyeModel<T extends TheEyeEntity> extends ListModel<T> {
         return LayerDefinition.create(modelData, 32, 32);
     }
 
-    @Override
-    public Iterable<ModelPart> parts() {
-        return ImmutableList.of(this.middle, this.leftSite, this.rightSite);
-    }
 
     @Override
-    public void setupAnim(T eye, float limbAngle, float limbDistance, float animationProgress, float headYaw, float headPitch) {
+    public void setupAnim(TheEyeRenderState state) {
+        float headPitch = state.xRot;
         this.middle.xRot = headPitch * 0.017453292F;
         this.leftSite.xRot = headPitch * 0.017453292F;
         this.rightSite.xRot = headPitch * 0.017453292F;
         // Split
 
-        if (eye.getHealth() < (eye.getMaxHealth() / 3.0F) && !(eye.getEntityData().get(TheEyeEntity.INVUL_TIMER) > 0)) {
+        if (state.health < (state.maxHealth / 3.0F) && !(state.invulTimer > 0)) {
             this.leftSite.x = -1.0F;
             this.rightSite.x = 1.0F;
         } else {

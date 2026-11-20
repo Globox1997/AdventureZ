@@ -3,8 +3,6 @@ package net.adventurez.item;
 import net.adventurez.init.ConfigInit;
 import net.adventurez.init.ItemInit;
 import net.adventurez.item.component.GildedActivationComponent;
-import net.minecraft.client.gui.screens.Screen;
-import net.minecraft.core.Holder;
 import net.minecraft.network.chat.Component;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.world.effect.MobEffectInstance;
@@ -12,36 +10,38 @@ import net.minecraft.world.effect.MobEffects;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EquipmentSlot;
 import net.minecraft.world.entity.player.Player;
-import net.minecraft.world.item.ArmorItem;
-import net.minecraft.world.item.ArmorMaterial;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.TooltipFlag;
-import net.minecraft.world.level.Level;
-import java.util.List;
+import net.minecraft.client.Minecraft;
+import net.minecraft.server.level.ServerLevel;
+import net.minecraft.world.item.Item;
+import net.minecraft.world.item.component.TooltipDisplay;
+import org.jspecify.annotations.Nullable;
+import java.util.function.Consumer;
 
-public class GildedNetheriteArmor extends ArmorItem {
+public class GildedNetheriteArmor extends Item {
 
-    public GildedNetheriteArmor(Holder<ArmorMaterial> material, Type type, Properties settings) {
-        super(material, type, settings);
+    public GildedNetheriteArmor(Properties settings) {
+        super(settings);
     }
 
     @Override
-    public void appendHoverText(ItemStack stack, TooltipContext context, List<Component> tooltip, TooltipFlag type) {
-        super.appendHoverText(stack, context, tooltip, type);
+    public void appendHoverText(ItemStack stack, TooltipContext context, TooltipDisplay display, Consumer<Component> tooltip, TooltipFlag type) {
+        super.appendHoverText(stack, context, display, tooltip, type);
         if (ConfigInit.CONFIG.allow_extra_tooltips) {
-            tooltip.add(Component.translatable("item.adventurez.moreinfo.tooltip"));
-            if (Screen.hasShiftDown()) {
-                tooltip.remove(Component.translatable("item.adventurez.moreinfo.tooltip"));
-                tooltip.add(Component.translatable("item.adventurez.gilded_netherite_armor.tooltip"));
-                tooltip.add(Component.translatable("item.adventurez.gilded_netherite_armor.tooltip2"));
-                tooltip.add(Component.translatable("item.adventurez.gilded_netherite_armor.tooltip3"));
-                tooltip.add(Component.translatable("item.adventurez.gilded_netherite_armor.tooltip4"));
+            if (Minecraft.getInstance().hasShiftDown()) {
+                tooltip.accept(Component.translatable("item.adventurez.gilded_netherite_armor.tooltip"));
+                tooltip.accept(Component.translatable("item.adventurez.gilded_netherite_armor.tooltip2"));
+                tooltip.accept(Component.translatable("item.adventurez.gilded_netherite_armor.tooltip3"));
+                tooltip.accept(Component.translatable("item.adventurez.gilded_netherite_armor.tooltip4"));
+            } else {
+                tooltip.accept(Component.translatable("item.adventurez.moreinfo.tooltip"));
             }
         }
     }
 
     @Override
-    public void inventoryTick(ItemStack stack, Level world, Entity entity, int slot, boolean selected) {
+    public void inventoryTick(ItemStack stack, ServerLevel world, Entity entity, @Nullable EquipmentSlot slot) {
         if (stack.getItem() == ItemInit.GILDED_NETHERITE_CHESTPLATE) {
             GildedActivationComponent component = stack.getOrDefault(ItemInit.GILDED_DATA, GildedActivationComponent.DEFAULT);
 

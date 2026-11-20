@@ -1,11 +1,11 @@
 package net.adventurez.entity.model;
 
-import com.google.common.collect.ImmutableList;
 
+import net.adventurez.entity.render.state.AdventureRenderState;
+import net.minecraft.client.model.EntityModel;
 import net.adventurez.entity.DesertRhinoEntity;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
-import net.minecraft.client.model.ListModel;
 import net.minecraft.client.model.geom.ModelPart;
 import net.minecraft.client.model.geom.PartPose;
 import net.minecraft.client.model.geom.builders.CubeListBuilder;
@@ -15,7 +15,7 @@ import net.minecraft.client.model.geom.builders.PartDefinition;
 import net.minecraft.util.Mth;
 
 @Environment(EnvType.CLIENT)
-public class DesertRhinoModel<T extends DesertRhinoEntity> extends ListModel<T> {
+public class DesertRhinoModel extends EntityModel<AdventureRenderState> {
     private final ModelPart main;
     private final ModelPart body;
     private final ModelPart tail;
@@ -26,6 +26,7 @@ public class DesertRhinoModel<T extends DesertRhinoEntity> extends ListModel<T> 
     private final ModelPart left_front_leg;
 
     public DesertRhinoModel(ModelPart root) {
+        super(root);
         this.main = root.getChild("main");
         this.left_front_leg = this.main.getChild("left_front_leg");
         this.left_back_leg = this.main.getChild("left_back_leg");
@@ -56,13 +57,14 @@ public class DesertRhinoModel<T extends DesertRhinoEntity> extends ListModel<T> 
         return LayerDefinition.create(modelData, 128, 128);
     }
 
-    @Override
-    public Iterable<ModelPart> parts() {
-        return ImmutableList.of(this.main);
-    }
 
     @Override
-    public void setupAnim(T fungus, float limbAngle, float limbDistance, float animationProgress, float headYaw, float headPitch) {
+    public void setupAnim(AdventureRenderState state) {
+        float limbAngle = state.walkAnimationPos;
+        float limbDistance = state.walkAnimationSpeed;
+        float animationProgress = state.ageInTicks;
+        float headYaw = state.yRot;
+        float headPitch = state.xRot;
         this.tail.xRot = -1.0F;
         this.head.xRot = headPitch * 0.010453292F;
         this.head.yRot = headYaw * 0.010453292F;
@@ -72,7 +74,7 @@ public class DesertRhinoModel<T extends DesertRhinoEntity> extends ListModel<T> 
         this.left_front_leg.xRot = Mth.cos(limbAngle * 0.6662F) * 1.4F * limbDistance;
         this.tail.yRot = Mth.cos(limbAngle * 0.6662F) * 1.4F * limbDistance * 0.3F;
 
-        float k = Mth.sin(this.attackTime * 3.1415927F);
+        float k = Mth.sin(state.attackTime * 3.1415927F);
 
         if (k > 0.0F)
             this.head.xRot = -k * 0.8F;

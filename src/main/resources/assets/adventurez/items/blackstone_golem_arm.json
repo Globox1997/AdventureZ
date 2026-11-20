@@ -1,0 +1,15 @@
+{
+  "model": {
+    "type": "minecraft:condition",
+    "property": "minecraft:has_component",
+    "component": "adventurez:lava_light",
+    "on_true": {
+      "type": "minecraft:model",
+      "model": "adventurez:item/blackstone_golem_arm_activated"
+    },
+    "on_false": {
+      "type": "minecraft:model",
+      "model": "adventurez:item/blackstone_golem_arm"
+    }
+  }
+}

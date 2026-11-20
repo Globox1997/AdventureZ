@@ -1,10 +1,10 @@
 package net.adventurez.entity.model;
 
-import com.google.common.collect.ImmutableList;
 
+import net.adventurez.entity.render.state.AdventureRenderState;
+import net.minecraft.client.model.EntityModel;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
-import net.minecraft.client.model.AgeableListModel;
 import net.minecraft.client.model.geom.ModelPart;
 import net.minecraft.client.model.geom.PartPose;
 import net.minecraft.client.model.geom.builders.CubeDeformation;
@@ -16,7 +16,7 @@ import net.minecraft.util.Mth;
 import net.minecraft.world.entity.animal.Animal;
 
 @Environment(EnvType.CLIENT)
-public class DeerModel<T extends Animal> extends AgeableListModel<T> {
+public class DeerModel extends EntityModel<AdventureRenderState> {
     private final ModelPart root;
     private final ModelPart root_r1;
     private final ModelPart neck;
@@ -36,7 +36,7 @@ public class DeerModel<T extends Animal> extends AgeableListModel<T> {
     private final ModelPart leg1;
 
     public DeerModel(ModelPart root) {
-        super(true, 17.0F, 4.0F);
+        super(root);
         this.root = root.getChild("root");
         this.leg1 = this.root.getChild("leg1");
         this.leg3 = this.root.getChild("leg3");
@@ -82,18 +82,15 @@ public class DeerModel<T extends Animal> extends AgeableListModel<T> {
         return LayerDefinition.create(modelData, 128, 128);
     }
 
-    @Override
-    protected Iterable<ModelPart> headParts() {
-        return ImmutableList.of(this.head);
-    }
+
 
     @Override
-    protected Iterable<ModelPart> bodyParts() {
-        return ImmutableList.of(this.root);
-    }
-
-    @Override
-    public void setupAnim(T entity, float limbAngle, float limbDistance, float animationProgress, float headYaw, float headPitch) {
+    public void setupAnim(AdventureRenderState state) {
+        float limbAngle = state.walkAnimationPos;
+        float limbDistance = state.walkAnimationSpeed;
+        float animationProgress = state.ageInTicks;
+        float headYaw = state.yRot;
+        float headPitch = state.xRot;
         this.head.xRot = headPitch * 0.010453292F;
         this.head.yRot = headYaw * 0.010453292F;
         this.root_r1.xRot = 0.3927F;
@@ -117,7 +114,7 @@ public class DeerModel<T extends Animal> extends AgeableListModel<T> {
         this.leg1.xRot = Mth.cos(limbAngle * 0.6662F + 3.1415927F) * 1.4F * limbDistance;
         this.leg2.xRot = Mth.cos(limbAngle * 0.6662F + 3.1415927F) * 1.4F * limbDistance;
         this.leg3.xRot = Mth.cos(limbAngle * 0.6662F) * 1.4F * limbDistance;
-        if (entity.isBaby()) {
+        if (state.isBaby) {
             this.antlers.visible = false;
         } else {
             this.antlers.visible = true;

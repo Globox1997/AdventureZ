@@ -1,11 +1,11 @@
 package net.adventurez.entity.model;
 
-import com.google.common.collect.ImmutableList;
 
+import net.adventurez.entity.render.state.VoidFragmentRenderState;
+import net.minecraft.client.model.EntityModel;
 import net.adventurez.entity.VoidFragmentEntity;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
-import net.minecraft.client.model.ListModel;
 import net.minecraft.client.model.geom.ModelPart;
 import net.minecraft.client.model.geom.PartPose;
 import net.minecraft.client.model.geom.builders.CubeListBuilder;
@@ -16,7 +16,7 @@ import net.minecraft.util.Mth;
 import net.minecraft.world.entity.Entity;
 
 @Environment(EnvType.CLIENT)
-public class VoidFragmentModel<T extends Entity> extends ListModel<T> {
+public class VoidFragmentModel extends EntityModel<VoidFragmentRenderState> {
     private final ModelPart small;
     private final ModelPart small1;
     private final ModelPart small2;
@@ -32,6 +32,7 @@ public class VoidFragmentModel<T extends Entity> extends ListModel<T> {
     private final ModelPart big5;
 
     public VoidFragmentModel(ModelPart root) {
+        super(root);
         this.small = root.getChild("small");
         this.small6 = this.small.getChild("small6");
         this.small5 = this.small.getChild("small5");
@@ -66,14 +67,15 @@ public class VoidFragmentModel<T extends Entity> extends ListModel<T> {
         return LayerDefinition.create(modelData, 64, 64);
     }
 
-    @Override
-    public Iterable<ModelPart> parts() {
-        return ImmutableList.of(this.small, this.big);
-    }
 
     @Override
-    public void setupAnim(T entity, float limbAngle, float limbDistance, float animationProgress, float headYaw, float headPitch) {
-        if (entity.getEntityData().get(VoidFragmentEntity.IS_VOID_ORB)) {
+    public void setupAnim(VoidFragmentRenderState state) {
+        float limbAngle = state.walkAnimationPos;
+        float limbDistance = state.walkAnimationSpeed;
+        float animationProgress = state.ageInTicks;
+        float headYaw = state.yRot;
+        float headPitch = state.xRot;
+        if (state.voidOrb) {
             big.visible = true;
             small.visible = false;
             this.big.y = 6.0F + Mth.cos(animationProgress * 0.1662F) * 0.6F;

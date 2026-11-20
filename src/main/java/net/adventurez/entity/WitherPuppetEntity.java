@@ -28,6 +28,9 @@ import net.minecraft.world.entity.monster.piglin.Piglin;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.level.storage.ValueInput;
+import net.minecraft.world.level.storage.ValueOutput;
+import net.minecraft.server.level.ServerLevel;
 
 public class WitherPuppetEntity extends Monster {
     private Mob owner;
@@ -59,15 +62,15 @@ public class WitherPuppetEntity extends Monster {
     }
 
     @Override
-    public void readAdditionalSaveData(CompoundTag tag) {
+    public void readAdditionalSaveData(ValueInput tag) {
         super.readAdditionalSaveData(tag);
         if (tag.contains("LifeTicks")) {
-            this.setLifeTicks(tag.getInt("LifeTicks"));
+            this.setLifeTicks(tag.getIntOr("LifeTicks", 0));
         }
     }
 
     @Override
-    public void addAdditionalSaveData(CompoundTag tag) {
+    public void addAdditionalSaveData(ValueOutput tag) {
         super.addAdditionalSaveData(tag);
         if (this.alive) {
             tag.putInt("LifeTicks", this.lifeTicks);
@@ -137,11 +140,11 @@ public class WitherPuppetEntity extends Monster {
     }
 
     @Override
-    public boolean doHurtTarget(Entity target) {
+    public boolean doHurtTarget(ServerLevel level, Entity target) {
         if (!this.level().isClientSide() && target instanceof LivingEntity livingEntity && this.level().getRandom().nextInt(5) == 0) {
             livingEntity.addEffect(new MobEffectInstance(MobEffects.WEAKNESS, 80, 0, false, false), this);
         }
-        return super.doHurtTarget(target);
+        return super.doHurtTarget(level, target);
     }
 
     class TrackOwnerTargetGoal extends TargetGoal {

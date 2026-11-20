@@ -1,7 +1,5 @@
 package net.adventurez.entity.model;
 
-import com.mojang.blaze3d.vertex.PoseStack;
-import com.mojang.blaze3d.vertex.VertexConsumer;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
 import net.minecraft.client.model.Model;
@@ -11,15 +9,16 @@ import net.minecraft.client.model.geom.builders.CubeListBuilder;
 import net.minecraft.client.model.geom.builders.LayerDefinition;
 import net.minecraft.client.model.geom.builders.MeshDefinition;
 import net.minecraft.client.model.geom.builders.PartDefinition;
-import net.minecraft.client.renderer.RenderType;
+import net.minecraft.client.renderer.rendertype.RenderTypes;
+import net.minecraft.util.Unit;
 
 @Environment(EnvType.CLIENT)
-public class RockModel extends Model {
+public class RockModel extends Model<Unit> {
 
     private final ModelPart base;
 
     public RockModel(ModelPart root) {
-        super(RenderType::entitySolid);
+        super(root, RenderTypes::entitySolid);
         this.base = root.getChild("base");
     }
 
@@ -32,9 +31,5 @@ public class RockModel extends Model {
 
     }
 
-    @Override
-    public void renderToBuffer(PoseStack matrices, VertexConsumer vertices, int light, int overlay, int color) {
-        this.base.render(matrices, vertices, light, overlay, color);
-    }
 
 }

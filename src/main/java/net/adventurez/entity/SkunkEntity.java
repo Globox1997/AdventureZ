@@ -33,6 +33,7 @@ import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.Vec3;
 import java.util.EnumSet;
+import net.minecraft.world.entity.EntitySpawnReason;
 
 public class SkunkEntity extends Animal {
 
@@ -95,12 +96,12 @@ public class SkunkEntity extends Animal {
 
     @Override
     protected void playStepSound(BlockPos pos, BlockState state) {
-        this.playSound(SoundEvents.WOLF_STEP, 0.15F, 1.0F);
+        this.playSound(SoundEvents.WOLF_STEP.value(), 0.15F, 1.0F);
     }
 
     @Override
     public SkunkEntity getBreedOffspring(ServerLevel serverWorld, AgeableMob passiveEntity) {
-        return EntityInit.SKUNK.create(serverWorld);
+        return EntityInit.SKUNK.create(serverWorld, EntitySpawnReason.MOB_SUMMONED);
     }
 
     @Override

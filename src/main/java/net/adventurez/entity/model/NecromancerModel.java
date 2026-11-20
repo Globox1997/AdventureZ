@@ -1,11 +1,11 @@
 package net.adventurez.entity.model;
 
-import com.google.common.collect.ImmutableList;
 
+import net.adventurez.entity.render.state.NecromancerRenderState;
+import net.minecraft.client.model.EntityModel;
 import net.adventurez.entity.NecromancerEntity;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
-import net.minecraft.client.model.ListModel;
 import net.minecraft.client.model.geom.ModelPart;
 import net.minecraft.client.model.geom.PartPose;
 import net.minecraft.client.model.geom.builders.CubeListBuilder;
@@ -15,7 +15,7 @@ import net.minecraft.client.model.geom.builders.PartDefinition;
 import net.minecraft.util.Mth;
 
 @Environment(EnvType.CLIENT)
-public class NecromancerModel<T extends NecromancerEntity> extends ListModel<T> {
+public class NecromancerModel extends EntityModel<NecromancerRenderState> {
     private final ModelPart head;
     private final ModelPart head2;
     private final ModelPart body;
@@ -25,6 +25,7 @@ public class NecromancerModel<T extends NecromancerEntity> extends ListModel<T> 
     private final ModelPart rightLeg;
 
     public NecromancerModel(ModelPart root) {
+        super(root);
         this.head = root.getChild("head");
         this.head2 = this.head.getChild("head2");
         this.body = root.getChild("body");
@@ -57,13 +58,14 @@ public class NecromancerModel<T extends NecromancerEntity> extends ListModel<T> 
         return LayerDefinition.create(modelData, 128, 128);
     }
 
-    @Override
-    public Iterable<ModelPart> parts() {
-        return ImmutableList.of(this.head, this.body, this.rightLeg, this.leftLeg, this.rightArm, this.leftArm);
-    }
 
     @Override
-    public void setupAnim(T necromancer, float f, float g, float h, float i, float j) {
+    public void setupAnim(NecromancerRenderState state) {
+        float f = state.walkAnimationPos;
+        float g = state.walkAnimationSpeed;
+        float h = state.ageInTicks;
+        float i = state.yRot;
+        float j = state.xRot;
         this.head.yRot = i * 0.0119453292F;
         this.head.xRot = j * 0.0061453292F;
         this.head2.xRot = -0.2618F;
@@ -80,7 +82,7 @@ public class NecromancerModel<T extends NecromancerEntity> extends ListModel<T> 
         this.leftLeg.yRot = 0.0F;
         this.leftLeg.zRot = 0.0F;
 
-        if (necromancer.isSpellcasting()) {
+        if (state.spellcasting) {
             this.rightArm.z = 0.0F;
             this.rightArm.x = 7.0F;
             this.rightArm.xRot = Mth.cos(h * 0.6662F) * 0.1F - 0.6F;

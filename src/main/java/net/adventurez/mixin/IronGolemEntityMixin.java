@@ -11,7 +11,6 @@ import net.adventurez.access.EntityAccess;
 import net.adventurez.init.ItemInit;
 import net.adventurez.init.SoundInit;
 import net.adventurez.init.TagInit;
-import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.syncher.EntityDataAccessor;
 import net.minecraft.network.syncher.EntityDataSerializers;
 import net.minecraft.network.syncher.SynchedEntityData;
@@ -21,13 +20,17 @@ import net.minecraft.world.InteractionResult;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.ai.attributes.Attributes;
 import net.minecraft.world.entity.ai.goal.target.NearestAttackableTargetGoal;
-import net.minecraft.world.entity.animal.AbstractGolem;
-import net.minecraft.world.entity.animal.IronGolem;
+import net.minecraft.world.entity.animal.golem.AbstractGolem;
+import net.minecraft.world.entity.animal.golem.IronGolem;
 import net.minecraft.world.entity.monster.Creeper;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.BlockItem;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
+import net.minecraft.world.entity.EntityTypes;
+import net.minecraft.world.level.storage.ValueInput;
+import net.minecraft.world.level.storage.ValueOutput;
+import net.minecraft.world.entity.LivingEntity;
 
 @Mixin(IronGolem.class)
 public abstract class IronGolemEntityMixin extends AbstractGolem implements EntityAccess {
@@ -44,14 +47,14 @@ public abstract class IronGolemEntityMixin extends AbstractGolem implements Enti
     }
 
     @Inject(method = "addAdditionalSaveData", at = @At(value = "TAIL"))
-    private void writeCustomDataToNbtMixin(CompoundTag nbt, CallbackInfo info) {
+    private void writeCustomDataToNbtMixin(ValueOutput nbt, CallbackInfo info) {
         nbt.putBoolean("Blackstoned", this.entityData.get(BLACKSTONED));
     }
 
     @Inject(method = "readAdditionalSaveData", at = @At(value = "TAIL"))
-    private void readCustomDataFromNbtMixin(CompoundTag nbt, CallbackInfo info) {
-        this.entityData.set(BLACKSTONED, nbt.getBoolean("Blackstoned"));
-        if (nbt.getBoolean("Blackstoned")) {
+    private void readCustomDataFromNbtMixin(ValueInput nbt, CallbackInfo info) {
+        this.entityData.set(BLACKSTONED, nbt.getBooleanOr("Blackstoned", false));
+        if (nbt.getBooleanOr("Blackstoned", false)) {
             this.targetSelector.addGoal(3, new NearestAttackableTargetGoal<>(this, Creeper.class, false, true));
         }
     }
@@ -63,16 +66,16 @@ public abstract class IronGolemEntityMixin extends AbstractGolem implements Enti
                 if (blockItem.getBlock().defaultBlockState().is(TagInit.PLATFORM_NETHER_BLOCKS)) {
                     this.heal(10.0F);
                     itemStack.consume(1, player);
-                    info.setReturnValue(InteractionResult.sidedSuccess(this.level().isClientSide()));
+                    info.setReturnValue(InteractionResult.SUCCESS);
                 }
             } else if (itemStack.is(ItemInit.GILDED_BLACKSTONE_SHARD)) {
                 this.heal(this.getMaxHealth() * 0.2F);
                 itemStack.consume(1, player);
-                info.setReturnValue(InteractionResult.sidedSuccess(this.level().isClientSide()));
+                info.setReturnValue(InteractionResult.SUCCESS);
             } else if (itemStack.is(ItemInit.BLACKSTONE_GOLEM_HEART)) {
                 this.heal(this.getMaxHealth());
                 itemStack.consume(1, player);
-                info.setReturnValue(InteractionResult.sidedSuccess(this.level().isClientSide()));
+                info.setReturnValue(InteractionResult.SUCCESS);
             }
         } else if (itemStack.is(ItemInit.BLACKSTONE_GOLEM_HEART)) {
             if (!this.level().isClientSide()) {
@@ -85,14 +88,14 @@ public abstract class IronGolemEntityMixin extends AbstractGolem implements Enti
                 itemStack.consume(1, player);
             }
             this.level().playSound(null, this.getX(), this.getY(), this.getZ(), SoundInit.BLACKSTONE_GOLEM_AWAKENS_EVENT, SoundSource.NEUTRAL, 1.4F, 1.0F);
-            info.setReturnValue(InteractionResult.sidedSuccess(this.level().isClientSide()));
+            info.setReturnValue(InteractionResult.SUCCESS);
         }
     }
 
-    @Inject(method = "canAttackType", at = @At(value = "HEAD"), cancellable = true)
-    private void canTargetMixin(EntityType<?> type, CallbackInfoReturnable<Boolean> info) {
-        if (type == EntityType.CREEPER && this.entityData.get(BLACKSTONED)) {
-            info.setReturnValue(true);
+    @Inject(method = "canAttack", at = @At(value = "HEAD"), cancellable = true)
+    private void canTargetMixin(LivingEntity target, CallbackInfoReturnable<Boolean> info) {
+        if (target.is(EntityTypes.CREEPER) && this.entityData.get(BLACKSTONED)) {
+            info.setReturnValue(target.canBeSeenAsEnemy());
         }
     }
 

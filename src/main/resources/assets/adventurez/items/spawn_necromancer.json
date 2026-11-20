@@ -1,0 +1,16 @@
+{
+  "model": {
+    "type": "minecraft:model",
+    "model": "adventurez:item/spawn_necromancer",
+    "tints": [
+      {
+        "type": "minecraft:constant",
+        "value": -15329770
+      },
+      {
+        "type": "minecraft:constant",
+        "value": -1263071
+      }
+    ]
+  }
+}

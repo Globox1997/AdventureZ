@@ -20,8 +20,7 @@ import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntityDimensions;
 import net.minecraft.world.entity.EntitySelector;
 import net.minecraft.world.entity.EntityType;
-import net.minecraft.world.entity.FlyingMob;
-import net.minecraft.world.entity.MobSpawnType;
+import net.minecraft.world.entity.EntitySpawnReason;
 import net.minecraft.world.entity.Pose;
 import net.minecraft.world.entity.SpawnGroupData;
 import net.minecraft.world.entity.ai.attributes.AttributeSupplier;
@@ -34,15 +33,36 @@ import net.minecraft.world.level.Level;
 import net.minecraft.world.level.Level.ExplosionInteraction;
 import net.minecraft.world.level.ServerLevelAccessor;
 import net.minecraft.world.phys.AABB;
+import net.minecraft.world.entity.Mob;
+import net.minecraft.core.BlockPos;
+import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.phys.Vec3;
+import net.minecraft.world.level.storage.ValueInput;
+import net.minecraft.world.level.storage.ValueOutput;
+import net.minecraft.server.level.ServerLevel;
 
-public class VoidFragmentEntity extends FlyingMob implements Enemy {
+public class VoidFragmentEntity extends Mob implements Enemy {
 
     public static final EntityDataAccessor<Boolean> IS_VOID_ORB = SynchedEntityData.defineId(VoidFragmentEntity.class, EntityDataSerializers.BOOLEAN);
     public boolean isVoidOrb;
     private int deathTick;
 
-    public VoidFragmentEntity(EntityType<? extends FlyingMob> entityType, Level world) {
+    public VoidFragmentEntity(EntityType<? extends Mob> entityType, Level world) {
         super(entityType, world);
+    }
+
+    @Override
+    protected void checkFallDamage(double heightDifference, boolean onGround, BlockState state, BlockPos landedPosition) {
+    }
+
+    @Override
+    public boolean onClimbable() {
+        return false;
+    }
+
+    @Override
+    public void travel(Vec3 movementInput) {
+        this.travelFlying(movementInput, 0.02F);
     }
 
     public static AttributeSupplier.Builder createVoidFragmentAttributes() {
@@ -51,8 +71,8 @@ public class VoidFragmentEntity extends FlyingMob implements Enemy {
     }
 
     @Override
-    public SpawnGroupData finalizeSpawn(ServerLevelAccessor world, DifficultyInstance difficulty, MobSpawnType spawnReason, @Nullable SpawnGroupData entityData) {
-        if (spawnReason == MobSpawnType.SPAWN_EGG) {
+    public SpawnGroupData finalizeSpawn(ServerLevelAccessor world, DifficultyInstance difficulty, EntitySpawnReason spawnReason, @Nullable SpawnGroupData entityData) {
+        if (spawnReason == EntitySpawnReason.SPAWN_ITEM_USE) {
             this.setVoidOrb(true);
         }
 
@@ -66,16 +86,16 @@ public class VoidFragmentEntity extends FlyingMob implements Enemy {
     }
 
     @Override
-    public void addAdditionalSaveData(CompoundTag tag) {
+    public void addAdditionalSaveData(ValueOutput tag) {
         super.addAdditionalSaveData(tag);
         tag.putBoolean("IsVoidOrb", this.isVoidOrb);
 
     }
 
     @Override
-    public void readAdditionalSaveData(CompoundTag tag) {
+    public void readAdditionalSaveData(ValueInput tag) {
         super.readAdditionalSaveData(tag);
-        this.isVoidOrb = tag.getBoolean("IsVoidOrb");
+        this.isVoidOrb = tag.getBooleanOr("IsVoidOrb", false);
         this.setVoidOrb(this.isVoidOrb);
     }
 
@@ -132,9 +152,9 @@ public class VoidFragmentEntity extends FlyingMob implements Enemy {
     }
 
     @Override
-    public void customServerAiStep() {
-        super.customServerAiStep();
-        if (!this.level().isClientSide() && this.level().getNearestPlayer(TargetingConditions.forCombat().range(0.8D), this) != null) {
+    public void customServerAiStep(ServerLevel level) {
+        super.customServerAiStep(level);
+        if (!this.level().isClientSide() && level.getNearestPlayer(TargetingConditions.forCombat().range(0.8D), this) != null) {
             this.dead = true;
             this.level().explode(this, this.getX(), this.getY(), this.getZ(), this.isVoidOrb ? 4.0F : 3.0F, ExplosionInteraction.NONE);
             this.discard();
@@ -142,16 +162,16 @@ public class VoidFragmentEntity extends FlyingMob implements Enemy {
     }
 
     @Override
-    public boolean hurt(DamageSource source, float amount) {
+    public boolean hurtServer(ServerLevel level, DamageSource source, float amount) {
         if (source.is(DamageTypeTags.BYPASSES_INVULNERABILITY)) {
-            return super.hurt(source, amount);
+            return super.hurtServer(level, source, amount);
         } else if ((source.getEntity() != null && source.getEntity() instanceof Player && ((Player) source.getEntity()).isCreative())) {
-            return super.hurt(source, amount);
+            return super.hurtServer(level, source, amount);
         }
-        if (this.isInvulnerableTo(source) || source.getDirectEntity() instanceof ThrownRockEntity || (this.isVoidOrb && !(source.getDirectEntity() instanceof VoidBulletEntity))) {
+        if (this.isInvulnerableTo(level, source) || source.getDirectEntity() instanceof ThrownRockEntity || (this.isVoidOrb && !(source.getDirectEntity() instanceof VoidBulletEntity))) {
             return false;
         } else {
-            return super.hurt(source, source.getDirectEntity() instanceof VoidBulletEntity ? this.getHealth() : amount);
+            return super.hurtServer(level, source, source.getDirectEntity() instanceof VoidBulletEntity ? this.getHealth() : amount);
         }
     }
 
@@ -163,7 +183,7 @@ public class VoidFragmentEntity extends FlyingMob implements Enemy {
     }
 
     @Override
-    public boolean causeFallDamage(float fallDistance, float damageMultiplier, DamageSource damageSource) {
+    public boolean causeFallDamage(double fallDistance, float damageMultiplier, DamageSource damageSource) {
         return false;
     }
 

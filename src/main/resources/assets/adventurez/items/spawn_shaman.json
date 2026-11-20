@@ -1,0 +1,16 @@
+{
+  "model": {
+    "type": "minecraft:model",
+    "model": "adventurez:item/spawn_shaman",
+    "tints": [
+      {
+        "type": "minecraft:constant",
+        "value": -16566482
+      },
+      {
+        "type": "minecraft:constant",
+        "value": -8037822
+      }
+    ]
+  }
+}

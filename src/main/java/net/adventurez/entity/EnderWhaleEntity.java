@@ -26,12 +26,11 @@ import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntitySelector;
 import net.minecraft.world.entity.EntityType;
-import net.minecraft.world.entity.FlyingMob;
 import net.minecraft.world.entity.ItemBasedSteering;
 import net.minecraft.world.entity.ItemSteerable;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.Mob;
-import net.minecraft.world.entity.MobSpawnType;
+import net.minecraft.world.entity.EntitySpawnReason;
 import net.minecraft.world.entity.MoverType;
 import net.minecraft.world.entity.Pose;
 import net.minecraft.world.entity.ai.attributes.AttributeSupplier;
@@ -51,18 +50,29 @@ import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.levelgen.Heightmap;
 import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.Vec3;
+import net.minecraft.world.level.storage.ValueInput;
+import net.minecraft.world.level.storage.ValueOutput;
 
-public class EnderWhaleEntity extends FlyingMob implements ItemSteerable {
+public class EnderWhaleEntity extends Mob implements ItemSteerable {
 
     private static final EntityDataAccessor<Boolean> ALWAYS_SADDLED;
     private static final EntityDataAccessor<Integer> BOOST_TIME;
     private final ItemBasedSteering saddledComponent;
 
-    public EnderWhaleEntity(EntityType<? extends FlyingMob> entityType, Level world) {
+    public EnderWhaleEntity(EntityType<? extends Mob> entityType, Level world) {
         super(entityType, world);
-        this.saddledComponent = new ItemBasedSteering(this.entityData, BOOST_TIME, ALWAYS_SADDLED);
+        this.saddledComponent = new ItemBasedSteering(this.entityData, BOOST_TIME);
         this.moveControl = new EnderWhaleEntity.EnderWhaleMovementControl(this);
         this.xpReward = 5;
+    }
+
+    @Override
+    protected void checkFallDamage(double heightDifference, boolean onGround, BlockState state, BlockPos landedPosition) {
+    }
+
+    @Override
+    public boolean onClimbable() {
+        return false;
     }
 
     public static AttributeSupplier.Builder createEnderWhaleAttributes() {
@@ -70,7 +80,7 @@ public class EnderWhaleEntity extends FlyingMob implements ItemSteerable {
                 .add(Attributes.ATTACK_KNOCKBACK, 1.5D).add(Attributes.KNOCKBACK_RESISTANCE, 2.5D);
     }
 
-    public static boolean canSpawn(EntityType<EnderWhaleEntity> type, LevelAccessor world, MobSpawnType spawnReason, BlockPos pos, RandomSource random) {
+    public static boolean canSpawn(EntityType<EnderWhaleEntity> type, LevelAccessor world, EntitySpawnReason spawnReason, BlockPos pos, RandomSource random) {
         BlockState blockState = world.getBlockState(pos);
         return random.nextInt(6) == 0 && pos.getY() > 40 && pos.getY() - world.getHeightmapPos(Heightmap.Types.WORLD_SURFACE, pos).getY() > 20 && blockState.isAir()
                 && world.getEntitiesOfClass(EnderDragon.class, new AABB(pos).inflate(80D), EntitySelector.NO_SPECTATORS).isEmpty()
@@ -92,9 +102,8 @@ public class EnderWhaleEntity extends FlyingMob implements ItemSteerable {
     }
 
     @Override
-    public void addAdditionalSaveData(CompoundTag nbt) {
+    public void addAdditionalSaveData(ValueOutput nbt) {
         super.addAdditionalSaveData(nbt);
-        this.saddledComponent.addAdditionalSaveData(nbt);
     }
 
     @Override
@@ -103,9 +112,8 @@ public class EnderWhaleEntity extends FlyingMob implements ItemSteerable {
     }
 
     @Override
-    public void readAdditionalSaveData(CompoundTag nbt) {
+    public void readAdditionalSaveData(ValueInput nbt) {
         super.readAdditionalSaveData(nbt);
-        this.saddledComponent.readAdditionalSaveData(nbt);
     }
 
     @Override
@@ -163,18 +171,18 @@ public class EnderWhaleEntity extends FlyingMob implements ItemSteerable {
                     player.getItemInHand(hand).shrink(1);
                     this.heal(4F);
                 }
-                return InteractionResult.sidedSuccess(this.level().isClientSide());
+                return InteractionResult.SUCCESS;
             }
             if (!this.isVehicle()) {
                 if (!this.level().isClientSide()) {
                     player.startRiding(this);
                 }
-                return InteractionResult.sidedSuccess(this.level().isClientSide());
+                return InteractionResult.SUCCESS;
             } else if (((EntityAccessor) this).getPassengerList().size() < 2) {
                 if (!this.level().isClientSide()) {
-                    player.startRiding(this, true);
+                    player.startRiding(this, true, true);
                 }
-                return InteractionResult.sidedSuccess(this.level().isClientSide());
+                return InteractionResult.SUCCESS;
             }
         }
         return InteractionResult.PASS;
@@ -219,14 +227,14 @@ public class EnderWhaleEntity extends FlyingMob implements ItemSteerable {
     @Override
     public void travel(Vec3 movementInput) {
         if (this.getControllingPassenger() != null) {
-            if (this.isControlledByLocalInstance()) {
+            if (this.isLocalInstanceAuthoritative()) {
                 this.moveRelative(this.getSpeed(), movementInput);
                 this.move(MoverType.SELF, this.getDeltaMovement());
                 this.setDeltaMovement(this.getDeltaMovement().scale(0.91f));
             }
             this.calculateEntityAnimation(false);
         } else {
-            super.travel(movementInput);
+            this.travelFlying(movementInput, 0.02F);
         }
     }
 
@@ -395,7 +403,7 @@ public class EnderWhaleEntity extends FlyingMob implements ItemSteerable {
             this.speed = speed;
             this.food = food;
             this.setFlags(EnumSet.of(Goal.Flag.MOVE, Goal.Flag.LOOK));
-            this.predicate = TEMPTING_ENTITY_PREDICATE.copy().selector(this::isTemptedBy);
+            this.predicate = TEMPTING_ENTITY_PREDICATE.copy().selector((target, level) -> this.isTemptedBy(target));
         }
 
         @Override
@@ -404,7 +412,7 @@ public class EnderWhaleEntity extends FlyingMob implements ItemSteerable {
                 --this.cooldown;
                 return false;
             } else {
-                this.closestPlayer = this.enderWhaleEntity.level().getNearestPlayer(this.predicate, this.enderWhaleEntity);
+                this.closestPlayer = getServerLevel(this.enderWhaleEntity).getNearestPlayer(this.predicate, this.enderWhaleEntity);
                 return this.closestPlayer != null;
             }
         }

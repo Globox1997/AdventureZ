@@ -18,7 +18,7 @@ import net.minecraft.world.entity.EntitySelector;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.EquipmentSlot;
 import net.minecraft.world.entity.LivingEntity;
-import net.minecraft.world.entity.MobSpawnType;
+import net.minecraft.world.entity.EntitySpawnReason;
 import net.minecraft.world.entity.PathfinderMob;
 import net.minecraft.world.entity.SpawnGroupData;
 import net.minecraft.world.entity.ai.attributes.AttributeSupplier;
@@ -36,19 +36,20 @@ import net.minecraft.world.entity.monster.Monster;
 import net.minecraft.world.entity.monster.RangedAttackMob;
 import net.minecraft.world.entity.monster.piglin.AbstractPiglin;
 import net.minecraft.world.entity.player.Player;
-import net.minecraft.world.entity.projectile.AbstractArrow;
-import net.minecraft.world.entity.projectile.Arrow;
+import net.minecraft.world.entity.projectile.arrow.AbstractArrow;
+import net.minecraft.world.entity.projectile.arrow.Arrow;
 import net.minecraft.world.entity.projectile.ProjectileUtil;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.item.ProjectileWeaponItem;
-import net.minecraft.world.item.SwordItem;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.ServerLevelAccessor;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.pathfinder.PathType;
 import net.minecraft.world.phys.AABB;
 import org.jetbrains.annotations.Nullable;
+import net.minecraft.tags.ItemTags;
+import net.adventurez.mixin.accessor.CreeperAccessor;
 
 public class SoulReaperEntity extends Monster implements RangedAttackMob {
 
@@ -92,16 +93,16 @@ public class SoulReaperEntity extends Monster implements RangedAttackMob {
 
     @Override
     @Nullable
-    public SpawnGroupData finalizeSpawn(ServerLevelAccessor serverWorldAccess, DifficultyInstance difficulty, MobSpawnType spawnReason, @Nullable SpawnGroupData entityData) {
+    public SpawnGroupData finalizeSpawn(ServerLevelAccessor serverWorldAccess, DifficultyInstance difficulty, EntitySpawnReason spawnReason, @Nullable SpawnGroupData entityData) {
         entityData = super.finalizeSpawn(serverWorldAccess, difficulty, spawnReason, entityData);
         RandomSource random = this.level().getRandom();
         this.populateDefaultEquipmentSlots(random, difficulty);
         this.populateDefaultEquipmentEnchantments(serverWorldAccess, random, difficulty);
         this.bowAttackGoal.setMinAttackInterval(40);
         this.goalSelector.addGoal(4, this.bowAttackGoal);
-        if (spawnReason.equals(MobSpawnType.COMMAND) || spawnReason.equals(MobSpawnType.NATURAL) || spawnReason.equals(MobSpawnType.CHUNK_GENERATION)) {
-            NightmareEntity nightmareEntity = EntityInit.NIGHTMARE.create(this.level());
-            nightmareEntity.moveTo(this.getX(), this.getY(), this.getZ(), this.getYRot(), 0.0F);
+        if (spawnReason.equals(EntitySpawnReason.COMMAND) || spawnReason.equals(EntitySpawnReason.NATURAL) || spawnReason.equals(EntitySpawnReason.CHUNK_GENERATION)) {
+            NightmareEntity nightmareEntity = EntityInit.NIGHTMARE.create(this.level(), EntitySpawnReason.MOB_SUMMONED);
+            nightmareEntity.snapTo(this.getX(), this.getY(), this.getZ(), this.getYRot(), 0.0F);
             nightmareEntity.finalizeSpawn(serverWorldAccess, difficulty, spawnReason, null);
             serverWorldAccess.addFreshEntity(nightmareEntity);
             this.startRiding(nightmareEntity);
@@ -114,10 +115,10 @@ public class SoulReaperEntity extends Monster implements RangedAttackMob {
         return false;
     }
 
-    public static boolean canSpawn(EntityType<SoulReaperEntity> type, ServerLevelAccessor world, MobSpawnType spawnReason, BlockPos pos, RandomSource random) {
+    public static boolean canSpawn(EntityType<SoulReaperEntity> type, ServerLevelAccessor world, EntitySpawnReason spawnReason, BlockPos pos, RandomSource random) {
         return (random.nextInt(7) == 0 && world.getBlockState(pos.above(3)).isAir() && checkMonsterSpawnRules(type, world, spawnReason, pos, random)
                 && world.getEntitiesOfClass(SoulReaperEntity.class, new AABB(pos).inflate(60D), EntitySelector.NO_SPECTATORS).isEmpty())
-                || spawnReason == MobSpawnType.SPAWNER;
+                || spawnReason == EntitySpawnReason.SPAWNER;
     }
 
     @Override
@@ -146,17 +147,17 @@ public class SoulReaperEntity extends Monster implements RangedAttackMob {
     }
 
     @Override
-    public boolean doHurtTarget(Entity target) {
+    public boolean doHurtTarget(ServerLevel level, Entity target) {
         if (target instanceof LivingEntity livingEntity) {
             livingEntity.addEffect(new MobEffectInstance(MobEffects.WITHER, 300));
         }
-        return super.doHurtTarget(target);
+        return super.doHurtTarget(level, target);
     }
 
     @Override
     public void aiStep() {
         if (this.level() != null && !this.level().isClientSide()) {
-            boolean meleeGoal = this.getItemBySlot(EquipmentSlot.MAINHAND).getItem() instanceof SwordItem;
+            boolean meleeGoal = this.getItemBySlot(EquipmentSlot.MAINHAND).is(ItemTags.SWORDS);
             LivingEntity target = this.getTarget();
             if (target != null) {
                 if (meleeGoal) {
@@ -211,8 +212,8 @@ public class SoulReaperEntity extends Monster implements RangedAttackMob {
     }
 
     @Override
-    public boolean canFireProjectileWeapon(ProjectileWeaponItem weapon) {
-        return weapon == Items.BOW;
+    public boolean canUseNonMeleeWeapon(ItemStack weapon) {
+        return weapon.is(Items.BOW);
     }
 
     @Override
@@ -247,9 +248,9 @@ public class SoulReaperEntity extends Monster implements RangedAttackMob {
 
     @Override
     protected void dropCustomDeathLoot(ServerLevel world, DamageSource source, boolean causedByPlayer) {
-        if (source.getEntity() instanceof Creeper creeperEntity && creeperEntity.canDropMobsSkull()) {
-            creeperEntity.increaseDroppedSkulls();
-            this.spawnAtLocation(Items.WITHER_SKELETON_SKULL);
+        if (source.getEntity() instanceof Creeper creeperEntity && creeperEntity.isPowered() && !((CreeperAccessor) creeperEntity).getDroppedSkulls()) {
+            ((CreeperAccessor) creeperEntity).setDroppedSkulls(true);
+            this.spawnAtLocation(world, Items.WITHER_SKELETON_SKULL);
         }
     }
 }

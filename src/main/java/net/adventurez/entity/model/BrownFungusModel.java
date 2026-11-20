@@ -1,11 +1,11 @@
 package net.adventurez.entity.model;
 
-import com.google.common.collect.ImmutableList;
 
+import net.adventurez.entity.render.state.AdventureRenderState;
+import net.minecraft.client.model.EntityModel;
 import net.adventurez.entity.BrownFungusEntity;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
-import net.minecraft.client.model.ListModel;
 import net.minecraft.client.model.geom.ModelPart;
 import net.minecraft.client.model.geom.PartPose;
 import net.minecraft.client.model.geom.builders.CubeListBuilder;
@@ -15,13 +15,14 @@ import net.minecraft.client.model.geom.builders.PartDefinition;
 import net.minecraft.util.Mth;
 
 @Environment(EnvType.CLIENT)
-public class BrownFungusModel<T extends BrownFungusEntity> extends ListModel<T> {
+public class BrownFungusModel extends EntityModel<AdventureRenderState> {
     private final ModelPart head;
     private final ModelPart body;
     private final ModelPart leftFoot;
     private final ModelPart rightFoot;
 
     public BrownFungusModel(ModelPart root) {
+        super(root);
         this.head = root.getChild("head");
         this.body = root.getChild("body");
         this.leftFoot = root.getChild("leftFoot");
@@ -38,18 +39,19 @@ public class BrownFungusModel<T extends BrownFungusEntity> extends ListModel<T> 
         return LayerDefinition.create(modelData, 128, 128);
     }
 
-    @Override
-    public Iterable<ModelPart> parts() {
-        return ImmutableList.of(this.head, this.body, this.leftFoot, this.rightFoot);
-    }
 
     @Override
-    public void setupAnim(T fungus, float limbAngle, float limbDistance, float animationProgress, float headYaw, float headPitch) {
+    public void setupAnim(AdventureRenderState state) {
+        float limbAngle = state.walkAnimationPos;
+        float limbDistance = state.walkAnimationSpeed;
+        float animationProgress = state.ageInTicks;
+        float headYaw = state.yRot;
+        float headPitch = state.xRot;
         this.head.xRot = -0.1745F;
         this.rightFoot.xRot = Mth.cos(limbAngle * 0.6662F) * 1.4F * limbDistance * 0.5F;
         this.leftFoot.xRot = Mth.cos(limbAngle * 0.6662F + 3.1415927F) * 1.4F * limbDistance * 0.5F;
 
-        float k = Mth.sin(this.attackTime * 3.1415927F);
+        float k = Mth.sin(state.attackTime * 3.1415927F);
         if (k > 0) {
             this.head.xRot = -k * 1.2F;
         }

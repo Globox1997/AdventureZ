@@ -26,9 +26,10 @@ public class AmethystShardEntity extends ThrowableProjectile {
     }
 
     public AmethystShardEntity(LivingEntity owner, Level world) {
-        super(EntityInit.AMETHYST_SHARD, owner, world);
+        super(EntityInit.AMETHYST_SHARD, owner.getX(), owner.getEyeY() - 0.1F, owner.getZ(), world);
+        this.setOwner(owner);
         Vec3 vec3d = owner.getViewVector(1.0F);
-        this.absMoveTo(this.getX() + vec3d.x, this.getY() - owner.getBbHeight() * 0.3D, this.getZ() + vec3d.z);
+        this.absSnapTo(this.getX() + vec3d.x, this.getY() - owner.getBbHeight() * 0.3D, this.getZ() + vec3d.z);
     }
 
     @Override

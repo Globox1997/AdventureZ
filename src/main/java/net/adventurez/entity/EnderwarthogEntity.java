@@ -22,7 +22,7 @@ import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.LivingEntity;
-import net.minecraft.world.entity.MobSpawnType;
+import net.minecraft.world.entity.EntitySpawnReason;
 import net.minecraft.world.entity.MoverType;
 import net.minecraft.world.entity.PathfinderMob;
 import net.minecraft.world.entity.SpawnGroupData;
@@ -37,7 +37,7 @@ import net.minecraft.world.entity.ai.goal.WaterAvoidingRandomStrollGoal;
 import net.minecraft.world.entity.ai.goal.target.HurtByTargetGoal;
 import net.minecraft.world.entity.ai.goal.target.NearestAttackableTargetGoal;
 import net.minecraft.world.entity.boss.enderdragon.EnderDragon;
-import net.minecraft.world.entity.monster.EnderMan;
+import net.minecraft.world.entity.monster.Enderman;
 import net.minecraft.world.entity.monster.Endermite;
 import net.minecraft.world.entity.monster.Monster;
 import net.minecraft.world.entity.monster.Shulker;
@@ -53,6 +53,8 @@ import net.minecraft.world.phys.Vec3;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.EnumSet;
+import net.minecraft.world.level.storage.ValueInput;
+import net.minecraft.world.level.storage.ValueOutput;
 
 public class EnderwarthogEntity extends Monster {
 
@@ -71,7 +73,7 @@ public class EnderwarthogEntity extends Monster {
                 .add(Attributes.FOLLOW_RANGE, 38.0D);
     }
 
-    public static boolean canSpawn(EntityType<EnderwarthogEntity> type, ServerLevelAccessor world, MobSpawnType spawnReason, BlockPos pos, RandomSource random) {
+    public static boolean canSpawn(EntityType<EnderwarthogEntity> type, ServerLevelAccessor world, EntitySpawnReason spawnReason, BlockPos pos, RandomSource random) {
         BlockState blockState = world.getBlockState(pos);
         return world.getDifficulty() != Difficulty.PEACEFUL && Monster.isDarkEnoughToSpawn(world, pos, random) && Monster.checkMobSpawnRules(type, world, spawnReason, pos, random)
                 && NaturalSpawner.isValidEmptySpawnBlock(world, pos, blockState, blockState.getFluidState(), EntityInit.ENDERWARTHOG);
@@ -89,23 +91,23 @@ public class EnderwarthogEntity extends Monster {
         this.targetSelector.addGoal(1, new NearestAttackableTargetGoal<>(this, Player.class, true));
         this.targetSelector.addGoal(2, (new HurtByTargetGoal(this, new Class[]{EnderwarthogEntity.class})));
         this.targetSelector.addGoal(3, (new HurtByTargetGoal(this, new Class[]{EnderDragon.class})));
-        this.targetSelector.addGoal(4, (new HurtByTargetGoal(this, new Class[]{EnderMan.class})));
+        this.targetSelector.addGoal(4, (new HurtByTargetGoal(this, new Class[]{Enderman.class})));
         this.targetSelector.addGoal(5, (new HurtByTargetGoal(this, new Class[]{Endermite.class})));
         this.targetSelector.addGoal(6, (new HurtByTargetGoal(this, new Class[]{Shulker.class})));
     }
 
     @Override
-    public void addAdditionalSaveData(CompoundTag tag) {
+    public void addAdditionalSaveData(ValueOutput tag) {
         super.addAdditionalSaveData(tag);
         tag.putInt("SprintTicker", this.sprintedTicker);
         tag.putBoolean("RareVariant", this.entityData.get(RARE_VARIANT));
     }
 
     @Override
-    public void readAdditionalSaveData(CompoundTag tag) {
+    public void readAdditionalSaveData(ValueInput tag) {
         super.readAdditionalSaveData(tag);
-        this.sprintedTicker = tag.getInt("SprintTicker");
-        this.entityData.set(RARE_VARIANT, tag.getBoolean("RareVariant"));
+        this.sprintedTicker = tag.getIntOr("SprintTicker", 0);
+        this.entityData.set(RARE_VARIANT, tag.getBooleanOr("RareVariant", false));
     }
 
     @Override
@@ -145,19 +147,19 @@ public class EnderwarthogEntity extends Monster {
     }
 
     @Override
-    public boolean doHurtTarget(Entity target) {
+    public boolean doHurtTarget(ServerLevel level, Entity target) {
         this.level().playSound(null, this.getX(), this.getY(), this.getZ(), SoundInit.ENDERWARTHOG_ATTACK_EVENT, SoundSource.HOSTILE, 1.0F,
                 0.8F + this.level().getRandom().nextFloat() * 0.4F);
-        return super.doHurtTarget(target);
+        return super.doHurtTarget(level, target);
     }
 
     @Override
     @Nullable
-    public SpawnGroupData finalizeSpawn(ServerLevelAccessor serverWorldAccess, DifficultyInstance difficulty, MobSpawnType spawnReason, @Nullable SpawnGroupData entityData) {
+    public SpawnGroupData finalizeSpawn(ServerLevelAccessor serverWorldAccess, DifficultyInstance difficulty, EntitySpawnReason spawnReason, @Nullable SpawnGroupData entityData) {
         entityData = super.finalizeSpawn(serverWorldAccess, difficulty, spawnReason, entityData);
-        if (spawnReason.equals(MobSpawnType.COMMAND))
+        if (spawnReason.equals(EntitySpawnReason.COMMAND))
             this.entityData.set(RARE_VARIANT, true);
-        if ((spawnReason.equals(MobSpawnType.NATURAL) || spawnReason.equals(MobSpawnType.CHUNK_GENERATION)) && this.level().getRandom().nextFloat() <= ConfigInit.CONFIG.warthog_rare_chance) {
+        if ((spawnReason.equals(EntitySpawnReason.NATURAL) || spawnReason.equals(EntitySpawnReason.CHUNK_GENERATION)) && this.level().getRandom().nextFloat() <= ConfigInit.CONFIG.warthog_rare_chance) {
             this.entityData.set(RARE_VARIANT, true);
             this.getAttribute(Attributes.MAX_HEALTH).setBaseValue(this.getAttributeBaseValue(Attributes.MAX_HEALTH) + 20.0D);
         }
@@ -191,8 +193,8 @@ public class EnderwarthogEntity extends Monster {
             if (canPerformAttack(target) && this.cooldown <= 0) {
                 this.enderwarthogEntity.entityData.set(BITE_ATTACK, true);
                 this.resetAttackCooldown();
-                this.mob.swing(InteractionHand.MAIN_HAND);
-                this.mob.doHurtTarget(target);
+                this.mob.swingForAttack(InteractionHand.MAIN_HAND);
+                this.mob.doHurtTarget(getServerLevel(this.mob), target);
             }
         }
 
@@ -292,8 +294,8 @@ public class EnderwarthogEntity extends Monster {
         private boolean attack(LivingEntity target, double squaredDistance) {
             double d = (double) (this.enderwarthogEntity.getBbWidth() * 1.5F * this.enderwarthogEntity.getBbWidth() * 1.5F + target.getBbWidth());
             if (squaredDistance <= d) {
-                this.enderwarthogEntity.swing(InteractionHand.MAIN_HAND);
-                if (this.enderwarthogEntity.doHurtTarget(target)) {
+                this.enderwarthogEntity.swingForAttack(InteractionHand.MAIN_HAND);
+                if (this.enderwarthogEntity.doHurtTarget(getServerLevel(this.enderwarthogEntity), target)) {
                     Vec3 attackedPos = new Vec3(target.getX(), target.getY(), target.getZ());
 
                     if (!this.enderwarthogEntity.level().getBlockState(BlockPos.containing(attackedPos).below()).isAir())
@@ -306,7 +308,7 @@ public class EnderwarthogEntity extends Monster {
                                     this.enderwarthogEntity.level().getRandom().nextDouble() * 0.15D, 0.D, 1.0D);
                         }
                     target.setDeltaMovement(target.getDeltaMovement().add(0.0D, 0.1D, 0.0D));
-                    target.knockback(3.0D, (double) Mth.sin(this.enderwarthogEntity.getYRot() * 0.017453292F), (double) (-Mth.cos(this.enderwarthogEntity.getYRot() * 0.017453292F)));
+                    target.knockback(3.0D, (double) Mth.sin(this.enderwarthogEntity.getYRot() * 0.017453292F), (double) (-Mth.cos(this.enderwarthogEntity.getYRot() * 0.017453292F)), this.enderwarthogEntity.damageSources().mobAttack(this.enderwarthogEntity), 0.0F);
                 }
                 return true;
             } else {

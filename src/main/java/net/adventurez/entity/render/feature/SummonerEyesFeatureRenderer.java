@@ -1,31 +1,28 @@
 package net.adventurez.entity.render.feature;
 
 import com.mojang.blaze3d.vertex.PoseStack;
-import com.mojang.blaze3d.vertex.VertexConsumer;
-import net.adventurez.entity.SummonerEntity;
 import net.adventurez.entity.model.SummonerModel;
 import net.adventurez.entity.render.feature.layer.ExtraRenderLayer;
+import net.adventurez.entity.render.state.SummonerRenderState;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
-import net.minecraft.client.renderer.MultiBufferSource;
-import net.minecraft.client.renderer.RenderType;
+import net.minecraft.client.renderer.SubmitNodeCollector;
 import net.minecraft.client.renderer.entity.RenderLayerParent;
 import net.minecraft.client.renderer.entity.layers.RenderLayer;
+import net.minecraft.client.renderer.rendertype.RenderType;
 import net.minecraft.client.renderer.texture.OverlayTexture;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 
 @Environment(EnvType.CLIENT)
-public class SummonerEyesFeatureRenderer extends RenderLayer<SummonerEntity, SummonerModel<SummonerEntity>> {
-    private static final RenderType EYE_LAYER = ExtraRenderLayer.getGlowing(ResourceLocation.parse("adventurez:textures/entity/feature/summoner_eyes_feature.png"));
+public class SummonerEyesFeatureRenderer extends RenderLayer<SummonerRenderState, SummonerModel> {
+    private static final RenderType EYE_LAYER = ExtraRenderLayer.getGlowing(Identifier.parse("adventurez:textures/entity/feature/summoner_eyes_feature.png"));
 
-    public SummonerEyesFeatureRenderer(RenderLayerParent<SummonerEntity, SummonerModel<SummonerEntity>> featureRendererContext) {
+    public SummonerEyesFeatureRenderer(RenderLayerParent<SummonerRenderState, SummonerModel> featureRendererContext) {
         super(featureRendererContext);
     }
 
     @Override
-    public void render(PoseStack matrixStack, MultiBufferSource vertexConsumerProvider, int i, SummonerEntity summonerEntity, float f, float g, float h, float j, float k, float l) {
-        VertexConsumer vertexConsumer = vertexConsumerProvider.getBuffer(EYE_LAYER);
-        this.getParentModel().renderToBuffer(matrixStack, vertexConsumer, 15728640, OverlayTexture.NO_OVERLAY);
+    public void submit(PoseStack matrixStack, SubmitNodeCollector submitNodeCollector, int i, SummonerRenderState state, float yRot, float xRot) {
+        submitNodeCollector.order(1).submitModel(this.getParentModel(), state, matrixStack, EYE_LAYER, 15728640, OverlayTexture.NO_OVERLAY, state.outlineColor);
     }
-
 }
